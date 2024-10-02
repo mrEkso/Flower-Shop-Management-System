@@ -1,0 +1,40 @@
+# This file is managed by the ST lab crew, please don't change it!
+
+name: CI build
+
+on:
+  push:
+    paths-ignore:
+    - 'src/main/asciidoc/**'
+    - 'readme.adoc'
+
+env:
+  MAVEN_OPTS: -Xmx1G
+
+jobs:
+  build:
+    name: Build and test
+
+    runs-on: self-hosted
+
+    steps:
+    - name: Print version information
+      run: |
+        java -version
+        javac --version
+        git --version
+
+    - name: Checkout sources
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Build and test with Maven
+      run: ./mvnw clean verify -Pci -B
+
+    - name: Run and publish SonarQube analysis
+      if: github.ref == 'refs/heads/main'
+      run: ./mvnw sonar:sonar -B
+      env:
+        STLAB_SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        STLAB_SONAR_LOGIN: ${{ secrets.SONAR_LOGIN }}

@@ -1,0 +1,41 @@
+# Java and Maven
+*.class
+*.jar
+target/
+
+# Un-ignore maven wrapper jar
+!/.mvn/wrapper/maven-wrapper.jar
+
+# Eclipse
+bin/
+.settings/
+.project
+.classpath
+.factorypath
+
+# Eclipse STS plugin
+.springBeans
+
+# IntelliJ
+out/
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# MagicDraw
+*.mdzip.bak
+
+# OS specific
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# H2 database files
+*.mv.db
+*.h2.db
+
+# Misc
+hs_err_*.log
+~$*
