@@ -1,0 +1,32 @@
+= Protokoll Gruppe 07
+
+Treffen am 15.10.2024
+
+Ort:      HSZ +
+Beginn:   17:30 Uhr +
+Ende:     17:50 Uhr
+
+__Schriftführer: Vadym Zaitsev__
+
+*Nächstes Treffen:* +
+17.10.2024, 18:00 Uhr, APB 2 OG.
+
+__Teilnehmer:__
+//Tabellarisch oder Aufzählung, Kennzeichnung von Teilnehmern mit besonderer Rolle (z.B. Kunde)
+
+- Vincent Kruse, Tutor
+- Andrejs Borodajevs, Scrum-Master
+- Oleh Khmelyk
+- Vadym Zaitsev
+- Valeriia Sarkisian
+- Nick Schulze
+- Paul-Valentin Vela
+- Davyd Okaianchenko
+
+== Bemerkungen
+Erstes Organisatorisches Treffen.
+
+
+== Aktueller Stand
+Entschieden mit den Ort und Zeit von wochentlichen Treffen (Montag 2 DS am 2 OG von APB). +
+Ein Scrum-Master ist gewählt (Andrejs Borodajevs)
