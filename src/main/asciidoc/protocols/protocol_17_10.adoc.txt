@@ -1,0 +1,32 @@
+= Protokoll Gruppe 07
+
+Treffen am 17.10.2024
+
+Ort:      Ort des Treffens APB
+Beginn:   18:00 Uhr +
+Ende:     18:30 Uhr
+
+__Schriftführer: Vadym Zaitsev__
+
+*Nächstes Treffen:* +
+21.10.2024, 9:20 Uhr, APB
+
+__Teilnehmer:__
+//Tabellarisch oder Aufzählung, Kennzeichnung von Teilnehmern mit besonderer Rolle (z.B. Kunde)
+
+- Vincent Kruse, Tutor
+- Vadym Zaitsev, Protokollant
+- Andrejs Borodajevs, Scrum-Master
+- Davyd Okaianchenko
+- Valeriia Sarkisian
+- Nick Schulze
+- Bechir Sayadi
+- Paul-Valentin Vela
+- Oleh Khmelyk
+
+== Bemerkungen
+Zweites Treffen. Wichtige Protokolle wurden von Vincent erklaert. 
+
+== Aktueller Stand
+Wir haben mögliche Erweiterungen von Guestbook besprochen, als auch die Aufgaben bis zum nächstes Treffen: Umsetzung von solchen Erweiterungen und bekanntmachung mit den "Kundenwuenschen". Ausserdem, einige Probleme mit IDEs und Java-versionen wurden zusammen geklaert.
+
