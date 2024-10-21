@@ -6,8 +6,8 @@ Die individuell erfasste Zeit beinhaltet auch das Lesen von Dokumentationen, Bes
 // See http://asciidoctor.org/docs/user-manual/#tables
 [option="headers"]
 |===
-|Woche |Andrejs |Davyd |Vadym |Oleh |Dev5 |Dev6 |Dev7 |Dev8 |Meeting
-|1  |200   |30    |150    |80    |…    |…     |…    |…    |45    
+|Woche |Andrejs |Davyd |Vadym |Oleh |Bechir |Dev6 |Dev7 |Dev8 |Meeting
+|1  |200   |30    |150    |80    |180    |…     |…    |…    |45    
 |2  |…   |…    |…    |…    |…    |…    |…    |…    |…    
 |3  |…   |…    |…    |…    |…    |…    |…    |…    |…    
 |4  |…   |…    |…    |…    |…    |…    |…    |…    |…    
