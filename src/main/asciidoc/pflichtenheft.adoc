@@ -1,4 +1,4 @@
-:project_name: Name des Projekts
+:project_name: Blumenladen
 :toc: left
 :numbered:
 = Pflichtenheft __{project_name}__
@@ -8,6 +8,7 @@
 |===
 |Version | Status      | Bearbeitungsdatum   | Autoren(en) |  Vermerk
 |0.1     | In Arbeit   | 10.10.2021          | Autor       | Initiale Version
+|0.1.1     | In Arbeit   | 21.10.2021          | Andrejs       | Stakeholders (Akteure)
 |===
 
 == Inhaltsverzeichnis
@@ -47,7 +48,12 @@ Weitere relevante Spalten können bei Bedarf ergänzt werden.
 [cols="1,4"]
 |===
 |Name |Beschreibung
-|...  |...
+|Frau Rosa Floris  | Besitzerin - Verwaltung Finanzen und Lager
+|Rosas Nichte  | Leiterin Pflanzenservice - Bestellung für den Auftrag benötigten Pflanzen und Arrangierung der Räumlichkeiten vor Ort
+|Kunden  | Kaufen Einzelblumen oder Blumensträuße  
+|Großhändler  | Verkaufen Blumen an das Unternehmen 
+|Administratoren | Verwalten das System, erteilen die Berechtigungen für Nutzer
+
 |===
 
 === Überblick Anwendungsfalldiagramm
