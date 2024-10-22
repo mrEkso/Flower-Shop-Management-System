@@ -48,11 +48,11 @@ Weitere relevante Spalten können bei Bedarf ergänzt werden.
 [cols="1,4"]
 |===
 |Name |Beschreibung
-|Frau Rosa Floris  | Besitzerin - Verwaltung Finanzen und Lager
+|Frau Rosa Floris  | Besitzerin - Verwaltung Finanzen und Lager. Berät Kunden bei Hochzeits- und Eventbestellungen.
 |Rosas Nichte  | Leiterin Pflanzenservice - Bestellung für den Auftrag benötigten Pflanzen und Arrangierung der Räumlichkeiten vor Ort
-|Kunden  | Kaufen Einzelblumen oder Blumensträuße  
+|Kunden  | Kaufen Einzelblumen oder Blumensträuße. Einige Kunden bestellen spezielle Aufträge für Hochzeiten oder andere Veranstaltungen und erhalten Beratung.
 |Großhändler  | Verkaufen Blumen an das Unternehmen 
-|Administratoren | Verwalten das System, erteilen die Berechtigungen für Nutzer
+|Administratoren | Verwalten das System, erteilen die Berechtigungen für Nutzer und sorgen für die reibungslose Funktion der Software.
 
 |===
 
