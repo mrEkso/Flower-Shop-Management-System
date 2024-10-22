@@ -8,7 +8,7 @@
 |===
 |Version | Status      | Bearbeitungsdatum   | Autoren(en) |  Vermerk
 |0.1     | In Arbeit   | 10.10.2021          | Autor       | Initiale Version
-|0.1.1     | In Arbeit   | 21.10.2021          | Andrejs       | Stakeholders (Akteure)
+|0.1.1     | In Arbeit   | 21.10.2024          | Andrejs       | Stakeholders (Akteure)
 |===
 
 == Inhaltsverzeichnis
