@@ -1,0 +1,65 @@
+= Protokoll Gruppe 07
+
+Treffen am 21.10.2024
+
+Ort:      APB +
+Beginn:   9:20 Uhr +
+Ende:     10:25 Uhr
+
+__Schriftführer: Vadym Zaitsev__
+
+*Nächstes Treffen:* +
+28.10.2024, 10:00 Uhr, APB
+
+__Teilnehmer:__
+//Tabellarisch oder Aufzählung, Kennzeichnung von Teilnehmern mit besonderer Rolle (z.B. Kunde)
+
+- Vincent Kruse, Tutor
+- Andrejs Borodajevs, Scrum-master
+- Vadym Zaitsev, Schriftfuehrer
+- Oleh Khmelyk
+- Bechir Sayadi
+- Davyd Okaianchenko
+- Paul-Valentin Vela
+- Valeriia Sarkisian
+
+== Bemerkungen
+Zweites Treffen. Besprechung von der Blumenladen-Projekt und der Aufgaben fuer die naechten 2 Wochen. Nick Schulze arbeitet mit uns nicht mehr. 
+
+== Retrospektive des letzten Sprints
+// Wie ist der Status der im letzten Sprint erstellten Issues/veteilten Aufgaben?
+Individuelle Bearbeitung der Guestbook:
+// See http://asciidoctor.org/docs/user-manual/=tables
+[option="headers"]
+|===
+|Aufgabe |Verantwortliche(r) |Status |Bemerkung
+|Bearbeitung der Posts       |Davyd                  |fertig      |…
+|Bewertung der Posts       |Bechir                  |fertig      |…
+|E-Mails speichern       |Andrejs                  |fertig      |…
+|Beantwortung von anderer Posts       |Vadym                  |fast fertig      |…
+|Likes       |Valeriia                  |fertig      |…
+|Bearbeitung der Posts (als Admin)       |Paul                  |fertig      |…
+|Stilverbesserung       |Oleh                  |fertig      |…
+|===
+
+
+== Aktueller Stand
+Wir haben uns vertraut gemacht mithilfe von Guestbook. Ausserdem haben wir die "Wuensche von Frau Floris fuer die Webseite fuer die Digitalisierung der Prozesse in ihrem Blumenladen"
+
+== Planung des nächsten Sprints
+- Fertigmachung von der Pflichtenheft fuers Blumenladen.
+- Erweiterung 
+*Issue referenziert die Issue ID von GitHub*
+
+// See http://asciidoctor.org/docs/user-manual/=tables
+[option="headers"]
+|===
+|Issue |Titel |Beschreibung |Verantwortlicher |Status
+|#1     |Bewertungen     |Limitierung von nur 5 Sternen. Hinweise einfuegen.            |Bechir                |Am Anfang
+|#3     |Loeschen/Leeren-Button     |Button, die den Warenkorb leert.            |Valeriia                |Am Anfang
+|#4     |Nachbestellung     |Nachbestellung der Filme in Lager als Chef            |Paul                |Am Anfang
+|#5     |Genaue Bestellungen     |Anzeige von mehr Infos in der Bestellungen-Ansicht des Chefs            |Andrejs                |Am Anfang
+|#6     |Suche     |Suche der Filme            |Davyd                |Am Anfang
+|#7     |Stueckzahl im Warenkorb     |Aenderung der Anzahl von Produkten im Warenkorb            |Vadym                |Am Anfang
+|#8     |Registrierung     |Registrierung von Users auf der Webseite            |Oleh                |Am Anfang
+|===
