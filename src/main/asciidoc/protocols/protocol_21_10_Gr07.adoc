@@ -48,7 +48,7 @@ Wir haben uns vertraut gemacht mithilfe von Guestbook. Ausserdem haben wir die "
 
 == Planung des nächsten Sprints
 - Fertigmachung von der Pflichtenheft fuers Blumenladen.
-- Erweiterung 
+- Erweiterung der Videoshop. 
 *Issue referenziert die Issue ID von GitHub*
 
 // See http://asciidoctor.org/docs/user-manual/=tables
