@@ -7,8 +7,8 @@ Die individuell erfasste Zeit beinhaltet auch das Lesen von Dokumentationen, Bes
 [option="headers"]
 |===
 |Woche |Andrejs |Davyd |Vadym |Oleh |Bechir |Valeriia |Dev7 |Dev8 |Meeting
-|1      |200   |30    |150    |80    |180    |160    |…    |…    |45   
-|2  |…   |450    |480    |…    |450    |440    |…    |…    |60    
+|1    |200   |30    |150    |80    |180    |160    |…    |…    |45   
+|2  |500   |450    |480    |…    |450    |440    |…    |…    |60    
 |3  |…   |…    |…    |…    |…    |…    |…    |…    |40    
 |4  |…   |…    |…    |…    |…    |…    |…    |…    |…    
 |5  |…   |…    |…    |…    |…    |…    |…    |…    |…    
