@@ -9,6 +9,7 @@
 |Version | Status      | Bearbeitungsdatum   | Autoren(en) |  Vermerk
 |0.1     | In Arbeit   | 10.10.2021          | Autor       | Initiale Version
 |0.1.1     | In Arbeit   | 21.10.2024          | Andrejs       | Stakeholders (Akteure)
+|0.2     | In Arbeit   | 28.10.2024          | Andrejs       | Init UseCase & Class Diagrammen
 |===
 
 == Inhaltsverzeichnis
@@ -57,7 +58,9 @@ Weitere relevante Spalten können bei Bedarf ergänzt werden.
 |===
 
 === Überblick Anwendungsfalldiagramm
-Anwendungsfall-Diagramm, das alle Anwendungsfälle und alle Akteure darstellt
+
+[[use_case_diagram]]
+image::./models/images/use_cases_a.svg[use case diagram, 100%, 100%, pdfwidth=100%, title= "Anwendungsfalldiagramm für {project_name} in UML", align=center]
 
 === Anwendungsfallbeschreibungen
 Dieser Unterabschnitt beschreibt die Anwendungsfälle. In dieser Beschreibung müssen noch nicht alle Sonderfälle und Varianten berücksichtigt werden. Schwerpunkt ist es, die wichtigsten Anwendungsfälle des Systems zu finden. Wichtig sind solche Anwendungsfälle, die für den Auftraggeber, den Nutzer den größten Nutzen bringen.
@@ -106,6 +109,9 @@ Für jeden Dialog:
 
 === Überblick: Klassendiagramm
 UML-Analyseklassendiagramm
+
+[[analysis_class_diagram]]
+image::./models/images/analysis_class_a.svg[Analysenklassendiagramm, 100%, 100%, pdfwidth=100%, title= "Analysenklassendiagramm für {project_name} in UML", align=center]
 
 === Klassen und Enumerationen
 Dieser Abschnitt stellt eine Vereinigung von Glossar und der Beschreibung von Klassen/Enumerationen dar. Jede Klasse und Enumeration wird in Form eines Glossars textuell beschrieben. Zusätzlich werden eventuellen Konsistenz- und Formatierungsregeln aufgeführt.
