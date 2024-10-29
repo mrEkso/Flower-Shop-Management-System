@@ -1,6 +1,6 @@
-<mxfile host="drawio-plugin" modified="2024-10-29T22:25:54.975Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36" etag="yIj2xzourD9NA1CJzygp" version="22.1.22" type="embed">
+<mxfile host="drawio-plugin" modified="2024-10-29T22:32:46.567Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36" etag="QpxtflHhxdxVHa9p9rPX" version="22.1.22" type="embed">
   <diagram id="T95qvjE1ERWwv_4aiWjD" name="Page-1">
-    <mxGraphModel dx="1265" dy="1565" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+    <mxGraphModel dx="1218" dy="1538" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -54,13 +54,15 @@
           <mxGeometry x="200" y="620" width="50" height="100" as="geometry" />
         </mxCell>
         <mxCell id="27" value="wählt aus und kauft" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" parent="1" source="6" target="18" edge="1">
-          <mxGeometry relative="1" as="geometry">
+          <mxGeometry x="-0.3179" y="-10" relative="1" as="geometry">
             <mxPoint x="940" y="400" as="sourcePoint" />
+            <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="25" value="bestellt" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" parent="1" source="6" target="21" edge="1">
-          <mxGeometry relative="1" as="geometry">
+          <mxGeometry x="-0.2209" y="-7" relative="1" as="geometry">
             <mxPoint x="940" y="400" as="sourcePoint" />
+            <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="6" value="Kunde" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" parent="1" vertex="1">
@@ -73,13 +75,13 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="11" value="Administrator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" parent="1" vertex="1">
-          <mxGeometry x="980" y="842.5" width="50" height="100" as="geometry" />
+          <mxGeometry x="980" y="850" width="50" height="100" as="geometry" />
         </mxCell>
         <mxCell id="15" value="[UC901]&lt;br&gt;Berechtigungen zuweisen" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" parent="1" vertex="1">
           <mxGeometry x="460" y="850" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="18" value="[UC103]&lt;br&gt;Verkauf von Blumen bzw. Sträußen im Laden" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" parent="1" vertex="1">
-          <mxGeometry x="472.5" y="335" width="140" height="70" as="geometry" />
+          <mxGeometry x="470" y="340" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="21" value="[UC201]&lt;br&gt;Eine Veranstaltung mit Blumen ausstatten" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" parent="1" vertex="1">
           <mxGeometry x="480" y="600" width="140" height="70" as="geometry" />
@@ -91,8 +93,9 @@
           <mxGeometry x="485" y="690" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="29" value="bestellt" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;" parent="1" source="6" target="26" edge="1">
-          <mxGeometry relative="1" as="geometry">
+          <mxGeometry x="-0.1538" y="9" relative="1" as="geometry">
             <mxPoint x="940" y="400" as="sourcePoint" />
+            <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="31" value="[UC001]&lt;br&gt;Rechnungen verwalten" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;" parent="1" vertex="1">
