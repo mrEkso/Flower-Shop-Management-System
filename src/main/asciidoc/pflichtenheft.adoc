@@ -12,6 +12,7 @@
 |0.2     | In Arbeit   | 28.10.2024          | Andrejs       | Init UseCase & Class Diagrammen
 |0.2.1     | In Arbeit   | 28.10.2024          | Andrejs       | UseCase & Class Diagrammen
 |0.2.2     | In Arbeit   | 31.10.2024          | Davyd       | Funktionale und nicht-funktionale Anforderungen
+|0.3      | In Arbeit   | 31.10.2024      | Bechir    |  Bearbeitung in Klassendiagram und beschreiben die Klassen und Enum
 |===
 
 == Inhaltsverzeichnis
@@ -266,7 +267,7 @@ Dieser Abschnitt stellt eine Vereinigung von Glossar und der Beschreibung von Kl
 |2. ServiceContract |Erbt von der Klasse Ordner und enthält ein Client-Objekt sowie ein Datum-Attribut. Das Attribut frequence beschreibt, wie oft eine Lieferung erfolgen soll. |
 |3. PaymentMethod  |Enthält zwei Attribute – Card, damit der Kunde mit Karte zahlen kann, und Cash, damit der Kunde bar bezahlen kann. |
 |4.Invoice |Jedes Invoice-Objekt hat eine einzigartige ID und eine PaymentMethod.|
-|5.Product  |Erbt von Product und besitzt ein Attribut additionalPrice. Jedes Bouquet kann aus zwei oder mehr Blumen bestehen. |
+|5.Product  |Jedes Product hat einen Namen, Einkaufspreis, Verkaufspreis und eine einzigartige ID. |
 |6.Flower | Erbt von Product und hat ein zusätzliches Attribut für die Farbe. |
 |7.Bouquet |Erbt von Product und besitzt ein Attribut additionalPrice. Jedes Bouquet kann aus zwei oder mehr Blumen bestehen. |
 |8.Storage |Ein Storage enthält mehrere Produkte. |
