@@ -31,8 +31,49 @@ Die Kunden könnten mit Karte oder Bar bezahlen.|
 Die Rechnungen lassen sich nach dem Einkauf bezahlt.|
 
 == Aufgabenstellung und Zielsetzung
-Text aus Aufgabenstellung kopieren und ggfs. präzisieren.
-Insbesondere ergänzen, welche Ziele mit dem Abschluss des Projektes erreicht werden sollen.
+Zuallererst braucht die Software eine Übersicht von dem Angebot des Großhändlers. Dabei
+soll es möglich sein, Bestellungen aufzunehmen und sofort losschicken. Sobald
+der Großhändler die Bestellung bestätigt hat, können die Angaben in den aktuellen
+Bestand übernommen werden, da die Lieferung umgehend erfolgt. Zu
+jeder Blumensorte stehen im Computer die aktuelle Anzahl sowie der Ein- und
+Verkaufspreis. Außerdem wird die Rechnung des Großhändlers erfasst und der
+Betrag sofort als Ausgabe für die tägliche Abrechnung verbucht.
+Wenn ein Kunde in den Laden kommt und sich seinen Blumenstrauß ausgesucht
+hat, muss in einem Rechnungsformular die Anzahl der dafür verwendeten
+Pflanzen eintragen werden. Die Software berechnet den Verkaufspreis und der
+Kunde kann entscheiden, ob er den Blumenstrauß in dieser Zusammenstellung
+wirklich kaufen möchte. Wenn sich der Kunde entschieden hat, bekommt er
+seine Rechnung, der Blumenbestand wird aktualisiert und der Betrag in der
+Kasse wird angeglichen.
+
+Ähnlich funktioniert es auch bei den Fertigsträußen, die Frau Floris herstellt,
+wenn gerade keine Kunden im Laden sind. Abends stellt die Software die Einnahmen
+und Ausgaben automatisch zusammen und gibt den aktuellen Kassenstand
+aus.
+
+Auch das Problem mit der Organisation für Hochzeiten soll die neue Software
+lösen. Bereits während des Beratungsgespräches werden alle Angaben
+eingegeben. Die endgültige Bestellung wird ausgelöst, wenn man sich über alle
+Details einig geworden ist. Die benötigten Blumen erscheinen einen Tag vor
+dem großen Ereignis automatisch in der Bestellung beim Großhändler und eine
+Rechnung für Frau Meier wird erzeugt. Frau Floris kann diese als “bezahlt”
+markieren, sobald das Geld (bar oder auf dem Konto) eingetroffen ist und somit
+die Abrechnungen aktualisieren.
+
+Der gemeinsam mit der Nichte geplante Pflanzenservice soll auch von der Software
+unterstützt werden. Eine Firma, die eine Ausstattung ihrer Büro- und
+Sitzungsräume mit Grünpflanzen wünscht, erteilt Frau Floris einen entsprechenden
+Auftrag. Sie bestellt die benötigten Pflanzen beim Großhändler und arrangiert
+sie in den Räumlichkeiten der Firma. Zusätzlich kann ein Servicevertrag
+abgeschlossen werden, der die wöchentliche Pflege der Pflanzen durch Frau Floris
+und auf Wunsch und zu anderen Konditionen auch die Versorgung mit frischen
+Schnittblumen umfasst.
+
+Nur die verwelkten Blumen in ihrem Laden kann die neue Software nicht aussortieren.
+Diese müsste Frau Floris abends aber als Verlust in die Abrechnung
+aufnehmen können.
+
+*Also, am Ende soll ein internes Website fertig sein, das alle Geschäftsprozesse in dem Blumenladen von Frau Floris digitalisiert und in einigen Fällen auch automatisiert. Das wird zur einer starken Optimisierung von allen Bereichen der Geschäftsführung.*
 
 == Produktnutzung
 Das System soll einer Frau Floris als Assistentin bei der Betreuung ihres Blumenladens dienen (z.B. Blumen und Sträuße an Kunden verkaufen, bei Großhaendler einkaufen, und andere Dienstleistungen anbieten). Die Software soll auf einem lokalen Server laufen und über den Webbrowser auf einem lokalen Rechner verfügbar sein.
@@ -305,10 +346,16 @@ Szenarium beschreibt). Für jedes Szenarium sollte es einen Akzeptanztestfall ge
 Jeder Testfall soll mit einer ID versehen werde, um später zwischen den Dokumenten (z.B. im Test-Plan) referenzieren zu können.
 
 == Glossar
-Sämtliche Begriffe, die innerhalb des Projektes verwendet werden und deren gemeinsames Verständnis aller beteiligten
-Stakeholder essenziell ist, sollten hier aufgeführt werden.
-Insbesondere Begriffe der zu implementierenden Domäne wurden bereits beschrieben, jedoch gibt es meist mehr Begriffe, die einer Beschreibung bedürfen. +
-Beispiel: Was bedeutet "Kunde"? Ein Nutzer des Systems? Der Kunde des Projektes (Auftraggeber)?
+
+ - Laden - Blumenladen von Frau Floris, für dem wird die System entwickelt.
+ - Administrator - eine Person, die den Auftraggeber über den Website nach dem Einsetzung beraten wird. Administrator kann den Website verwalten.
+ - Produkt - Waren, die in dem Laden verkauft werden. Nun - Schnittblumen und Blumensträusen.
+ - Kunde - Die Person, die Produkte in dem Laden kauft bzw. die Services, wie z.B Dekorieren und Lieferung der Blumen von dem Laden bestellt.
+ - Auftraggeber - der Laden
+ - Nutzer des Systems - Frau Floris, ihre Nichte, andere Mitarbeiter von dem Laden (in dem Fall, wenn es die geben wird).
+ - Lager - Die Menge von Blumen, die für die sofortige Verkauf in dem Laden bereit sind. Auf English - Stock.
+ - Großhändler - ein Unternehmen, wo der Laden alle Blumen für den Lager in großen Mengen und billiger als Verkaufspreis bestellt.
+ - Service - Vorherig vereinbarte reguläre oder einmalige Leistung des Ladens für ein:e Kund:in. Eine Vorbereitung in Form von einer Bestellung von exakt allen benötigten Blumen von dem Großhändler ist in Fällen von einer großen Bestellung (wie eine Hochzeit) notwendig.
+ - Rechnungsformular - eine Sektion von dem Website, wo Nuzter des Systems mit dem geeignetem Zugengsstatus die von Kunden gewählte Produkte einfügen, damit die nach der Bezahlung weiterbearbeitet sein werden, und Kassenstand mit dem Lager aktualisiert, und die Rechnung - erstellt werden können.
 
 == Offene Punkte
-Offene Punkte werden entweder direkt in der Spezifikation notiert. Wenn das Pflichtenheft zum finalen Review vorgelegt wird, sollte es keine offenen Punkte mehr geben.
