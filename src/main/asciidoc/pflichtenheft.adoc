@@ -91,7 +91,7 @@ Welche realen und juristischen Personen(-gruppen) haben Einfluss auf die Anforde
 Das Kontextdiagramm zeigt das geplante Software-System in seiner Umgebung. Zur Umgebung gehören alle Nutzergruppen des Systems und Nachbarsysteme. Die Grafik kann auch informell gehalten sein.
 
 [[context_diagram]]
-image::./models/images/context_diagram_a.svg[context diagram, 100%, 100%, pdfwidth=100%, title= "Kontextdiagramm für {project_name} in UML", align=center]
+image::./models/images/context_diagram_b.svg[context diagram, 100%, 100%, pdfwidth=100%, title= "Kontextdiagramm für {project_name} in UML", align=center]
 
 === Top-Level-Architektur
 Dokumentieren Sie ihre Top-Level-Architektur mit Hilfe eines Komponentendiagramm.
