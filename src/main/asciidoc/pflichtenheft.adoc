@@ -15,6 +15,7 @@
 |0.3      | In Arbeit   | 31.10.2024      | Bechir    |  Bearbeitung in Klassendiagram und beschreiben die Klassen und Enum
 |0.3.1     | In Arbeit    | 31.10.2024     | Bechir    | schreiben der Zussammenfassung
 |0.4     | In Arbeit    | 31.10.2024     | Oleh    | 4.Produktnutzung & 6.Systemgrenze und Top-Level-Architektur
+|0.5     | In Arbeit    | 31.10.2024     | Andrejs    | Beschreibung von Anwendungsfällen
 |===
 
 == Inhaltsverzeichnis
@@ -247,6 +248,78 @@ Die typischen Anwendungsfälle (Anlegen, Ändern, Löschen) können zu einem ein
 |Extensions                 |-
 |Functional Requirements    |<<F0104>>, <<F0102>>
 |===
+
+[cols="1h, 3"]
+[[UC301]]
+|===
+|ID                         |**<<UC301>>**
+|Name                       | Lagerstand verwalten
+|Beschreibungen             | Frau Floris soll Lager verwalten können.
+|Akteure                    | Frau Floris
+|Auslöser                   |- 
+|Vorbedingungen            a| 	Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen zur Lagerverwaltung.
+|Wesentliche Schritte            a| 
+1. Frau Floris wählt die Funktion „Lager“ im Lagermodus aus und bekommt überlick von allen vorhandenen Artikeln.
+|Extensions                 |-
+|Functional Requirements    | <<F0102>>
+|===
+
+
+[cols="1h, 3"]
+[[UC301]]
+|===
+|ID                         |**<<UC301>>**
+|Name                       | Eine Veranstaltung mit Blumen ausstatten
+|Beschreibungen             | Ein Kunde soll die Möglichkeit haben, eine Veranstaltung mit Blumen ausstatten zu lassen, indem er den Service des Blumenshops bucht. Die Nichte organisiert die Lieferung und arrangiert die Blumen vor Or
+|Akteure                    | Frau Floris, Nichte, Kunde
+|Auslöser                   | Ein Kunde bestellt Blumenservice für eine Veranstaltung per Telefon. 
+|Vorbedingungen            a| 	Blumen und Materialien für die Veranstaltung sind auf Lager und der Kunde hat eine Veranstaltung gebucht.
+|Wesentliche Schritte            a| 
+1. Kunde kontaktiert den Blumenshop (Frau Rosa) und bucht den Blumenservice für eine Veranstaltung.
+2. Nichte überprüft die benötigten Blumen und Materialien im Lagerbestand.
+3. Nichte plant die Lieferung und arrangiert die Blumen vor Ort für die Veranstaltung.
+|Extensions                 |-
+|Functional Requirements    | <<F0201>>
+|===
+
+
+[cols="1h, 3"]
+[[UC302]]
+|===
+|ID                         |**<<UC302>>**
+|Name                       | Ein- bzw. mehrmaliges Blumenservice
+|Beschreibungen             | Ein Kunde soll die Möglichkeit haben, einen einmaligen oder wiederkehrenden Blumenservice für verschiedene Anlässe (z. B. Hochzeiten, Firmenveranstaltungen) zu buchen. Die Nichte organisiert die Lieferung und stellt sicher, dass die Blumen regelmäßig oder wie gewünscht vor Ort arrangiert werden. 
+|Akteure                    | Frau Floris, Nichte, Kunde
+|Auslöser                   | Ein Kunde bestellt Blumenservice für eine Veranstaltung per Telefon. 
+|Vorbedingungen            a| 	Kunde möchte einen einmaligen oder regelmäßigen Blumenservice buchen.
+|Wesentliche Schritte            a| 
+1. Kunde kontaktiert den Blumenshop und wählt zwischen einem einmaligen und einem mehrmaligen Blumenservice.
+2. Kunde legt den gewünschten Zeitraum und die Häufigkeit der Lieferungen fest.
+3. Nichte überprüft die Lagerbestände und stellt die erforderlichen Blumen und Materialien zusammen.
+4. Nichte organisiert die Lieferung und arrangiert bzw. pflegt die Blumen entweder einmalig oder regelmäßig nach den Vorgaben des Kunden vor Ort.
+|Extensions                 |<<UC303>>
+|Functional Requirements    | <<F0202>>
+|===
+
+[cols="1h, 3"]
+[[UC303]]
+|===
+|ID                         |**<<UC303>>**
+|Name                       | Blumen zur Abholung im Laden
+|Beschreibungen             | Ein Kunde kann Blumen zur Abholung im Laden bestellen, entweder als einmalige Bestellung oder im Rahmen eines regelmäßigen Services (z. B. wöchentliche Blumenarrangements). Dieser Anwendungsfall erweitert den Anwendungsfall <<UC202>> Ein- bzw. mehrmaliges Blumenservice, da der Kunde anstelle einer Lieferung eine Abholung im Laden wählt.
+|Akteure                    | Frau Floris, Nichte, Kunde
+|Auslöser                   | Ein Kunde bestellt Blumenservice für eine Veranstaltung per Telefon. 
+|Vorbedingungen            a| 	Die gewünschten Blumen sind im Lager verfügbar oder wurden rechtzeitig bestellt und vorbereitet.
+|Wesentliche Schritte            a| 
+1. Kunde kontaktiert den Blumenshop und gibt Frau Floris an, dass er Blumen zur Abholung im Laden wünscht.
+2. Kunde wählt zwischen einer einmaligen Abholung und einem regelmäßigen Abholservice.
+3. Nichte prüft die Verfügbarkeit der Blumen im Lager und reserviert die benötigten Blumen für die Abholung.
+4. Nichte informiert den Kunden über den Abholzeitpunkt und stellt die Blumen im Laden zur Verfügung.
+5. Kunde holt die Blumen zum vereinbarten Zeitpunkt im Laden ab.
+|Extensions                 |-
+|Functional Requirements    | <<F0203>>
+|===
+
 
 == Funktionale Anforderungen
 
