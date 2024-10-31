@@ -262,7 +262,22 @@ Dieser Abschnitt stellt eine Vereinigung von Glossar und der Beschreibung von Kl
 [options="header"]
 |===
 |Klasse/Enumeration |Beschreibung |
-|…                  |…            |
+|1. Client|Enthält Informationen über den Kunden, wie Name, Adresse und Telefonnummer. |
+|2. ServiceContract |Erbt von der Klasse Ordner und enthält ein Client-Objekt sowie ein Datum-Attribut. Das Attribut frequence beschreibt, wie oft eine Lieferung erfolgen soll. |
+|3. PaymentMethod  |Enthält zwei Attribute – Card, damit der Kunde mit Karte zahlen kann, und Cash, damit der Kunde bar bezahlen kann. |
+|4.Invoice |Jedes Invoice-Objekt hat eine einzigartige ID und eine PaymentMethod.|
+|5.Product  |Erbt von Product und besitzt ein Attribut additionalPrice. Jedes Bouquet kann aus zwei oder mehr Blumen bestehen. |
+|6.Flower | Erbt von Product und hat ein zusätzliches Attribut für die Farbe. |
+|7.Bouquet |Erbt von Product und besitzt ein Attribut additionalPrice. Jedes Bouquet kann aus zwei oder mehr Blumen bestehen. |
+|8.Storage |Ein Storage enthält mehrere Produkte. |
+|9.CashRegister |Ein CashRegister kann mehrere FinancialReport-Objekte enthalten. |
+|10.FinancialReport |Jedes FinancialReport-Objekt enthält Informationen über die Finanzen, wie Einnahmen und Ausgaben, den aktuellen Stand (Balance) und eine Zahl für den Profit. Die Daten werden aus dem CashRegister genutzt. |
+|11.DailyFinancialReport |Erbt von FinancialReport und behandelt täglich die Attribute. |
+|12.MonthlyFinancialReport |Erbt von FinancialReport und verarbeitet die Attribute monatlich. |
+|13.OrderStatus  |Eine Enumeration, die nur zwei Werte enthält: PAID und NOT_PAID. |
+|14.Order  |Eine Bestellung kann ein oder mehrere Produkte, eine ID, eine Variable vom Typ OrderStatus und eine Invoice enthalten. |
+|15.FlowerShop |Verfügt über ein Management für das Storage, bietet eine Übersicht über alle Bestellungen, hat eine unbegrenzte Anzahl an RegisteredUsers und ein CashRegister. |
+|16.RegisteredUser|Repräsentiert Benutzer, die bereits registriert sind.  |
 |===
 
 == Akzeptanztestfälle
