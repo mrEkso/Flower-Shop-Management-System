@@ -13,13 +13,23 @@
 |0.2.1     | In Arbeit   | 28.10.2024          | Andrejs       | UseCase & Class Diagrammen
 |0.2.2     | In Arbeit   | 31.10.2024          | Davyd       | Funktionale und nicht-funktionale Anforderungen
 |0.3      | In Arbeit   | 31.10.2024      | Bechir    |  Bearbeitung in Klassendiagram und beschreiben die Klassen und Enum
+|0.3.1     | In Arbeit    | 31.10.2024     | Bechir    | schreiben der Zussammenfassung
 |===
 
 == Inhaltsverzeichnis
 Dieses Dokument benötigt ein Inhaltsverzeichnis. Es existieren mehrere Einbindungsmöglichkeiten.
 
 == Zusammenfassung
-Eine kurze Beschreibung des Dokuments. Wenige Absätze.
+Eine kurze Beschreibung des Dokuments. Wenige Absätze:
+Das System für Frau Rosa Floris' Blumenshop digitalisiert und vereinfacht verschiedene Geschäftsprozesse:
+	-Finanzverwaltung: Das System hilft Frau Floris dabei, Rechnungen zu verwalten, Tegesrechnungen und Monatsrechnungen zu erstellen sowie den Verlust durch verwelkte Blumen zu kalkulieren.
+	-Vertrieb und Verkauf: Der Vertrieb umfasst den Einkauf von Blumen als Rohstoff, den Verkauf von Blumen oder Boquets.
+	-Lagermanagement: Frau Floris kann den Überblick über die verfügbare Ware behalten.
+	-Serviceangebote: Das System unterstützt Dienstleistungen wie: das Dekorieren von Veranstltungen mit Blumen| regelmäßige Blumenlieferung| die Bereitstellung von Boquets und Blume zur Abholung im Lade. (wenn die Kunden spezielle Services und Angebote nutzen möchten).
+	-Admin-Bereich: Der Administrator verwaltet Benutzerberechtigungen und simuliert den Großhändler-Katalog.
+
+Die Kunden könnten mit Karte oder Bar bezahlen.
+Die Rechnungen lassen sich nach dem Einkauf bezahlt.
 
 == Aufgabenstellung und Zielsetzung
 Text aus Aufgabenstellung kopieren und ggfs. präzisieren.
