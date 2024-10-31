@@ -71,22 +71,162 @@ Die typischen Anwendungsfälle (Anlegen, Ändern, Löschen) können zu einem ein
 
 == Funktionale Anforderungen
 
+Dieser Abschnitt gibt einen Überblick über die funktionalen Anforderungen des Systems.
+
+Die Tabellen enthalten:
+
+ - Eine eindeutige Kennung der Anforderung (ID), die für die Referenzierung während des gesamten Projekts verwendet werden kann
+ - Die aktuelle Version der Anforderung, da Änderungen an einer Anforderung während des Projekts auftreten können
+ - einen Kurznamen für die Anforderung
+ - Die Beschreibung der Anforderung
+
+Die Anforderungen werden in Muss-Kriterien und Kann-Kriterien unterteilt:
+
 === Muss-Kriterien
 Was das zu erstellende Programm auf alle Fälle leisten muss.
+
+[options="header", cols="2h,1,3,12"]
+|===
+
+| ID | Version | Name | Beschreibung
+
+| [[F0001]]<<F0001>>
+| v0.1
+| Rechnungen verwalten
+| Das System soll die Verwaltung von Rechnungen für jede Transaktion ermöglichen. Es speichert die Details jeder für Kundenkäufe oder Großbestellungen erstellten Rechnung, damit Frau Floris die Finanzunterlagen im Überblick behalten kann.
+
+| [[F0002]]<<F0002>>
+| v0.1
+| Tagesabrechnung
+| Das System soll am Ende des Tages die Einnahmen und Ausgaben automatisch zusammenstellen und den aktuellen Kassenstand anzeigen.
+
+| [[F0003]]<<F0003>>
+| v0.1
+| Monatsabrechnung
+| Das System soll eine monatliche Abrechnung der Einnahmen und Ausgaben erstellen, um einen detaillierten Überblick über die finanzielle Lage des Geschäfts zu bieten.
+
+| [[F0004]]<<F0004>>
+| v0.1
+| Verwelkte Blumen als Verlust
+| Das System soll es ermöglichen, abends verwelkte Blumen als Verlust in die Abrechnung aufzunehmen.
+
+| [[F0101]]<<F0101>>
+| v0.1
+| Blumen als Rohstoff verwalten
+| Das System soll den aktuellen Blumenbestand sowie Ein- und Verkaufspreise der Blumen anzeigen, basierend auf den Bestellungen beim Großhändler und dem Verkauf im Laden.
+
+| [[F0102]]<<F0102>>
+| v0.1
+| Lagerbestand verwalten
+| Das System soll die Verwaltung des Lagerbestands unterstützen und Bestellungen basierend auf aktuellen Bedürfnissen und zukünftigen Veranstaltungen ermöglichen.
+
+| [[F0103]]<<F0103>>
+| v0.1
+| Verkauf von Blumen im Laden
+| Das System soll den Verkauf von Blumen im Laden erleichtern, indem es die Anzahl der verkauften Blumen erfasst, den Verkaufspreis berechnet und den Lagerbestand aktualisiert.
+
+| [[F0104]]<<F0104>>
+| v0.1
+| Fertigsträuße erstellen
+| Das System soll es ermöglichen, dass Frau Floris Fertigsträuße erstellt und deren Bestand im System verwaltet.
+
+| [[F0201]]<<F0201>>
+| v0.1
+| Veranstaltung mit Blumen ausstatten
+| Das System soll eine vollständige Verwaltung für die Organisation von Veranstaltungen mit Blumenschmuck bieten, einschließlich Beratung, Bestellung und Rechnungserstellung.
+
+| [[F0202]]<<F0202>>
+| v0.1
+| Blumenservice für Firmen anbieten
+| Das System soll die Möglichkeit bieten, für Firmen einen Pflanzenservice zu organisieren, einschließlich der Bestellung und Lieferung von Pflanzen sowie eines optionalen Pflegevertrags.
+
+|===
 
 === Kann-Kriterien
 Anforderungen die das Programm leisten können soll, aber für den korrekten Betrieb entbehrlich sind.
 
+[options="header", cols="2h,1,3,12"]
+|===
+
+| ID | Version | Name | Beschreibung
+
+| [[F0203]]<<F0203>>
+| v0.1
+| Blumen zur Abholung im Laden
+| Das System soll es Kunden ermöglichen, Blumen im Voraus zu bestellen und zur Abholung im Laden bereitzustellen.
+
+| [[F0901]]<<F0901>>
+| v0.1
+| Berechtigungen zuweisen
+| Das System soll die Möglichkeit bieten, Berechtigungen für verschiedene Benutzerrollen zu verwalten, um die Sicherheit und die Struktur der Zugriffsrechte im System zu gewährleisten.
+
+|===
+
 == Nicht-Funktionale Anforderungen
+
+Dieser Abschnitt gibt einen Überblick über die nicht-funktionalen Anforderungen des Projekts Blumenladen.
+Diese Anforderungen beschreiben, wie das System funktionieren soll und in welchen Grenzen es arbeiten soll.
 
 === Qualitätsziele
 
-Dokumentieren Sie in einer Tabelle die Qualitätsziele, welche das System erreichen soll, sowie deren Priorität.
+Die folgende Tabelle zeigt die Qualitätsanforderungen, die in welchem Umfang erfüllt werden müssen.
+Die erste Spalte listet die Qualitätsanforderungen auf, während in den folgenden Spalten die Priorität mit einem "x" markiert ist.
+Die zugewiesene Priorität muss bei der Formulierung der konkreten nicht-funktionalen Anforderungen berücksichtigt werden.
+
+1 = Weniger wichtig ..
+5 = Sehr wichtig
+[options="header", cols="3h, ^1, ^1, ^1, ^1, ^1"]
+|===
+|Qualitätsanforderung       | 1 | 2 | 3 | 4 | 5
+|Verfügbarkeit               |   |   |   | x |
+|Leistungsfähigkeit          |   |   | x |   |
+|Benutzerfreundlichkeit      |   |   |   | x |
+|Sicherheit                  |   |   |   |   | x
+|Wartbarkeit                 |   |   | x |   |
+|===
 
 === Konkrete Nicht-Funktionale Anforderungen
 
-Beschreiben Sie Nicht-Funktionale Anforderungen, welche dazu dienen, die zuvor definierten Qualitätsziele zu erreichen.
-Achten Sie darauf, dass deren Erfüllung (mindestens theoretisch) messbar sein muss.
+:desired-uptime: 99,5%
+
+[options="header", cols="2h, 1, 3, 12"]
+|===
+|ID
+|Version
+|Name
+|Beschreibung
+
+|[[NF0010]]<<NF0010>>
+|v0.1
+|Verfügbarkeit - Betriebszeit
+a|
+Das System soll eine Betriebszeit von mindestens **{desired-uptime}** erreichen, um sicherzustellen, dass die Anwendung für Benutzer zuverlässig verfügbar ist.
+
+|[[NF0020]]<<NF0020>>
+|v0.1
+|Sicherheit - Passwortspeicherung
+a|
+Passwörter der Benutzer sollen nur als Hash-Werte gespeichert werden, um Diebstahl und Missbrauch zu verhindern.
+
+|[[NF0030]]<<NF0030>>
+|v0.1
+|Leistungsfähigkeit - Reaktionszeit der Benutzeroberfläche
+a|
+Die Reaktionszeit der Benutzeroberfläche soll nicht mehr als 2 Sekunden für jede Hauptfunktionalität betragen, wie das Abrufen des Lagerbestands, das Erstellen von Rechnungen und das Verwalten von Bestellungen.
+
+|[[NF0040]]<<NF0040>>
+|v0.1
+|Benutzerfreundlichkeit - Intuitive Bedienung
+a|
+Die Benutzeroberfläche des Systems soll so gestaltet sein, dass Mitarbeiter ohne technische Vorkenntnisse in der Lage sind, die wichtigsten Funktionen wie Rechnungsstellung, Bestandsverwaltung und Bestellungserstellung innerhalb von maximal 1 Stunde Einarbeitungszeit zu beherrschen.
+
+|[[NF0050]]<<NF0050>>
+|v0.1
+|Wartbarkeit - Dokumentation und Code-Kommentare
+a|
+Der Quellcode des Systems soll ausführlich dokumentiert sein, um spätere Wartung und Erweiterungen zu erleichtern. Jede wichtige Funktion soll mindestens einen erklärenden Kommentar enthalten, und es soll eine klare Struktur für zukünftige Entwickler vorgegeben sein.
+
+|===
 
 == GUI Prototyp
 
