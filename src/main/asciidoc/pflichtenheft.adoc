@@ -14,6 +14,7 @@
 |0.2.2     | In Arbeit   | 31.10.2024          | Davyd       | Funktionale und nicht-funktionale Anforderungen
 |0.3      | In Arbeit   | 31.10.2024      | Bechir    |  Bearbeitung in Klassendiagram und beschreiben die Klassen und Enum
 |0.3.1     | In Arbeit    | 31.10.2024     | Bechir    | schreiben der Zussammenfassung
+|0.4     | In Arbeit    | 31.10.2024     | Oleh    | 4.Produktnutzung & 6.Systemgrenze und Top-Level-Architektur
 |===
 
 == Inhaltsverzeichnis
