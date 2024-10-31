@@ -343,15 +343,16 @@ Szenarium beschreibt). Für jedes Szenarium sollte es einen Akzeptanztestfall ge
 Jeder Testfall soll mit einer ID versehen werde, um später zwischen den Dokumenten (z.B. im Test-Plan) referenzieren zu können.
 
 == Glossar
-Beispiel: Was bedeutet "Kunde"? Ein Nutzer des Systems? Der Kunde des Projektes (Auftraggeber)?
-- Laden - Blumenladen von Frau Floris, für dem wird die System entwickelt.
-- Administrator - eine Person, die den Auftraggeber über den Website nach dem Einsetzung beraten wird. Administrator kann den Website verwalten.
-- Produkt - Waren, die in dem Laden verkauft werden. Nun - Schnittblumen und Blumensträusen.
-- Kunde - Die Person, die Produkte in dem Laden kauft bzw. die Services, wie z.B Dekorieren und Lieferung der Blumen von dem Laden bestellt.
-- Auftraggeber - der Laden
-- Nutzer des Systems - Frau Floris, ihre Nichte, andere Mitarbeiter von dem Laden (in dem Fall, wenn es die geben wird).
-- Lager - Die Menge von Blumen, die für die sofortige Verkauf in dem Laden bereit sind. Auf English - Stock.
-- Großhändler - ein Unternehmen, wo der Laden alle Blumen für den Lager in großen Mengen und billiger als Verkaufspreis bestellt.
-- Service - Vorherig vereinbarte reguläre oder einmalige Leistung des Ladens für ein:e Kund:in. Eine Vorbereitung in Form von einer Bestellung von exakt allen benötigten Blumen von dem Großhändler ist in Fällen von einer großen Bestellung (wie eine Hochzeit) notwendig.
-- Rechnungsformular - eine Sektion von dem Website, wo Nuzter des Systems mit dem geeignetem Zugengsstatus die von Kunden gewählte Produkte einfügen, damit die nach der Bezahlung weiterbearbeitet sein werden, und Kassenstand mit dem Lager aktualisiert, und die Rechnung - erstellt werden können.
+
+ - Laden - Blumenladen von Frau Floris, für dem wird die System entwickelt.
+ - Administrator - eine Person, die den Auftraggeber über den Website nach dem Einsetzung beraten wird. Administrator kann den Website verwalten.
+ - Produkt - Waren, die in dem Laden verkauft werden. Nun - Schnittblumen und Blumensträusen.
+ - Kunde - Die Person, die Produkte in dem Laden kauft bzw. die Services, wie z.B Dekorieren und Lieferung der Blumen von dem Laden bestellt.
+ - Auftraggeber - der Laden
+ - Nutzer des Systems - Frau Floris, ihre Nichte, andere Mitarbeiter von dem Laden (in dem Fall, wenn es die geben wird).
+ - Lager - Die Menge von Blumen, die für die sofortige Verkauf in dem Laden bereit sind. Auf English - Stock.
+ - Großhändler - ein Unternehmen, wo der Laden alle Blumen für den Lager in großen Mengen und billiger als Verkaufspreis bestellt.
+ - Service - Vorherig vereinbarte reguläre oder einmalige Leistung des Ladens für ein:e Kund:in. Eine Vorbereitung in Form von einer Bestellung von exakt allen benötigten Blumen von dem Großhändler ist in Fällen von einer großen Bestellung (wie eine Hochzeit) notwendig.
+ - Rechnungsformular - eine Sektion von dem Website, wo Nuzter des Systems mit dem geeignetem Zugengsstatus die von Kunden gewählte Produkte einfügen, damit die nach der Bezahlung weiterbearbeitet sein werden, und Kassenstand mit dem Lager aktualisiert, und die Rechnung - erstellt werden können.
+
 == Offene Punkte
