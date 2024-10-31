@@ -45,10 +45,12 @@ Kunde kann entscheiden, ob er den Blumenstrauß in dieser Zusammenstellung
 wirklich kaufen möchte. Wenn sich der Kunde entschieden hat, bekommt er
 seine Rechnung, der Blumenbestand wird aktualisiert und der Betrag in der
 Kasse wird angeglichen.
+
 Ähnlich funktioniert es auch bei den Fertigsträußen, die Frau Floris herstellt,
 wenn gerade keine Kunden im Laden sind. Abends stellt die Software die Einnahmen
 und Ausgaben automatisch zusammen und gibt den aktuellen Kassenstand
 aus.
+
 Auch das Problem mit der Organisation für Hochzeiten soll die neue Software
 lösen. Bereits während des Beratungsgespräches werden alle Angaben
 eingegeben. Die endgültige Bestellung wird ausgelöst, wenn man sich über alle
@@ -57,6 +59,7 @@ dem großen Ereignis automatisch in der Bestellung beim Großhändler und eine
 Rechnung für Frau Meier wird erzeugt. Frau Floris kann diese als “bezahlt”
 markieren, sobald das Geld (bar oder auf dem Konto) eingetroffen ist und somit
 die Abrechnungen aktualisieren.
+
 Der gemeinsam mit der Nichte geplante Pflanzenservice soll auch von der Software
 unterstützt werden. Eine Firma, die eine Ausstattung ihrer Büro- und
 Sitzungsräume mit Grünpflanzen wünscht, erteilt Frau Floris einen entsprechenden
@@ -65,6 +68,7 @@ sie in den Räumlichkeiten der Firma. Zusätzlich kann ein Servicevertrag
 abgeschlossen werden, der die wöchentliche Pflege der Pflanzen durch Frau Floris
 und auf Wunsch und zu anderen Konditionen auch die Versorgung mit frischen
 Schnittblumen umfasst.
+
 Nur die verwelkten Blumen in ihrem Laden kann die neue Software nicht aussortieren.
 Diese müsste Frau Floris abends aber als Verlust in die Abrechnung
 aufnehmen können.
