@@ -27,7 +27,6 @@ Das System für Frau Rosa Floris' Blumenshop digitalisiert und vereinfacht versc
 	3. Lagermanagement: Frau Floris kann den Überblick über die verfügbare Ware behalten.|
 	4. Serviceangebote: Das System unterstützt Dienstleistungen wie: das Dekorieren von Veranstltungen mit Blumen| regelmäßige Blumenlieferung| die Bereitstellung von Boquets und Blume zur Abholung im Lade. (wenn die Kunden spezielle Services und Angebote nutzen möchten).|
 	5. Admin-Bereich: Der Administrator verwaltet Benutzerberechtigungen und simuliert den Großhändler-Katalog.|
-Die Kunden könnten mit Karte oder Bar bezahlen.|
 Die Rechnungen lassen sich nach dem Einkauf bezahlt.|
 
 == Aufgabenstellung und Zielsetzung
@@ -35,8 +34,11 @@ Text aus Aufgabenstellung kopieren und ggfs. präzisieren.
 Insbesondere ergänzen, welche Ziele mit dem Abschluss des Projektes erreicht werden sollen.
 
 == Produktnutzung
-In welchem Kontext soll das System später genutzt werden? Welche Rahmenbedingungen gelten?
-Zusätzlich kurze Einleitung für fachfremde Personen
+Das System soll einer Frau Floris als Assistentin bei der Betreuung ihres Blumenladens dienen (z.B. Blumen und Sträuße an Kunden verkaufen, bei Großhaendler einkaufen, und andere Dienstleistungen anbieten). Die Software soll auf einem lokalen Server laufen und über den Webbrowser auf einem lokalen Rechner verfügbar sein.
+
+Die primären Nutzer der Software sind Frau Floris und ihre Nichte, die nicht unbedingt einen technischen Hintergrund haben.
+
+Das System soll keine technische Wartung benötigen. Alle Daten sollen dauerhaft in einer lokalen Datenbank gespeichert werden und über die Anwendung zugänglich sein (z.B. sollten für Frau Floris keine SQL-Kenntnisse erforderlich sein). Die Geldoperationen sollten auch mit Hilfe eines lokalen Geldmanagers durchgeführt werden können.
 
 == Interessensgruppen (Stakeholders)
 Welche realen und juristischen Personen(-gruppen) haben Einfluss auf die Anforderungen im Projekt?
