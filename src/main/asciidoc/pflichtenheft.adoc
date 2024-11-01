@@ -8,7 +8,7 @@
 |===
 |Version | Status      | Bearbeitungsdatum   | Autoren(en) |  Vermerk
 |0.1     | In Arbeit   | 10.10.2021          | Autor       | Initiale Version
-|0.1.1     | In Arbeit   | 21.10.2024          | Andrejs       | Stakeholders (Akteure)
+|0.1.1     | In Arbeit   | 21.10.2024          | Andrejs       | Akteure
 |0.2     | In Arbeit   | 28.10.2024          | Andrejs       | Init UseCase & Class Diagrammen
 |0.2.1     | In Arbeit   | 28.10.2024          | Andrejs       | UseCase & Class Diagrammen
 |0.2.2     | In Arbeit   | 31.10.2024          | Davyd       | Funktionale und nicht-funktionale Anforderungen
@@ -16,6 +16,7 @@
 |0.3.1     | In Arbeit    | 31.10.2024     | Bechir    | schreiben der Zussammenfassung
 |0.4     | In Arbeit    | 31.10.2024     | Oleh    | 4.Produktnutzung & 6.Systemgrenze und Top-Level-Architektur
 |0.5     | In Arbeit    | 31.10.2024     | Andrejs    | Beschreibung von Anwendungsfällen
+|0.6     | In Arbeit    | 31.10.2024     | Andrejs    | Stakeholders (Interessengrupppen)
 |===
 
 == Inhaltsverzeichnis
@@ -86,6 +87,22 @@ Das System soll keine technische Wartung benötigen. Alle Daten sollen dauerhaft
 
 == Interessensgruppen (Stakeholders)
 Welche realen und juristischen Personen(-gruppen) haben Einfluss auf die Anforderungen im Projekt?
+
+
+Diese Stakeholder beeinflussen die Anforderungen des Projekts, da ihre jeweiligen Bedürfnisse, Verantwortlichkeiten und gesetzlichen Anforderungen berücksichtigt werden müssen. Das System muss so konzipiert sein, dass es alle funktionalen, sicherheitsrelevanten Anforderungen erfüllt.
+
+[options="header"]
+[cols="1,4,4"]
+|===
+|Name |Interessen |Einfluss
+|Frau Floris (Shop-Besitzerin) |Die Geschäftsinhaberin möchte den Verkauf von Blumen effizient gestalten und die Bestandsverwaltung sowie die finanzielle Berichterstattung optimieren. | Frau Floris wird wahrscheinlich die Hauptanforderungen an die Kernfunktionalitäten des Systems stellen.
+|Kunden |Kunden erwarten einen einfachen und effizienten Einkaufsvorgang, z. B. eine schnelle Abwicklung an der Kasse und die Möglichkeit zur Abholung oder Lieferung von Blumen. |Anforderungen an die Benutzerfreundlichkeit und die Verfügbarkeit verschiedener Zahlungsmethoden sowie optionaler Services wie Abholung oder Lieferung.
+|Mitarbeiterinnen und Mitarbeiter (z. B. Nichte im Service) |  Mitarbeiter, die in Service und Verkauf tätig sind, benötigen ein einfaches System für die Bearbeitung von Kundenaufträgen und die Durchführung von Bestandsupdates. | Anforderungen an die Benutzerfreundlichkeit und Funktionalität der Modulen, einschließlich Zugriff auf spezifische Berechtigungen.
+|Großhändler |Großhändler sind für die Lieferung von Blumen als Rohstoffe zuständig und benötigen eine ordnungsgemäße Bestands- und Rechnungsverwaltung. | Anforderungen an die Schnittstellen für Bestellungen und Bestandsverwaltung sowie Berichte für die Großhändler.
+|Administrator(en) | Der Administrator ist für die Zuweisung und Verwaltung von Berechtigungen verantwortlich, um sicherzustellen, dass Mitarbeiter nur auf die für ihre Rolle notwendigen Bereiche zugreifen können. | Anforderungen an das Berechtigungsmodul, das die Zugangskontrolle und Sicherheitsanforderungen gewährleistet.
+| Softwareentwickler | Die technische Machbarkeit und Wartbarkeit des Systems, z. B. durch einen modularen Aufbau und eine klar strukturierte Softwarearchitektur. | Anforderungen an die technische Architektur, Skalierbarkeit, Wartbarkeit und Anpassbarkeit des Systems, einschließlich der Integration in vorhandene IT-Systeme.
+|===
+
 
 == Systemgrenze und Top-Level-Architektur
 
