@@ -673,6 +673,7 @@ Jeder Testfall soll mit einer ID versehen werde, um später zwischen den Dokumen
 == Glossar
 
  - Laden - Blumenladen von Frau Floris, für dem wird die System entwickelt.
+ - Entwickler - Personen, die die System erstellen und einsetzen.
  - Administrator - eine Person, die den Auftraggeber über den Website nach dem Einsetzung beraten wird. Administrator kann den Website verwalten.
  - Produkt - Waren, die in dem Laden verkauft werden. Nun - Schnittblumen und Blumensträusen.
  - Kunde - Die Person, die Produkte in dem Laden kauft bzw. die Services, wie z.B Dekorieren und Lieferung der Blumen von dem Laden bestellt.
