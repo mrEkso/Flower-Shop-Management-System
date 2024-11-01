@@ -1,0 +1,45 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0" version="24.8.3">
+  <diagram name="Page-1" id="1Q-Lw_ZOnqIO_KKdkwqz">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="vYyTAaalu0FOAwD9EvOo-8" value="&lt;p style=&quot;margin:0px;margin-top:4px;margin-left:10px;text-align:left;&quot;&gt;&lt;b&gt;package&lt;/b&gt; flowershop   [ flowershop_context ]&lt;/p&gt;" style="html=1;shape=mxgraph.sysml.package;align=left;spacingLeft=5;verticalAlign=top;spacingTop=-3;labelX=254.67;html=1;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="-550" y="80" width="760" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="vYyTAaalu0FOAwD9EvOo-1" value="«component»&lt;br&gt;&lt;b&gt;flowershop&lt;/b&gt;" style="html=1;dropTarget=0;whiteSpace=wrap;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="-390" y="120" width="465" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="vYyTAaalu0FOAwD9EvOo-2" value="" style="shape=module;jettyWidth=8;jettyHeight=4;" vertex="1" parent="vYyTAaalu0FOAwD9EvOo-1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vYyTAaalu0FOAwD9EvOo-6" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="-410" y="170" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vYyTAaalu0FOAwD9EvOo-9" value="Mrs. Rosa Floris" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-540" y="170" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vYyTAaalu0FOAwD9EvOo-10" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="-410" y="235" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vYyTAaalu0FOAwD9EvOo-11" value="Rosas Niece" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-530" y="235" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vYyTAaalu0FOAwD9EvOo-26" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="60" y="220" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vYyTAaalu0FOAwD9EvOo-28" value="Administrator" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="90" y="220" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ZQzcl88Ke4On_PcGANGm-1" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="-410" y="300" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ZQzcl88Ke4On_PcGANGm-2" value="Unauthenticated User" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-550" y="300" width="130" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
