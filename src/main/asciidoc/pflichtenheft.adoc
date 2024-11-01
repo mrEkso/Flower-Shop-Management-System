@@ -17,6 +17,7 @@
 |0.4     | In Arbeit    | 31.10.2024     | Oleh    | 4.Produktnutzung & 6.Systemgrenze und Top-Level-Architektur
 |0.5     | In Arbeit    | 31.10.2024     | Andrejs    | Beschreibung von Anwendungsfällen
 |0.6     | In Arbeit    | 31.10.2024     | Andrejs    | Stakeholders (Interessengrupppen)
+|0.6.1     | In Arbeit    | 31.10.2024     | Andrejs    | Beschreibung von Anwendungsfällen in Adminmodul
 |===
 
 == Inhaltsverzeichnis
@@ -335,6 +336,40 @@ Die typischen Anwendungsfälle (Anlegen, Ändern, Löschen) können zu einem ein
 5. Kunde holt die Blumen zum vereinbarten Zeitpunkt im Laden ab.
 |Extensions                 |-
 |Functional Requirements    | <<F0203>>
+|===
+
+
+[cols="1h, 3"]
+[[UC901]]
+|===
+|ID                         |**<<UC901>>**
+|Name                       |Berechtigungen zuweisen
+|Beschreibungen             | Der Administratror soll in der Lage sein, verschiedene (abteilungsbezogene) Berechtigungen zu Rollen bzw. Personen zuzuweisen. 
+|Akteure                    | Administrator
+|Auslöser                   | Ein Mitarbeiter ist nicht zu einer Funktion berechtigt oder hat zu viel Zugriff.  
+|Vorbedingungen            a| 	Administrator ist angemeldet. 
+|Wesentliche Schritte            a| 
+1. Der Administrator wählt Adminmodul aus.
+2. Er kann bestehende Berechtigungen zu Personen bzw. Rollen zuweisen, ändern oder löschen.
+|Extensions                 |-
+|Functional Requirements    | ???????????????? <<F0001>>
+|===
+
+
+[cols="1h, 3"]
+[[UC902]]
+|===
+|ID                         |**<<UC902>>**
+|Name                       |Großhändler-Katalog zum Testen simulieren
+|Beschreibungen             | Der Administratror soll in der Lage sein, Großhändler-Katalog zu editieren, um Simulation zu ermöglichen.
+|Akteure                    | Administrator
+|Auslöser                   | Katalog ist zu Testzwecken nicht ausreichend.  
+|Vorbedingungen            a| 	Administrator ist angemeldet. 
+|Wesentliche Schritte            a| 
+1. Der Administrator wählt Adminmodul aus.
+2. Er kann Großhändler-Katalog editieren, indem er Preise oder Namen usw. ändert.
+|Extensions                 |-
+|Functional Requirements    | ???????????????? <<F0001>>
 |===
 
 
