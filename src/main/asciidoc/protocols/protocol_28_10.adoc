@@ -1,0 +1,69 @@
+= Protokoll Gruppe 07
+
+Treffen am 28.10.2024
+
+Ort:      APB +
+Beginn:   9:20 Uhr +
+Ende:     10:00 Uhr
+
+__Schriftführer: Vadym Zaitsev__
+
+*Nächstes Treffen:* +
+04.11.2024, 9:20 Uhr, APB
+
+__Teilnehmer:__
+//Tabellarisch oder Aufzählung, Kennzeichnung von Teilnehmern mit besonderer Rolle (z.B. Kunde)
+
+- Vincent Kruse, Tutor
+- Andrejs Borodajevs, Scrum-master
+- Vadym Zaitsev, Schriftfuehrer
+- Oleh Khmelyk
+- Bechir Sayadi
+- Davyd Okaianchenko
+- Paul-Valentin Vela
+- Valeriia Sarkisian
+
+== Bemerkungen
+Drittes Treffen. Weitere Besprechung von dem Blumenladen-Projekt und persönlichen Aufgaben in Videoshop.
+
+== Retrospektive des letzten Sprints
+*Issue referenziert die Issue ID von GitHub*
+// Wie ist der Status der im letzten Sprint erstellten Issues/veteilten Aufgaben?
+
+// See http://asciidoctor.org/docs/user-manual/=tables
+[option="headers"]
+|===
+|Issue |Titel |Verantwortlicher |Status
+|#1     |Bewertungen            |Bechir                |Nah zum Ende
+|#3     |Loeschen/Leeren-Button            |Valeriia                |Wird um die Erweiterung gebeten
+|#4     |Nachbestellung            |Paul                |Fertig
+|#5     |Genaue Bestellungen            |Andrejs                |Fertig
+|#6     |Suche            |Davyd                |Wird um die Erweiterung gebeten
+|#7     |Stueckzahl im Warenkorb            |Vadym                |Fertig
+|#8     |Registrierung            |Oleh                |Am Anfang
+|===
+
+
+== Aktueller Stand
+Es gibt grobe Ideen für GUI, Klassendiagramen sind fast fertig.
+
+== Planung des nächsten Sprints
+*Issue referenziert den Punkt in Pflichtenheft*
+
+// See http://asciidoctor.org/docs/user-manual/=tables
+[option="headers"]
+|===
+|Issue |Titel |Verantwortlicher |Status
+|2     |Zusammenfassung             |Bechir                |Am Anfang
+|3     |Aufgabenstellung und Zielsetzung     |Vadym                |Am Anfang
+|4     |Produktnutzung     |Oleh            |Am Anfang
+|5     |Interessensgruppen (Stakeholders) |Andrejs |Am Anfang
+|6     |Systemgrenze und Top-Level-Architektur |Oleh |Am Anfang
+|7     |Anwendungsfälle |Andrejs |Am Anfang
+|8     |Funktionale Anforderungen |Davyd |Am Anfang
+|9     |Nicht-Funktionale Anforderungen |Davyd |Am Anfang
+|10    |GUI Prototyp |Paul |Am Anfang
+|11    |Datenmodell |Andrejs, Bechir |Am Anfang
+|12    |Akzeptanztestfälle |Valeriia |Am Anfang
+|13    |Glossar |Vadym |Am Anfang         
+|===
