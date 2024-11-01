@@ -16,8 +16,8 @@
 |0.3.1     | In Arbeit    | 31.10.2024     | Bechir    | schreiben der Zussammenfassung
 |0.4     | In Arbeit    | 31.10.2024     | Oleh    | 4.Produktnutzung & 6.Systemgrenze und Top-Level-Architektur
 |0.5     | In Arbeit    | 31.10.2024     | Andrejs    | Beschreibung von Anwendungsfällen
-|0.6     | In Arbeit    | 31.10.2024     | Andrejs    | Stakeholders (Interessengrupppen)
-|0.6.1     | In Arbeit    | 31.10.2024     | Andrejs    | Beschreibung von Anwendungsfällen in Adminmodul
+|0.6     | In Arbeit    | 01.11.2024     | Andrejs    | Stakeholders (Interessengrupppen)
+|0.6.1     | In Arbeit    | 01.11.2024     | Andrejs    | Beschreibung von Anwendungsfällen in Adminmodul
 |===
 
 == Inhaltsverzeichnis
