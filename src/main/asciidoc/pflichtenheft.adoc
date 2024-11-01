@@ -556,6 +556,120 @@ D.h., pro (komplexen) Anwendungsfall gibt es typischerweise mindestens ein Seque
 Szenarium beschreibt). Für jedes Szenarium sollte es einen Akzeptanztestfall geben. Listen Sie alle Akzeptanztestfälle in tabellarischer Form auf.
 Jeder Testfall soll mit einer ID versehen werde, um später zwischen den Dokumenten (z.B. im Test-Plan) referenzieren zu können.
 
+[cols="1,1,2,2,2,3", options="header"]
+|===
+|Testfall-ID       |Anwendungsfall-ID |Szenario-Beschreibung               |Erwartetes Ergebnis                                                                                      |Voraussetzungen                                                                                           |Schritte
+[[ATF-UC001-01]]
+|**<<ATF-UC001-01>>**      
+|<<UC001>>             
+|Überprüfung der bestehenden Rechnungen 
+|Frau Floris kann die vorhandenen Rechnungen einsehen und durchsuchen.
+|Frau Floris ist im System angemeldet und hat Berechtigungen für die Rechnungsverwaltung.                 
+|1. Frau Floris wählt die Funktion "Rechnungen verwalten" im Finanzmodul. +
+2. Sie sucht nach einer bestimmten Rechnung. +
+3. Sie sieht die Details der ausgewählten Rechnung.
+
+[[ATF-UC001-02]]
+|**<<ATF-UC001-02>>**      
+|<<UC001>>             
+|Erstellen einer neuen Rechnung      
+|Eine neue Rechnung wird erfolgreich erstellt und gespeichert.
+|Frau Floris ist im System angemeldet und hat Berechtigungen für die Rechnungsverwaltung.                 
+|1. Frau Floris wählt die Funktion "Rechnungen verwalten" im Finanzmodul. +
+2. Sie erstellt eine neue Rechnung und gibt die erforderlichen Details ein. +
+3. Sie speichert die Rechnung.
+|===
+
+[cols="1,1,1,1,1,3"]
+|===
+|Testfall-ID |Anwendungsfall-ID |Szenario-Beschreibung |Erwartetes Ergebnis |Voraussetzungen |Schritte
+
+[[ATF-UC002-01]]
+|**<<ATF-UC002-01>>**
+|<<UC002>>
+|Überprüfung der Tagesrechnung
+|Frau Floris kann die Tagesrechnung einsehen und als PDF exportieren.
+|Frau Floris ist im System angemeldet und hat Berechtigungen für die Rechnungsverwaltung.
+|1. Frau Floris wählt die Funktion "Rechnungen verwalten" im Finanzmodul. +
+2. Sie wählt die Tagesrechnung aus. +
+3. Sie exportiert die Rechnung als PDF.
+
+[[ATF-UC003-01]]
+|**<<ATF-UC003-01>>**
+|<<UC003>>
+|Überprüfung der Monatsrechnung
+|Frau Floris kann die Monatsrechnung einsehen und als PDF exportieren.
+|Frau Floris ist im System angemeldet und hat Berechtigungen für die Rechnungsverwaltung.
+|1. Frau Floris wählt die Funktion "Rechnungen verwalten" im Finanzmodul. +
+2. Sie wählt die Monatsrechnung aus. +
+3. Sie exportiert die Rechnung als PDF.
+
+[[ATF-UC004-01]]
+|**<<ATF-UC004-01>>**
+|<<UC004>>
+|Blumen als Verlust markieren
+|Blumen werden erfolgreich als Verlust im System markiert.
+|Frau Floris ist im System angemeldet und hat Berechtigungen zur Verlustmarkierung.
+|1. Frau Floris wählt die Funktion "Lager" im Lagermodul. +
+2. Sie wählt Blumen aus dem Katalog aus und markiert diese als Verlust.
+
+[[ATF-UC101-01]]
+|**<<ATF-UC101-01>>**
+|<<UC101>>
+|Blumen als Rohstoff einkaufen
+|Blumen werden erfolgreich gekauft und im Lagerbestand aktualisiert.
+|Frau Floris ist im System angemeldet und hat Berechtigungen für den Einkauf.
+|1. Frau Floris wählt die Funktion "Großhändler" im Einkaufsmodul. +
+2. Sie wählt Blumen aus dem Katalog und bestätigt den Kauf. +
+3. Der Großhändler bestätigt den Vorgang.
+
+[[ATF-UC103-01]]
+|**<<ATF-UC103-01>>**
+|<<UC103>>
+|Blumen im Laden verkaufen
+|Der Verkauf wird abgeschlossen und der Lagerbestand aktualisiert.
+|Frau Floris ist im System angemeldet und hat Berechtigungen für den Vertrieb.
+|1. Frau Floris wählt die Funktion "Verkauf" im Vertriebsmodul. +
+2. Sie wählt die Blumen bzw. Sträuße aus und bestätigt den Kauf. +
+3. Der Kunde bezahlt oder storniert.
+
+[[ATF-UC104-01]]
+|**<<ATF-UC104-01>>**
+|<<UC104>>
+|Fertigstrauß erstellen
+|Ein neuer Strauß wird erstellt und der Lagerbestand entsprechend aktualisiert.
+|Frau Floris ist im System angemeldet und hat Berechtigungen zur Erstellung von Sträußen.
+|1. Frau Floris wählt die Funktion "Strauß erstellen" im Lagermodul. +
+2. Sie wählt Blumen aus dem Katalog und bestätigt den Vorgang.
+
+[[ATF-UC301-01]]
+|**<<ATF-UC301-01>>**
+|<<UC301>>
+|Lagerstand einsehen und verwalten
+|Frau Floris kann alle vorhandenen Artikel im Lager einsehen.
+|Frau Floris ist im System angemeldet und hat Berechtigungen zur Lagerverwaltung.
+|1. Frau Floris wählt die Funktion "Lager" im Lagermodus und erhält eine Übersicht aller vorhandenen Artikel.
+
+[[ATF-UC302-01]]
+|**<<ATF-UC302-01>>**
+|<<UC302>>
+|Einmaligen Blumenservice buchen
+|Ein einmaliger Blumenservice wird erfolgreich organisiert.
+|Blumen und Materialien sind auf Lager, und der Kunde möchte einen einmaligen Service.
+|1. Kunde kontaktiert den Blumenshop und wählt einen einmaligen Blumenservice. +
+2. Nichte überprüft Lagerbestände und arrangiert die Blumen für die Veranstaltung.
+
+[[ATF-UC303-01]]
+|**<<ATF-UC303-01>>**
+|<<UC303>>
+|Blumen zur Abholung bereitstellen
+|Die Blumen sind zur vereinbarten Abholzeit verfügbar.
+|Frau Floris ist im System angemeldet, und die Blumen sind auf Lager.
+|1. Kunde kontaktiert den Blumenshop und wählt Abholung im Laden. +
+2. Nichte reserviert die Blumen und informiert den Kunden über den Abholzeitpunkt. +
+3. Kunde holt die Blumen zum vereinbarten Zeitpunkt ab.
+|===
+
 == Glossar
 
  - Laden - Blumenladen von Frau Floris, für dem wird die System entwickelt.
