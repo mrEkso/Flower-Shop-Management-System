@@ -30,14 +30,15 @@ Das System für Frau Rosa Floris' Blumenshop digitalisiert und vereinfacht versc
  +
          **1. Finanzverwaltung:** Das System hilft Frau Floris dabei, Rechnungen zu verwalten, Tegesrechnungen und Monatsrechnungen zu erstellen sowie den Verlust durch verwelkte Blumen zu kalkulieren. +
  +
-  -         **2. Vertrieb und Verkauf:** Der Vertrieb umfasst den Einkauf von Blumen als Rohstoff, den Verkauf von Blumen oder Boquets. +
+         **2. Vertrieb und Verkauf:** Der Vertrieb umfasst den Einkauf von Blumen als Rohstoff, den Verkauf von Blumen oder Boquets. +
  +
          **3. Lagermanagement:** Frau Floris kann den Überblick über die verfügbare Ware behalten. +
  +
          **4. Serviceangebote:** Das System unterstützt Dienstleistungen wie: + 
-• das Dekorieren von Veranstltungen mit Blumen + 
-• regelmäßige Blumenlieferung + 
-• die Bereitstellung von Boquets und Blume zur Abholung im Lade. (wenn die Kunden spezielle Services und Angebote nutzen möchten). +
+ + 
+•  das Dekorieren von Veranstltungen mit Blumen + 
+•  regelmäßige Blumenlieferung + 
+•  die Bereitstellung von Boquets und Blume zur Abholung im Lade. (wenn die Kunden spezielle Services und Angebote nutzen möchten). +
  +
          **5. Admin-Bereich:** Der Administrator verwaltet Benutzerberechtigungen und simuliert den Großhändler-Katalog. +
  +
