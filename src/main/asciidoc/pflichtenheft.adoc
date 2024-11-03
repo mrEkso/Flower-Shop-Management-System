@@ -18,29 +18,29 @@
 |0.5     | In Arbeit    | 31.10.2024     | Andrejs    | Beschreibung von Anwendungsfällen
 |0.6     | In Arbeit    | 01.11.2024     | Andrejs    | Stakeholders (Interessengrupppen)
 |0.6.1     | In Arbeit    | 01.11.2024     | Andrejs    | Beschreibung von Anwendungsfällen in Adminmodul
+|0.6.2     | In Arbeit    | 01.11.2024     | Andrejs    | Zusammenfassung erweitert
 |===
 
 
 == Zusammenfassung
 
-Das System für das Blumenladen von Frau Rosa Floris digitalisiert und vereinfacht verschiedene Geschäftsprozesse: +
- +
-         **1. Finanzverwaltung:** Das System hilft Frau Floris dabei, Rechnungen zu verwalten, Tegesrechnungen und Monatsrechnungen zu erstellen sowie den Verlust durch verwelkte Blumen zu kalkulieren. +
- +
-         **2. Vertrieb und Verkauf:** Der Vertrieb umfasst den Einkauf von Blumen als Rohstoff, den Verkauf von Blumen oder Boquets. +
- +
-         **3. Lagermanagement:** Frau Floris kann den Überblick über die verfügbare Ware behalten. +
- +
-         **4. Serviceangebote:** Das System unterstützt Dienstleistungen wie: + 
- + 
-•  das Dekorieren von Veranstltungen mit Blumen + 
-•  regelmäßige Blumenlieferung + 
-•  die Bereitstellung von Boquets und Blume zur Abholung im Lade. (wenn die Kunden spezielle Services und Angebote nutzen möchten). +
- +
-         **5. Admin-Bereich:** Der Administrator verwaltet Benutzerberechtigungen und simuliert den Großhändler-Katalog. +
- +
-Die Kunden könnten mit Karte oder Bar bezahlen. +
-Die Rechnungen lassen sich nach dem Einkauf erstellen. +
+Das Pflichtenheft dient als zentrales Dokument zur detaillierten Beschreibung aller Anforderungen und Spezifikationen eines Projekts. Es regelt die verbindlichen Vorgaben, die für die Entwicklung, Umsetzung und Prüfung des Systems gelten, und stellt sicher, dass alle Projektbeteiligten ein gemeinsames Verständnis über den Umfang und die Ziele des Projekts haben.
+
+Das System für das Blumenladen von Frau Rosa Floris digitalisiert und vereinfacht verschiedene Geschäftsprozesse:
+
+**1. Finanzverwaltung:** Das System hilft Frau Floris dabei, Rechnungen zu verwalten, Tagesrechnungen und Monatsrechnungen zu erstellen sowie den Verlust durch verwelkte Blumen zu kalkulieren.
+
+**2. Vertrieb und Verkauf:** Der Vertrieb umfasst den Einkauf von Blumen als Rohstoff, den Verkauf von Blumen oder Bouquets.
+
+**3. Lagermanagement:** Mithilfe des Systems kann Frau Floris stets den Überblick über den aktuellen Warenbestand behalten.
+
+**4. Serviceangebote:** Die Plattform unterstützt Dienstleistungen wie die Dekoration von Veranstaltungen, regelmäßige Blumenlieferungen sowie die Bereitstellung von Sträußen zur Abholung. Diese Services ermöglichen es Kunden, spezielle Angebote nach Wunsch zu nutzen.
+
+**5. Admin-Bereich:** Ein Administrator verwaltet die Benutzerrechte und kann einen Großhandelskatalog simulieren, um die Auswahl zu erleichtern.
+
+Für die Bezahlung steht den Kunden die Wahl zwischen Kartenzahlung und Barzahlung offen. Rechnungen lassen sich direkt nach dem Einkauf erstellen.
+
+Dieses System digitalisiert die Abläufe und verbessert die Effizienz im gesamten Blumenladen.
 
 == Aufgabenstellung und Zielsetzung
 Zuallererst braucht die Software eine Übersicht von dem Angebot des Großhändlers. Dabei
