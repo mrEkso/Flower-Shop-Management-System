@@ -168,7 +168,7 @@ Komplexere Anwendungsfälle sind mit einem UML-Sequenzdiagramm ergänzt worden.
 1. Frau Floris wählt die Funktion „Rechnungen verwalten“ im Finanzmodul aus.
 2. Sie kann eine bestehende Rechnung suchen, einsehen.
 |Extensions                 |-
-|Functional Requirements    |<<F0001>>
+|Funktionale Anforderungen    |<<F0001>>
 |===
 
 
@@ -185,7 +185,7 @@ Komplexere Anwendungsfälle sind mit einem UML-Sequenzdiagramm ergänzt worden.
 1. Frau Floris wählt die Funktion „Rechnungen verwalten“ im Finanzmodul aus.
 2. Sie kann eine bestehende Rechnung einsehen und als PDF exportieren.
 |Extensions                 |-
-|Functional Requirements    |<<F0002>>
+|Funktionale Anforderungen    |<<F0002>>
 |===
 
 
@@ -202,7 +202,7 @@ Komplexere Anwendungsfälle sind mit einem UML-Sequenzdiagramm ergänzt worden.
 1. Frau Floris wählt die Funktion „Rechnungen verwalten“ im Finanzmodul aus.
 2. Sie kann eine bestehende Rechnung einsehen und als PDF exportieren.
 |Extensions                 |-
-|Functional Requirements    |<<F0003>>
+|Funktionale Anforderungen    |<<F0003>>
 |===
 
 
@@ -219,7 +219,7 @@ Komplexere Anwendungsfälle sind mit einem UML-Sequenzdiagramm ergänzt worden.
 1. Frau Floris wählt die Funktion „Lager“ im Lagermodul aus.
 2. Sie wählt Blumen aus Katalog aus und markiert die als Verlust.
 |Extensions                 |-
-|Functional Requirements    |<<F0004>>, <<F0102>>
+|Funktionale Anforderungen    |<<F0004>>, <<F0102>>
 |===
 
 
@@ -237,7 +237,7 @@ Komplexere Anwendungsfälle sind mit einem UML-Sequenzdiagramm ergänzt worden.
 2. Sie wählt Blumen aus Katalog aus und bestätigt den Kauf.
 3. Der Großhändler bestätigt den Vorgang. 
 |Extensions                 |-
-|Functional Requirements    |<<F0101>>, <<F0102>>
+|Funktionale Anforderungen    |<<F0101>>, <<F0102>>
 |===
 
 [[sequence_diagram_101]]
@@ -258,7 +258,7 @@ image::./models/images/sequence_diagram_101_f.svg[sequence diagram, 100%, 100%, 
 2. Sie wählt Blumen bzw. Sträuße aus Katalog aus und bestätigt den Kauf.
 3. Der Kunde bezahlt oder storniert. 
 |Extensions                 |-
-|Functional Requirements    |<<F0103>>, <<F0102>>
+|Funktionale Anforderungen    |<<F0103>>, <<F0102>>
 |===
 
 [cols="1h, 3"]
@@ -274,7 +274,7 @@ image::./models/images/sequence_diagram_101_f.svg[sequence diagram, 100%, 100%, 
 1. ??????????????????????
 2. Sie wählt Blumen aus Katalog aus und bestätigt den Vorgang.
 |Extensions                 |-
-|Functional Requirements    |<<F0104>>, <<F0102>>
+|Funktionale Anforderungen    |<<F0104>>, <<F0102>>
 |===
 
 [cols="1h, 3"]
@@ -289,7 +289,7 @@ image::./models/images/sequence_diagram_101_f.svg[sequence diagram, 100%, 100%, 
 |Wesentliche Schritte            a| 
 1. Frau Floris wählt die Funktion „Lager“ im Lagermodus aus und bekommt überlick von allen vorhandenen Artikeln.
 |Extensions                 |-
-|Functional Requirements    | <<F0102>>
+|Funktionale Anforderungen    | <<F0102>>
 |===
 
 
@@ -307,7 +307,7 @@ image::./models/images/sequence_diagram_101_f.svg[sequence diagram, 100%, 100%, 
 2. Nichte überprüft die benötigten Blumen und Materialien im Lagerbestand.
 3. Nichte plant die Lieferung und arrangiert die Blumen vor Ort für die Veranstaltung.
 |Extensions                 |-
-|Functional Requirements    | <<F0201>>
+|Funktionale Anforderungen    | <<F0201>>
 |===
 
 
@@ -326,7 +326,7 @@ image::./models/images/sequence_diagram_101_f.svg[sequence diagram, 100%, 100%, 
 3. Nichte überprüft die Lagerbestände und stellt die erforderlichen Blumen und Materialien zusammen.
 4. Nichte organisiert die Lieferung und arrangiert bzw. pflegt die Blumen entweder einmalig oder regelmäßig nach den Vorgaben des Kunden vor Ort.
 |Extensions                 |<<UC303>>
-|Functional Requirements    | <<F0202>>
+|Funktionale Anforderungen    | <<F0202>>
 |===
 
 [[sequence_diagram_302]]
@@ -348,7 +348,7 @@ image::./models/images/sequence_diagram_302_b.svg[sequence diagram, 100%, 100%, 
 4. Nichte informiert den Kunden über den Abholzeitpunkt und stellt die Blumen im Laden zur Verfügung.
 5. Kunde holt die Blumen zum vereinbarten Zeitpunkt im Laden ab.
 |Extensions                 |-
-|Functional Requirements    | <<F0203>>
+|Funktionale Anforderungen    | <<F0203>>
 |===
 
 
@@ -365,7 +365,7 @@ image::./models/images/sequence_diagram_302_b.svg[sequence diagram, 100%, 100%, 
 1. Der Administrator wählt Adminmodul aus.
 2. Er kann bestehende Berechtigungen zu Personen bzw. Rollen zuweisen, ändern oder löschen.
 |Extensions                 |-
-|Functional Requirements    | ???????????????? <<F0001>>
+|Funktionale Anforderungen    | ???????????????? <<F0001>>
 |===
 
 
@@ -382,7 +382,7 @@ image::./models/images/sequence_diagram_302_b.svg[sequence diagram, 100%, 100%, 
 1. Der Administrator wählt Adminmodul aus.
 2. Er kann Großhändler-Katalog editieren, indem er Preise oder Namen usw. ändert.
 |Extensions                 |-
-|Functional Requirements    | ???????????????? <<F0001>>
+|Funktionale Anforderungen    | ???????????????? <<F0001>>
 |===
 
 
