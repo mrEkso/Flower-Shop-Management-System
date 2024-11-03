@@ -20,13 +20,10 @@
 |0.6.1     | In Arbeit    | 01.11.2024     | Andrejs    | Beschreibung von Anwendungsfällen in Adminmodul
 |===
 
-== Inhaltsverzeichnis
-Dieses Dokument benötigt ein Inhaltsverzeichnis. Es existieren mehrere Einbindungsmöglichkeiten.
 
 == Zusammenfassung
-Eine kurze Beschreibung des Dokuments. Wenige Absätze: +
- +
-Das System für Frau Rosa Floris' Blumenshop digitalisiert und vereinfacht verschiedene Geschäftsprozesse: +
+
+Das System für das Blumenladen von Frau Rosa Floris digitalisiert und vereinfacht verschiedene Geschäftsprozesse: +
  +
          **1. Finanzverwaltung:** Das System hilft Frau Floris dabei, Rechnungen zu verwalten, Tegesrechnungen und Monatsrechnungen zu erstellen sowie den Verlust durch verwelkte Blumen zu kalkulieren. +
  +
@@ -43,7 +40,7 @@ Das System für Frau Rosa Floris' Blumenshop digitalisiert und vereinfacht versc
          **5. Admin-Bereich:** Der Administrator verwaltet Benutzerberechtigungen und simuliert den Großhändler-Katalog. +
  +
 Die Kunden könnten mit Karte oder Bar bezahlen. +
-Die Rechnungen lassen sich nach dem Einkauf bezahlt. +
+Die Rechnungen lassen sich nach dem Einkauf erstellen. +
 
 == Aufgabenstellung und Zielsetzung
 Zuallererst braucht die Software eine Übersicht von dem Angebot des Großhändlers. Dabei
