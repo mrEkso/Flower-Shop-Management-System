@@ -331,6 +331,9 @@ image::./models/images/sequence_diagram_101_d.svg[sequence diagram, 100%, 100%, 
 |Functional Requirements    | <<F0202>>
 |===
 
+[[sequence_diagram_302]]
+image::./models/images/sequence_diagram_302_a.svg[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für {project_name} in UML", align=center]
+
 [cols="1h, 3"]
 [[UC303]]
 |===
