@@ -1,4 +1,4 @@
-::project_name: Blumenladen
+:project_name: Blumenladen
 :toc: left
 :numbered:
 = Pflichtenheft __{project_name}__
