@@ -338,7 +338,7 @@ image::./models/images/sequence_diagram_302_b.svg[sequence diagram, 100%, 100%, 
 |===
 |ID                         |**<<UC303>>**
 |Name                       | Blumen zur Abholung im Laden
-|Beschreibungen             | Ein Kunde kann Blumen zur Abholung im Laden bestellen, entweder als einmalige Bestellung oder im Rahmen eines regelmäßigen Services (z. B. wöchentliche Blumenarrangements). Dieser Anwendungsfall erweitert den Anwendungsfall <<UC202>> Ein- bzw. mehrmaliges Blumenservice, da der Kunde anstelle einer Lieferung eine Abholung im Laden wählt.
+|Beschreibungen             | Ein Kunde kann Blumen zur Abholung im Laden bestellen, entweder als einmalige Bestellung oder im Rahmen eines regelmäßigen Services (z. B. wöchentliche Blumenarrangements). Dieser Anwendungsfall erweitert den Anwendungsfall <<UC302>> Ein- bzw. mehrmaliges Blumenservice, da der Kunde anstelle einer Lieferung eine Abholung im Laden wählt.
 |Akteure                    | Frau Floris, Nichte, Kunde
 |Auslöser                   | Ein Kunde bestellt Blumenservice für eine Veranstaltung per Telefon. 
 |Vorbedingungen            a| 	Die gewünschten Blumen sind im Lager verfügbar oder wurden rechtzeitig bestellt und vorbereitet.
@@ -351,6 +351,9 @@ image::./models/images/sequence_diagram_302_b.svg[sequence diagram, 100%, 100%, 
 |Extensions                 |-
 |Funktionale Anforderungen    | <<F0203>>
 |===
+
+[[Sequencediagramm_303]]
+image::./models/images/sequence_diagramm_303.svg[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für Anwendungsfall 303 für {project_name} in UML", align=center]
 
 
 [cols="1h, 3"]
