@@ -18,7 +18,8 @@
 |0.5     | In Arbeit    | 31.10.2024     | Andrejs    | Beschreibung von Anwendungsfällen
 |0.6     | In Arbeit    | 01.11.2024     | Andrejs    | Stakeholders (Interessengrupppen)
 |0.6.1     | In Arbeit    | 01.11.2024     | Andrejs    | Beschreibung von Anwendungsfällen in Adminmodul
-|0.6.2     | In Arbeit    | 01.11.2024     | Andrejs    | Zusammenfassung erweitert
+|0.6.2     | In Arbeit    | 03.11.2024     | Andrejs    | Zusammenfassung erweitert
+|0.6.3     | In Arbeit    | 03.11.2024     | Andrejs    | Cleanup
 |===
 
 
@@ -129,8 +130,7 @@ image::./models/images/top_level_diagram_b.svg[top level diagram, 100%, 100%, pd
 
 === Akteure
 
-Akteure sind die Benutzer des Software-Systems oder Nachbarsysteme, welche darauf zugreifen. Dokumentieren Sie die Akteure in einer Tabelle. Diese Tabelle gibt einen Überblick über die Akteure und beschreibt sie kurz. Die Tabelle hat also mindestens zwei Spalten (Akteur Name und Kommentar).
-Weitere relevante Spalten können bei Bedarf ergänzt werden.
+Akteure sind die Benutzer des Software-Systems oder Nachbarsysteme, welche darauf zugreifen. Diese Tabelle gibt einen Überblick über die Akteure und beschreibt sie kurz.
 
 // See http://asciidoctor.org/docs/user-manual/#tables
 [options="header"]
@@ -152,9 +152,7 @@ image::./models/images/use_cases_b.svg[use case diagram, 100%, 100%, pdfwidth=10
 
 === Anwendungsfallbeschreibungen
 Dieser Unterabschnitt beschreibt die Anwendungsfälle. In dieser Beschreibung müssen noch nicht alle Sonderfälle und Varianten berücksichtigt werden. Schwerpunkt ist es, die wichtigsten Anwendungsfälle des Systems zu finden. Wichtig sind solche Anwendungsfälle, die für den Auftraggeber, den Nutzer den größten Nutzen bringen.
-Für komplexere Anwendungsfälle ein UML-Sequenzdiagramm ergänzen.
-Einfache Anwendungsfälle mit einem Absatz beschreiben.
-Die typischen Anwendungsfälle (Anlegen, Ändern, Löschen) können zu einem einzigen zusammengefasst werden.
+Komplexere Anwendungsfälle sind mit einem UML-Sequenzdiagramm ergänzt worden.
 
 
 [cols="1h, 3"]
