@@ -546,25 +546,21 @@ Der Quellcode des Systems soll ausführlich dokumentiert sein, um spätere Wartu
 
 == GUI Prototyp
 
-Sales/Home Page für order management
+
 [[Sales]]
-image::./models/images/sales.png[Salespage, 100%, 100%, pdfwidth=100%, align=center]
+image::./models/images/sales.png[Salespage, title= "Sales/Home Page für order management", 100%, 100%, pdfwidth=100%, align=center]
 
-Sales Page für Großhandler Bestellungen
 [[Sales2]]
-image::./models/images/sales2.png[Handlerpage, 100%, 100%, pdfwidth=100%, align=center]
+image::./models/images/sales2.png[Handlerpage,title= "SSales Page für Großhandler Bestellungen", 100%, 100%, pdfwidth=100%, align=center]
 
-Services Page
 [[Services]]
-image::./models/images/services.png[Servicepage, 100%, 100%, pdfwidth=100%, align=center]
+image::./models/images/services.png[Servicepage, title="Services Page",100%, 100%, pdfwidth=100%, align=center]
 
-Lager Management Page
 [[Inventory]]
-image::./models/images/inventory.png[Inventorypage, 100%, 100%, pdfwidth=100%, align=center]
+image::./models/images/inventory.png[Inventorypage,title="Lager Management Page", 100%, 100%, pdfwidth=100%, align=center]
 
-Die Rechnung der Laden
 [[Rechnung]]
-image::./models/images/rechnung.png[Rechnungpage, 100%, 100%, pdfwidth=100%, align=center]
+image::./models/images/rechnung.png[Rechnungpage, title= "Die Rechnung der Laden", 100%, 100%, pdfwidth=100%, align=center]
 
 In diesem Kapitel soll ein Entwurf der Navigationsmöglichkeiten und Dialoge des Systems erstellt werden.
 Idealerweise entsteht auch ein grafischer Prototyp, welcher dem Kunden zeigt, wie sein System visuell umgesetzt werden soll.
