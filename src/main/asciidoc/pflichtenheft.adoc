@@ -461,6 +461,11 @@ Was das zu erstellende Programm auf alle Fälle leisten muss.
 | Blumenservice für Firmen anbieten
 | Das System soll die Möglichkeit bieten, für Firmen einen Pflanzenservice zu organisieren, einschließlich der Bestellung und Lieferung von Pflanzen sowie eines optionalen Pflegevertrags.
 
+| [[UC902]]<<UC902>>
+| v0.1
+| Großhändler-Katalog zum Testen simulieren
+| Das System soll die Möglichkeit bieten, einen simulierten Katalog des Großhändlers für Testzwecke bereitzustellen. Dies ermöglicht das Testen der Bestellfunktionalität, ohne eine echte Verbindung zum Großhändler herstellen zu müssen.
+
 |===
 
 === Kann-Kriterien
