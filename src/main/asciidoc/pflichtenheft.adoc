@@ -245,6 +245,10 @@ Die typischen Anwendungsfälle (Anlegen, Ändern, Löschen) können zu einem ein
 |Functional Requirements    |<<F0101>>, <<F0102>>
 |===
 
+[[sequence_diagram_101]]
+image::./models/images/sequence_diagram_101_a.svg[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für {project_name} in UML", align=center]
+
+
 [cols="1h, 3"]
 [[UC103]]
 |===
