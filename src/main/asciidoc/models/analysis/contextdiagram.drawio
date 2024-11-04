@@ -22,22 +22,10 @@
           <mxGeometry x="-540" y="170" width="120" height="30" as="geometry" />
         </mxCell>
         <mxCell id="vYyTAaalu0FOAwD9EvOo-10" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
-          <mxGeometry x="-410" y="235" width="30" height="30" as="geometry" />
+          <mxGeometry x="-410" y="280" width="30" height="30" as="geometry" />
         </mxCell>
         <mxCell id="vYyTAaalu0FOAwD9EvOo-11" value="Rosas Niece" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="-530" y="235" width="110" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="vYyTAaalu0FOAwD9EvOo-26" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
-          <mxGeometry x="60" y="220" width="30" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="vYyTAaalu0FOAwD9EvOo-28" value="Administrator" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="90" y="220" width="120" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="ZQzcl88Ke4On_PcGANGm-1" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
-          <mxGeometry x="-410" y="300" width="30" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="ZQzcl88Ke4On_PcGANGm-2" value="Unauthenticated User" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="-550" y="300" width="130" height="30" as="geometry" />
+          <mxGeometry x="-530" y="280" width="110" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

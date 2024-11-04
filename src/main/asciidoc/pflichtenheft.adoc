@@ -120,11 +120,11 @@ Diese Stakeholder beeinflussen die Anforderungen des Projekts, da ihre jeweilige
 Das Kontextdiagramm zeigt das geplante Software-System in seiner Umgebung. Zur Umgebung gehören alle Nutzergruppen des Systems und Nachbarsysteme. Die Grafik kann auch informell gehalten sein.
 
 [[context_diagram]]
-image::./models/images/context_diagram_b.svg[context diagram, 100%, 100%, pdfwidth=100%, title= "Kontextdiagramm für {project_name} in UML", align=center]
+image::./models/images/context_diagram_c.svg[context diagram, 100%, 100%, pdfwidth=100%, title= "Kontextdiagramm für {project_name} in UML", align=center]
 
 === Top-Level-Architektur
 [[top_level_diagram]]
-image::./models/images/top_level_diagram_b.svg[top level diagram, 100%, 100%, pdfwidth=100%, title= "Top-Level-Architektur für {project_name} in UML", align=center]
+image::./models/images/top_level_diagram_c.svg[top level diagram, 100%, 100%, pdfwidth=100%, title= "Top-Level-Architektur für {project_name} in UML", align=center]
 
 == Anwendungsfälle
 
