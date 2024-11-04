@@ -652,11 +652,6 @@ Jeder Testfall soll mit einer ID versehen werde, um später zwischen den Dokumen
 |1. Frau Floris wählt die Funktion "Rechnungen verwalten" im Finanzmodul. +
 2. Sie erstellt eine neue Rechnung und gibt die erforderlichen Details ein. +
 3. Sie speichert die Rechnung.
-|===
-
-[cols="1,1,1,1,1,3"]
-|===
-|Testfall-ID |Anwendungsfall-ID |Szenario-Beschreibung |Erwartetes Ergebnis |Voraussetzungen |Schritte
 
 [[ATF-UC002-01]]
 |**<<ATF-UC002-01>>**
