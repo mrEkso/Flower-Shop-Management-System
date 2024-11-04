@@ -21,6 +21,7 @@
 |0.6.2     | In Arbeit    | 03.11.2024     | Andrejs    | Zusammenfassung erweitert
 |0.6.3     | In Arbeit    | 03.11.2024     | Andrejs    | Cleanup
 |0.6.4     | In Arbeit    | 03.11.2024     | Andrejs    | Cleanup
+|1.0    | Fertig    | 03.11.2024     | Andrejs    | Release
 |===
 
 
@@ -97,8 +98,6 @@ Die primären Nutzer der Software sind Frau Floris und ihre Nichte, die nicht un
 Das System soll keine technische Wartung benötigen. Alle Daten sollen dauerhaft in einer lokalen Datenbank gespeichert werden und über die Anwendung zugänglich sein (z.B. sollten für Frau Floris keine SQL-Kenntnisse erforderlich sein). Die Geldoperationen sollten auch mit Hilfe eines lokalen Geldmanagers durchgeführt werden können.
 
 == Interessensgruppen (Stakeholders)
-Welche realen und juristischen Personen(-gruppen) haben Einfluss auf die Anforderungen im Projekt?
-
 
 Diese Stakeholder beeinflussen die Anforderungen des Projekts, da ihre jeweiligen Bedürfnisse, Verantwortlichkeiten und gesetzlichen Anforderungen berücksichtigt werden müssen. Das System muss so konzipiert sein, dass es alle funktionalen, sicherheitsrelevanten Anforderungen erfüllt.
 
@@ -272,7 +271,7 @@ image::./models/images/sequence_diagram_101_f.svg[sequence diagram, 100%, 100%, 
 |Auslöser                   | Es sind keine Kunde im Laden und Frau Floris hat entschieden, einen Blumenstrauß zu machen. 
 |Vorbedingungen            a| 	Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen zum Vertrieb.
 |Wesentliche Schritte            a| 
-1. ??????????????????????
+1. Frau Floris druckt den Button "Fertigstrauß erstellen". 
 2. Sie wählt Blumen aus Katalog aus und bestätigt den Vorgang.
 |Extensions                 |-
 |Funktionale Anforderungen    |<<F0104>>, <<F0102>>
@@ -369,7 +368,7 @@ image::./models/images/sequence_diagramm_303.svg[sequence diagram, 100%, 100%, p
 1. Der Administrator wählt Adminmodul aus.
 2. Er kann bestehende Berechtigungen zu Personen bzw. Rollen zuweisen, ändern oder löschen.
 |Extensions                 |-
-|Funktionale Anforderungen    | ???????????????? <<F0001>>
+|Funktionale Anforderungen    | <<F0901>>
 |===
 
 
@@ -386,7 +385,7 @@ image::./models/images/sequence_diagramm_303.svg[sequence diagram, 100%, 100%, p
 1. Der Administrator wählt Adminmodul aus.
 2. Er kann Großhändler-Katalog editieren, indem er Preise oder Namen usw. ändert.
 |Extensions                 |-
-|Funktionale Anforderungen    | ???????????????? <<F0001>>
+|Funktionale Anforderungen    | -
 |===
 
 
@@ -572,8 +571,6 @@ image::./models/images/inventory.png[Inventorypage,title="Lager Management Page"
 [[Rechnung]]
 image::./models/images/rechnung.png[Rechnungpage, title= "Die Rechnung der Laden", 100%, 100%, pdfwidth=100%, align=center]
 
-In diesem Kapitel soll ein Entwurf der Navigationsmöglichkeiten und Dialoge des Systems erstellt werden.
-Idealerweise entsteht auch ein grafischer Prototyp, welcher dem Kunden zeigt, wie sein System visuell umgesetzt werden soll.
 Konkrete Absprachen - beispielsweise ob der grafische Prototyp oder die Dialoglandkarte höhere Priorität hat - sind mit dem Kunden zu treffen.
 
 === Überblick: Dialoglandkarte
