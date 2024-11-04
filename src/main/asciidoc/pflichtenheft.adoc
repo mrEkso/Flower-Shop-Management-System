@@ -573,18 +573,24 @@ image::./models/images/rechnung.png[Rechnungpage, title= "Die Rechnung der Laden
 
 Konkrete Absprachen - beispielsweise ob der grafische Prototyp oder die Dialoglandkarte höhere Priorität hat - sind mit dem Kunden zu treffen.
 
-=== Überblick: Dialoglandkarte
-Erstellen Sie ein Übersichtsdiagramm, das das Zusammenspiel Ihrer Masken zur Laufzeit darstellt. Also mit welchen Aktionen zwischen den Masken navigiert wird.
+== Überblick: Dialoglandkarte
 //Die nachfolgende Abbildung zeigt eine an die Pinnwand gezeichnete Dialoglandkarte. Ihre Karte sollte zusätzlich die Buttons/Funktionen darstellen, mit deren Hilfe Sie zwischen den Masken navigieren.
+[[DialogLandkarte]]
+image::./models/images/Dialogue.jpg[Dialogue, title= "Dialogue Landkarte", 100%, 100%, pdfwidth=100%, align=center]
 
 === Dialogbeschreibung
 
-1. Kurze textuelle Dialogbeschreibung eingefügt: Was soll der jeweilige Dialog? Was kann man damit tun? Überblick?
-2. Maskenentwürfe (Screenshot, Mockup)
-3. Maskenelemente (Ein/Ausgabefelder, Aktionen wie Buttons, Listen, …)
-4. Evtl. Maskendetails, spezielle Widgets
-
-
+. Navigation zwischen den Seiten
+. Order bestellen, nach Auswahl der Artikel
+. Seachbar für die Artikel
+. Filtern nach Kategorien
+. Blumenstrauß mit ausgewählten Blumen erstellen
+. Zum Korb hinzufügen
+. Tagesrechung herunterladen
+. Monatsrechung herunterladen
+. Datumsauswahl
+. Neue Service erstellen
+. Service schließen
 
 == Datenmodell
 
