@@ -240,7 +240,7 @@ Komplexere Anwendungsfälle sind mit einem UML-Sequenzdiagramm ergänzt worden.
 |===
 
 [[sequence_diagram_101]]
-image::./models/images/sequence_diagram_101_f.svg[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für Anwendungsfall 101 für {project_name} in UML", align=center]
+image::./models/images/sequence_diagram_101_g.svg[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für Anwendungsfall 101 für {project_name} in UML", align=center]
 
 
 [cols="1h, 3"]
@@ -329,7 +329,7 @@ image::./models/images/sequence_diagram_101_f.svg[sequence diagram, 100%, 100%, 
 |===
 
 [[sequence_diagram_302]]
-image::./models/images/sequence_diagram_302_b.svg[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für Anwendungsfall 302 für {project_name} in UML", align=center]
+image::./models/images/sequence_diagram_302_c.svg[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für Anwendungsfall 302 für {project_name} in UML", align=center]
 
 [cols="1h, 3"]
 [[UC303]]
