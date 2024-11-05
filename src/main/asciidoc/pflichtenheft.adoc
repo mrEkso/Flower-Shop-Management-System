@@ -124,7 +124,7 @@ image::./models/images/context_diagram_d.svg[context diagram, 100%, 100%, pdfwid
 
 === Top-Level-Architektur
 [[top_level_diagram]]
-image::./models/images/top_level_diagram_c.svg[top level diagram, 100%, 100%, pdfwidth=100%, title= "Top-Level-Architektur für {project_name} in UML", align=center]
+image::./models/images/top_level_diagram_d.svg[top level diagram, 100%, 100%, pdfwidth=100%, title= "Top-Level-Architektur für {project_name} in UML", align=center]
 
 == Anwendungsfälle
 
