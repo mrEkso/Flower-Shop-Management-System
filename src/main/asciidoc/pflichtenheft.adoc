@@ -351,7 +351,7 @@ image::./models/images/sequence_diagram_302_b.svg[sequence diagram, 100%, 100%, 
 |===
 
 [[Sequencediagramm_303]]
-image::./models/images/sequence_diagramm_303.svg[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für Anwendungsfall 303 für {project_name} in UML", align=center]
+image::./models/images/UC303.vpd[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für Anwendungsfall 303 für {project_name} in UML", align=center]
 
 
 [cols="1h, 3"]
