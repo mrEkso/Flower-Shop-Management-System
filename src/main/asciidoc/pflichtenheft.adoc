@@ -147,7 +147,7 @@ Akteure sind die Benutzer des Software-Systems oder Nachbarsysteme, welche darau
 === Überblick Anwendungsfalldiagramm
 
 [[use_case_diagram]]
-image::./models/images/use_cases_d.svg[use case diagram, 100%, 100%, pdfwidth=100%, title= "Anwendungsfalldiagramm für {project_name} in UML", align=center]
+image::./models/images/use_cases_e.svg[use case diagram, 100%, 100%, pdfwidth=100%, title= "Anwendungsfalldiagramm für {project_name} in UML", align=center]
 
 === Anwendungsfallbeschreibungen
 Dieser Unterabschnitt beschreibt die Anwendungsfälle. In dieser Beschreibung müssen noch nicht alle Sonderfälle und Varianten berücksichtigt werden. Schwerpunkt ist es, die wichtigsten Anwendungsfälle des Systems zu finden. Wichtig sind solche Anwendungsfälle, die für den Auftraggeber, den Nutzer den größten Nutzen bringen.
