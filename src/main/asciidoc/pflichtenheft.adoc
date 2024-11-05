@@ -795,4 +795,3 @@ Jeder Testfall soll mit einer ID versehen werde, um später zwischen den Dokumen
  - Service - Vorherig vereinbarte reguläre oder einmalige Leistung des Ladens für ein:e Kund:in. Eine Vorbereitung in Form von einer Bestellung von exakt allen benötigten Blumen von dem Großhändler ist in Fällen von einer großen Bestellung (wie eine Hochzeit) notwendig.
  - Rechnungsformular - eine Sektion von dem Website, wo Nuzter des Systems mit dem geeignetem Zugengsstatus die von Kunden gewählte Produkte einfügen, damit die nach der Bezahlung weiterbearbeitet sein werden, und Kassenstand mit dem Lager aktualisiert, und die Rechnung - erstellt werden können.
 
-== Offene Punkte
