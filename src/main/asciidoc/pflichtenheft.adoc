@@ -140,7 +140,6 @@ Akteure sind die Benutzer des Software-Systems oder Nachbarsysteme, welche darau
 |Frau Rosa Floris  | Besitzerin - Verwaltung Finanzen und Lager. Berät Kunden bei Hochzeits- und Eventbestellungen.
 |Rosas Nichte  | Leiterin Pflanzenservice - Bestellung für den Auftrag benötigten Pflanzen und Arrangierung der Räumlichkeiten vor Ort
 |Kunden  | Kaufen Einzelblumen oder Blumensträuße. Einige Kunden bestellen spezielle Aufträge für Hochzeiten oder andere Veranstaltungen und erhalten Beratung.
-|Großhändler  | Verkaufen Blumen an das Unternehmen 
 |Administratoren | Verwalten das System, erteilen die Berechtigungen für Nutzer und sorgen für die reibungslose Funktion der Software.
 
 |===
