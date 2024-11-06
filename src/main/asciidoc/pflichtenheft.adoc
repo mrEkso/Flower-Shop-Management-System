@@ -460,10 +460,10 @@ Was das zu erstellende Programm auf alle Fälle leisten muss.
 
 | ID | Version | Name | Beschreibung
 
-| [[F0001]]<<F0001>> 
-| v0.1 
-| Rechnungen ansehen, filtern 
-| Das System soll es ermöglichen, Rechnungen anzusehen und zu filtern, einschließlich Ein- und Ausgabenübersicht, um Transaktionen effizient zu verwalten.
+| [[F0001]]<<F0001>>
+| v0.1
+| Rechnungen ansehen
+| Das System soll es ermöglichen, Rechnungen einzusehen, damit Benutzer jederzeit Zugriff auf die Details von Transaktionen, Ein- und Ausgaben haben, um Finanzinformationen effizient zu überwachen.
 
 | [[F0002]]<<F0002>>
 | v0.1
@@ -475,40 +475,40 @@ Was das zu erstellende Programm auf alle Fälle leisten muss.
 | Monatsabrechnung
 | Das System soll eine monatliche Abrechnung der Einnahmen und Ausgaben erstellen, um einen detaillierten Überblick über die finanzielle Lage des Geschäfts zu bieten.
 
-| [[F0004]]<<F0004>> 
+| [[F0005]]<<F0005>>
 | v0.1 
-| Verwelkte Blumen als Verlust berechnen
-| Das System soll es ermöglichen, abends verwelkte Blumen als Verlust in die Abrechnung aufzunehmen und sie automatisch in den Finanzberichten auszuweisen, um sie als Teil der Finanzen zu berücksichtigen.
-
-| [[F0005]]<<F0005>> 
-| v0.1 
-| Kassenstand sehen 
+| Kassenstand sehen, aktualisieren 
 | Das System soll es ermöglichen, den aktuellen Kassenstand einzusehen und zu aktualisieren, um die Finanzdaten stets auf dem neuesten Stand zu halten.
 
 | [[F0006]]<<F0006>> 
 | v0.1 
 | Rechnungen als PDF exportieren 
-| Das System soll Rechnungen als PDF exportieren und herunterladen können, um eine einfache Speicherung und Weitergabe zu ermöglichen.
+| Das System soll alle Rechnungen als PDF exportieren und herunterladen können, um eine einfache Speicherung und Weitergabe zu ermöglichen.
+
+| [[F0007]]<<F0007>>
+| v0.1
+| Rechnungen filtern
+| Das System soll eine Filterfunktion für Rechnungen bieten, damit Benutzer spezifische Transaktionen basierend auf bestimmten Kriterien schnell finden können. Die Filterfunktion soll es ermöglichen, nach Datum, Betrag, Kundenname und Transaktionstyp zu suchen, um gezielt Rechnungen anzuzeigen.
+
+| [[F0008]]<<F0008>> 
+| v0.1 
+| Zahlungsarten 
+| Das System soll beim Kauf und Verkauf verschiedene Zahlungsarten anbieten, wie beispielsweise die Bezahlung in bar oder mit Karte, um eine flexible Zahlungsabwicklung zu gewährleisten.
 
 | [[F0101]]<<F0101>>
-| v0.1
-| Blumen als Rohstoff einkaufen 
-| Das System soll es ermöglichen, Blumen als Rohstoff bei Großhändlern einzukaufen, um den Lagerbestand aufzufüllen.
-
-| [[F0103]]<<F0103>>
 | v0.1
 | Verkauf von Blumen bzw. Sträußen im Laden 
 | Das System soll den Verkauf von Blumen und Sträußen im Geschäft unterstützen, indem es nach dem Kauf eine Rechnung ausstellt, auf deren Grundlage der Kunde entscheidet, ob er einen Kauf tätigen möchte oder nicht.
 
-| [[F0104]]<<F0104>>
+| [[F0102]]<<F0102>>
 | v0.1
 | Fertigsträuße erstellen
 | Das System soll es ermöglichen, dass man Fertigsträuße erstellt und deren Bestand im System verwaltet.
 
-| [[F0105]]<<F0105>> 
-| v0.1 
-| Warenkorb 
-| Das System sollte eine Warenkorbfunktion bieten, um die Bestellung und ihre Details zu verwalten. Der Warenkorb soll die Anzahl der zu verkaufenden Artikel und den zu zahlenden Betrag an zeigen.
+| [[F0103]]<<F0103>>
+| v0.1
+| Warenkorb
+| Das System sollte beim Kauf von Blumen für das Geschäft oder beim Verkauf von Blumen an Kunden eine Warenkorbfunktion bieten, die es ermöglicht, Blumen hinzuzufügen und zu entfernen und die Bestellmenge anzupassen. Der Warenkorb sollte die Anzahl der ausgewählten Artikel und den Gesamtbetrag anzeigen, um den Bestellvorgang effizient zu gestalten.
 
 | [[F0201]]<<F0201>>
 | v0.1
@@ -530,15 +530,35 @@ Was das zu erstellende Programm auf alle Fälle leisten muss.
 | Bestellansicht 
 | Das System soll eine detaillierte Ansicht für Bestellungen bieten, um alle relevanten Informationen schnell einsehen zu können.
 
-| [[F0301]]<<F0301>> 
+| [[F0205]]<<F0205>> 
 | v0.1 
-| Lagerstand für Blumen erhöhen bzw. reduzieren 
-| Das System soll den Lagerstand für Blumen erhöhen oder reduzieren können, basierend auf dem Ein- und Verkauf von Blumen.
+| Lieferung
+| Das System soll die Möglichkeit bieten, Blumenlieferungen für Veranstaltungen und verschiedene andere Services zu organisieren. Diese Lieferungen sollen zusätzlich berechnet werden, um eine flexible und an den Kundenbedarf angepasste Dienstleistung zu gewährleisten.
+
+| [[F0206]]<<F0206>> 
+| v0.1 
+| Informationen zu Produkttypen in Services anzeigen 
+| Das System soll die Möglichkeit bieten, Informationen über die Produkttypen wie Blumengießen, Lieferung oder das Erstellen eines Straußes in den Services anzuzeigen. Bei der Erstellung eines Services soll es möglich sein, den Typ des Services sowie die Art der für die Ausführung erforderlichen Arbeit auszuwählen.
+
+| [[F0301]]<<F0301>>
+| v0.1
+| Blumen als Rohstoff einkaufen 
+| Das System soll es ermöglichen, Blumen als Rohstoff bei Großhändlern einzukaufen, um den Lagerbestand aufzufüllen.
 
 | [[F0302]]<<F0302>>
 | v0.1 
-| Blumen im Lager filtern und suchen 
+| Blumen im Lager filtern, suchen 
 | Das System soll eine Filter- und Suchfunktion für Blumen im Lagerbestand bereitstellen, um eine schnelle und gezielte Lagerverwaltung zu ermöglichen.
+
+| [[F0304]]<<F0304>>
+| v0.1 
+| Verwelkte Blumen als Verlust berechnen
+| Das System soll es ermöglichen, abends verwelkte Blumen als Verlust in die Abrechnung aufzunehmen und sie automatisch in den Finanzberichten auszuweisen, um sie als Teil der Finanzen zu berücksichtigen.
+
+| [[F0305]]<<F0305>>
+| v0.1
+| Lagerstand für Blumen reduzieren
+| Das System soll es ermöglichen, den Lagerstand für Blumen zu reduzieren, insbesondere wenn Blumen verwelkt oder beschädigt sind, um eine genaue Bestandsverwaltung zu gewährleisten.
 
 | [[F0401]]<<F0401>>
 | v0.1 
@@ -547,13 +567,13 @@ Was das zu erstellende Programm auf alle Fälle leisten muss.
 
 | [[F0402]]<<F0402>> 
 | v0.1 
-| Services im Kalender anzeigen 
-| Das System soll allgemeine Übersichten zu Services, wie Blumenausstattungen für Veranstaltungen oder Mehr- bzw. einmaliges Blumenservice, im Kalender anzeigen, um die Terminverwaltung zu unterstützen.
+| Services und Reservierungen im Kalender anzeigen 
+| Das System soll allgemeine Übersichten zu Services, wie Blumenausstattungen für Veranstaltungen oder Mehr- bzw. einmaliges Blumenservice, im Kalender anzeigen, um die Terminverwaltung zu unterstützen. Zusätzlich sollen auch Reservierungen von Blumen und Sträußen durch Kunden im Kalender sichtbar sein, um die Planung und Organisation effizienter zu gestalten. Es soll möglich sein, den Status der Reservierungen zu ändern und für jede Reservierung ein konkretes Datum und eine Uhrzeit festzulegen.
 
 | [[F0403]]<<F0403>> 
 | v0.1 
-| Sonstige Termine im Kalender verwalten 
-| Das System soll die Möglichkeit bieten, verschiedene (nicht nur Blumenausstattungen für Veranstaltungen oder Mehr- bzw. einmaliges Blumenservice) Termine im Kalender zu verwalten, um die Organisation zu erleichtern.
+| Sonstige Termine im Kalender
+| Das System soll die Möglichkeit bieten, verschiedene Termine im Kalender hinzuzufügen und anzuzeigen. Dies umfasst Funktionen wie das Eintragen und Anzeigen von arbeitsbezogenen Terminen, sowie das Hinzufügen von weniger arbeitsrelevanten Ereignissen, wie Feiertage oder Geburtstage, die zur besseren Arbeitsorganisation beitragen können.
 
 | [[F0501]]<<F0501>> 
 | v0.1 
@@ -584,12 +604,12 @@ Die zugewiesene Priorität muss bei der Formulierung der konkreten nicht-funktio
 |Verfügbarkeit               |   |   |   | x |
 |Leistungsfähigkeit          |   |   | x |   |
 |Benutzerfreundlichkeit      |   |   |   | x |
-|Sicherheit                  |   |   | x |   | 
+|Sicherheit                  |   | x |   |   |
 |Wartbarkeit                 |   |   | x |   |
 |===
 
 Verfügbarkeit (Priorität 4)
-Verfügbarkeit ist für den kontinuierlichen Betrieb des Systems im Blumenladen essenziell. Da Mitarbeiter und Kunden zu jeder Zeit auf das System zugreifen, um Bestellungen, Rechnungen und Lagerbestände zu verwalten, muss das System zuverlässig verfügbar sein. Diese Anforderung wurde als wichtig eingestuft, um sicherzustellen, dass das System keine Ausfälle hat, die den Geschäftsprozess unterbrechen könnten. Eine hohe Verfügbarkeit minimiert das Risiko von Umsatzverlusten und steigert die Kundenzufriedenheit.
+Verfügbarkeit ist für den kontinuierlichen Betrieb des Systems im Blumenladen essenziell. Da Mitarbeiter und Kunden zu jeder Zeit auf das System zugreifen, um Bestellungen, Rechnungen und Lagerbestände zu bearbeiten, muss das System zuverlässig verfügbar sein. Diese Anforderung wurde als wichtig eingestuft, um sicherzustellen, dass das System keine Ausfälle hat, die den Geschäftsprozess unterbrechen könnten. Eine hohe Verfügbarkeit minimiert das Risiko von Umsatzverlusten und steigert die Kundenzufriedenheit.
 
 Leistungsfähigkeit (Priorität 3)
 Das System muss in der Lage sein, mehrere Prozesse effizient abzuwickeln, insbesondere zu Spitzenzeiten (wenn es viele Termine an einem Tag gibt oder viele Bestellungen, Reservierungen). Die Leistungspriorität wurde aufgrund der geringen Anforderungen des Arbeitsumfelds in einem Blumenladen als mittel eingestuft, es handelt sich nicht um ein ganzes Franchise oder ein riesiges Unternehmen, dennoch muss das System in der Lage sein, die Anforderungen des täglichen Betriebs zu bewältigen und die Leistung auch bei erhöhter Belastung nicht zu beeinträchtigen. Dies gewährleistet eine schnelle und reibungslose Auftragsabwicklung und Lagerprozesse.
@@ -597,7 +617,7 @@ Das System muss in der Lage sein, mehrere Prozesse effizient abzuwickeln, insbes
 Benutzerfreundlichkeit (Priorität 4)
 Die Benutzerfreundlichkeit ist für die Mitarbeiter des Blumenladens sehr wichtig, da sie möglicherweise keine technischen Kenntnisse haben. Das benutzerfreundliche System ist intuitiv bedienbar und ermöglicht es den Benutzern, ihre Aufgaben schnell und effizient zu erledigen. Diese Anforderung wurde als sehr wichtig erachtet, um den Schulungsaufwand für das Personal zu minimieren und die Arbeitsabläufe im Geschäft zu optimieren.
 
-Sicherheit (Priorität 3)
+Sicherheit (Priorität 2)
 Da das System sensible Daten wie Kundeninformationen und Finanzdaten verarbeitet, muss es ausreichende Sicherheitsmaßnahmen bieten. Die Sicherheit wurde mit mittlerer Priorität bewertet, da ein Grundschutz gegen unbefugten Zugriff und Datenverluste erforderlich ist. Obwohl das Blumenladen-System keine extrem kritischen Daten verwaltet, ist ein gewisses Maß an Sicherheit notwendig, um den Datenschutz zu gewährleisten und die Datenintegrität zu wahren.
 
 Wartbarkeit (Priorität 3)
@@ -628,7 +648,7 @@ Passwörter der Benutzer sollen nur als Hash-Werte gespeichert werden, um Diebst
 |v0.1
 |Leistungsfähigkeit - Reaktionszeit der Benutzeroberfläche
 a|
-Die Reaktionszeit der Benutzeroberfläche soll nicht mehr als 2 Sekunden für jede Hauptfunktionalität betragen, wie das Abrufen des Lagerbestands, das Erstellen von Rechnungen und das Verwalten von Bestellungen.
+Die Reaktionszeit der Benutzeroberfläche soll nicht mehr als 2 Sekunden für jede Hauptfunktionalität betragen, wie das Abrufen des Lagerbestands, das Erstellen von Rechnungen und die Bearbeitung von Bestellungen.
 
 |[[NF0040]]<<NF0040>>
 |v0.1
