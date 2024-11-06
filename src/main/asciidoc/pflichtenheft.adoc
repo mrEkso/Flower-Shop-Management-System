@@ -596,26 +596,26 @@ Der Quellcode des Systems soll ausführlich dokumentiert sein, um spätere Wartu
 
 
 [[Sales]]
-image::./models/images/sales.png[Salespage, title= "Sales/Home Page für order management", 100%, 100%, pdfwidth=100%, align=center]
-
-[[Sales2]]
-image::./models/images/sales2.png[Handlerpage,title= "SSales Page für Großhandler Bestellungen", 100%, 100%, pdfwidth=100%, align=center]
+image::./models/images/Sales.png[Salespage, title= "Sales/Home Page für order management", 100%, 100%, pdfwidth=100%, align=center]
 
 [[Services]]
-image::./models/images/services.png[Servicepage, title="Services Page",100%, 100%, pdfwidth=100%, align=center]
+image::./models/images/Services.png[Servicepage, title="Services Page",100%, 100%, pdfwidth=100%, align=center]
 
 [[Inventory]]
-image::./models/images/inventory.png[Inventorypage,title="Lager Management Page", 100%, 100%, pdfwidth=100%, align=center]
+image::./models/images/Lager.png[Inventorypage,title="Lager Management Page", 100%, 100%, pdfwidth=100%, align=center]
 
 [[Rechnung]]
-image::./models/images/rechnung.png[Rechnungpage, title= "Die Rechnung der Laden", 100%, 100%, pdfwidth=100%, align=center]
+image::./models/images/Rechnung.png[Rechnungpage, title= "Die Rechnung der Laden", 100%, 100%, pdfwidth=100%, align=center]
+
+[[Kalender]]
+image::./models/images/Kalender.png[Kalenderseite, title= "Kalender Seite", 100%, 100%, pdfwidth=100%, align=center]
 
 Konkrete Absprachen - beispielsweise ob der grafische Prototyp oder die Dialoglandkarte höhere Priorität hat - sind mit dem Kunden zu treffen.
 
 == Überblick: Dialoglandkarte
 //Die nachfolgende Abbildung zeigt eine an die Pinnwand gezeichnete Dialoglandkarte. Ihre Karte sollte zusätzlich die Buttons/Funktionen darstellen, mit deren Hilfe Sie zwischen den Masken navigieren.
 [[DialogLandkarte]]
-image::./models/images/Dialogue.jpg[Dialogue, title= "Dialogue Landkarte", 100%, 100%, pdfwidth=100%, align=center]
+image::./models/images/Dialogue.png[Dialogue, title= "Dialogue Landkarte", 100%, 100%, pdfwidth=100%, align=center]
 
 === Dialogbeschreibung
 
