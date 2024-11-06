@@ -755,15 +755,6 @@ Jeder Testfall soll mit einer ID versehen werde, um später zwischen den Dokumen
 |1. Frau Floris wählt die Funktion "Rechnungen verwalten" im Finanzmodul. +
 2. Sie wählt die Monatsrechnung aus.
 
-[[ATF-UC004]]
-|**<<ATF-UC004>>**
-|<<UC004>>
-|Blumen als Verlust markieren
-|Blumen werden erfolgreich als Verlust im System markiert und aus dem Lager gelöscht.
-|Frau Floris ist im System angemeldet und hat Berechtigungen zur Verlustmarkierung.
-|1. Frau Floris wählt die Funktion "Lager" im Lagermodul. +
-2. Sie wählt Blumen aus dem Katalog aus und markiert diese als Verlust.
-
 [[ATF-UC005]]
 |**<<ATF-UC005>>**
 |<<UC005>>
@@ -786,57 +777,111 @@ Jeder Testfall soll mit einer ID versehen werde, um später zwischen den Dokumen
 |**<<ATF-UC301>>**
 |<<UC301>>
 |Blumen als Rohstoff einkaufen
-|Blumen werden erfolgreich gekauft und im Lagerbestand aktualisiert.
+|Blumen werden erfolgreich beim Großhändler gekauft und im Lagerbestand aktualisiert.
 |Frau Floris ist im System angemeldet und hat Berechtigungen für den Einkauf.
 |1. Frau Floris wählt die Funktion "Großhändler" im Einkaufsmodul. +
 2. Sie wählt Blumen aus dem Katalog und bestätigt den Kauf. +
 3. Der Großhändler bestätigt den Vorgang.
 
-[[ATF-UC103-01]]
-|**<<ATF-UC103-01>>**
-|<<UC103>>
-|Blumen im Laden verkaufen
+[[ATF-UC302]]
+|**<<ATF-UC302>>**
+|<<UC302>>
+|Blumen im Lager filtern, suchen
+|Frau Floris kann alle Blumen bzw. Blumensträußen sehen und durch ein Suchfeld filtern.
+|Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen zum Lager.
+|1. Frau Floris wählt Lagermodul aus. +
+2. Sie kann alle Blumen bzw. Blumensträußen sehen. +
+3. Sie kann die Produkte filtern durch ein Suchfeld.
+
+[[ATF-UC304]]
+|**<<ATF-UC304>>**
+|<<UC304>>
+|Blumen als Verlust markieren
+|Blumen werden erfolgreich als Verlust im System markiert und aus dem Lager gelöscht.
+|Frau Floris ist im System angemeldet und hat Berechtigungen zur Verlustmarkierung.
+|1. Frau Floris wählt die Funktion "Lager" im Lagermodul. +
+2. Sie wählt Blumen aus dem Katalog aus und markiert diese als Verlust.
+
+[[ATF-UC101]]
+|**<<ATF-UC101>>**
+|<<UC101>>
+|Verkauf von Blumen bzw. Sträußen im Laden
 |Der Verkauf wird abgeschlossen und der Lagerbestand aktualisiert.
 |Frau Floris ist im System angemeldet und hat Berechtigungen für den Vertrieb.
 |1. Frau Floris wählt die Funktion "Verkauf" im Vertriebsmodul. +
 2. Sie wählt die Blumen bzw. Sträuße aus und bestätigt den Kauf. +
 3. Der Kunde bezahlt oder storniert.
 
-[[ATF-UC104-01]]
-|**<<ATF-UC104-01>>**
-|<<UC104>>
+[[ATF-UC102]]
+|**<<ATF-UC102>>**
+|<<UC102>>
 |Fertigstrauß erstellen
 |Ein neuer Strauß wird erstellt und der Lagerbestand entsprechend aktualisiert.
 |Frau Floris ist im System angemeldet und hat Berechtigungen zur Erstellung von Sträußen.
 |1. Frau Floris wählt die Funktion "Strauß erstellen" im Lagermodul. +
 2. Sie wählt Blumen aus dem Katalog und bestätigt den Vorgang.
 
-[[ATF-UC301-01]]
-|**<<ATF-UC301-01>>**
-|<<UC301>>
-|Lagerstand einsehen und verwalten
-|Frau Floris kann alle vorhandenen Artikel im Lager einsehen.
-|Frau Floris ist im System angemeldet und hat Berechtigungen zur Lagerverwaltung.
-|1. Frau Floris wählt die Funktion "Lager" im Lagermodus und erhält eine Übersicht aller vorhandenen Artikel.
+[[ATF-UC201]]
+|**<<ATF-UC201>>**
+|<<UC201>>
+|Eine Veranstaltung mit Blumen ausstatten
+|Ein Kunde hat die Möglichkeit, eine Veranstaltung mit Blumen ausstatten zu lassen, indem er den Service des Blumenshops bucht. Die Nichte organisiert die Lieferung und arrangiert die Blumen vor Ort
+|Blumen und Materialien für die Veranstaltung sind auf Lager und der Kunde hat eine Veranstaltung gebucht.
+|1. Kunde kontaktiert den Blumenshop (Frau Rosa) und bucht den Blumenservice für eine Veranstaltung. +
+2. Nichte überprüft die benötigten Blumen und Materialien im Lagerbestand. +
+3. Nichte plant die Lieferung und arrangiert die Blumen vor Ort für die Veranstaltung.
 
-[[ATF-UC302-01]]
-|**<<ATF-UC302-01>>**
-|<<UC302>>
-|Einmaligen Blumenservice buchen
-|Ein einmaliger Blumenservice wird erfolgreich organisiert.
-|Blumen und Materialien sind auf Lager, und der Kunde möchte einen einmaligen Service.
-|1. Kunde kontaktiert den Blumenshop und wählt einen einmaligen Blumenservice. +
-2. Nichte überprüft Lagerbestände und arrangiert die Blumen für die Veranstaltung.
+[[ATF-UC202]]
+|**<<ATF-UC202>>**
+|<<UC202>>
+|Ein- bzw. mehrmaliges Blumenservice
+|Ein Kunde hat die Möglichkeit, einen einmaligen oder wiederkehrenden Blumenservice für verschiedene Anlässe (z. B. Hochzeiten, Firmenveranstaltungen) zu buchen. Die Nichte organisiert die Lieferung und stellt sicher, dass die Blumen regelmäßig oder wie gewünscht vor Ort arrangiert werden.
+|Kunde möchte einen einmaligen oder regelmäßigen Blumenservice buchen.
+|1. Kunde kontaktiert den Blumenshop und wählt zwischen einem einmaligen und einem mehrmaligen Blumenservice. +
+2. Kunde legt den gewünschten Zeitraum und die Häufigkeit der Lieferungen fest. +
+3. Nichte überprüft die Lagerbestände und stellt die erforderlichen Blumen und Materialien zusammen. +
+4. Nichte organisiert die Lieferung und arrangiert bzw. pflegt die Blumen entweder einmalig oder regelmäßig nach den Vorgaben des Kunden vor Ort.
 
-[[ATF-UC303-01]]
-|**<<ATF-UC303-01>>**
-|<<UC303>>
-|Blumen zur Abholung bereitstellen
-|Die Blumen sind zur vereinbarten Abholzeit verfügbar.
-|Frau Floris ist im System angemeldet, und die Blumen sind auf Lager.
-|1. Kunde kontaktiert den Blumenshop und wählt Abholung im Laden. +
-2. Nichte reserviert die Blumen und informiert den Kunden über den Abholzeitpunkt. +
-3. Kunde holt die Blumen zum vereinbarten Zeitpunkt ab.
+[[ATF-UC203]]
+|**<<ATF-UC203>>**
+|<<UC203>>
+|Blumen zur Abholung im Laden
+|Ein Kunde hat die Möglichkeit, eine "Rerservierung" oder Kauf zur Abholung im Laden zu betätigen. Die Blumen sind zur vereinbarten Zeit zum Abholung verfügbar.
+|Die gewünschten Blumen sind im Lager verfügbar oder wurden rechtzeitig bestellt und vorbereitet.
+|1. Kunde kontaktiert den Blumenshop und gibt Frau Floris an, dass er Blumen zur Abholung im Laden wünscht. +
+2. Kunde wählt zwischen einer einmaligen Abholung und einem regelmäßigen Abholservice. +
+3. Nichte prüft die Verfügbarkeit der Blumen im Lager und reserviert die benötigten Blumen für die Abholung. +
+4. Nichte informiert den Kunden über den Abholzeitpunkt und stellt die Blumen im Laden zur Verfügung. +
+5. Kunde holt die Blumen zum vereinbarten Zeitpunkt im Laden ab.
+
+[[ATF-UC401]]
+|**<<ATF-UC401>>**
+|<<UC401>>
+|Kalender navigieren
+|Ein Mitarbeiter hat die Möglichkeit, Kalender zu navigieren.
+|Man hat die entsprechende Berechtigung.
+|1. Ein Mitarbeiter wählt Kalendermodul aus. +
+2. Der Mitarbeiter kann den Kalender navigeren, indem er die Daten ändern und Termine sehen kann.
+
+[[ATF-UC402]]
+|**<<ATF-UC402>>**
+|<<UC402>>
+|Services im Kalender
+|Sämtliche Dienstsleistungen des Ladens werden in den Kalender automatisch eingetragen.
+|Man hat die entsprechende Berechtigung.
+|1. Ein Mitarbeiter wählt Kalendermodul aus. +
+2. Der Mitarbeiter kann im Kalender den korrekten Servicetermin sehen.
+
+[[ATF-UC403]]
+|**<<ATF-UC403>>**
+|<<UC403>>
+|Sonstige Termine im Kalender
+|Ein Mitarbeiter hat die Möglichkeit, im Kalender einen beliebigen (auch nicht Businessbezogenenen) Termin anlegen.
+|Man hat die entsprechende Berechtigung.
+|1. Ein Mitarbeiter wählt Kalendermodul aus. +
+2. Der Mitarbeiter wählt die Funktion "Neuer Termin" aus. +
+3. Der Mitarbeiter trägt benötigte Daten zur Terminerstellung ein. +
+4. Der kann den neuen Termin im Kalender sehen.
 |===
 
 == Glossar
