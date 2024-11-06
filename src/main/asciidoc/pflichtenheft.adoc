@@ -22,6 +22,7 @@
 |0.6.3     | In Arbeit    | 03.11.2024     | Andrejs    | Cleanup
 |0.6.4     | In Arbeit    | 03.11.2024     | Andrejs    | Cleanup
 |1.0    | Fertig    | 03.11.2024     | Andrejs    | Release
+|2.0    | Fertig    | 04.11.2024     | Alle    | Überarbeitung und Konsolidierung
 |===
 
 
@@ -147,7 +148,7 @@ Akteure sind die Benutzer des Software-Systems oder Nachbarsysteme, welche darau
 === Überblick Anwendungsfalldiagramm
 
 [[use_case_diagram]]
-image::./models/images/use_cases_e.svg[use case diagram, 100%, 100%, pdfwidth=100%, title= "Anwendungsfalldiagramm für {project_name} in UML", align=center]
+image::./models/images/use_cases_f.svg[use case diagram, 100%, 100%, pdfwidth=100%, title= "Anwendungsfalldiagramm für {project_name} in UML", align=center]
 
 === Anwendungsfallbeschreibungen
 Dieser Unterabschnitt beschreibt die Anwendungsfälle. In dieser Beschreibung müssen noch nicht alle Sonderfälle und Varianten berücksichtigt werden. Schwerpunkt ist es, die wichtigsten Anwendungsfälle des Systems zu finden. Wichtig sind solche Anwendungsfälle, die für den Auftraggeber, den Nutzer den größten Nutzen bringen.
@@ -158,15 +159,15 @@ Komplexere Anwendungsfälle sind mit einem UML-Sequenzdiagramm ergänzt worden.
 [[UC001]]
 |===
 |ID                         |**<<UC001>>**
-|Name                       |Rechnungen verwalten
+|Name                       |Rechnungen ansehen, filtern
 |Beschreibungen             | Frau Floris soll in der Lage sein, Rechnungen für den Blumenladen zu verwalten, um die Finanzen des Geschäfts zu überblicken. 
 |Akteure                    | Frau Floris
-|Auslöser                   | Frau Floris möchte die Finanzen überprüfen oder eine neue Rechnung für den Tages- oder Monatsabschluss wird automatisch erstellt am Ende des Tages/Monates.
+|Auslöser                   | Frau Floris möchte die Finanzen überprüfen.
 |Vorbedingungen            a| 	Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen zur Rechnungsverwaltung.
 |Wesentliche Schritte            a| 
-1. Frau Floris wählt die Funktion „Rechnungen verwalten“ im Finanzmodul aus.
+1. Frau Floris wählt die Funktion „Rechnungen“ im Finanzmodul aus.
 2. Sie kann eine bestehende Rechnung suchen, einsehen.
-|Extensions                 |-
+|Extensions                 | <<UC002>>, <<UC003>>
 |Funktionale Anforderungen    |<<F0001>>
 |===
 
@@ -176,13 +177,13 @@ Komplexere Anwendungsfälle sind mit einem UML-Sequenzdiagramm ergänzt worden.
 |===
 |ID                         |**<<UC002>>**
 |Name                       | Tagesrechnung
-|Beschreibungen             | Frau Floris soll in der Lage sein, die Tagesrechnung einzusehen, um die Finanzen des Geschäfts zu überblicken. Es gibt die Möglichkeit, Rechnung als PDF zu exportieren.  
+|Beschreibungen             | Frau Floris soll in der Lage sein, die Tagesrechnung einzusehen, um die Finanzen des Geschäfts zu überblicken.
 |Akteure                    | Frau Floris
 |Auslöser                   | Am Tagesabschluss wird automatisch ausgelöst.
 |Vorbedingungen            a| 	Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen zur Rechnungsverwaltung.
 |Wesentliche Schritte            a| 
-1. Frau Floris wählt die Funktion „Rechnungen verwalten“ im Finanzmodul aus.
-2. Sie kann eine bestehende Rechnung einsehen und als PDF exportieren.
+1. Frau Floris wählt die Funktion „Rechnungen“ im Finanzmodul aus.
+2. Sie kann eine bestehende Rechnung einsehen.
 |Extensions                 |-
 |Funktionale Anforderungen    |<<F0002>>
 |===
@@ -193,46 +194,62 @@ Komplexere Anwendungsfälle sind mit einem UML-Sequenzdiagramm ergänzt worden.
 |===
 |ID                         |**<<UC003>>**
 |Name                       | Monatsrechnung
-|Beschreibungen             | Frau Floris soll in der Lage sein, die Monatsrechnung einzusehen, um die Finanzen des Geschäfts zu überblicken. Es gibt die Möglichkeit, Rechnung als PDF zu exportieren.  
+|Beschreibungen             | Frau Floris soll in der Lage sein, die Monatsrechnung einzusehen, um die Finanzen des Geschäfts zu überblicken.  
 |Akteure                    | Frau Floris
 |Auslöser                   | Am Monatsabschluss wird automatisch ausgelöst.
 |Vorbedingungen            a| 	Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen zur Rechnungsverwaltung.
 |Wesentliche Schritte            a| 
-1. Frau Floris wählt die Funktion „Rechnungen verwalten“ im Finanzmodul aus.
-2. Sie kann eine bestehende Rechnung einsehen und als PDF exportieren.
+1. Frau Floris wählt die Funktion „Rechnungen“ im Finanzmodul aus.
+2. Sie kann eine bestehende Rechnung einsehen.
 |Extensions                 |-
 |Funktionale Anforderungen    |<<F0003>>
 |===
 
 
 [cols="1h, 3"]
-[[UC004]]
+[[UC005]]
 |===
-|ID                         |**<<UC004>>**
-|Name                       | Verwelkten Blumen als Verlust berechnen
-|Beschreibungen             | Frau Floris soll Blumen von Großhändler einkaufen können. Dabei muss auch Lagerbestand mit neugekauften Blumen aktualisiert werden.
-|Akteure                    | Frau Floris, Großhändler
-|Auslöser                   | Frau Floris bemerkt, dass einige Blummen nicht verkaufswürdig sind.
+|ID                         |**<<UC005>>**
+|Name                       | Kassenstand sehen
+|Beschreibungen             | Frau Floris soll Kontroll über Kasse haben.
+|Akteure                    | Frau Floris
+|Auslöser                   | Frau Floris will den Kassenstand prüfen. 
 |Vorbedingungen            a| 	Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen.
 |Wesentliche Schritte            a| 
-1. Frau Floris wählt die Funktion „Lager“ im Lagermodul aus.
-2. Sie wählt Blumen aus Katalog aus und markiert die als Verlust.
+1. Frau Floris wählt die Funktion „Kasse“ im Finanzmodul aus.
+2. Sie sieht die Bilanz und letzte Transaktionen.
 |Extensions                 |-
 |Funktionale Anforderungen    |<<F0004>>, <<F0102>>
 |===
 
+[cols="1h, 3"]
+[[UC006]]
+|===
+|ID                         |**<<UC006>>**
+|Name                       | Rechnungen als PDF exportieren 
+|Beschreibungen             | Alle Rechnungen sollen in PDF-Format konvertierbar sein.
+|Akteure                    | Frau Floris
+|Auslöser                   | Frau Floris will eine Rechnung herunterladen.
+|Vorbedingungen            a| 	Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen.
+|Wesentliche Schritte            a| 
+1. Frau Floris wählt die Funktion „Rechnungen“ im Finanzmodul aus.
+2. Sie wählt eine Rechnung aus und kann sie durch den Button "Als PDF exportieren" herunterladen.
+|Extensions                 |-
+|Funktionale Anforderungen    | <<F0006>>
+|===
+
 
 [cols="1h, 3"]
-[[UC101]]
+[[UC301]]
 |===
-|ID                         |**<<UC101>>**
-|Name                       | Blumen als Rohstoff
+|ID                         |**<<UC301>>**
+|Name                       | Blumen als Rohstoff einkaufen
 |Beschreibungen             | Frau Floris soll Blumen von Großhändler einkaufen können. Dabei muss auch Lagerbestand mit neugekauften Blumen aktualisiert werden.
 |Akteure                    | Frau Floris, Großhändler
 |Auslöser                   | Es fehlt an Blumen im Lager.
 |Vorbedingungen            a| 	Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen zum Vertrieb.
 |Wesentliche Schritte            a| 
-1. Frau Floris wählt die Funktion „Großhändler“ im Einkaufsmodul aus.
+1. Frau Floris wählt die Funktion „Großhändler“ im Lagermodul aus.
 2. Sie wählt Blumen aus Katalog aus und bestätigt den Kauf.
 3. Der Großhändler bestätigt den Vorgang. 
 |Extensions                 |-
@@ -240,13 +257,30 @@ Komplexere Anwendungsfälle sind mit einem UML-Sequenzdiagramm ergänzt worden.
 |===
 
 [[sequence_diagram_101]]
-image::./models/images/sequence_diagram_101_g.svg[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für Anwendungsfall 101 für {project_name} in UML", align=center]
+image::./models/images/sequence_diagram_101_g.svg[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für Anwendungsfall 301 für {project_name} in UML", align=center]
+
+[cols="1h, 3"]
+[[UC302]]
+|===
+|ID                         |**<<UC302>>**
+|Name                       | Blumen im Lager filtern, suchen
+|Beschreibungen             | Frau Floris soll Blumen im Lager übersichten können. 
+|Akteure                    | Frau Floris
+|Auslöser                   | Frau Floris will eine Lagerübersicht bekommen.
+|Vorbedingungen            a| 	Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen zum Lager.
+|Wesentliche Schritte            a| 
+1. Frau Floris wählt Lagermodul aus.
+2. Sie kann alle Blumen bzw. Blumensträußen sehen.
+3. Sie kann die Produkte filtern durch ein Suchfeld.
+|Extensions                 |-
+|Funktionale Anforderungen    |<<F0101>>, <<F0102>>
+|===
 
 
 [cols="1h, 3"]
-[[UC103]]
+[[UC101]]
 |===
-|ID                         |**<<UC103>>**
+|ID                         |**<<UC101>>**
 |Name                       | Verkauf von Blumen bzw. Sträußen im Laden
 |Beschreibungen             | Frau Floris soll Produkte an der Kasse verkaufen können. Dabei muss auch Lagerbestand aktualisiert werden.
 |Akteure                    | Frau Floris, Kunde
@@ -257,13 +291,13 @@ image::./models/images/sequence_diagram_101_g.svg[sequence diagram, 100%, 100%, 
 2. Sie wählt Blumen bzw. Sträuße aus Katalog aus und bestätigt den Kauf.
 3. Der Kunde bezahlt oder storniert. 
 |Extensions                 |-
-|Funktionale Anforderungen    |<<F0103>>, <<F0102>>
+|Funktionale Anforderungen    |<<F0103>>, <<F0301>>, <<F0105>>
 |===
 
 [cols="1h, 3"]
-[[UC104]]
+[[UC102]]
 |===
-|ID                         |**<<UC104>>**
+|ID                         |**<<UC102>>**
 |Name                       | Fertigstrauß erstellen
 |Beschreibungen             | Frau Floris soll Fertigsträuße erstellen können. Dabei muss auch Lagerbestand aktualisiert werden, indem die Blumen zu einem Strauß zuweisen.
 |Akteure                    | Frau Floris
@@ -273,29 +307,14 @@ image::./models/images/sequence_diagram_101_g.svg[sequence diagram, 100%, 100%, 
 1. Frau Floris druckt den Button "Fertigstrauß erstellen". 
 2. Sie wählt Blumen aus Katalog aus und bestätigt den Vorgang.
 |Extensions                 |-
-|Funktionale Anforderungen    |<<F0104>>, <<F0102>>
-|===
-
-[cols="1h, 3"]
-[[UC301]]
-|===
-|ID                         |**<<UC301>>**
-|Name                       | Lagerstand verwalten
-|Beschreibungen             | Frau Floris soll Lager verwalten können.
-|Akteure                    | Frau Floris
-|Auslöser                   |- 
-|Vorbedingungen            a| 	Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen zur Lagerverwaltung.
-|Wesentliche Schritte            a| 
-1. Frau Floris wählt die Funktion „Lager“ im Lagermodus aus und bekommt überlick von allen vorhandenen Artikeln.
-|Extensions                 |-
-|Funktionale Anforderungen    | <<F0102>>
+|Funktionale Anforderungen    |<<F0104>>, <<F0301>>
 |===
 
 
 [cols="1h, 3"]
-[[UC301]]
+[[UC201]]
 |===
-|ID                         |**<<UC301>>**
+|ID                         |**<<UC201>>**
 |Name                       | Eine Veranstaltung mit Blumen ausstatten
 |Beschreibungen             | Ein Kunde soll die Möglichkeit haben, eine Veranstaltung mit Blumen ausstatten zu lassen, indem er den Service des Blumenshops bucht. Die Nichte organisiert die Lieferung und arrangiert die Blumen vor Or
 |Akteure                    | Frau Floris, Nichte, Kunde
@@ -311,9 +330,9 @@ image::./models/images/sequence_diagram_101_g.svg[sequence diagram, 100%, 100%, 
 
 
 [cols="1h, 3"]
-[[UC302]]
+[[UC202]]
 |===
-|ID                         |**<<UC302>>**
+|ID                         |**<<UC202>>**
 |Name                       | Ein- bzw. mehrmaliges Blumenservice
 |Beschreibungen             | Ein Kunde soll die Möglichkeit haben, einen einmaligen oder wiederkehrenden Blumenservice für verschiedene Anlässe (z. B. Hochzeiten, Firmenveranstaltungen) zu buchen. Die Nichte organisiert die Lieferung und stellt sicher, dass die Blumen regelmäßig oder wie gewünscht vor Ort arrangiert werden. 
 |Akteure                    | Frau Floris, Nichte, Kunde
@@ -324,19 +343,20 @@ image::./models/images/sequence_diagram_101_g.svg[sequence diagram, 100%, 100%, 
 2. Kunde legt den gewünschten Zeitraum und die Häufigkeit der Lieferungen fest.
 3. Nichte überprüft die Lagerbestände und stellt die erforderlichen Blumen und Materialien zusammen.
 4. Nichte organisiert die Lieferung und arrangiert bzw. pflegt die Blumen entweder einmalig oder regelmäßig nach den Vorgaben des Kunden vor Ort.
-|Extensions                 |<<UC303>>
+|Extensions                 | -
 |Funktionale Anforderungen    | <<F0202>>
 |===
 
+
 [[sequence_diagram_302]]
-image::./models/images/sequence_diagram_302_c.svg[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für Anwendungsfall 302 für {project_name} in UML", align=center]
+image::./models/images/sequence_diagram_302_c.svg[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für Anwendungsfall 202 für {project_name} in UML", align=center]
 
 [cols="1h, 3"]
-[[UC303]]
+[[UC203]]
 |===
-|ID                         |**<<UC303>>**
+|ID                         |**<<UC203>>**
 |Name                       | Blumen zur Abholung im Laden
-|Beschreibungen             | Ein Kunde kann Blumen zur Abholung im Laden bestellen, entweder als einmalige Bestellung oder im Rahmen eines regelmäßigen Services (z. B. wöchentliche Blumenarrangements). Dieser Anwendungsfall erweitert den Anwendungsfall <<UC302>> Ein- bzw. mehrmaliges Blumenservice, da der Kunde anstelle einer Lieferung eine Abholung im Laden wählt.
+|Beschreibungen             | Ein Kunde soll die Möglichkeit haben, eine "Rerservierung" oder Kauf zur Abholung im Laden betätigen.
 |Akteure                    | Frau Floris, Nichte, Kunde
 |Auslöser                   | Ein Kunde bestellt Blumenservice für eine Veranstaltung per Telefon. 
 |Vorbedingungen            a| 	Die gewünschten Blumen sind im Lager verfügbar oder wurden rechtzeitig bestellt und vorbereitet.
@@ -350,42 +370,60 @@ image::./models/images/sequence_diagram_302_c.svg[sequence diagram, 100%, 100%, 
 |Funktionale Anforderungen    | <<F0203>>
 |===
 
-[[Sequencediagramm_303]]
-image::./models/images/UC303.vpd[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für Anwendungsfall 303 für {project_name} in UML", align=center]
+[[Sequencediagramm_203]]
+image::./models/images/sequence_diagram_UC303.svg[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für Anwendungsfall 203 für {project_name} in UML", align=center]
 
 
 [cols="1h, 3"]
-[[UC901]]
+[[UC401]]
 |===
-|ID                         |**<<UC901>>**
-|Name                       |Berechtigungen zuweisen
-|Beschreibungen             | Der Administratror soll in der Lage sein, verschiedene (abteilungsbezogene) Berechtigungen zu Rollen bzw. Personen zuzuweisen. 
-|Akteure                    | Administrator
-|Auslöser                   | Ein Mitarbeiter ist nicht zu einer Funktion berechtigt oder hat zu viel Zugriff.  
-|Vorbedingungen            a| 	Administrator ist angemeldet. 
+|ID                         |**<<UC401>>**
+|Name                       | Kalender navigieren
+|Beschreibungen             | Ein Mitarbeiter soll die Möglichkeit haben, Kalender zu navigieren.
+|Akteure                    | Frau Floris, Nichte
+|Auslöser                   | Frau Floris oder die Nichte will den Kalender anschauen.
+|Vorbedingungen            a| Man hat die entsprechende Berechtigung. 
 |Wesentliche Schritte            a| 
-1. Der Administrator wählt Adminmodul aus.
-2. Er kann bestehende Berechtigungen zu Personen bzw. Rollen zuweisen, ändern oder löschen.
+1. Ein Mitarbeiter wählt Kalendermodul aus.
+2. Der Mitarbeiter kann den Kalender navigeren, indem er die Daten ändern und Termine sehen kann. 
 |Extensions                 |-
-|Funktionale Anforderungen    | <<F0901>>
+|Funktionale Anforderungen    | <<F0401>>
 |===
-
 
 [cols="1h, 3"]
-[[UC902]]
+[[UC402]]
 |===
-|ID                         |**<<UC902>>**
-|Name                       |Großhändler-Katalog zum Testen simulieren
-|Beschreibungen             | Der Administratror soll in der Lage sein, Großhändler-Katalog zu editieren, um Simulation zu ermöglichen.
-|Akteure                    | Administrator
-|Auslöser                   | Katalog ist zu Testzwecken nicht ausreichend.  
-|Vorbedingungen            a| 	Administrator ist angemeldet. 
+|ID                         |**<<UC402>>**
+|Name                       | Services im Kalender
+|Beschreibungen             | Sämtliche Dienstsleistungen des Ladens sollen in den Kalender automatisch eingetragen werden. 
+|Akteure                    | Frau Floris, Nichte
+|Auslöser                   | Frau Floris oder die Nichte legt eine neue Dienstleistung (Service) an.
+|Vorbedingungen            a| Man hat die entsprechende Berechtigung. 
 |Wesentliche Schritte            a| 
-1. Der Administrator wählt Adminmodul aus.
-2. Er kann Großhändler-Katalog editieren, indem er Preise oder Namen usw. ändert.
+1. Ein Mitarbeiter wählt Kalendermodul aus.
+2. Der Mitarbeiter kann im Kalender den korrekten Servicetermin sehen.   
 |Extensions                 |-
-|Funktionale Anforderungen    | -
+|Funktionale Anforderungen    | <<F0402>> 
 |===
+
+[cols="1h, 3"]
+[[UC403]]
+|===
+|ID                         |**<<UC403>>**
+|Name                       | Sonstige Termine im Kalender
+|Beschreibungen             | Ein Mitarbeiter soll die Möglichkeit haben, im Kalender einen beliebigen (auch nicht Businessbezogenenen) Termin anlegen. 
+|Akteure                    | Frau Floris, Nichte
+|Auslöser                   | Frau Floris oder die Nichte legt einen neuen Termin an.
+|Vorbedingungen            a| Man hat die entsprechende Berechtigung. 
+|Wesentliche Schritte            a| 
+1. Ein Mitarbeiter wählt Kalendermodul aus.
+2. Der Mitarbeiter wählt die Funktion "Neuer Termin" aus.
+3. Der Mitarbeiter trägt benötigte Daten zur Terminerstellung ein. 
+3. Der kann den neuen Termin im Kalender sehen. 
+|Extensions                 |-
+|Funktionale Anforderungen    | <<F0403>> 
+|===
+
 
 == Funktionale Anforderungen
 
@@ -430,7 +468,7 @@ Was das zu erstellende Programm auf alle Fälle leisten muss.
 
 | [[F0005]]<<F0005>> 
 | v0.1 
-| Kassenstand sehen, aktualisieren 
+| Kassenstand sehen 
 | Das System soll es ermöglichen, den aktuellen Kassenstand einzusehen und zu aktualisieren, um die Finanzdaten stets auf dem neuesten Stand zu halten.
 
 | [[F0006]]<<F0006>> 
@@ -646,9 +684,9 @@ Dieser Abschnitt stellt eine Vereinigung von Glossar und der Beschreibung von Kl
 [options="header"]
 |===
 |Klasse/Enumeration |Beschreibung 
-|1. Client|Enthält Informationen über den Kunden, wie Name, Adresse und Telefonnummer. 
-|2. ServiceContract |Erbt von der Klasse Ordner und enthält ein Client-Objekt sowie ein Datum-Attribut. Das Attribut frequence beschreibt, wie oft eine Lieferung erfolgen soll. 
-|3. PaymentMethod  |Enthält zwei Attribute – Card, damit der Kunde mit Karte zahlen kann, und Cash, damit der Kunde bar bezahlen kann. 
+|1. Client|Enthält Informationen über den Kunden, wie Name, Adresse und Telefonnummer. ein Client Objekt kann in Reservation oder Contract als Attribut vorliegt.
+|2. Contract|Erbt von der Klasse Ordner und enthält ein oder mehr Client-Objekt sowie ein Date-Range-Attribut. Das Attribut frequence beschreibt, wie oft eine Lieferung erfolgen soll. 
+|3. Reservation| erbt von der Klasse Ordner und enthält ein oder mehr Client-Objekt und Date-Time-Attribut, was die Datum von der Reservierung beschreibt.
 |4.Invoice |Jedes Invoice-Objekt hat eine einzigartige ID und eine PaymentMethod.
 |5.Product  |Jedes Product hat einen Namen, Einkaufspreis, Verkaufspreis und eine einzigartige ID. 
 |6.Flower | Erbt von Product und hat ein zusätzliches Attribut für die Farbe. 
@@ -661,7 +699,7 @@ Dieser Abschnitt stellt eine Vereinigung von Glossar und der Beschreibung von Kl
 |13.OrderStatus  |Eine Enumeration, die nur zwei Werte enthält: PAID und NOT_PAID. 
 |14.Order  |Eine Bestellung kann ein oder mehrere Produkte, eine ID, eine Variable vom Typ OrderStatus und eine Invoice enthalten. 
 |15.FlowerShop |Verfügt über ein Management für das Storage, bietet eine Übersicht über alle Bestellungen, hat eine unbegrenzte Anzahl an RegisteredUsers und ein CashRegister. 
-|16.RegisteredUser|Repräsentiert Benutzer, die bereits registriert sind.  
+|16. PaymentMethod  |Enthält zwei Attribute – Card, damit der Kunde mit Karte zahlen kann, und Cash, damit der Kunde bar bezahlen kann. 
 |===
 
 == Akzeptanztestfälle
@@ -675,58 +713,64 @@ Jeder Testfall soll mit einer ID versehen werde, um später zwischen den Dokumen
 [cols="1,1,2,2,2,3", options="header"]
 |===
 |Testfall-ID       |Anwendungsfall-ID |Szenario-Beschreibung               |Erwartetes Ergebnis                                                                                      |Voraussetzungen                                                                                           |Schritte
-[[ATF-UC001-01]]
-|**<<ATF-UC001-01>>**      
+[[ATF-UC001]]
+|**<<ATF-UC001>>**      
 |<<UC001>>             
-|Überprüfung der bestehenden Rechnungen 
-|Frau Floris kann die vorhandenen Rechnungen einsehen und durchsuchen.
+|Ansehen der bestehenden Rechnungen 
+|Frau Floris kann die vorhandenen Rechnungen einsehen und durchsuchen, filtern, sortieren.
 |Frau Floris ist im System angemeldet und hat Berechtigungen für die Rechnungsverwaltung.                 
 |1. Frau Floris wählt die Funktion "Rechnungen verwalten" im Finanzmodul. +
 2. Sie sucht nach einer bestimmten Rechnung. +
 3. Sie sieht die Details der ausgewählten Rechnung.
 
-[[ATF-UC001-02]]
-|**<<ATF-UC001-02>>**      
-|<<UC001>>             
-|Erstellen einer neuen Rechnung      
-|Eine neue Rechnung wird erfolgreich erstellt und gespeichert.
-|Frau Floris ist im System angemeldet und hat Berechtigungen für die Rechnungsverwaltung.                 
-|1. Frau Floris wählt die Funktion "Rechnungen verwalten" im Finanzmodul. +
-2. Sie erstellt eine neue Rechnung und gibt die erforderlichen Details ein. +
-3. Sie speichert die Rechnung.
-
-[[ATF-UC002-01]]
-|**<<ATF-UC002-01>>**
+[[ATF-UC002]]
+|**<<ATF-UC002>>**
 |<<UC002>>
 |Überprüfung der Tagesrechnung
-|Frau Floris kann die Tagesrechnung einsehen und als PDF exportieren.
+|Frau Floris kann die Tagesrechnung einsehen.
 |Frau Floris ist im System angemeldet und hat Berechtigungen für die Rechnungsverwaltung.
 |1. Frau Floris wählt die Funktion "Rechnungen verwalten" im Finanzmodul. +
-2. Sie wählt die Tagesrechnung aus. +
-3. Sie exportiert die Rechnung als PDF.
+2. Sie wählt die Tagesrechnung aus.
 
-[[ATF-UC003-01]]
-|**<<ATF-UC003-01>>**
+[[ATF-UC003]]
+|**<<ATF-UC003>>**
 |<<UC003>>
 |Überprüfung der Monatsrechnung
-|Frau Floris kann die Monatsrechnung einsehen und als PDF exportieren.
+|Frau Floris kann die Monatsrechnung einsehen.
 |Frau Floris ist im System angemeldet und hat Berechtigungen für die Rechnungsverwaltung.
 |1. Frau Floris wählt die Funktion "Rechnungen verwalten" im Finanzmodul. +
-2. Sie wählt die Monatsrechnung aus. +
-3. Sie exportiert die Rechnung als PDF.
+2. Sie wählt die Monatsrechnung aus.
 
-[[ATF-UC004-01]]
-|**<<ATF-UC004-01>>**
+[[ATF-UC004]]
+|**<<ATF-UC004>>**
 |<<UC004>>
 |Blumen als Verlust markieren
-|Blumen werden erfolgreich als Verlust im System markiert.
+|Blumen werden erfolgreich als Verlust im System markiert und aus dem Lager gelöscht.
 |Frau Floris ist im System angemeldet und hat Berechtigungen zur Verlustmarkierung.
 |1. Frau Floris wählt die Funktion "Lager" im Lagermodul. +
 2. Sie wählt Blumen aus dem Katalog aus und markiert diese als Verlust.
 
-[[ATF-UC101-01]]
-|**<<ATF-UC101-01>>**
-|<<UC101>>
+[[ATF-UC005]]
+|**<<ATF-UC005>>**
+|<<UC005>>
+|Kassenstand ansehen
+|Frau Floris kann den Kassenstand prüfen, die Bilanz und letzte Transaktionen ansehen.
+|Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen.
+|1. Frau Floris wählt die Funktion „Kasse“ im Finanzmodul aus. +
+2. Sie sieht die Bilanz und letzte Transaktionen.
+
+[[ATF-UC006]]
+|**<<ATF-UC006>>**
+|<<UC006>>
+|Rechnungen als PDF exportieren
+|Frau Floris kann alle Rechnungen im PDF-Format herunterladen.
+|Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen.
+|1. Frau Floris wählt die Funktion „Rechnungen“ im Finanzmodul aus. +
+2. Sie wählt eine Rechnung aus und kann sie durch den Button "Als PDF exportieren" herunterladen.
+
+[[ATF-UC301]]
+|**<<ATF-UC301>>**
+|<<UC301>>
 |Blumen als Rohstoff einkaufen
 |Blumen werden erfolgreich gekauft und im Lagerbestand aktualisiert.
 |Frau Floris ist im System angemeldet und hat Berechtigungen für den Einkauf.
