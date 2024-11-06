@@ -713,51 +713,39 @@ Jeder Testfall soll mit einer ID versehen werde, um später zwischen den Dokumen
 [cols="1,1,2,2,2,3", options="header"]
 |===
 |Testfall-ID       |Anwendungsfall-ID |Szenario-Beschreibung               |Erwartetes Ergebnis                                                                                      |Voraussetzungen                                                                                           |Schritte
-[[ATF-UC001-01]]
-|**<<ATF-UC001-01>>**      
+[[ATF-UC001]]
+|**<<ATF-UC001>>**      
 |<<UC001>>             
-|Überprüfung der bestehenden Rechnungen 
-|Frau Floris kann die vorhandenen Rechnungen einsehen und durchsuchen.
+|Ansehen der bestehenden Rechnungen 
+|Frau Floris kann die vorhandenen Rechnungen einsehen und durchsuchen, filtern, sortieren.
 |Frau Floris ist im System angemeldet und hat Berechtigungen für die Rechnungsverwaltung.                 
 |1. Frau Floris wählt die Funktion "Rechnungen verwalten" im Finanzmodul. +
 2. Sie sucht nach einer bestimmten Rechnung. +
 3. Sie sieht die Details der ausgewählten Rechnung.
 
-[[ATF-UC001-02]]
-|**<<ATF-UC001-02>>**      
-|<<UC001>>             
-|Erstellen einer neuen Rechnung      
-|Eine neue Rechnung wird erfolgreich erstellt und gespeichert.
-|Frau Floris ist im System angemeldet und hat Berechtigungen für die Rechnungsverwaltung.                 
-|1. Frau Floris wählt die Funktion "Rechnungen verwalten" im Finanzmodul. +
-2. Sie erstellt eine neue Rechnung und gibt die erforderlichen Details ein. +
-3. Sie speichert die Rechnung.
-
-[[ATF-UC002-01]]
-|**<<ATF-UC002-01>>**
+[[ATF-UC002]]
+|**<<ATF-UC002>>**
 |<<UC002>>
 |Überprüfung der Tagesrechnung
-|Frau Floris kann die Tagesrechnung einsehen und als PDF exportieren.
+|Frau Floris kann die Tagesrechnung einsehen.
 |Frau Floris ist im System angemeldet und hat Berechtigungen für die Rechnungsverwaltung.
 |1. Frau Floris wählt die Funktion "Rechnungen verwalten" im Finanzmodul. +
-2. Sie wählt die Tagesrechnung aus. +
-3. Sie exportiert die Rechnung als PDF.
+2. Sie wählt die Tagesrechnung aus.
 
-[[ATF-UC003-01]]
-|**<<ATF-UC003-01>>**
+[[ATF-UC003]]
+|**<<ATF-UC003>>**
 |<<UC003>>
 |Überprüfung der Monatsrechnung
-|Frau Floris kann die Monatsrechnung einsehen und als PDF exportieren.
+|Frau Floris kann die Monatsrechnung einsehen.
 |Frau Floris ist im System angemeldet und hat Berechtigungen für die Rechnungsverwaltung.
 |1. Frau Floris wählt die Funktion "Rechnungen verwalten" im Finanzmodul. +
-2. Sie wählt die Monatsrechnung aus. +
-3. Sie exportiert die Rechnung als PDF.
+2. Sie wählt die Monatsrechnung aus.
 
-[[ATF-UC004-01]]
-|**<<ATF-UC004-01>>**
+[[ATF-UC004]]
+|**<<ATF-UC004>>**
 |<<UC004>>
 |Blumen als Verlust markieren
-|Blumen werden erfolgreich als Verlust im System markiert.
+|Blumen werden erfolgreich als Verlust im System markiert und aus dem Lager gelöscht.
 |Frau Floris ist im System angemeldet und hat Berechtigungen zur Verlustmarkierung.
 |1. Frau Floris wählt die Funktion "Lager" im Lagermodul. +
 2. Sie wählt Blumen aus dem Katalog aus und markiert diese als Verlust.
