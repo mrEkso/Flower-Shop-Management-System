@@ -750,9 +750,27 @@ Jeder Testfall soll mit einer ID versehen werde, um später zwischen den Dokumen
 |1. Frau Floris wählt die Funktion "Lager" im Lagermodul. +
 2. Sie wählt Blumen aus dem Katalog aus und markiert diese als Verlust.
 
-[[ATF-UC101-01]]
-|**<<ATF-UC101-01>>**
-|<<UC101>>
+[[ATF-UC005]]
+|**<<ATF-UC005>>**
+|<<UC005>>
+|Kassenstand ansehen
+|Frau Floris kann den Kassenstand prüfen, die Bilanz und letzte Transaktionen ansehen.
+|Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen.
+|1. Frau Floris wählt die Funktion „Kasse“ im Finanzmodul aus. +
+2. Sie sieht die Bilanz und letzte Transaktionen.
+
+[[ATF-UC006]]
+|**<<ATF-UC006>>**
+|<<UC006>>
+|Rechnungen als PDF exportieren
+|Frau Floris kann alle Rechnungen im PDF-Format herunterladen.
+|Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen.
+|1. Frau Floris wählt die Funktion „Rechnungen“ im Finanzmodul aus. +
+2. Sie wählt eine Rechnung aus und kann sie durch den Button "Als PDF exportieren" herunterladen.
+
+[[ATF-UC301]]
+|**<<ATF-UC301>>**
+|<<UC301>>
 |Blumen als Rohstoff einkaufen
 |Blumen werden erfolgreich gekauft und im Lagerbestand aktualisiert.
 |Frau Floris ist im System angemeldet und hat Berechtigungen für den Einkauf.
