@@ -699,8 +699,7 @@ Dieser Abschnitt stellt eine Vereinigung von Glossar und der Beschreibung von Kl
 |13.OrderStatus  |Eine Enumeration, die nur zwei Werte enthält: PAID und NOT_PAID. 
 |14.Order  |Eine Bestellung kann ein oder mehrere Produkte, eine ID, eine Variable vom Typ OrderStatus und eine Invoice enthalten. 
 |15.FlowerShop |Verfügt über ein Management für das Storage, bietet eine Übersicht über alle Bestellungen, hat eine unbegrenzte Anzahl an RegisteredUsers und ein CashRegister. 
-|16.RegisteredUser|Repräsentiert Benutzer, die bereits registriert sind.
-|17. PaymentMethod  |Enthält zwei Attribute – Card, damit der Kunde mit Karte zahlen kann, und Cash, damit der Kunde bar bezahlen kann. 
+|16. PaymentMethod  |Enthält zwei Attribute – Card, damit der Kunde mit Karte zahlen kann, und Cash, damit der Kunde bar bezahlen kann. 
 |===
 
 == Akzeptanztestfälle
