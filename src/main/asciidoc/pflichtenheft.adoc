@@ -34,7 +34,7 @@ Das System für das Blumenladen von Frau Rosa Floris digitalisiert und vereinfac
 
 **1. Finanzverwaltung:** Das System hilft Frau Floris dabei, Rechnungen zu verwalten, Tagesrechnungen und Monatsrechnungen zu erstellen sowie den Verlust durch verwelkte Blumen zu kalkulieren.
 
-**2. Vertrieb und Verkauf:** Der Vertrieb umfasst den Einkauf von Blumen als Rohstoff, den Verkauf von Blumen oder Bouquets.
+**2. Vertrieb und Verkauf:** Der Vertrieb umfasst den Einkauf von Blumen als Rohstoff, den Verkauf - von Blumen oder Bouquets.
 
 **3. Lagermanagement:** Mithilfe des Systems kann Frau Floris stets den Überblick über den aktuellen Warenbestand behalten.
 
