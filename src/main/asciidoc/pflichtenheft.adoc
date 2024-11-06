@@ -235,7 +235,7 @@ Komplexere Anwendungsfälle sind mit einem UML-Sequenzdiagramm ergänzt worden.
 1. Frau Floris wählt die Funktion „Rechnungen“ im Finanzmodul aus.
 2. Sie wählt eine Rechnung aus und kann sie durch den Button "Als PDF exportieren" herunterladen.
 |Extensions                 |-
-|Funktionale Anforderungen    |
+|Funktionale Anforderungen    | <<F0006>>
 |===
 
 
