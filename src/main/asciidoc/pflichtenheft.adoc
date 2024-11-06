@@ -370,7 +370,7 @@ image::./models/images/sequence_diagram_302_c.svg[sequence diagram, 100%, 100%, 
 |Funktionale Anforderungen    | <<F0203>>
 |===
 
-[[Sequencediagramm_303]]
+[[Sequencediagramm_203]]
 image::./models/images/sequence_diagramm_303.svg[sequence diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für Anwendungsfall 203 für {project_name} in UML", align=center]
 
 
