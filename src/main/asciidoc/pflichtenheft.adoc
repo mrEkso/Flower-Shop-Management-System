@@ -684,9 +684,9 @@ Dieser Abschnitt stellt eine Vereinigung von Glossar und der Beschreibung von Kl
 [options="header"]
 |===
 |Klasse/Enumeration |Beschreibung 
-|1. Client|Enthält Informationen über den Kunden, wie Name, Adresse und Telefonnummer. 
-|2. Service|Erbt von der Klasse Ordner und enthält ein Client-Objekt sowie ein Date-Range-Attribut. Das Attribut frequence beschreibt, wie oft eine Lieferung erfolgen soll. 
-|3. PaymentMethod  |Enthält zwei Attribute – Card, damit der Kunde mit Karte zahlen kann, und Cash, damit der Kunde bar bezahlen kann. 
+|1. Client|Enthält Informationen über den Kunden, wie Name, Adresse und Telefonnummer. ein Client Objekt kann in Reservation oder Contract als Attribut vorliegt.
+|2. Contract|Erbt von der Klasse Ordner und enthält ein oder mehr Client-Objekt sowie ein Date-Range-Attribut. Das Attribut frequence beschreibt, wie oft eine Lieferung erfolgen soll. 
+|3. Reservation| erbt von der Klasse Ordner und enthält ein oder mehr Client-Objekt und Date-Time-Attribut, was die Datum von der Reservierung beschreibt.
 |4.Invoice |Jedes Invoice-Objekt hat eine einzigartige ID und eine PaymentMethod.
 |5.Product  |Jedes Product hat einen Namen, Einkaufspreis, Verkaufspreis und eine einzigartige ID. 
 |6.Flower | Erbt von Product und hat ein zusätzliches Attribut für die Farbe. 
@@ -700,7 +700,7 @@ Dieser Abschnitt stellt eine Vereinigung von Glossar und der Beschreibung von Kl
 |14.Order  |Eine Bestellung kann ein oder mehrere Produkte, eine ID, eine Variable vom Typ OrderStatus und eine Invoice enthalten. 
 |15.FlowerShop |Verfügt über ein Management für das Storage, bietet eine Übersicht über alle Bestellungen, hat eine unbegrenzte Anzahl an RegisteredUsers und ein CashRegister. 
 |16.RegisteredUser|Repräsentiert Benutzer, die bereits registriert sind.
-|17. Reservation| erbt con der Klasse Ordner und enthält ein Client-Objekt und Date-Time-Attribut, was die Datum von der Reservierung beschreibt.
+|17. PaymentMethod  |Enthält zwei Attribute – Card, damit der Kunde mit Karte zahlen kann, und Cash, damit der Kunde bar bezahlen kann. 
 |===
 
 == Akzeptanztestfälle
