@@ -22,6 +22,7 @@
 |0.6.3     | In Arbeit    | 03.11.2024     | Andrejs    | Cleanup
 |0.6.4     | In Arbeit    | 03.11.2024     | Andrejs    | Cleanup
 |1.0    | Fertig    | 03.11.2024     | Andrejs    | Release
+|2.0    | Fertig    | 04.11.2024     | Alle    | Überarbeitung und Konsolidierung
 |===
 
 
