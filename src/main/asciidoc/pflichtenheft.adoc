@@ -291,7 +291,7 @@ image::./models/images/sequence_diagram_101_g.svg[sequence diagram, 100%, 100%, 
 2. Sie wählt Blumen bzw. Sträuße aus Katalog aus und bestätigt den Kauf.
 3. Der Kunde bezahlt oder storniert. 
 |Extensions                 |-
-|Funktionale Anforderungen    |<<F0103>>, <<F0102>>
+|Funktionale Anforderungen    |<<F0103>>, <<F0301>>
 |===
 
 [cols="1h, 3"]
@@ -307,7 +307,7 @@ image::./models/images/sequence_diagram_101_g.svg[sequence diagram, 100%, 100%, 
 1. Frau Floris druckt den Button "Fertigstrauß erstellen". 
 2. Sie wählt Blumen aus Katalog aus und bestätigt den Vorgang.
 |Extensions                 |-
-|Funktionale Anforderungen    |<<F0104>>, <<F0102>>
+|Funktionale Anforderungen    |<<F0104>>, <<F0301>>
 |===
 
 
@@ -387,7 +387,7 @@ image::./models/images/sequence_diagram_UC303.svg[sequence diagram, 100%, 100%, 
 1. Ein Mitarbeiter wählt Kalendermodul aus.
 2. Der Mitarbeiter kann den Kalender navigeren, indem er die Daten ändern und Termine sehen kann. 
 |Extensions                 |-
-|Funktionale Anforderungen    | ??????????????????
+|Funktionale Anforderungen    | <<F0401>>
 |===
 
 [cols="1h, 3"]
@@ -403,7 +403,7 @@ image::./models/images/sequence_diagram_UC303.svg[sequence diagram, 100%, 100%, 
 1. Ein Mitarbeiter wählt Kalendermodul aus.
 2. Der Mitarbeiter kann im Kalender den korrekten Servicetermin sehen.   
 |Extensions                 |-
-|Funktionale Anforderungen    | ??????????????????
+|Funktionale Anforderungen    | <<F0402>> 
 |===
 
 [cols="1h, 3"]
@@ -421,7 +421,7 @@ image::./models/images/sequence_diagram_UC303.svg[sequence diagram, 100%, 100%, 
 3. Der Mitarbeiter trägt benötigte Daten zur Terminerstellung ein. 
 3. Der kann den neuen Termin im Kalender sehen. 
 |Extensions                 |-
-|Funktionale Anforderungen    | ??????????????????
+|Funktionale Anforderungen    | <<F0403>> 
 |===
 
 
