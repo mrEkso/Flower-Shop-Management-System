@@ -276,6 +276,21 @@ image::./models/images/sequence_diagram_101_g.svg[sequence diagram, 100%, 100%, 
 |Funktionale Anforderungen    |<<F0101>>, <<F0102>>
 |===
 
+[cols="1h, 3"]
+[[UC304]]
+|===
+|ID                         |**<<UC304>>**
+|Name                       | Verwelkten Blumen als Verlust berechnen
+|Beschreibungen             | Frau Floris soll Blumen von Großhändler einkaufen können. Dabei muss auch Lagerbestand mit neugekauften Blumen aktualisiert werden.
+|Akteure                    | Frau Floris, Großhändler
+|Auslöser                   | Frau Floris bemerkt, dass einige Blummen nicht verkaufswürdig sind.
+|Vorbedingungen            a| 	Frau Floris ist im System angemeldet und hat die entsprechenden Berechtigungen.
+|Wesentliche Schritte            a| 
+1. Frau Floris wählt die Funktion „Lager“ im Lagermodul aus.
+2. Sie wählt Blumen aus Katalog aus und markiert die als Verlust.
+|Extensions                 |-
+|Funktionale Anforderungen    |<<F0004>>, <<F0102>>
+|===
 
 [cols="1h, 3"]
 [[UC101]]
