@@ -1,7 +1,7 @@
 package flowershop.initializers;
 
 import flowershop.models.Client;
-import kickstart.Davyd_Lera.repositories.ClientRepository;
+import flowershop.repositories.ClientRepository;
 import org.salespointframework.core.DataInitializer;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ public class ClientInitializer implements DataInitializer {
 	@Override
 	public void initialize() {
 		if (clientRepository.count() > 0) {
-			return; // Клиенты уже инициализированы
+			return; // Return if clients were already initialized.
 		}
 
 		// Добавляем несколько клиентов
