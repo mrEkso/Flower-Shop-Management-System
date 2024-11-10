@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="#{services.title}">Services</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <!-- Header -->
+    <div class="text-center mb-4">
+        <h1 th:text="#{services.title}">Services</h1>
+    </div>
+
+    <!-- Button to create a new service -->
+    <div class="d-flex justify-content-start mb-4">
+        <button class="btn btn-primary" th:text="#{services.create_new}" th:href="@{/services/new}">
+            new service
+        </button>
+    </div>
+
+    <!-- Service Cards Container -->
+    <div class="row">
+        <!-- Iterate over services and display each one -->
+        <div class="col-md-4 mb-4" th:each="service : ${services}">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${service.companyName}">Company Name</h5>
+                    <p class="card-text" th:text="${service.time}">15:30-16:30</p>
+                    <p class="card-text" th:text="${service.day}">every Monday</p>
+                    <p class="card-text" th:text="#{services.phone} + ' ' + ${service.phone}">Phone: +49 xxx xxx xxx</p>
+                    <p class="card-text" th:text="#{services.frequency} + ' ' + ${service.frequency}">Frequency:
+                        One-Time</p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <button class="btn btn-secondary" th:text="#{services.cancel}">Cancel</button>
+                    <button class="btn btn-success" th:text="#{services.finish}">Finish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
