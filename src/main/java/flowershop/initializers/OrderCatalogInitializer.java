@@ -1,9 +1,10 @@
 package flowershop.initializers;
 
 import flowershop.catalogs.ProductCatalog;
+import flowershop.models.Client;
 import flowershop.models.order.AbstractOrder;
+import flowershop.models.order.EventOrder;
 import flowershop.models.payment.CardPayment;
-import flowershop.models.payment.CashPayment;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.core.DataInitializer;
 import org.salespointframework.order.Order;
@@ -15,17 +16,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Component
 @org.springframework.core.annotation.Order(20)
 public class OrderCatalogInitializer implements DataInitializer {
 
-	private final OrderManagement<AbstractOrder> orderManagement;
+	private final OrderManagement<Order> orderManagement;
 	private final ProductCatalog productCatalog;
 	private final UserAccountManagement userAccountManagement;
 
-	public OrderCatalogInitializer(OrderManagement<AbstractOrder> orderManagement, ProductCatalog productCatalog, UserAccountManagement userAccountManagement) {
+	public OrderCatalogInitializer(OrderManagement<Order> orderManagement, ProductCatalog productCatalog, UserAccountManagement userAccountManagement) {
 		Assert.notNull(orderManagement, "OrderManagement must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(userAccountManagement, "UserAccountManagement must not be null!");
@@ -44,11 +46,16 @@ public class OrderCatalogInitializer implements DataInitializer {
 		UserAccount frauFloris = userAccountManagement.findByUsername("frau_floris").orElseThrow(() ->
 			new IllegalArgumentException("Frau Floris account not found"));
 
+		// Create dummy client
+		Client dummyClient = new Client("Olaf Scholz", "Platz der Republik 1, 11011 Berlin", "+49 (0)30 227 0");
+
 		// Create a new order for Frau Floris
-		Order orderForFrauFloris = new Order(Objects.requireNonNull(frauFloris.getId()), new CashPayment());
+		EventOrder orderForFrauFloris = new EventOrder(LocalDate.now(), "Nöthnitzer Str. 46, 01187 Dresden", dummyClient);
+
 		Product product = productCatalog.findByName("Rose Bouquet")
 			.stream().findFirst().orElseThrow(() -> new IllegalArgumentException("Product not found"));
 		orderForFrauFloris.addOrderLine(product, Quantity.of(2));
+
 		orderManagement.save(orderForFrauFloris);
 
 		// Fetch UserAccount for Floris Nichte
