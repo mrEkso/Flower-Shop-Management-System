@@ -3,7 +3,6 @@ package flowershop.controllers;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 
 import org.javamoney.moneta.Money;
@@ -17,6 +16,7 @@ import flowershop.models.product.Flower;
 public class FlowerShopController {
     @GetMapping("/sell")
     public String sell(Model model){
+
         List<Flower> flowers = new ArrayList<>();
         flowers.addAll(List.of(
             new Flower("Rose", new Pricing(Money.of(2, "EUR") , Money.of(5, "EUR")), "Red"),
@@ -25,6 +25,7 @@ public class FlowerShopController {
             
         );
         model.addAttribute("flowers", flowers);
+
         return "sell";
     }
 }
