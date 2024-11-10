@@ -1,0 +1,60 @@
+= Protokoll Gruppe 07
+
+Treffen am 04.11.2024
+
+Ort:      APB +
+Beginn:   9:30 Uhr +
+Ende:     10:10 Uhr
+
+__Schriftführer: Vadym Zaitsev__
+
+*Nächstes Treffen:* +
+11.11.2024, 9:20 Uhr, APB
+
+__Teilnehmer:__
+//Tabellarisch oder Aufzählung, Kennzeichnung von Teilnehmern mit besonderer Rolle (z.B. Kunde)
+
+- Vincent Kruse, Tutor
+- Andrejs Borodajevs, Scrum-master
+- Vadym Zaitsev, Schriftfuehrer
+- Oleh Khmelyk
+- Bechir Sayadi
+- Davyd Okaianchenko
+- Paul-Valentin Vela
+- Valeriia Sarkisian
+
+== Bemerkungen
+Viertes Treffen. Letzte Besprechung von der Pflichtenheft. Erste Aufgaben in Rahmen der Umsetzung des Projektes. Die 2er Gruppen sind bestimmt: +
+- Andrejs und Oleh
+- Davyd und Valeriia
+- Bechir und Paul
+- Ich (und myself)
+
+== Retrospektive des letzten Sprints
+*Issue referenziert die Issue ID von GitHub*
+// Wie ist der Status der im letzten Sprint erstellten Issues/veteilten Aufgaben?
+
+// See http://asciidoctor.org/docs/user-manual/=tables
+[option="headers"]
+|===
+|Issue |Aufgabe |Status |Bemerkung
+|1     |Pflichtenheft |Fast fertig |Viele Aspekte davon sollten anders gemacht werden
+|===
+
+
+== Aktueller Stand
+Ziemlich viele Muss-Kriterien wurden uebergesehen. Diagrammen uebereinstimmten zu den Bedingungen nicht ganz und oft hatten verschiedliche Stile.
+
+== Planung des nächsten Sprints
+*Issue referenziert die Issue ID von GitHub*
+
+// See http://asciidoctor.org/docs/user-manual/=tables
+[option="headers"]
+|===
+|Titel |Verantwortlicher |Status
+|Finances     |Vadym                |Am Anfang
+|Calendar |Paul und Bechir |Am Anfang
+|Lager |Paul und Bechir |Am Anfang
+|Sales |Andrejs und Oleh |Am Anfang
+|Services |Valeriia und Davyd |Am Anfang
+|===
