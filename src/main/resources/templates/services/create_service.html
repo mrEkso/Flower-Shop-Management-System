@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create New Service</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://unpkg.com/htmx.org@1.7.0"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <!-- Header -->
+    <div class="text-center mb-4">
+        <h1>Create New Service</h1>
+    </div>
+
+    <!-- Step 1: Select Service Type -->
+    <div class="text-center">
+        <div class="d-flex justify-content-around">
+            <button type="button" class="btn btn-lg btn-outline-primary" hx-get="/services/form?type=Event" hx-target="#serviceForm">
+                <i class="fas fa-calendar-alt fa-3x"></i><br>
+                Event
+            </button>
+            <button type="button" class="btn btn-lg btn-outline-success" hx-get="/services/form?type=Flower" hx-target="#serviceForm">
+                <i class="fas fa-seedling fa-3x"></i><br>
+                Flower Service
+            </button>
+            <button type="button" class="btn btn-lg btn-outline-info" hx-get="/services/form?type=Reservation" hx-target="#serviceForm">
+                <i class="fas fa-bookmark fa-3x"></i><br>
+                Reservation
+            </button>
+        </div>
+    </div>
+
+    <!-- Step 2: Service Details Form -->
+    <div id="serviceForm" class="mt-4">
+        <!-- The form will load here using HTMX after selecting a service type -->
+    </div>
+</div>
+
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
