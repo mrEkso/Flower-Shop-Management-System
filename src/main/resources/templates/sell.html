@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sell page</title>
+  </head>
+  <body>
+    <h2>Sales</h2>
+    <p th:text="#{sell.description}"></p>
+    <table border="1">
+      <thead>
+        <tr>
+          <th th:text="#{sell.table.head.icon}"></th>
+          <th th:text="#{sell.table.head.name}"></th>
+          <th th:text="#{sell.table.head.type}"></th>
+          <th th:text="#{sell.table.head.quantity}"></th>
+          <th th:text="#{sell.table.head.price}"></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="flower : ${flowers}">
+          <td>icon1</td>
+          <td th:text="${flower.name}"></td>
+          <td th:text="${flower.color}"></td>
+          <td>1</td>
+          <td th:text="${flower.pricing.buyPrice}"></td>
+          <td>_</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

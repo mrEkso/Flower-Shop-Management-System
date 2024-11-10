@@ -38,33 +38,33 @@ public class OrderCatalogInitializer implements DataInitializer {
 
 	@Override
 	public void initialize() {
-		if (orderManagement.findAll(Pageable.unpaged()).iterator().hasNext()) {
-			return; // Skip initialization if orders already exist
-		}
+		// if (orderManagement.findAll(Pageable.unpaged()).iterator().hasNext()) {
+		// 	return; // Skip initialization if orders already exist
+		// }
 
-		// Fetch UserAccount for Frau Floris
-		UserAccount frauFloris = userAccountManagement.findByUsername("frau_floris").orElseThrow(() ->
-			new IllegalArgumentException("Frau Floris account not found"));
+		// // Fetch UserAccount for Frau Floris
+		// UserAccount frauFloris = userAccountManagement.findByUsername("frau_floris").orElseThrow(() ->
+		// 	new IllegalArgumentException("Frau Floris account not found"));
 
-		// Create dummy client
-		Client dummyClient = new Client("Olaf Scholz", "Platz der Republik 1, 11011 Berlin", "+49 (0)30 227 0");
+		// // Create dummy client
+		// Client dummyClient = new Client("Olaf Scholz", "Platz der Republik 1, 11011 Berlin", "+49 (0)30 227 0");
 
-		// Create a new order for Frau Floris
-		EventOrder orderForFrauFloris = new EventOrder(LocalDate.now(), "Nöthnitzer Str. 46, 01187 Dresden", dummyClient);
+		// // Create a new order for Frau Floris
+		// EventOrder orderForFrauFloris = new EventOrder(LocalDate.now(), "Nöthnitzer Str. 46, 01187 Dresden", dummyClient);
 
-		Product product = productCatalog.findByName("Rose Bouquet")
-			.stream().findFirst().orElseThrow(() -> new IllegalArgumentException("Product not found"));
-		orderForFrauFloris.addOrderLine(product, Quantity.of(2));
+		// Product product = productCatalog.findByName("Rose Bouquet")
+		// 	.stream().findFirst().orElseThrow(() -> new IllegalArgumentException("Product not found"));
+		// orderForFrauFloris.addOrderLine(product, Quantity.of(2));
 
-		orderManagement.save(orderForFrauFloris);
+		// orderManagement.save(orderForFrauFloris);
 
-		// Fetch UserAccount for Floris Nichte
-		UserAccount florisNichte = userAccountManagement.findByUsername("floris_nichte").orElseThrow(() ->
-			new IllegalArgumentException("Floris Nichte account not found"));
+		// // Fetch UserAccount for Floris Nichte
+		// UserAccount florisNichte = userAccountManagement.findByUsername("floris_nichte").orElseThrow(() ->
+		// 	new IllegalArgumentException("Floris Nichte account not found"));
 
-		// Create a new order for Floris Nichte
-		Order orderForFlorisNichte = new Order(Objects.requireNonNull(florisNichte.getId()), new CardPayment());
-		orderForFlorisNichte.addOrderLine(product, Quantity.of(1));
-		orderManagement.save(orderForFlorisNichte);
+		// // Create a new order for Floris Nichte
+		// Order orderForFlorisNichte = new Order(Objects.requireNonNull(florisNichte.getId()), new CardPayment());
+		// orderForFlorisNichte.addOrderLine(product, Quantity.of(1));
+		// orderManagement.save(orderForFlorisNichte);
 	}
 }
