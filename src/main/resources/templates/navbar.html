@@ -1,0 +1,23 @@
+<div>
+    <nav th:fragment="navbar" class="d-flex flex-column vh-100 bg-light">
+        <header class="navbar navbar-light">
+            <a class="navbar-brand mb-4 text-center" href="/" th:href="@{/}">MyApp</a>
+        </header>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/sales}">Sell</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/service}">Service</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/finance}">Finance</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/calendar}">Calendar</a>
+            </li>
+
+        </ul>
+    </nav>
+</div>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
