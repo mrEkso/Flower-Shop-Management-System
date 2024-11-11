@@ -9,6 +9,14 @@ import org.salespointframework.useraccount.UserAccount;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents an order for a reservation to pick up flower arrangements from the shop at a
+ * specified date and time. This type of order is designed for clients who prefer to collect
+ * their flowers in person, often used for custom or pre-arranged bouquets that are ready upon arrival.
+ *
+ * <p>Typical use cases include walk-in clients who schedule pickup orders or clients who prefer
+ * to inspect arrangements before taking them home.</p>
+ */
 @Entity
 public class ReservationOrder extends AbstractOrder {
 

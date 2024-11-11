@@ -10,6 +10,14 @@ import org.salespointframework.useraccount.UserAccount;
 
 import java.time.LocalDate;
 
+/**
+ * This type of order is intended for clients who receive regular flower deliveries over a
+ * specified period, such as weekly or monthly deliveries.
+ *
+ * <p>Example use cases include corporate clients who require regular flower arrangements
+ *  * for office spaces, or individual clients who want fresh flowers delivered to their homes
+ *  * periodically.</p>
+ */
 @Entity
 public class ContractOrder extends AbstractOrder {
 

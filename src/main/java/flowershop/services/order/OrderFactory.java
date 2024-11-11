@@ -11,15 +11,13 @@ import java.time.LocalDateTime;
 
 /**
  * This class is needed to create all orders of type {@link AbstractOrder}.
- * It hides the workaround of assigning a default {@link UserAccount} to every {@link org.salespointframework.order.Order} , without which the framework seems not to work.
+ * It encapsulates the workaround of assigning a default {@link UserAccount} to every {@link org.salespointframework.order.Order} , without which the framework seems not to work.
  */
 public class OrderFactory {
 
-	private final UserAccountManagement userAccountManagement;
 	private final UserAccount defaultUserAccount;
 
 	public OrderFactory(UserAccountManagement userAccountManagement) {
-		this.userAccountManagement = userAccountManagement;
 		this.defaultUserAccount = userAccountManagement.findByUsername("shop_worker")
 			.orElseThrow(() -> new IllegalArgumentException("Default UserAccount shop_worker not found"));
 	}

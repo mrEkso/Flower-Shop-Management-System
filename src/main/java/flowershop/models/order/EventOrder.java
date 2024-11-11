@@ -8,6 +8,13 @@ import org.salespointframework.useraccount.UserAccount;
 
 import java.time.LocalDate;
 
+/**
+ * Represents a one-time order for event-based flower arrangements. This type of order is designed
+ * for clients who require flower services for specific events, such as weddings, corporate events,
+ * or celebrations, where arrangements are to be delivered to a specific location on a designated date.
+ * <p>Example scenarios include weddings that require complex flower setups, or corporate events
+ * where flowers are delivered and arranged for the venue.</p>
+ */
 @Entity
 public class EventOrder extends AbstractOrder {
 
