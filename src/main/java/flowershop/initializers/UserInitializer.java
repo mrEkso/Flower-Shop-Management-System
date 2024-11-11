@@ -33,5 +33,11 @@ public class UserInitializer implements DataInitializer {
 		florisNichte.setFirstname("Floris");
 		florisNichte.setLastname("Nichte");
 		userAccountManagement.save(florisNichte);
+
+		// Creating Floris Nichte
+		UserAccount dummyShopWorker = userAccountManagement.create("shop_worker", Password.UnencryptedPassword.of("password"), Role.of("ROLE_USER"));
+		dummyShopWorker.setFirstname("Shop");
+		dummyShopWorker.setLastname("Worker");
+		userAccountManagement.save(dummyShopWorker);
 	}
 }

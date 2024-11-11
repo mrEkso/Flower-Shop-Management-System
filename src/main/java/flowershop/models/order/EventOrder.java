@@ -4,6 +4,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import flowershop.models.Client;
+import org.salespointframework.useraccount.UserAccount;
 
 import java.time.LocalDate;
 
@@ -16,13 +17,19 @@ public class EventOrder extends AbstractOrder {
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Client client;
 
-	public EventOrder(LocalDate eventDate, String deliveryAddress, Client client) {
-		super(client);
+	public EventOrder(UserAccount userAccount, LocalDate eventDate, String deliveryAddress, Client client) {
+		super(userAccount);
+		this.client = client;
 		this.eventDate = eventDate;
 		this.deliveryAddress = deliveryAddress;
 	}
 
-	public EventOrder() {
+	public EventOrder(UserAccount userAccount) {
+		super(userAccount);
+	}
+
+	protected EventOrder() {
+
 	}
 
 	public LocalDate getEventDate() {
@@ -39,5 +46,9 @@ public class EventOrder extends AbstractOrder {
 
 	public void setDeliveryAddress(String deliveryAddress) {
 		this.deliveryAddress = deliveryAddress;
+	}
+
+	public Client getClient() {
+		return client;
 	}
 }

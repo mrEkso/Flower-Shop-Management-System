@@ -1,9 +1,12 @@
 package flowershop.models.order;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import flowershop.models.Client;
+import jakarta.persistence.ManyToOne;
 import org.jetbrains.annotations.NotNull;
 import org.salespointframework.order.OrderStatus;
+import org.salespointframework.useraccount.UserAccount;
 
 import java.time.LocalDate;
 
@@ -15,16 +18,24 @@ public class ContractOrder extends AbstractOrder {
 	private LocalDate endDate;
 	private OrderStatus orderStatus;
 
-	public ContractOrder(String frequency, LocalDate startDate, LocalDate endDate, OrderStatus orderStatus, Client client) {
-		super(client);
+	@ManyToOne(cascade = CascadeType.ALL)
+	private Client client;
+
+	public ContractOrder(UserAccount userAccount, String frequency, LocalDate startDate, LocalDate endDate, OrderStatus orderStatus, Client client) {
+		super(userAccount);
 		this.frequency = frequency;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.orderStatus = orderStatus;
+		this.client = client;
 	}
 
-	public ContractOrder() {
-		super();
+	public ContractOrder(UserAccount user) {
+		super(user);
+	}
+
+	protected ContractOrder() {
+
 	}
 
 	public String getFrequency() {
@@ -59,5 +70,9 @@ public class ContractOrder extends AbstractOrder {
 
 	public void setOrderStatus(OrderStatus orderStatus) {
 		this.orderStatus = orderStatus;
+	}
+
+	public Client getClient() {
+		return client;
 	}
 }
