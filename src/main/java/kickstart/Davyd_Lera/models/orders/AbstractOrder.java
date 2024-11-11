@@ -1,17 +1,24 @@
-package kickstart.Davyd_Lera.models.order;
+package kickstart.Davyd_Lera.models.orders;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.ManyToOne;
 import kickstart.Davyd_Lera.models.Client;
 import org.salespointframework.order.Order;
+import org.salespointframework.useraccount.UserAccount;
+
+import java.util.Objects;
 
 public abstract class AbstractOrder extends Order {
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Client client;
 
-	@SuppressWarnings({"unused", "deprecation"})
-	public AbstractOrder(Client client) {
-		super();
+	/*
+	The order is always built on the worker who took the order and
+	the client to whom the order is given. Depending on the type of order,
+	various other fields will be added.
+	 */
+	public AbstractOrder(UserAccount orderProcessingEmployee, Client client) {
+		super(Objects.requireNonNull(orderProcessingEmployee.getId()));
 		this.client = client;
 	}
 

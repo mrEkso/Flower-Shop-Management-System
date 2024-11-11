@@ -1,4 +1,4 @@
-package kickstart.Davyd_Lera.catalogs;
+package kickstart.Davyd_Lera.repositories;
 
 import org.salespointframework.catalog.Catalog;
 import org.salespointframework.catalog.Product;
@@ -6,4 +6,5 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface ProductCatalog extends Catalog<Product> {
+	// Here you can define additional user-defined queries if necessary.
 }

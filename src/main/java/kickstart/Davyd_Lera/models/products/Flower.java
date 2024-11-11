@@ -1,4 +1,4 @@
-package kickstart.Davyd_Lera.models.product;
+package kickstart.Davyd_Lera.models.products;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;

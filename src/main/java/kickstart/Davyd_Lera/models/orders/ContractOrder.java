@@ -1,9 +1,8 @@
-package kickstart.Davyd_Lera.models.order;
+package kickstart.Davyd_Lera.models.orders;
 
 import jakarta.persistence.Entity;
 import kickstart.Davyd_Lera.models.Client;
-import org.jetbrains.annotations.NotNull;
-import org.salespointframework.order.OrderStatus;
+import org.salespointframework.useraccount.UserAccount;
 
 import java.time.LocalDate;
 
@@ -13,14 +12,12 @@ public class ContractOrder extends AbstractOrder {
 	private String frequency;
 	private LocalDate startDate;
 	private LocalDate endDate;
-	private OrderStatus orderStatus;
 
-	public ContractOrder(String frequency, LocalDate startDate, LocalDate endDate, OrderStatus orderStatus, Client client) {
-		super(client);
+	public ContractOrder(String frequency, LocalDate startDate, LocalDate endDate, UserAccount orderProcessingEmployee, Client client) {
+		super(orderProcessingEmployee, client);
 		this.frequency = frequency;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.orderStatus = orderStatus;
 	}
 
 	public ContractOrder() {
@@ -49,15 +46,5 @@ public class ContractOrder extends AbstractOrder {
 
 	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
-	}
-
-	@NotNull
-	@Override
-	public OrderStatus getOrderStatus() {
-		return orderStatus;
-	}
-
-	public void setOrderStatus(OrderStatus orderStatus) {
-		this.orderStatus = orderStatus;
 	}
 }

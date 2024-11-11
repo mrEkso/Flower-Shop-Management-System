@@ -1,4 +1,4 @@
-package kickstart.Davyd_Lera.models.payment;
+package kickstart.Davyd_Lera.models.payments;
 
 import org.salespointframework.payment.PaymentMethod;
 

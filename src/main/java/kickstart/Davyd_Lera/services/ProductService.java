@@ -1,15 +1,12 @@
 package kickstart.Davyd_Lera.services;
 
-import kickstart.Davyd_Lera.catalogs.ProductCatalog;
-import kickstart.Davyd_Lera.models.product.Bouquet;
-import kickstart.Davyd_Lera.models.product.Flower;
-import kickstart.Davyd_Lera.models.embedded.Pricing;
-import org.javamoney.moneta.Money;
+import kickstart.Davyd_Lera.repositories.ProductCatalog;
+import kickstart.Davyd_Lera.models.products.Bouquet;
+import kickstart.Davyd_Lera.models.products.Flower;
 import org.salespointframework.catalog.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,29 +19,22 @@ public class ProductService {
 		this.productCatalog = productCatalog;
 	}
 
-	// Method to add a new flower
-	public Flower addFlower(String name, Pricing pricing, String color) {
-		Flower flower = new Flower(name, pricing, color);
+	public Flower addFlower(Flower flower) {
 		return productCatalog.save(flower);
 	}
 
-	// Method to add a new bouquet
-	public Bouquet addBouquet(String name, Pricing pricing, List<Flower> flowers, Money additionalPrice) {
-		Bouquet bouquet = new Bouquet(name, pricing, flowers, additionalPrice);
+	public Bouquet addBouquet(Bouquet bouquet) {
 		return productCatalog.save(bouquet);
 	}
 
-	// Method to find all products
 	public Iterable<Product> getAllProducts() {
 		return productCatalog.findAll();
 	}
 
-	// Method to find a product by ID
 	public Optional<Product> getProductById(Long id) {
 		return productCatalog.findById(getProductId(id));
 	}
 
-	// Method to delete a product by ID
 	public void deleteProductById(Long id) {
 		productCatalog.findById(getProductId(id)).ifPresent(productCatalog::delete);
 	}

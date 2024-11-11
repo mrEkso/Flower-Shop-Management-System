@@ -1,20 +1,24 @@
 package kickstart.Davyd_Lera.controllers;
 
-import kickstart.Davyd_Lera.models.order.ContractOrder;
-import kickstart.Davyd_Lera.models.order.EventOrder;
-import kickstart.Davyd_Lera.models.order.ReservationOrder;
-import kickstart.Davyd_Lera.services.order.AbstractOrderService;
+import kickstart.Davyd_Lera.models.orders.ContractOrder;
+import kickstart.Davyd_Lera.models.orders.EventOrder;
+import kickstart.Davyd_Lera.models.orders.ReservationOrder;
 import kickstart.Davyd_Lera.services.order.ContractOrderService;
 import kickstart.Davyd_Lera.services.order.EventOrderService;
 import kickstart.Davyd_Lera.services.order.ReservationOrderService;
 import org.salespointframework.order.Order;
+import org.salespointframework.order.OrderManagement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
-@RestController
+@Controller
 @RequestMapping("/orders")
 public class OrderController {
 
@@ -28,6 +32,24 @@ public class OrderController {
 		this.eventOrderService = eventOrderService;
 		this.reservationOrderService = reservationOrderService;
 		this.contractOrderService = contractOrderService;
+	}
+
+	@GetMapping("")
+	public String getAllServices(Model model) {
+		// Fetching all orders by type and adding to the model
+		List<ContractOrder> contracts = contractOrderService.findAll();
+		List<EventOrder> events = eventOrderService.findAll();
+		List<ReservationOrder> reservations = reservationOrderService.findAll();
+
+		model.addAttribute("contracts", contracts);
+		model.addAttribute("events", events);
+		model.addAttribute("reservations", reservations);
+
+		System.out.println("Contracts: " + contracts);
+		System.out.println("Events: " + events);
+		System.out.println("Reservations: " + reservations);
+
+		return "services/services";
 	}
 
 	/* GET BY ID ENDPOINT */
@@ -59,11 +81,12 @@ public class OrderController {
 
 	/* DELETE ORDER ENDPOINT */
 	@DeleteMapping("/{type}/{id}")
-	public ResponseEntity<Void> deleteOrder(@PathVariable String type, @PathVariable Long id) {
+	public ResponseEntity<?> deleteOrder(@PathVariable String type, @PathVariable Long id) {
 		return switch (type) {
-			case "event" -> handleDeleteOrder(eventOrderService.getById(id), eventOrderService);
-			case "reservation" -> handleDeleteOrder(reservationOrderService.getById(id), reservationOrderService);
-			case "contract" -> handleDeleteOrder(contractOrderService.getById(id), contractOrderService);
+			case "event" -> handleDeleteOrder(eventOrderService.getById(id), eventOrderService::delete);
+			case "reservation" ->
+				handleDeleteOrder(reservationOrderService.getById(id), reservationOrderService::delete);
+			case "contract" -> handleDeleteOrder(contractOrderService.getById(id), contractOrderService::delete);
 			default -> new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		};
 	}
@@ -74,10 +97,10 @@ public class OrderController {
 			.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
-	private <T extends Order> ResponseEntity<Void> handleDeleteOrder(Optional<T> order, AbstractOrderService<T> service) {
+	private <T extends Order> ResponseEntity<?> handleDeleteOrder(Optional<T> order, Consumer<T> deleteFunction) {
 		return order.map(value -> {
-			service.delete(value);
-			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+			deleteFunction.accept(value);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 }

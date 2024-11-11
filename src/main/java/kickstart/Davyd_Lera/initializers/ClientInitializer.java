@@ -1,14 +1,14 @@
 package kickstart.Davyd_Lera.initializers;
 
-import kickstart.Davyd_Lera.models.Client;
 import kickstart.Davyd_Lera.repositories.ClientRepository;
+import kickstart.Davyd_Lera.models.Client;
 import org.salespointframework.core.DataInitializer;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 @Component
-@Order(5) // Устанавливаем порядок выполнения, если нужно, чтобы клиенты были добавлены раньше заказов
+@Order(5)
 public class ClientInitializer implements DataInitializer {
 
 	private final ClientRepository clientRepository;
@@ -20,11 +20,8 @@ public class ClientInitializer implements DataInitializer {
 
 	@Override
 	public void initialize() {
-		if (clientRepository.count() > 0) {
-			return; // Клиенты уже инициализированы
-		}
+		if (clientRepository.count() > 0) return;
 
-		// Добавляем несколько клиентов
 		clientRepository.save(new Client("John Doe", "123 Main St", "+123456789"));
 		clientRepository.save(new Client("Jane Smith", "456 Elm St", "+987654321"));
 		clientRepository.save(new Client("Alice Johnson", "789 Oak St", "+555123456"));

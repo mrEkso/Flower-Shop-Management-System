@@ -1,9 +1,8 @@
-package kickstart.Davyd_Lera.models.order;
+package kickstart.Davyd_Lera.models.orders;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
 import kickstart.Davyd_Lera.models.Client;
+import org.salespointframework.useraccount.UserAccount;
 
 import java.time.LocalDate;
 
@@ -13,11 +12,8 @@ public class EventOrder extends AbstractOrder {
 	private LocalDate eventDate;
 	private String deliveryAddress;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	private Client client;
-
-	public EventOrder(LocalDate eventDate, String deliveryAddress, Client client) {
-		super(client);
+	public EventOrder(LocalDate eventDate, String deliveryAddress, UserAccount orderProcessingEmployee, Client client) {
+		super(orderProcessingEmployee, client);
 		this.eventDate = eventDate;
 		this.deliveryAddress = deliveryAddress;
 	}

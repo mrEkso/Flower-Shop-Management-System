@@ -1,42 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{services.title}">Services</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 <div class="container mt-5">
-    <!-- Header -->
     <div class="text-center mb-4">
         <h1 th:text="#{services.title}">Services</h1>
     </div>
 
-    <!-- Button to create a new service -->
-    <div class="d-flex justify-content-start mb-4">
-        <button class="btn btn-primary" th:text="#{services.create_new}" th:href="@{/services/new}">
-            new service
-        </button>
-    </div>
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs" id="serviceTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="contracts-tab" data-toggle="tab" href="#contracts" role="tab"
+               aria-controls="contracts" aria-selected="true" th:text="#{services.contracts}">Contracts</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="events-tab" data-toggle="tab" href="#events" role="tab"
+               aria-controls="events" aria-selected="false" th:text="#{services.events}">Events</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="reservations-tab" data-toggle="tab" href="#reservations" role="tab"
+               aria-controls="reservations" aria-selected="false" th:text="#{services.reservations}">Reservations</a>
+        </li>
+    </ul>
 
-    <!-- Service Cards Container -->
-    <div class="row">
-        <!-- Iterate over services and display each one -->
-        <div class="col-md-4 mb-4" th:each="service : ${services}">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${service.companyName}">Company Name</h5>
-                    <p class="card-text" th:text="${service.time}">15:30-16:30</p>
-                    <p class="card-text" th:text="${service.day}">every Monday</p>
-                    <p class="card-text" th:text="#{services.phone} + ' ' + ${service.phone}">Phone: +49 xxx xxx xxx</p>
-                    <p class="card-text" th:text="#{services.frequency} + ' ' + ${service.frequency}">Frequency:
-                        One-Time</p>
+    <!-- Tab Content -->
+    <div class="tab-content" id="serviceTabsContent">
+        <!-- Contracts Tab -->
+        <div class="tab-pane fade show active" id="contracts" role="tabpanel" aria-labelledby="contracts-tab">
+            <div class="row mt-3">
+                <div class="col-md-4 mb-4" th:each="contract : ${contracts}">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${contract.client.name}">Client Name</h5>
+                            <p class="card-text">Frequency: <span th:text="${contract.frequency}">Weekly</span></p>
+                            <p class="card-text">Start Date: <span th:text="${contract.startDate}">01/01/2023</span></p>
+                            <p class="card-text">End Date: <span th:text="${contract.endDate}">31/12/2023</span></p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between">
+                            <a th:href="@{/services/contracts/edit/{id}(id=${contract.id})}" class="btn btn-secondary">Edit</a>
+                            <a th:href="@{/services/contracts/delete/{id}(id=${contract.id})}" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-footer d-flex justify-content-between">
-                    <button class="btn btn-secondary" th:text="#{services.cancel}">Cancel</button>
-                    <button class="btn btn-success" th:text="#{services.finish}">Finish</button>
+            </div>
+        </div>
+
+        <!-- Events Tab -->
+        <div class="tab-pane fade" id="events" role="tabpanel" aria-labelledby="events-tab">
+            <div class="row mt-3">
+                <div class="col-md-4 mb-4" th:each="event : ${events}">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${event.client.name}">Client Name</h5>
+                            <p class="card-text">Event Date: <span th:text="${event.eventDate}">01/06/2023</span></p>
+                            <p class="card-text">Delivery Address: <span th:text="${event.deliveryAddress}">123 Main St</span></p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between">
+                            <a th:href="@{/services/events/edit/{id}(id=${event.id})}" class="btn btn-secondary">Edit</a>
+                            <a th:href="@{/services/events/delete/{id}(id=${event.id})}" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservations Tab -->
+        <div class="tab-pane fade" id="reservations" role="tabpanel" aria-labelledby="reservations-tab">
+            <div class="row mt-3">
+                <div class="col-md-4 mb-4" th:each="reservation : ${reservations}">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${reservation.client.name}">Client Name</h5>
+                            <p class="card-text">Reservation Time: <span th:text="${reservation.reservationTime}">15:30</span></p>
+                            <p class="card-text">Status: <span th:text="${reservation.reservationStatus}">In Process</span></p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between">
+                            <a th:href="@{/services/reservations/edit/{id}(id=${reservation.id})}" class="btn btn-secondary">Edit</a>
+                            <a th:href="@{/services/reservations/delete/{id}(id=${reservation.id})}" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
