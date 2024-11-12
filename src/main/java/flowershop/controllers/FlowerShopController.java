@@ -5,6 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.javamoney.moneta.Money;
 import org.springframework.stereotype.Controller;
@@ -25,10 +28,18 @@ public class FlowerShopController {
 
     @GetMapping("/sell")
     public String sell(Model model){
-        model.addAttribute("flowers", productCatalog.findAll().filter(product -> product instanceof Flower).toList());
+        List<Flower> flowers = productCatalog.findAll()
+            .filter(product -> product instanceof Flower)
+            .map(product -> (Flower) product).toList();
+
+        Set<String> colors = flowers.stream()
+            .map(Flower::getColor)
+            .collect(Collectors.toSet());
+
+        model.addAttribute("flowers", flowers);
         
         List<String> typeList = new ArrayList<>();
-        typeList.addAll(List.of("Red", "Yellow", "White"));
+        typeList.addAll(colors);
         model.addAttribute("typeList", typeList);
 
         String selectedItem = "";
