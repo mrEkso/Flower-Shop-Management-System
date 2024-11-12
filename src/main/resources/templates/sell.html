@@ -9,7 +9,7 @@
     <title>Sell page</title>
   </head>
   <body>
-    <div th:replace="navbar"></div>
+    <div th:replace="~{navbar}"></div>
     <div class = "content">
       <h2>Sales</h2>
       <p th:text="#{sell.description}"></p>
@@ -49,6 +49,6 @@
         </tbody>
       </table>
     </div>
-    <div th:replace="basket"></div>
+    <div th:replace="~{basket}"></div>
   </body>
 </html>

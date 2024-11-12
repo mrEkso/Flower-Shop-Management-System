@@ -21,20 +21,20 @@ import flowershop.models.product.Flower;
 public class FlowerShopController {
 
     private final ProductCatalog productCatalog;
-
     FlowerShopController(ProductCatalog productCatalog){
         this.productCatalog = productCatalog;
     }
 
     @GetMapping("/sell")
     public String sell(Model model){
+
         List<Flower> flowers = productCatalog.findAll()
-            .filter(product -> product instanceof Flower)
-            .map(product -> (Flower) product).toList();
+        .filter(product -> product instanceof Flower)
+        .map(product -> (Flower) product).toList();
 
         Set<String> colors = flowers.stream()
-            .map(Flower::getColor)
-            .collect(Collectors.toSet());
+        .map(Flower::getColor)
+        .collect(Collectors.toSet());
 
         model.addAttribute("flowers", flowers);
         
@@ -46,5 +46,28 @@ public class FlowerShopController {
         model.addAttribute("selectedItem", selectedItem);
 
         return "sell";
+    }
+
+    @GetMapping("/buy")
+    public String buy(Model model){
+        
+        List<Flower> flowers = productCatalog.findAll()
+        .filter(product -> product instanceof Flower)
+        .map(product -> (Flower) product).toList();
+
+        Set<String> colors = flowers.stream()
+        .map(Flower::getColor)
+        .collect(Collectors.toSet());
+
+        model.addAttribute("flowers", this.flowers);
+        
+        List<String> typeList = new ArrayList<>();
+        typeList.addAll(colors);
+        model.addAttribute("typeList", typeList);
+
+        String selectedItem = "";
+        model.addAttribute("selectedItem", selectedItem);
+
+        return "buy";
     }
 }
