@@ -1,0 +1,27 @@
+<div>
+  <nav th:fragment="navbar" class="d-flex flex-column vh-100 bg-light">
+    <header class="navbar navbar-light"></header>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link active" th:href="@{/sell}"
+          ><i class="fa fa-shopping-cart"></i> Sell</a
+        >
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" th:href="@{/service}"
+          ><i class="fa fa-cog"></i> Services</a
+        >
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" th:href="@{/finance}"
+          ><i class="fa fa-dollar-sign"></i> Finances</a
+        >
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" th:href="@{/calendar}"
+          ><i class="fa fa-calendar-alt"></i> Calendar</a
+        >
+      </li>
+    </ul>
+  </nav>
+</div>

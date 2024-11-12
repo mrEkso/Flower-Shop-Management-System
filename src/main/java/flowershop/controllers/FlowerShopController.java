@@ -25,6 +25,13 @@ public class FlowerShopController {
             
         );
         model.addAttribute("flowers", flowers);
+        
+        List<String> typeList = new ArrayList<>();
+        typeList.addAll(List.of("Red", "White", "Purple"));
+        model.addAttribute("typeList", typeList);
+
+        String selectedItem = "";
+        model.addAttribute("selectedItem", selectedItem);
 
         return "sell";
     }

@@ -4,40 +4,51 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link th:href="@{/resources/css/sell.css}" rel="stylesheet" />
+    <link th:href="@{/resources/css/navbar.css}" rel="stylesheet" />
+    <link th:href="@{/resources/css/basket.css}" rel="stylesheet" />
     <title>Sell page</title>
   </head>
   <body>
-    <h2>Sales</h2>
     <div th:replace="navbar"></div>
-    <p th:text="#{sell.description}"></p>
-    <div>
-      <input type="text">
-      <input type="text">
-      <img th:src="@{/resources/img/filter.png}" />
-    </div>
-    <table id="flower-table">
-      <thead>
-        <div class="table-header">
-          <tr></tr>
-            <th th:text="#{sell.table.head.icon}"></th>
-            <th th:text="#{sell.table.head.name}"></th>
-            <th th:text="#{sell.table.head.color}"></th>
-            <th th:text="#{sell.table.head.quantity}"></th>
-            <th th:text="#{sell.table.head.price}"></th>
-            <th></th>
+    <div class = "content">
+      <h2>Sales</h2>
+      <p th:text="#{sell.description}"></p>
+      <div class = "inputs-div">
+        <input id ="search-input" type="text" th:placeholder = "#{sell.search}">
+        <div id="filter-div">
+          <select id="filter-dd" th:field="${selectedItem}">
+            <option th:each="type : ${typeList}" 
+                    th:value="${type}"
+                    th:text="${type}">
+            </option>
+          </select>
+        <img th:src="@{/resources/img/filter.png}" /></div>
+      </div>
+      <table id="flower-table">
+        <thead>
+          <div class="table-header">
+            <tr></tr>
+              <th th:text="#{sell.table.head.icon}"></th>
+              <th th:text="#{sell.table.head.name}"></th>
+              <th th:text="#{sell.table.head.color}"></th>
+              <th th:text="#{sell.table.head.quantity}"></th>
+              <th th:text="#{sell.table.head.price}"></th>
+              <th></th>
+            </tr>
+          </div>
+        </thead>
+        <tbody>
+          <tr th:each="flower : ${flowers}">
+            <td><img th:src="@{/resources/img/rose.png}" /></td>
+            <td><div class="text-cell name-cell" th:text="${flower.name}"></div></td>
+            <td><div class="text-cell type-cell" th:text="${flower.color}"></div></td>
+            <td><div class="text-cell quantity-cell">1</div></td>
+            <td><div class="text-cell price-cell" th:text="${flower.pricing.sellPrice}"></div></td>
+            <td ><img th:src="@{/resources/img/shopping-basket.png}" /></td>
           </tr>
-        </div>
-      </thead>
-      <tbody>
-        <tr th:each="flower : ${flowers}">
-          <td><img th:src="@{/resources/img/rose.png}" /></td>
-          <td><div class="text-cell name-cell" th:text="${flower.name}"></div></td>
-          <td><div class="text-cell type-cell" th:text="${flower.color}"></div></td>
-          <td><div class="text-cell quantity-cell">1</div></td>
-          <td><div class="text-cell price-cell" th:text="${flower.pricing.sellPrice}"></div></td>
-          <td ><img th:src="@{/resources/img/shopping-basket.png}" /></td>
-        </tr>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
+    <div th:replace="basket"></div>
   </body>
 </html>

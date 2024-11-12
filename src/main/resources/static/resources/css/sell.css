@@ -1,3 +1,8 @@
+.content {
+  margin-left: 160px;
+  margin-right: 240px;
+}
+
 #flower-table {
   width: 100%;
   border-collapse: collapse;
@@ -68,10 +73,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* .name-cell {
-  background-color: #f5f5f5;
-  color: #333;
-} */
 
 .type-cell {
   background-color: #f0f4c3;
@@ -86,4 +87,26 @@
 .price-cell {
   background-color: #e3f2fd;
   color: #2196f3;
+}
+
+.inputs-div {
+  width: 610px;
+  justify-content: space-around;
+  display: flex;
+  align-items: center;
+}
+
+#filter-div {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+#filter-dd {
+  margin-right: 8px;
+}
+
+#filter-div img {
+  width: 20px;
+  height: 20px;
 }
