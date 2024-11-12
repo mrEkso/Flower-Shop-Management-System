@@ -12,6 +12,7 @@ public abstract class AbstractOrder extends Order {
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Client client;
 
+	private String notes;
 	/*
 	The order is always built on the worker who took the order and
 	the client to whom the order is given. Depending on the type of order,
@@ -21,6 +22,7 @@ public abstract class AbstractOrder extends Order {
 		super(Objects.requireNonNull(orderProcessingEmployee.getId()));
 		this.client = client;
 	}
+
 
 	@SuppressWarnings({"unused", "deprecation"})
 	public AbstractOrder() {
@@ -33,5 +35,13 @@ public abstract class AbstractOrder extends Order {
 
 	public void setClient(Client client) {
 		this.client = client;
+	}
+
+	public String getNotes() {
+		return notes;
+	}
+
+	public void setNotes(String notes) {
+		this.notes = notes;
 	}
 }

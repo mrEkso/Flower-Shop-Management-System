@@ -12,12 +12,14 @@ public class ContractOrder extends AbstractOrder {
 	private String frequency;
 	private LocalDate startDate;
 	private LocalDate endDate;
+	private String address;
 
-	public ContractOrder(String frequency, LocalDate startDate, LocalDate endDate, UserAccount orderProcessingEmployee, Client client) {
+	public ContractOrder(String frequency, LocalDate startDate, LocalDate endDate, String address, UserAccount orderProcessingEmployee, Client client) {
 		super(orderProcessingEmployee, client);
 		this.frequency = frequency;
 		this.startDate = startDate;
 		this.endDate = endDate;
+		this.address = address;
 	}
 
 	public ContractOrder() {
@@ -46,5 +48,13 @@ public class ContractOrder extends AbstractOrder {
 
 	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 }
