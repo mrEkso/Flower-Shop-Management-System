@@ -3,18 +3,14 @@ package flowershop.controllers;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import org.javamoney.moneta.Money;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import flowershop.catalogs.ProductCatalog;
-import flowershop.models.embedded.Pricing;
 import flowershop.models.product.Flower;
 
 @Controller
@@ -59,7 +55,7 @@ public class FlowerShopController {
         .map(Flower::getColor)
         .collect(Collectors.toSet());
 
-        model.addAttribute("flowers", this.flowers);
+        model.addAttribute("flowers", flowers);
         
         List<String> typeList = new ArrayList<>();
         typeList.addAll(colors);
