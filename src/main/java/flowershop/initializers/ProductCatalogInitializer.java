@@ -36,11 +36,15 @@ public class ProductCatalogInitializer implements DataInitializer {
 		Flower rose = new Flower("Rose", new Pricing(Money.of(10.0, EURO), Money.of(20.0, EURO)), "Red");
 		Flower sunflower = new Flower("Sunflower", new Pricing(Money.of(2.5, EURO), Money.of(5.0, EURO)), "Yellow");
 		Flower lily = new Flower("Lily", new Pricing(Money.of(9.0, EURO), Money.of(18.0, EURO)), "White");
+		Flower lily2 = new Flower("Lily2", new Pricing(Money.of(10.0, EURO), Money.of(19.0, EURO)), "White");
+		Flower lily3 = new Flower("Lily3", new Pricing(Money.of(11.0, EURO), Money.of(20.0, EURO)), "Purple");
 
 		// Saving flowers to the catalog
 		productCatalog.save(rose);
 		productCatalog.save(sunflower);
 		productCatalog.save(lily);
+		productCatalog.save(lily2);
+		productCatalog.save(lily3);
 
 		// Creating a bouquet with a list of flowers and additional price
 		List<Flower> bouquetFlowers = Arrays.asList(rose, lily);
