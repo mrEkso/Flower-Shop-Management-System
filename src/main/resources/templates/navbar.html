@@ -4,23 +4,28 @@
     <ul class="nav flex-column">
       <li class="nav-item">
         <a class="nav-link active" th:href="@{/sell}"
-          ><i class="fa fa-shopping-cart"></i> Sell</a
-        >
+          ><i class="fa fa-shopping-cart" th:text="#{navbar.sell}"></i
+        ></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" th:href="@{/buy}"
+          ><i class="fa fa-shopping-cart" th:text="#{navbar.buy}"></i
+        ></a>
       </li>
       <li class="nav-item">
         <a class="nav-link" th:href="@{/service}"
-          ><i class="fa fa-cog"></i> Services</a
-        >
+          ><i class="fa fa-cog" th:text="#{navbar.services}"></i
+        ></a>
       </li>
       <li class="nav-item">
         <a class="nav-link" th:href="@{/finance}"
-          ><i class="fa fa-dollar-sign"></i> Finances</a
-        >
+          ><i class="fa fa-dollar-sign" th:text="#{navbar.finances}"></i
+        ></a>
       </li>
       <li class="nav-item">
         <a class="nav-link" th:href="@{/calendar}"
-          ><i class="fa fa-calendar-alt"></i> Calendar</a
-        >
+          ><i class="fa fa-calendar-alt" th:text="#{navbar.calendar}"></i
+        ></a>
       </li>
     </ul>
   </nav>

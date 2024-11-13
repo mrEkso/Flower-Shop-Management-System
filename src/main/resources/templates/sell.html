@@ -16,13 +16,16 @@
       <div class = "inputs-div">
         <input id ="search-input" type="text" th:placeholder = "#{sell.search}">
         <div id="filter-div">
-          <select id="filter-dd" th:field="${selectedItem}">
-            <option th:each="type : ${typeList}" 
-                    th:value="${type}"
-                    th:text="${type}">
-            </option>
-          </select>
-        <img th:src="@{/resources/img/filter.png}" /></div>
+          <!-- <form action="#" th:action="@{/sel-filter}" th:object=""> -->
+            <select id="filter-dd" th:field="${selectedItem}">
+              <option th:each="type : ${typeList}" 
+                      th:value="${type}"
+                      th:text="${type}">
+              </option>
+            </select>
+            <img th:src="@{/resources/img/filter.png}" />
+          <!-- </form> -->
+        </div>
       </div>
       <table id="flower-table">
         <thead>
