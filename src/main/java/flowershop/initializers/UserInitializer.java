@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 @Component
-@Order(10)
+@Order(5)
 public class UserInitializer implements DataInitializer {
 
 	private final UserAccountManagement userAccountManagement;
@@ -23,13 +23,13 @@ public class UserInitializer implements DataInitializer {
 	@Override
 	public void initialize() {
 		// Creating Frau Floris
-		UserAccount frauFloris = userAccountManagement.create("frau_floris", Password.UnencryptedPassword.of("password"), Role.of("ROLE_USER"));
+		UserAccount frauFloris = userAccountManagement.create("frau_floris", Password.UnencryptedPassword.of("password"), Role.of("ROLE_ADMIN"));
 		frauFloris.setFirstname("Frau");
 		frauFloris.setLastname("Floris");
 		userAccountManagement.save(frauFloris);
 
 		// Creating Floris Nichte
-		UserAccount florisNichte = userAccountManagement.create("floris_nichte", Password.UnencryptedPassword.of("password"), Role.of("ROLE_USER"));
+		UserAccount florisNichte = userAccountManagement.create("floris_nichte", Password.UnencryptedPassword.of("password"), Role.of("ROLE_ADMIN"));
 		florisNichte.setFirstname("Floris");
 		florisNichte.setLastname("Nichte");
 		userAccountManagement.save(florisNichte);

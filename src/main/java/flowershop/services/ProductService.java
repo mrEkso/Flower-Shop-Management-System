@@ -9,7 +9,6 @@ import org.salespointframework.catalog.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,17 +37,14 @@ public class ProductService {
 		return productCatalog.save(bouquet);
 	}
 
-	// Method to find all products
 	public Iterable<Product> getAllProducts() {
 		return productCatalog.findAll();
 	}
 
-	// Method to find a product by ID
 	public Optional<Product> getProductById(Long id) {
 		return productCatalog.findById(getProductId(id));
 	}
 
-	// Method to delete a product by ID
 	public void deleteProductById(Long id) {
 		productCatalog.findById(getProductId(id)).ifPresent(productCatalog::delete);
 	}

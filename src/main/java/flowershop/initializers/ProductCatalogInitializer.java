@@ -10,7 +10,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.salespointframework.core.Currencies.EURO;
@@ -28,9 +27,7 @@ public class ProductCatalogInitializer implements DataInitializer {
 
 	@Override
 	public void initialize() {
-		if (productCatalog.findAll().iterator().hasNext()) {
-			return; // Skip initialization if products already exist
-		}
+		if (productCatalog.findAll().iterator().hasNext()) return; // Skip initialization if products already exist
 
 		// Creating specific flowers with Pricing and color
 		Flower rose = new Flower("Rose", new Pricing(Money.of(10.0, EURO), Money.of(20.0, EURO)), "Red", 10);
@@ -40,22 +37,27 @@ public class ProductCatalogInitializer implements DataInitializer {
 		Flower lily3 = new Flower("Lily3", new Pricing(Money.of(11.0, EURO), Money.of(20.0, EURO)), "Purple", 73);
 
 		// Saving flowers to the catalog
-		productCatalog.save(rose);
+		productCatalog.save(rose1);
+		productCatalog.save(rose2);
 		productCatalog.save(sunflower);
 		productCatalog.save(lily);
 		productCatalog.save(lily2);
 		productCatalog.save(lily3);
 
 		// Creating a bouquet with a list of flowers and additional price
-		List<Flower> bouquetFlowers = Arrays.asList(rose, lily);
 		Bouquet roseLilyBouquet = new Bouquet(
 			"Rose and Lily Bouquet",
-			new Pricing(Money.of(15.0, EURO), Money.of(30.0, EURO)),
-			bouquetFlowers,
+			List.of(rose1, lily),
+			Money.of(5.0, EURO) // Additional price for the bouquet
+		);
+		Bouquet roseBoquet = new Bouquet(
+			"Rose Bouquet",
+			List.of(rose2),
 			Money.of(5.0, EURO) // Additional price for the bouquet
 		);
 
 		// Saving bouquet to the catalog
 		productCatalog.save(roseLilyBouquet);
+		productCatalog.save(roseBoquet);
 	}
 }
