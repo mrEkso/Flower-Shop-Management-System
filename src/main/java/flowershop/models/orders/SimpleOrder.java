@@ -4,8 +4,6 @@ import jakarta.persistence.Entity;
 import org.salespointframework.order.Order;
 import org.salespointframework.useraccount.UserAccount;
 
-import flowershop.models.Client;
-
 /**
  * Represents a basic order created when a client makes a direct purchase in the shop.
  * This type of order is used for straightforward transactions where no special delivery
@@ -16,8 +14,8 @@ import flowershop.models.Client;
  */
 @Entity
 public class SimpleOrder extends AbstractOrder {
-	public SimpleOrder(UserAccount user, Client client) {
-		super(user, client);
+	public SimpleOrder(UserAccount user) {
+		super(user);
 	}
 
 	protected SimpleOrder() {
