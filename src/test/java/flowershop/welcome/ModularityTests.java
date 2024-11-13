@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package kickstart.welcome;
+package flowershop.welcome;
 
-import kickstart.Application;
+import flowershop.Application;
 
 import java.io.IOException;
 

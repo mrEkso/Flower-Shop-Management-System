@@ -1,0 +1,89 @@
+#flower-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f5f5f5;
+}
+
+#flower-table td,
+#flower-table th {
+  border: none;
+}
+
+#flower-table tbody tr {
+  border-top: 1px solid #000;
+}
+
+#flower-table thead th {
+  text-align: left;
+  padding: 10px;
+  background-color: #eeeeee;
+  color: #333;
+  border-bottom: 1px solid #000;
+}
+
+#flower-table tbody td {
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+  border: none;
+}
+
+#flower-table td:first-child {
+  width: 5%;
+  text-align: center;
+}
+
+#flower-table td img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+#flower-table td:nth-child(2),
+#flower-table td:nth-child(3),
+#flower-table td:nth-child(4),
+#flower-table td:nth-child(5) {
+  text-align: left;
+  padding-left: 10px;
+}
+
+#flower-table td:last-child {
+  width: 5%;
+  text-align: center;
+}
+
+.text-cell {
+  display: inline-block;
+  padding: 5px 10px;
+  font-weight: bold;
+  border-radius: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* .name-cell {
+  background-color: #f5f5f5;
+  color: #333;
+} */
+
+.type-cell {
+  background-color: #f0f4c3;
+  color: #7cb342;
+}
+
+.quantity-cell {
+  background-color: #e8f5e9;
+  color: #4caf50;
+}
+
+.price-cell {
+  background-color: #e3f2fd;
+  color: #2196f3;
+}
