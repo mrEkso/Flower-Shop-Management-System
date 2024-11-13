@@ -31,6 +31,10 @@ public class ProductService {
 	// Method to add a new bouquet
 	public Bouquet addBouquet(String name, Pricing pricing, List<Flower> flowers, Money additionalPrice) {
 		Bouquet bouquet = new Bouquet(name, pricing, flowers, additionalPrice);
+
+		// If flowers are used to create a bouquet, these have to become unavailable (i.e. deleted)
+		productCatalog.deleteAll(flowers);
+
 		return productCatalog.save(bouquet);
 	}
 
