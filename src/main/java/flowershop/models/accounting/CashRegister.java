@@ -1,7 +1,7 @@
 package flowershop.models.accounting;
 
 import aj.org.objectweb.asm.commons.InstructionAdapter;
-import flowershop.models.order.*;
+import flowershop.models.orders.*;
 import jakarta.persistence.*;
 import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.Accountancy;

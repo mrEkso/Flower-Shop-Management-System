@@ -1,6 +1,7 @@
 package flowershop.models.accounting;
 
-import flowershop.models.order.*;
+import flowershop.models.orders.*;
+import flowershop.models.orders.AbstractOrder;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.order.ChargeLine;
 import org.salespointframework.order.OrderLine;
