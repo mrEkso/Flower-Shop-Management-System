@@ -1,16 +1,31 @@
 package flowershop.models.accounting;
 
-import flowershop.models.order.AbstractOrder;
+import org.salespointframework.accountancy.AccountancyEntry;
+import org.salespointframework.time.Interval;
+import org.springframework.data.util.Streamable;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import javax.money.MonetaryAmount;
 
 public class DailyFinancialReport extends FinancialReport{
-	public DailyFinancialReport(LocalDateTime day, double balancePrevDay) {
-		super(day,balancePrevDay);
-		//fill orders (DAY)
-		ArrayList orders = new ArrayList<AbstractOrder>();
-		initialize();
+
+	private Streamable<AccountancyEntry> orders;
+
+	public DailyFinancialReport(Interval day,
+								MonetaryAmount balanceEndOfTheDay,
+								CashRegister cashRegister) {
+		super(day, balanceEndOfTheDay, cashRegister);
+		Streamable<AccountancyEntry> set = cashRegister.find(day);
+		this.orders = set;
+		this.income = cashRegister.getRevenue(set);
+		this.expenditure = cashRegister.getExpences(set);
+
+		countProfit();
 		//do the rest.
 	}
+
+	public Streamable<AccountancyEntry> getOrders() {
+		return this.orders;
+	}
+
+
 }

@@ -1,26 +1,43 @@
 package flowershop.models.accounting;
 
-import flowershop.models.order.AbstractOrder;
+import org.salespointframework.time.Interval;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import javax.money.MonetaryAmount;
 
-public class FinancialReport {
-	private List<AbstractOrder> orders;
-	private double income;
-	private double expenditure;
-	private double profit;
-	private double balance;
-	private double balanceSomeTimeBefore;
-	public FinancialReport(LocalDateTime day, double balanceSomeTimeBefore) {
-		//fill orders
+public abstract class FinancialReport {
+	protected MonetaryAmount income;
+	protected MonetaryAmount expenditure;
+	protected MonetaryAmount profit; //difference
+	protected MonetaryAmount balance;
+
+
+	public FinancialReport(Interval period,
+						   MonetaryAmount balanceEndOfThePeriod,
+						   CashRegister cashRegister) {
+		this.balance = balanceEndOfThePeriod;
+		//this.orders = orders;
 		//count the fields based on orders
 	}
-	protected void initialize() {
-		this.profit = this.income-this.expenditure;
-		this.balance = this.balanceSomeTimeBefore + this.profit;
+	protected void countProfit() {
+		this.profit = this.income.add(this.expenditure);
 	}
 	public void generatePDF(){
 
+	}
+
+	public MonetaryAmount getBalance() {
+		return balance;
+	}
+
+	public MonetaryAmount getExpenditure() {
+		return expenditure;
+	}
+
+	public MonetaryAmount getIncome() {
+		return income;
+	}
+
+	public MonetaryAmount getProfit() {
+		return profit;
 	}
 }
