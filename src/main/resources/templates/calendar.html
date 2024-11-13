@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <link th:href="@{/resources/css/calendar.css}" rel="stylesheet" />
+</head>
+<body>
+
+<h1>Calendar - <span th:text="${currentYear}"></span> - <span th:text="${currentMonth}"></span></h1>
+<div>
+<form action="/calendar/add" method="post">
+
+    <input type="text" name="name" placeholder="Event Title" required>
+    <input type="datetime-local" name="date" required>
+    <input type="text" name="description" required>
+
+    <button type="submit">Add Event</button>
+</form>
+</div>
+
+
+<div class="calendar-nav">
+    <a th:href="@{/calendar/previous(month=${currentMonth}, year=${currentYear})}">&lt; Previous</a>
+    <a th:href="@{/calendar/next(month=${currentMonth}, year=${currentYear})}">Next &gt;</a>
+</div>
+
+<div class="calendar">
+    <div class="calendar-header">
+        <div>Sun</div>
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+    </div>
+    <div class="calendar-grid">
+        <div th:each="day : ${calendarDays}" class="day" th:class="${day.date}">
+            <div th:text="${day.date.dayOfMonth}"></div>
+            <div th:each="event : ${day.events}" class="event">
+                <div th:text="${event.name}"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
