@@ -1,8 +1,11 @@
 package flowershop.repositories;
 
 import flowershop.models.Client;
+
+import java.util.Optional;
+
 import org.springframework.data.repository.CrudRepository;
 
 public interface ClientRepository extends CrudRepository<Client, Long> {
-	// Hier kannst du zusätzliche benutzerdefinierte Abfragen definieren, wenn nötig.
+	Optional<Client> findByName(String name);
 }

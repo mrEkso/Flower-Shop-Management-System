@@ -1,4 +1,4 @@
-package kickstart.Davyd_Lera.repositories.orders;
+package flowershop.repositories.orders;
 
 import org.springframework.stereotype.Component;
 

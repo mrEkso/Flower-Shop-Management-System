@@ -21,9 +21,8 @@ public class Bouquet extends Product {
 
 	private Money additionalPrice;
 
-	public Bouquet(String name, Pricing pricing, List<Flower> flowers, Money additionalPrice) {
-		super(name, pricing.getSellPrice());
-		this.pricing = pricing;
+	public Bouquet(String name, List<Flower> flowers, Money additionalPrice) {
+		super(name, calculateTotalPricing(flowers, additionalPrice).getSellPrice());
 		this.flowers = flowers;
 		this.additionalPrice = additionalPrice;
 	}
@@ -38,7 +37,7 @@ public class Bouquet extends Product {
 
 	public void setPricing(Pricing pricing) {
 		this.pricing = pricing;
-		super.setPrice(pricing.getSellPrice()); // Обновляем цену в Product
+		super.setPrice(pricing.getSellPrice());
 	}
 
 	public List<Flower> getFlowers() {
@@ -56,4 +55,22 @@ public class Bouquet extends Product {
 	public void setAdditionalPrice(Money additionalPrice) {
 		this.additionalPrice = additionalPrice;
 	}
+
+
+	
+	private static Pricing calculateTotalPricing(List<Flower> flowers, Money additionalPrice) {
+		
+		Money totalBuyPrice = flowers.stream()
+			.map(flower -> flower.getPricing().getBuyPrice()) 
+			.reduce(Money.of(0, additionalPrice.getCurrency()), Money::add); 
+
+		
+		Money totalSellPrice = flowers.stream()
+			.map(flower -> flower.getPricing().getSellPrice()) 
+			.reduce(Money.of(0, additionalPrice.getCurrency()), Money::add) 
+			.add(additionalPrice); 
+
+		return new Pricing(totalBuyPrice, totalSellPrice);
+	}
+
 }

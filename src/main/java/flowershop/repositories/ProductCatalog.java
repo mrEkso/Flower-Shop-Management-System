@@ -1,4 +1,5 @@
-package kickstart.Davyd_Lera.repositories;
+package flowershop.repositories;
+
 
 import org.salespointframework.catalog.Catalog;
 import org.salespointframework.catalog.Product;

@@ -1,11 +1,12 @@
-package flowershop.models.order;
+package kickstart.Davyd_Lera.models.orders;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import flowershop.models.Client;
-import jakarta.persistence.ManyToOne;
-import org.salespointframework.order.OrderStatus;
+import kickstart.Davyd_Lera.models.Client;
+
 import org.salespointframework.useraccount.UserAccount;
+import org.springframework.util.Assert;
+
+import flowershop.models.enums.ReservationStatus;
 
 import java.time.LocalDateTime;
 
@@ -17,32 +18,50 @@ import java.time.LocalDateTime;
  * <p>Typical use cases include walk-in clients who schedule pickup orders or clients who prefer
  * to inspect arrangements before taking them home.</p>
  */
+
 @Entity
 public class ReservationOrder extends AbstractOrder {
 
-	private LocalDateTime dateTime; // Date and time for the reservation
+	private LocalDateTime reservationDateTime; // Date and time for the reservation
+	/* In addition to the orderStatus field built into the Order parent class,
+	 which can be “Open”, “Paid”, “Completed”, “Canceled”, we will have a
+	 reservationStatus field that shows the progress of the reservation process itself. */
+	private ReservationStatus reservationStatus;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	private Client client;
-
-	public ReservationOrder(UserAccount userAccount, OrderStatus orderStatus, LocalDateTime dateTime, Client client) {
-		super(userAccount);
-		this.dateTime = dateTime;
+	public ReservationOrder(LocalDateTime reservationDateTime, UserAccount orderProcessingEmployee, Client client) {
+		super(orderProcessingEmployee, client);
+		this.reservationDateTime = reservationDateTime;
+		this.reservationStatus = ReservationStatus.IN_PROCESS;
 	}
 
-	public ReservationOrder(UserAccount userAccount) {
-		super(userAccount);
+	public ReservationOrder() {
 	}
 
-	protected ReservationOrder() {
-
+	public LocalDateTime getReservationDateTime() {
+		return reservationDateTime;
 	}
 
-	public LocalDateTime getDateTime() {
-		return dateTime;
+	public void setReservationDateTime(LocalDateTime reservationDateTime) {
+		this.reservationDateTime = reservationDateTime;
 	}
 
-	public void setDateTime(LocalDateTime dateTime) {
-		this.dateTime = dateTime;
+	public ReservationStatus getReservationStatus() {
+		return reservationStatus;
+	}
+
+	ReservationOrder markInProcess() {
+		this.reservationStatus = ReservationStatus.IN_PROCESS;
+		return this;
+	}
+
+	ReservationOrder markReadyForPickup() {
+		this.reservationStatus = ReservationStatus.READY_FOR_PICKUP;
+		return this;
+	}
+
+	ReservationOrder markPickedUp() {
+		Assert.isTrue(this.isPaid(), "A reservation must be paid to be picked up!");
+		this.reservationStatus = ReservationStatus.PICKED_UP;
+		return this;
 	}
 }

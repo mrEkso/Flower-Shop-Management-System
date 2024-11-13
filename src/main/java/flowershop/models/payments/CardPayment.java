@@ -1,4 +1,4 @@
-package flowershop.models.payment;
+package flowershop.models.payments;
 
 import org.salespointframework.payment.PaymentMethod;
 

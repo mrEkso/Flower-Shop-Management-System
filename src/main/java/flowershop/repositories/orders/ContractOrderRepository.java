@@ -1,4 +1,4 @@
-package kickstart.Davyd_Lera.repositories.orders;
+package flowershop.repositories.orders;
 
 import kickstart.Davyd_Lera.models.orders.ContractOrder;
 import org.jetbrains.annotations.NotNull;

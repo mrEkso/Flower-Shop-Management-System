@@ -1,4 +1,4 @@
-package kickstart.Davyd_Lera.models.enums;
+package flowershop.models.enums;
 
 public enum ReservationStatus {
 	IN_PROCESS,

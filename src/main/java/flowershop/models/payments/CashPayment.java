@@ -1,4 +1,4 @@
-package kickstart.Davyd_Lera.models.payments;
+package flowershop.models.payments;
 
 import org.salespointframework.payment.PaymentMethod;
 
