@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link th:href="@{/resources/css/finances.css}" rel="stylesheet" />
+    <title>Finances page</title>
+</head>
+<body>
+    <h2>Transactions History</h2>
+    <div th:replace="navbar"></div>
+    <p th:text="#{sell.description}"></p>
+    <div>
+        <p>Von</p>
+        <input type="date">
+        <p>bis</p>
+        <input type="date">
+        <select name="filter" id="filter">
+            <option value="all">Alles</option>
+            <option value="income">Nur Einkommen</option>
+            <option value="spendings">Nut Ausgaben</option>
+
+        </select>
+    </div>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package flowershop.models.accounting;
 
+import flowershop.services.finances.CashRegisterService;
 import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.time.Interval;
@@ -7,8 +8,6 @@ import org.springframework.data.util.Streamable;
 
 import javax.money.MonetaryAmount;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.temporal.TemporalAmount;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,9 +17,9 @@ public class MonthlyFinancialReport extends FinancialReport{
 
 	private LinkedList<DailyFinancialReport> dailyFinancialReports = new LinkedList<>();
 
-	MonthlyFinancialReport(Interval month,
-						   MonetaryAmount balanceEndOfTheMonth,
-						   CashRegister cashRegister){
+	public MonthlyFinancialReport(Interval month,
+								  MonetaryAmount balanceEndOfTheMonth,
+								  CashRegisterService cashRegister){
 		super(month, balanceEndOfTheMonth, cashRegister);
 		this.profit = Money.of(0,balanceEndOfTheMonth.getCurrency());
 		this.expenditure = Money.of(0,balanceEndOfTheMonth.getCurrency());

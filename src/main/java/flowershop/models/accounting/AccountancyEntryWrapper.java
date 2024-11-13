@@ -21,7 +21,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 	private Map<String, Quantity> itemQuantityMap = new HashMap<String,Quantity>();
 	private Category category;
 	// PLEASE DONT CHANGE THIS FORMAT OF ENUMS!!!
-	enum Category{
+	public enum Category{
 		Einfacher_Verkauf,
 		Reservierter_Verkauf,
 		Veranstaltung_Verkauf,
@@ -45,9 +45,11 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		if(order == null){
 			throw new IllegalArgumentException("Order is null, couldn't create an AccountancyEntryWrapper");
 		}
+		/*
 		if(order instanceof WholesalerOrder){
 			this.category = Category.Einkauf;
 		}
+		 */
 		else if(order instanceof ContractOrder){
 			this.category = Category.Vertraglicher_Verkauf;
 		}

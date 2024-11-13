@@ -1,5 +1,6 @@
 package flowershop.models.accounting;
 
+import flowershop.services.finances.CashRegisterService;
 import org.salespointframework.time.Interval;
 
 import javax.money.MonetaryAmount;
@@ -13,7 +14,7 @@ public abstract class FinancialReport {
 
 	public FinancialReport(Interval period,
 						   MonetaryAmount balanceEndOfThePeriod,
-						   CashRegister cashRegister) {
+						   CashRegisterService cashRegister) {
 		this.balance = balanceEndOfThePeriod;
 		//this.orders = orders;
 		//count the fields based on orders

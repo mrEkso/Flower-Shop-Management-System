@@ -1,5 +1,6 @@
 package flowershop.models.accounting;
 
+import flowershop.services.finances.CashRegisterService;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.time.Interval;
 import org.springframework.data.util.Streamable;
@@ -12,7 +13,7 @@ public class DailyFinancialReport extends FinancialReport{
 
 	public DailyFinancialReport(Interval day,
 								MonetaryAmount balanceEndOfTheDay,
-								CashRegister cashRegister) {
+								CashRegisterService cashRegister) {
 		super(day, balanceEndOfTheDay, cashRegister);
 		Streamable<AccountancyEntry> set = cashRegister.find(day);
 		this.orders = set;
