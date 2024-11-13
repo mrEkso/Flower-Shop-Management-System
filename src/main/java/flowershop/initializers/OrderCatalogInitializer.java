@@ -64,14 +64,14 @@
 // }
 
 // ----------------------------- DAVID ----------------------------
-// package kickstart.Davyd_Lera.initializers;
+// package flowershop.initializers;
 
-// import kickstart.Davyd_Lera.models.Client;
-// import kickstart.Davyd_Lera.models.orders.ContractOrder;
-// import kickstart.Davyd_Lera.models.orders.EventOrder;
-// import kickstart.Davyd_Lera.models.orders.ReservationOrder;
-// import kickstart.Davyd_Lera.repositories.ClientRepository;
-// import kickstart.Davyd_Lera.repositories.ProductCatalog;
+// import flowershop.models.Client;
+// import flowershop.models.orders.ContractOrder;
+// import flowershop.models.orders.EventOrder;
+// import flowershop.models.orders.ReservationOrder;
+// import flowershop.repositories.ClientRepository;
+// import flowershop.repositories.ProductCatalog;
 
 // import org.salespointframework.catalog.Product;
 // import org.salespointframework.core.DataInitializer;

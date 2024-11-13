@@ -1,9 +1,10 @@
 package flowershop.initializers;
 
 import flowershop.catalogs.ProductCatalog;
-import flowershop.models.product.Bouquet;
-import flowershop.models.product.Flower;
 import flowershop.models.embedded.Pricing;
+import flowershop.models.products.Bouquet;
+import flowershop.models.products.Flower;
+
 import org.javamoney.moneta.Money;
 import org.salespointframework.core.DataInitializer;
 import org.springframework.core.annotation.Order;
@@ -50,7 +51,6 @@ public class ProductCatalogInitializer implements DataInitializer {
 		List<Flower> bouquetFlowers = Arrays.asList(rose, lily);
 		Bouquet roseLilyBouquet = new Bouquet(
 			"Rose and Lily Bouquet",
-			new Pricing(Money.of(15.0, EURO), Money.of(30.0, EURO)),
 			bouquetFlowers,
 			Money.of(5.0, EURO) // Additional price for the bouquet
 		);

@@ -1,10 +1,9 @@
 package flowershop.services;
 
 import flowershop.catalogs.ProductCatalog;
-import flowershop.models.product.Bouquet;
-import flowershop.models.product.Flower;
-import flowershop.models.embedded.Pricing;
-import org.javamoney.moneta.Money;
+import flowershop.models.products.Bouquet;
+import flowershop.models.products.Flower;
+
 import org.salespointframework.catalog.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -22,17 +21,15 @@ public class ProductService {
 	}
 
 	// Method to add a new flower
-	public Flower addFlower(String name, Pricing pricing, String color, Integer quantity) {
-		Flower flower = new Flower(name, pricing, color, quantity);
+	public Flower addFlower(Flower flower) {
 		return productCatalog.save(flower);
 	}
 
 	// Method to add a new bouquet
-	public Bouquet addBouquet(String name, Pricing pricing, List<Flower> flowers, Money additionalPrice) {
-		Bouquet bouquet = new Bouquet(name, pricing, flowers, additionalPrice);
+	public Bouquet addBouquet(Bouquet bouquet) {
 
 		// If flowers are used to create a bouquet, these have to become unavailable (i.e. deleted)
-		productCatalog.deleteAll(flowers);
+		productCatalog.deleteAll(bouquet.getFlowers());
 
 		return productCatalog.save(bouquet);
 	}

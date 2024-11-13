@@ -1,8 +1,8 @@
-package kickstart.Davyd_Lera.controllers;
+package flowershop.controllers;
 
-import kickstart.Davyd_Lera.models.products.Bouquet;
-import kickstart.Davyd_Lera.models.products.Flower;
-import kickstart.Davyd_Lera.services.ProductService;
+import flowershop.models.products.Bouquet;
+import flowershop.models.products.Flower;
+import flowershop.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

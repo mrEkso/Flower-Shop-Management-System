@@ -1,4 +1,4 @@
-package flowershop.models.order;
+package flowershop.models.orders;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.ManyToOne;

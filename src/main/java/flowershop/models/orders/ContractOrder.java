@@ -1,8 +1,8 @@
 
- package kickstart.Davyd_Lera.models.orders;
+ package flowershop.models.orders;
 
  import jakarta.persistence.Entity;
- import kickstart.Davyd_Lera.models.Client;
+ import flowershop.models.Client;
  import org.salespointframework.useraccount.UserAccount;
  
  import java.time.LocalDate;

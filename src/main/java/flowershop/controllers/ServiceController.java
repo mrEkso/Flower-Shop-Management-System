@@ -1,11 +1,11 @@
-package kickstart.Davyd_Lera.controllers;
+package flowershop.controllers;
 
-import kickstart.Davyd_Lera.models.orders.ContractOrder;
-import kickstart.Davyd_Lera.models.orders.EventOrder;
-import kickstart.Davyd_Lera.models.orders.ReservationOrder;
-import kickstart.Davyd_Lera.services.order.ContractOrderService;
-import kickstart.Davyd_Lera.services.order.EventOrderService;
-import kickstart.Davyd_Lera.services.order.ReservationOrderService;
+import flowershop.models.orders.ContractOrder;
+import flowershop.models.orders.EventOrder;
+import flowershop.models.orders.ReservationOrder;
+import flowershop.services.order.ContractOrderService;
+import flowershop.services.order.EventOrderService;
+import flowershop.services.order.ReservationOrderService;
 import org.salespointframework.order.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

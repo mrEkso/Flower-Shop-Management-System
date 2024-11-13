@@ -1,4 +1,4 @@
-package flowershop.models.product;
+package flowershop.models.products;
 
 public class Product {
 	private String name;

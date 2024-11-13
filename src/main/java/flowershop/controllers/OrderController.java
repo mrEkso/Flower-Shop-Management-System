@@ -1,8 +1,8 @@
 package flowershop.controllers;
 
-import flowershop.models.order.ContractOrder;
-import flowershop.models.order.EventOrder;
-import flowershop.models.order.ReservationOrder;
+import flowershop.models.orders.ContractOrder;
+import flowershop.models.orders.EventOrder;
+import flowershop.models.orders.ReservationOrder;
 import flowershop.services.order.AbstractOrderService;
 import flowershop.services.order.ContractOrderService;
 import flowershop.services.order.EventOrderService;
@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/orders")
@@ -32,7 +33,7 @@ public class OrderController {
 
 	/* GET BY ID ENDPOINT */
 	@GetMapping("/{type}/{id}")
-	public ResponseEntity<?> getOrderById(@PathVariable String type, @PathVariable Long id) {
+	public ResponseEntity<?> getOrderById(@PathVariable String type, @PathVariable UUID id) {
 		return switch (type) {
 			case "event" -> handleGetOrder(eventOrderService.getById(id));
 			case "reservation" -> handleGetOrder(reservationOrderService.getById(id));
@@ -57,16 +58,16 @@ public class OrderController {
 		return new ResponseEntity<>(contractOrderService.create(contractOrder), HttpStatus.CREATED);
 	}
 
-	/* DELETE ORDER ENDPOINT */
-	@DeleteMapping("/{type}/{id}")
-	public ResponseEntity<Void> deleteOrder(@PathVariable String type, @PathVariable Long id) {
-		return switch (type) {
-			case "event" -> handleDeleteOrder(eventOrderService.getById(id), eventOrderService);
-			case "reservation" -> handleDeleteOrder(reservationOrderService.getById(id), reservationOrderService);
-			case "contract" -> handleDeleteOrder(contractOrderService.getById(id), contractOrderService);
-			default -> new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		};
-	}
+	// /* DELETE ORDER ENDPOINT */
+	// @DeleteMapping("/{type}/{id}")
+	// public ResponseEntity<Void> deleteOrder(@PathVariable String type, @PathVariable UUID id) {
+	// 	return switch (type) {
+	// 		case "event" -> handleDeleteOrder(eventOrderService.getById(id), eventOrderService);
+	// 		case "reservation" -> handleDeleteOrder(reservationOrderService.getById(id), reservationOrderService);
+	// 		case "contract" -> handleDeleteOrder(contractOrderService.getById(id), contractOrderService);
+	// 		default -> new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	// 	};
+	// }
 
 	/* PRIVATE HELPER METHODS */
 	private <T> ResponseEntity<T> handleGetOrder(Optional<T> order) {

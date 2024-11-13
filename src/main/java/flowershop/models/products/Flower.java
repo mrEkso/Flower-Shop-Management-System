@@ -1,4 +1,4 @@
-package flowershop.models.product;
+package flowershop.models.products;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;

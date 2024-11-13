@@ -12,7 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import flowershop.catalogs.ProductCatalog;
-import flowershop.models.product.Flower;
+import flowershop.models.products.Flower;
 
 @Controller
 public class FlowerShopController {

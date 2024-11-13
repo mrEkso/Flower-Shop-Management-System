@@ -1,6 +1,6 @@
 package flowershop.repositories.orders;
 
-import kickstart.Davyd_Lera.models.orders.EventOrder;
+import flowershop.models.orders.EventOrder;
 import org.jetbrains.annotations.NotNull;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderStatus;
