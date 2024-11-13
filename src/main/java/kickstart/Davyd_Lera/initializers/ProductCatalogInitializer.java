@@ -1,9 +1,9 @@
 package kickstart.Davyd_Lera.initializers;
 
-import kickstart.Davyd_Lera.repositories.ProductCatalog;
 import kickstart.Davyd_Lera.models.embedded.Pricing;
 import kickstart.Davyd_Lera.models.products.Bouquet;
 import kickstart.Davyd_Lera.models.products.Flower;
+import kickstart.Davyd_Lera.repositories.ProductCatalog;
 import org.javamoney.moneta.Money;
 import org.salespointframework.core.DataInitializer;
 import org.springframework.core.annotation.Order;

@@ -7,7 +7,6 @@ import kickstart.Davyd_Lera.services.order.ContractOrderService;
 import kickstart.Davyd_Lera.services.order.EventOrderService;
 import kickstart.Davyd_Lera.services.order.ReservationOrderService;
 import org.salespointframework.order.Order;
-import org.salespointframework.order.OrderManagement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,16 +18,16 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 @Controller
-@RequestMapping("/orders")
-public class OrderController {
+@RequestMapping("/services")
+public class ServiceController {
 
 	private final EventOrderService eventOrderService;
 	private final ReservationOrderService reservationOrderService;
 	private final ContractOrderService contractOrderService;
 
-	public OrderController(EventOrderService eventOrderService,
-						   ReservationOrderService reservationOrderService,
-						   ContractOrderService contractOrderService) {
+	public ServiceController(EventOrderService eventOrderService,
+							 ReservationOrderService reservationOrderService,
+							 ContractOrderService contractOrderService) {
 		this.eventOrderService = eventOrderService;
 		this.reservationOrderService = reservationOrderService;
 		this.contractOrderService = contractOrderService;
@@ -37,18 +36,9 @@ public class OrderController {
 	@GetMapping("")
 	public String getAllServices(Model model) {
 		// Fetching all orders by type and adding to the model
-		List<ContractOrder> contracts = contractOrderService.findAll();
-		List<EventOrder> events = eventOrderService.findAll();
-		List<ReservationOrder> reservations = reservationOrderService.findAll();
-
-		model.addAttribute("contracts", contracts);
-		model.addAttribute("events", events);
-		model.addAttribute("reservations", reservations);
-
-		System.out.println("Contracts: " + contracts);
-		System.out.println("Events: " + events);
-		System.out.println("Reservations: " + reservations);
-
+		model.addAttribute("contracts", contractOrderService.findAll());
+		model.addAttribute("events", eventOrderService.findAll());
+		model.addAttribute("reservations", reservationOrderService.findAll());
 		return "services/services";
 	}
 

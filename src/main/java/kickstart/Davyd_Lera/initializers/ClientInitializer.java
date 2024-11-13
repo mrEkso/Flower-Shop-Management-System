@@ -1,7 +1,7 @@
 package kickstart.Davyd_Lera.initializers;
 
-import kickstart.Davyd_Lera.repositories.ClientRepository;
 import kickstart.Davyd_Lera.models.Client;
+import kickstart.Davyd_Lera.repositories.ClientRepository;
 import org.salespointframework.core.DataInitializer;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;

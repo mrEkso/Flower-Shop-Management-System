@@ -1,13 +1,14 @@
 package kickstart.Davyd_Lera.initializers;
 
+import kickstart.Davyd_Lera.models.Client;
+import kickstart.Davyd_Lera.models.orders.ContractOrder;
+import kickstart.Davyd_Lera.models.orders.EventOrder;
+import kickstart.Davyd_Lera.models.orders.ReservationOrder;
 import kickstart.Davyd_Lera.repositories.ClientRepository;
 import kickstart.Davyd_Lera.repositories.ProductCatalog;
-import kickstart.Davyd_Lera.models.Client;
-import kickstart.Davyd_Lera.models.orders.AbstractOrder;
-import kickstart.Davyd_Lera.models.orders.EventOrder;
+import kickstart.Davyd_Lera.repositories.orders.OrderFactoryRepository;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.core.DataInitializer;
-import org.salespointframework.order.OrderManagement;
 import org.salespointframework.quantity.Quantity;
 import org.salespointframework.useraccount.UserAccount;
 import org.salespointframework.useraccount.UserAccountManagement;
@@ -21,17 +22,17 @@ import java.time.LocalDate;
 @org.springframework.core.annotation.Order(20)
 public class OrderCatalogInitializer implements DataInitializer {
 
-	private final OrderManagement<AbstractOrder> orderManagement;
+	private final OrderFactoryRepository orderFactoryRepository;
 	private final ProductCatalog productCatalog;
 	private final UserAccountManagement userAccountManagement;
 	private final ClientRepository clientRepository;
 
-	public OrderCatalogInitializer(OrderManagement<AbstractOrder> orderManagement, ProductCatalog productCatalog, UserAccountManagement userAccountManagement, ClientRepository clientRepository) {
-		Assert.notNull(orderManagement, "OrderManagement must not be null!");
+	public OrderCatalogInitializer(OrderFactoryRepository orderFactoryRepository, ProductCatalog productCatalog, UserAccountManagement userAccountManagement, ClientRepository clientRepository) {
+		Assert.notNull(orderFactoryRepository, "OrderFactoryRepository must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(userAccountManagement, "UserAccountManagement must not be null!");
 		Assert.notNull(clientRepository, "ClientRepository must not be null!");
-		this.orderManagement = orderManagement;
+		this.orderFactoryRepository = orderFactoryRepository;
 		this.productCatalog = productCatalog;
 		this.userAccountManagement = userAccountManagement;
 		this.clientRepository = clientRepository;
@@ -39,7 +40,12 @@ public class OrderCatalogInitializer implements DataInitializer {
 
 	@Override
 	public void initialize() {
-		if (orderManagement.findAll(Pageable.unpaged()).iterator().hasNext())
+		if (orderFactoryRepository.getEventOrderRepository()
+			.findAll(Pageable.unpaged()).iterator().hasNext() &&
+			orderFactoryRepository.getContractOrderRepository()
+				.findAll(Pageable.unpaged()).iterator().hasNext() &&
+			orderFactoryRepository.getReservationOrderRepository()
+				.findAll(Pageable.unpaged()).iterator().hasNext())
 			return; // Skip initialization if orders already exist
 
 		// Fetch UserAccount for Frau Floris and Floris Nichte
@@ -55,15 +61,29 @@ public class OrderCatalogInitializer implements DataInitializer {
 			.orElseThrow(() -> new IllegalArgumentException("Client not found"));
 
 		// Create orders
-
-		EventOrder order1 = new EventOrder(LocalDate.now(), "Nöthnitzer Str. 46, 01187 Dresden", frauFloris, client1);
+		//	EventOrders
+		EventOrder eventOrder1 = new EventOrder(LocalDate.now(),
+			"Nöthnitzer Str. 46, 01187 Dresden", frauFloris, client1);
 		Product product = productCatalog.findByName("Rose Bouquet")
 			.stream().findFirst().orElseThrow(() -> new IllegalArgumentException("Product not found"));
-		order1.addOrderLine(product, Quantity.of(2));
-		orderManagement.save(order1);
+		eventOrder1.addOrderLine(product, Quantity.of(2));
+		orderFactoryRepository.getEventOrderRepository().save(eventOrder1);
 
-		EventOrder order2 = new EventOrder(LocalDate.now(), "Nöthnitzer Str. 46, 01187 Dresden", florisNichte, client2);
-		order2.addOrderLine(product, Quantity.of(1));
-		orderManagement.save(order2);
+		EventOrder eventOrder2 = new EventOrder(LocalDate.now(),
+			"Nöthnitzer Str. 46, 01187 Dresden", florisNichte, client2);
+		eventOrder2.addOrderLine(product, Quantity.of(1));
+		orderFactoryRepository.getEventOrderRepository().save(eventOrder2);
+		//	ContractOrders
+		ContractOrder contractOrder = new ContractOrder("once a week", LocalDate.now(),
+			LocalDate.of(2026, 1, 1),
+			"Nöthnitzer Str. 46, 01187 Dresden", frauFloris, client1);
+		contractOrder.addOrderLine(product, Quantity.of(30));
+		orderFactoryRepository.getContractOrderRepository().save(contractOrder);
+
+		//	ReservationOrders
+		ReservationOrder reservationOrder = new ReservationOrder(
+			LocalDate.of(2025, 1, 1).atStartOfDay(), florisNichte, client2);
+		reservationOrder.addOrderLine(product, Quantity.of(5));
+		orderFactoryRepository.getReservationOrderRepository().save(reservationOrder);
 	}
 }

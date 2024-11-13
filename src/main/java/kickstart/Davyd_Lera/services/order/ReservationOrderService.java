@@ -1,7 +1,7 @@
 package kickstart.Davyd_Lera.services.order;
 
 import kickstart.Davyd_Lera.models.orders.ReservationOrder;
-import kickstart.Davyd_Lera.repositories.OrdersRepository;
+import kickstart.Davyd_Lera.repositories.orders.OrderFactoryRepository;
 import org.salespointframework.order.Order;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,26 +12,26 @@ import java.util.Optional;
 
 @Service
 public class ReservationOrderService {
-	private final OrdersRepository<ReservationOrder> reservationOrderRepository;
+	private final OrderFactoryRepository orderFactoryRepository;
 
-	public ReservationOrderService(OrdersRepository<ReservationOrder> reservationOrderRepository) {
-		Assert.notNull(reservationOrderRepository, "OrderRepository must not be null!");
-		this.reservationOrderRepository = reservationOrderRepository;
+	public ReservationOrderService(OrderFactoryRepository orderFactoryRepository) {
+		Assert.notNull(orderFactoryRepository, "OrderFactoryRepository must not be null!");
+		this.orderFactoryRepository = orderFactoryRepository;
 	}
 
 	public List<ReservationOrder> findAll() {
-		return reservationOrderRepository.findAll(Pageable.unpaged()).toList();
+		return orderFactoryRepository.getReservationOrderRepository().findAll(Pageable.unpaged()).toList();
 	}
 
 	public Optional<ReservationOrder> getById(Long id) {
-		return reservationOrderRepository.findById(Order.OrderIdentifier.of(id.toString()));
+		return orderFactoryRepository.getReservationOrderRepository().findById(Order.OrderIdentifier.of(id.toString()));
 	}
 
 	public ReservationOrder create(ReservationOrder order) {
-		return reservationOrderRepository.save(order);
+		return orderFactoryRepository.getReservationOrderRepository().save(order);
 	}
 
 	public void delete(ReservationOrder order) {
-		reservationOrderRepository.delete(order);
+		orderFactoryRepository.getReservationOrderRepository().delete(order);
 	}
 }

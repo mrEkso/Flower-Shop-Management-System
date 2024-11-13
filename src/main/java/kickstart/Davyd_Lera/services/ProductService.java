@@ -1,8 +1,8 @@
 package kickstart.Davyd_Lera.services;
 
-import kickstart.Davyd_Lera.repositories.ProductCatalog;
 import kickstart.Davyd_Lera.models.products.Bouquet;
 import kickstart.Davyd_Lera.models.products.Flower;
+import kickstart.Davyd_Lera.repositories.ProductCatalog;
 import org.salespointframework.catalog.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;

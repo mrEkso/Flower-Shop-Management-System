@@ -37,14 +37,22 @@
                 <div class="col-md-4 mb-4" th:each="contract : ${contracts}">
                     <div class="card h-100">
                         <div class="card-body">
-                            <h5 class="card-title" th:text="${contract.client.name}">Client Name</h5>
-                            <p class="card-text">Frequency: <span th:text="${contract.frequency}">Weekly</span></p>
-                            <p class="card-text">Start Date: <span th:text="${contract.startDate}">01/01/2023</span></p>
-                            <p class="card-text">End Date: <span th:text="${contract.endDate}">31/12/2023</span></p>
+                            <h5 class="card-title"><span th:text="#{client.name}">Client Name</span>: <span
+                                    th:text="${contract.client.name}">Not found</span></h5>
+                            <p class="card-text"><span th:text="#{contract.frequency}">Frequency</span>: <span
+                                    th:text="${contract.frequency}">Not found</span></p>
+                            <p class="card-text"><span th:text="#{contract.startDate}">Start Date</span>: <span
+                                    th:text="${contract.startDate}">Not found</span></p>
+                            <p class="card-text"><span th:text="#{contract.endDate}">End Date</span>: <span
+                                    th:text="${contract.endDate}">Not found</span></p>
+                            <p class="card-text"><span th:text="#{contract.orderStatus}">Status</span>: <span
+                                    th:text="${contract.orderStatus}">Not found</span></p>
                         </div>
                         <div class="card-footer d-flex justify-content-between">
-                            <a th:href="@{/services/contracts/edit/{id}(id=${contract.id})}" class="btn btn-secondary">Edit</a>
-                            <a th:href="@{/services/contracts/delete/{id}(id=${contract.id})}" class="btn btn-danger">Delete</a>
+                            <a th:href="@{/services/contracts/edit/{id}(id=${contract.id})}" class="btn btn-secondary"
+                               th:text="#{action.edit}">Edit</a>
+                            <a th:href="@{/services/contracts/delete/{id}(id=${contract.id})}" class="btn btn-danger"
+                               th:text="#{action.delete}">Delete</a>
                         </div>
                     </div>
                 </div>
@@ -57,13 +65,20 @@
                 <div class="col-md-4 mb-4" th:each="event : ${events}">
                     <div class="card h-100">
                         <div class="card-body">
-                            <h5 class="card-title" th:text="${event.client.name}">Client Name</h5>
-                            <p class="card-text">Event Date: <span th:text="${event.eventDate}">01/06/2023</span></p>
-                            <p class="card-text">Delivery Address: <span th:text="${event.deliveryAddress}">123 Main St</span></p>
+                            <h5 class="card-title"><span th:text="#{client.name}">Client Name</span>: <span
+                                    th:text="${event.client.name}">Not found</span></h5>
+                            <p class="card-text"><span th:text="#{event.eventDate}">Event Date</span>: <span
+                                    th:text="${event.eventDate}">Not found</span></p>
+                            <p class="card-text"><span th:text="#{event.deliveryAddress}">Delivery Address</span>: <span
+                                    th:text="${event.deliveryAddress}">Not found</span></p>
+                            <p class="card-text"><span th:text="#{event.orderStatus}">Status</span>: <span
+                                    th:text="${event.orderStatus}">Not found</span></p>
                         </div>
                         <div class="card-footer d-flex justify-content-between">
-                            <a th:href="@{/services/events/edit/{id}(id=${event.id})}" class="btn btn-secondary">Edit</a>
-                            <a th:href="@{/services/events/delete/{id}(id=${event.id})}" class="btn btn-danger">Delete</a>
+                            <a th:href="@{/services/events/edit/{id}(id=${event.id})}" class="btn btn-secondary"
+                               th:text="#{action.edit}">Edit</a>
+                            <a th:href="@{/services/events/delete/{id}(id=${event.id})}" class="btn btn-danger"
+                               th:text="#{action.delete}">Delete</a>
                         </div>
                     </div>
                 </div>
@@ -76,13 +91,20 @@
                 <div class="col-md-4 mb-4" th:each="reservation : ${reservations}">
                     <div class="card h-100">
                         <div class="card-body">
-                            <h5 class="card-title" th:text="${reservation.client.name}">Client Name</h5>
-                            <p class="card-text">Reservation Time: <span th:text="${reservation.reservationTime}">15:30</span></p>
-                            <p class="card-text">Status: <span th:text="${reservation.reservationStatus}">In Process</span></p>
+                            <h5 class="card-title"><span th:text="#{client.name}">Client Name</span>: <span
+                                    th:text="${reservation.client.name}">Not found</span></h5>
+                            <p class="card-text"><span th:text="#{reservation.time}">Reservation Time</span>: <span
+                                    th:text="${reservation.reservationDateTime}">Not found</span></p>
+                            <p class="card-text"><span th:text="#{reservation.orderStatus}">Status</span>: <span
+                                    th:text="${reservation.orderStatus}">Not found</span></p>
+                            <p class="card-text"><span th:text="#{reservation.reservationStatus}">Status</span>: <span
+                                    th:text="${reservation.reservationStatus}">Not found</span></p>
                         </div>
                         <div class="card-footer d-flex justify-content-between">
-                            <a th:href="@{/services/reservations/edit/{id}(id=${reservation.id})}" class="btn btn-secondary">Edit</a>
-                            <a th:href="@{/services/reservations/delete/{id}(id=${reservation.id})}" class="btn btn-danger">Delete</a>
+                            <a th:href="@{/services/reservations/edit/{id}(id=${reservation.id})}"
+                               class="btn btn-secondary" th:text="#{action.edit}">Edit</a>
+                            <a th:href="@{/services/reservations/delete/{id}(id=${reservation.id})}"
+                               class="btn btn-danger" th:text="#{action.delete}">Delete</a>
                         </div>
                     </div>
                 </div>

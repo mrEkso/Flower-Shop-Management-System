@@ -1,7 +1,7 @@
 package kickstart.Davyd_Lera.services.order;
 
 import kickstart.Davyd_Lera.models.orders.EventOrder;
-import kickstart.Davyd_Lera.repositories.OrdersRepository;
+import kickstart.Davyd_Lera.repositories.orders.OrderFactoryRepository;
 import org.salespointframework.order.Order;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,26 +12,26 @@ import java.util.Optional;
 
 @Service
 public class EventOrderService {
-	private final OrdersRepository<EventOrder> eventOrderRepository;
+	private final OrderFactoryRepository orderFactoryRepository;
 
-	public EventOrderService(OrdersRepository<EventOrder> eventOrderRepository) {
-		Assert.notNull(eventOrderRepository, "OrderRepository must not be null!");
-		this.eventOrderRepository = eventOrderRepository;
+	public EventOrderService(OrderFactoryRepository orderFactoryRepository) {
+		Assert.notNull(orderFactoryRepository, "OrderFactoryRepository must not be null!");
+		this.orderFactoryRepository = orderFactoryRepository;
 	}
 
 	public List<EventOrder> findAll() {
-		return eventOrderRepository.findAll(Pageable.unpaged()).toList();
+		return orderFactoryRepository.getEventOrderRepository().findAll(Pageable.unpaged()).toList();
 	}
 
 	public Optional<EventOrder> getById(Long id) {
-		return eventOrderRepository.findById(Order.OrderIdentifier.of(id.toString()));
+		return orderFactoryRepository.getEventOrderRepository().findById(Order.OrderIdentifier.of(id.toString()));
 	}
 
 	public EventOrder create(EventOrder order) {
-		return eventOrderRepository.save(order);
+		return orderFactoryRepository.getEventOrderRepository().save(order);
 	}
 
 	public void delete(EventOrder order) {
-		eventOrderRepository.delete(order);
+		orderFactoryRepository.getEventOrderRepository().delete(order);
 	}
 }

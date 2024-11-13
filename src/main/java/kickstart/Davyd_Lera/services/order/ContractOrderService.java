@@ -1,7 +1,7 @@
 package kickstart.Davyd_Lera.services.order;
 
 import kickstart.Davyd_Lera.models.orders.ContractOrder;
-import kickstart.Davyd_Lera.repositories.OrdersRepository;
+import kickstart.Davyd_Lera.repositories.orders.OrderFactoryRepository;
 import org.salespointframework.order.Order;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,26 +12,26 @@ import java.util.Optional;
 
 @Service
 public class ContractOrderService {
-	private final OrdersRepository<ContractOrder> contractOrderRepository;
+	private final OrderFactoryRepository orderFactoryRepository;
 
-	public ContractOrderService(OrdersRepository<ContractOrder> contractOrderRepository) {
-		Assert.notNull(contractOrderRepository, "OrderRepository must not be null!");
-		this.contractOrderRepository = contractOrderRepository;
+	public ContractOrderService(OrderFactoryRepository orderFactoryRepository) {
+		Assert.notNull(orderFactoryRepository, "OrderFactoryRepository must not be null!");
+		this.orderFactoryRepository = orderFactoryRepository;
 	}
 
 	public List<ContractOrder> findAll() {
-		return contractOrderRepository.findAll(Pageable.unpaged()).toList();
+		return orderFactoryRepository.getContractOrderRepository().findAll(Pageable.unpaged()).toList();
 	}
 
 	public Optional<ContractOrder> getById(Long id) {
-		return contractOrderRepository.findById(Order.OrderIdentifier.of(id.toString()));
+		return orderFactoryRepository.getContractOrderRepository().findById(Order.OrderIdentifier.of(id.toString()));
 	}
 
 	public ContractOrder create(ContractOrder order) {
-		return contractOrderRepository.save(order);
+		return orderFactoryRepository.getContractOrderRepository().save(order);
 	}
 
 	public void delete(ContractOrder order) {
-		contractOrderRepository.delete(order);
+		orderFactoryRepository.getContractOrderRepository().delete(order);
 	}
 }
