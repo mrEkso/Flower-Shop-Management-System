@@ -45,7 +45,7 @@
             <td><img th:src="@{/resources/img/rose.png}" /></td>
             <td><div class="text-cell name-cell" th:text="${flower.name}"></div></td>
             <td><div class="text-cell type-cell" th:text="${flower.color}"></div></td>
-            <td><div class="text-cell quantity-cell">1</div></td>
+            <td><div class="text-cell quantity-cell" th:text="${flower.quantity}"></div></td>
             <td><div class="text-cell price-cell" th:text="${flower.pricing.sellPrice}"></div></td>
             <td ><img th:src="@{/resources/img/shopping-basket.png}" /></td>
           </tr>

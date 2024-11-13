@@ -23,8 +23,8 @@ public class ProductService {
 	}
 
 	// Method to add a new flower
-	public Flower addFlower(String name, Pricing pricing, String color) {
-		Flower flower = new Flower(name, pricing, color);
+	public Flower addFlower(String name, Pricing pricing, String color, Integer quantity) {
+		Flower flower = new Flower(name, pricing, color, quantity);
 		return productCatalog.save(flower);
 	}
 

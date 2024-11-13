@@ -31,7 +31,7 @@ public class ProductController {
 											@RequestParam double sellPrice,
 											@RequestParam String color) {
 		Pricing pricing = new Pricing(Money.of(buyPrice, EURO), Money.of(sellPrice, EURO));
-		Flower flower = productService.addFlower(name, pricing, color);
+		Flower flower = productService.addFlower(name, pricing, color, 1);
 		return new ResponseEntity<>(flower, HttpStatus.CREATED);
 	}
 

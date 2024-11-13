@@ -12,11 +12,13 @@ public class Flower extends Product {
 	private Pricing pricing;
 
 	private String color;
+	private Integer quantity;
 
-	public Flower(String name, Pricing pricing, String color) {
+	public Flower(String name, Pricing pricing, String color, Integer quantity) {
 		super(name, pricing.getSellPrice());
 		this.pricing = pricing;
 		this.color = color;
+		this.quantity = quantity;
 	}
 
 	@SuppressWarnings({"unused", "deprecation"})
@@ -38,5 +40,13 @@ public class Flower extends Product {
 
 	public void setColor(String color) {
 		this.color = color;
+	}
+
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
+	}
+
+	public Integer getQuantity() {
+		return quantity;
 	}
 }
