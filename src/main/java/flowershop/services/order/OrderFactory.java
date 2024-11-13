@@ -5,14 +5,17 @@ import flowershop.models.order.*;
 import org.salespointframework.order.OrderStatus;
 import org.salespointframework.useraccount.UserAccount;
 import org.salespointframework.useraccount.UserAccountManagement;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
  * This class is needed to create all orders of type {@link AbstractOrder}.
- * It encapsulates the workaround of assigning a default {@link UserAccount} to every {@link org.salespointframework.order.Order} , without which the framework seems not to work.
+ * It encapsulates the workaround of assigning a default {@link UserAccount}
+ * to every {@link org.salespointframework.order.Order}, without which the framework seems not to work.
  */
+@Service
 public class OrderFactory {
 
 	private final UserAccount defaultUserAccount;
