@@ -16,15 +16,15 @@
       <div class = "inputs-div">
         <input id ="search-input" type="text" th:placeholder = "#{sell.search}">
         <div id="filter-div">
-          <!-- <form action="#" th:action="@{/sel-filter}" th:object=""> -->
-            <select id="filter-dd" th:field="${selectedItem}">
+          <form action="#" th:action="@{/sell}" method="get">
+            <select id="filter-dd" th:value="${selectedItem}">
               <option th:each="type : ${typeList}" 
                       th:value="${type}"
                       th:text="${type}">
               </option>
             </select>
             <img th:src="@{/resources/img/filter.png}" />
-          <!-- </form> -->
+          </form>
         </div>
       </div>
       <table id="flower-table">
