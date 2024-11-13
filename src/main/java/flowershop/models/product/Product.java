@@ -1,4 +1,4 @@
-package kickstart.inventory;
+package flowershop.models.product;
 
 public class Product {
 	private String name;
