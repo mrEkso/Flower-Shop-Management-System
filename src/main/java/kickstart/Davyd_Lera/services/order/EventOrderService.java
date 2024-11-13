@@ -9,6 +9,7 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class EventOrderService {
@@ -23,7 +24,7 @@ public class EventOrderService {
 		return orderFactoryRepository.getEventOrderRepository().findAll(Pageable.unpaged()).toList();
 	}
 
-	public Optional<EventOrder> getById(Long id) {
+	public Optional<EventOrder> getById(UUID id) {
 		return orderFactoryRepository.getEventOrderRepository().findById(Order.OrderIdentifier.of(id.toString()));
 	}
 

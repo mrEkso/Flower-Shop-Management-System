@@ -16,13 +16,13 @@
         <!-- Company Name -->
         <div class="mb-3">
             <label for="companyName" class="form-label">Company Name</label>
-            <input type="text" class="form-control" id="companyName" name="companyName" required>
+            <input type="text" class="form-control" th:value="${contractOrder.client.name}" id="companyName" name="companyName" required>
         </div>
 
         <!-- Service Date and Time -->
         <div class="mb-3">
-            <label for="serviceTime" class="form-label">Service Time</label>
-            <input type="datetime-local" class="form-control" id="serviceTime" name="serviceTime" required>
+            <label for="eventDate" class="form-label">Service Time</label>
+            <input type="datetime-local" class="form-control" th:value="${contractOrder.eventDate}" id="eventDate" name="eventDate" required>
         </div>
 
         <!-- Contact Phone -->
@@ -38,12 +38,6 @@
                 <option value="One-Time">One-Time</option>
                 <option value="Recurring">Recurring</option>
             </select>
-        </div>
-
-        <!-- Delivery Address -->
-        <div class="mb-3">
-            <label for="deliveryAddress" class="form-label">Delivery Address</label>
-            <textarea class="form-control" id="deliveryAddress" name="notes" rows="3" placeholder="Enter any additional notes here"></textarea>
         </div>
 
         <!-- Notes -->

@@ -16,34 +16,25 @@
         <!-- Company Name -->
         <div class="mb-3">
             <label for="companyName" class="form-label">Company Name</label>
-            <input type="text" class="form-control" id="companyName" name="companyName" required>
+            <input type="text" class="form-control" th:value="${eventOrder.client.name}" id="companyName" name="companyName" required>
         </div>
 
         <!-- Service Date and Time -->
         <div class="mb-3">
-            <label for="serviceTime" class="form-label">Service Time</label>
-            <input type="datetime-local" class="form-control" id="serviceTime" name="serviceTime" required>
+            <label for="eventDate" class="form-label">Service Time</label>
+            <input type="datetime-local" class="form-control" th:value="${eventOrder.eventDate}" id="eventDate" name="eventDate" required>
         </div>
 
         <!-- Contact Phone -->
         <div class="mb-3">
-            <label for="phone" class="form-label">Phone</label>
-            <input type="tel" class="form-control" id="phone" name="phone" placeholder="+1 xxx xxx xxx" required>
-        </div>
-
-        <!-- Frequency -->
-        <div class="mb-3">
-            <label for="frequency" class="form-label">Frequency</label>
-            <select id="frequency" class="form-control" name="frequency" required>
-                <option value="One-Time">One-Time</option>
-                <option value="Recurring">Recurring</option>
-            </select>
+            <label for="contactPhoneNumber" class="form-label">Phone</label>
+            <input type="tel" class="form-control" th:value="${eventOrder.client.contactPhoneNumber}" id="contactPhoneNumber" name="contactPhoneNumber" placeholder="+1 xxx xxx xxx" required>
         </div>
 
         <!-- Delivery Address -->
         <div class="mb-3">
             <label for="deliveryAddress" class="form-label">Delivery Address</label>
-            <textarea class="form-control" id="deliveryAddress" name="notes" rows="3" placeholder="Enter any additional notes here"></textarea>
+            <input class="form-control" th:value="${eventOrder.deliveryAddress}" id="deliveryAddress" name="deliveryAddress" rows="3" placeholder="Please enter address"></input>
         </div>
 
         <!-- Notes -->

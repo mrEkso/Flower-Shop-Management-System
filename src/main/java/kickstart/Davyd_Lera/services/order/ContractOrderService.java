@@ -9,6 +9,7 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ContractOrderService {
@@ -23,7 +24,7 @@ public class ContractOrderService {
 		return orderFactoryRepository.getContractOrderRepository().findAll(Pageable.unpaged()).toList();
 	}
 
-	public Optional<ContractOrder> getById(Long id) {
+	public Optional<ContractOrder> getById(UUID id) {
 		return orderFactoryRepository.getContractOrderRepository().findById(Order.OrderIdentifier.of(id.toString()));
 	}
 

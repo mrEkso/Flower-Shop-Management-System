@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 @Controller
@@ -44,39 +45,47 @@ public class ServiceController {
 
 	/* GET BY ID ENDPOINT */
 	@GetMapping("/{type}/{id}")
-	public ResponseEntity<?> getOrderById(@PathVariable String type, @PathVariable Long id) {
+	public ResponseEntity<?> getOrderById(@PathVariable String type, @PathVariable UUID id) {
 		return switch (type) {
-			case "event" -> handleGetOrder(eventOrderService.getById(id));
-			case "reservation" -> handleGetOrder(reservationOrderService.getById(id));
-			case "contract" -> handleGetOrder(contractOrderService.getById(id));
+			case "events" -> handleGetOrder(eventOrderService.getById(id));
+			case "reservations" -> handleGetOrder(reservationOrderService.getById(id));
+			case "contracts" -> handleGetOrder(contractOrderService.getById(id));
 			default -> new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		};
 	}
 
+	@GetMapping("/events/edit/{id}")
+	public String getEventOrderEditPage(@PathVariable UUID id,
+										Model model){
+		EventOrder dbEventOrder = eventOrderService.getById(id).get();
+		model.addAttribute("eventOrder", dbEventOrder);
+		return "edit/eventOrderEditForm";
+	}
+
 	/* CREATE ENDPOINTS */
-	@PostMapping("/event")
+	@PostMapping("/events")
 	public ResponseEntity<EventOrder> createEventOrder(@RequestBody EventOrder eventOrder) {
 		return new ResponseEntity<>(eventOrderService.create(eventOrder), HttpStatus.CREATED);
 	}
 
-	@PostMapping("/reservation")
+	@PostMapping("/reservations")
 	public ResponseEntity<ReservationOrder> createReservationOrder(@RequestBody ReservationOrder reservationOrder) {
 		return new ResponseEntity<>(reservationOrderService.create(reservationOrder), HttpStatus.CREATED);
 	}
 
-	@PostMapping("/contract")
+	@PostMapping("/contracts")
 	public ResponseEntity<ContractOrder> createContractOrder(@RequestBody ContractOrder contractOrder) {
 		return new ResponseEntity<>(contractOrderService.create(contractOrder), HttpStatus.CREATED);
 	}
 
 	/* DELETE ORDER ENDPOINT */
 	@DeleteMapping("/{type}/{id}")
-	public ResponseEntity<?> deleteOrder(@PathVariable String type, @PathVariable Long id) {
+	public ResponseEntity<?> deleteOrder(@PathVariable String type, @PathVariable UUID id) {
 		return switch (type) {
-			case "event" -> handleDeleteOrder(eventOrderService.getById(id), eventOrderService::delete);
-			case "reservation" ->
+			case "events" -> handleDeleteOrder(eventOrderService.getById(id), eventOrderService::delete);
+			case "reservations" ->
 				handleDeleteOrder(reservationOrderService.getById(id), reservationOrderService::delete);
-			case "contract" -> handleDeleteOrder(contractOrderService.getById(id), contractOrderService::delete);
+			case "contracts" -> handleDeleteOrder(contractOrderService.getById(id), contractOrderService::delete);
 			default -> new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		};
 	}
