@@ -4,7 +4,7 @@ import flowershop.models.accounting.AccountancyEntryWrapper;
 import flowershop.models.accounting.CashRegister;
 import flowershop.models.accounting.DailyFinancialReport;
 import flowershop.models.accounting.MonthlyFinancialReport;
-import flowershop.models.order.AbstractOrder;
+import flowershop.models.orders.AbstractOrder;
 import flowershop.repositories.CashRegisterRepository;
 import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.Accountancy;

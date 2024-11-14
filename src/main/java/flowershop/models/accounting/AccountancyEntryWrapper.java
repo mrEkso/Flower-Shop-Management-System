@@ -1,8 +1,12 @@
 package flowershop.models.accounting;
 
-import flowershop.models.order.*;
+import flowershop.models.orders.ContractOrder;
+import flowershop.models.orders.EventOrder;
+import flowershop.models.orders.ReservationOrder;
+import flowershop.models.orders.SimpleOrder;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.order.ChargeLine;
+import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderLine;
 import org.salespointframework.order.Totalable;
 import org.salespointframework.quantity.Quantity;
@@ -40,7 +44,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		return itemQuantityMap;
 	}
 
-	public AccountancyEntryWrapper(AbstractOrder order) {
+	public AccountancyEntryWrapper(Order order) {
 		super(order.getTotal());
 		if(order == null){
 			throw new IllegalArgumentException("Order is null, couldn't create an AccountancyEntryWrapper");
