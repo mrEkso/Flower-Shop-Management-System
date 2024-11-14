@@ -3,10 +3,8 @@ package flowershop.controllers;
 import flowershop.models.orders.ContractOrder;
 import flowershop.models.orders.EventOrder;
 import flowershop.models.orders.ReservationOrder;
-import flowershop.services.order.AbstractOrderService;
-import flowershop.services.order.ContractOrderService;
-import flowershop.services.order.EventOrderService;
-import flowershop.services.order.ReservationOrderService;
+import flowershop.models.orders.SimpleOrder;
+import flowershop.services.order.*;
 import org.salespointframework.order.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +20,16 @@ public class OrderController {
 	private final EventOrderService eventOrderService;
 	private final ReservationOrderService reservationOrderService;
 	private final ContractOrderService contractOrderService;
+	private final SimpleOrderService simpleOrderService;
 
 	public OrderController(EventOrderService eventOrderService,
 						   ReservationOrderService reservationOrderService,
-						   ContractOrderService contractOrderService) {
+						   ContractOrderService contractOrderService,
+						   SimpleOrderService simpleOrderService) {
 		this.eventOrderService = eventOrderService;
 		this.reservationOrderService = reservationOrderService;
 		this.contractOrderService = contractOrderService;
+		this.simpleOrderService = simpleOrderService;
 	}
 
 	/* GET BY ID ENDPOINT */
@@ -56,6 +57,11 @@ public class OrderController {
 	@PostMapping("/contract")
 	public ResponseEntity<ContractOrder> createContractOrder(@RequestBody ContractOrder contractOrder) {
 		return new ResponseEntity<>(contractOrderService.create(contractOrder), HttpStatus.CREATED);
+	}
+
+	@PostMapping("/simpleorder")
+	public ResponseEntity<SimpleOrder> createSimpleOrder(@RequestBody SimpleOrder simpleOrder) {
+		return new ResponseEntity<>(simpleOrderService.create(simpleOrder), HttpStatus.CREATED);
 	}
 
 	// /* DELETE ORDER ENDPOINT */
