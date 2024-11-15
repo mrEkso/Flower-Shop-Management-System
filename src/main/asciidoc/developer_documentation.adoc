@@ -55,9 +55,10 @@ NOTE: Name the used external frameworks, in which packages you used them, and wh
 |salespointframework |Backend | Zur Entwicklung von Point-of-Sales-Anwendungen (PoS) mit Spring Framework und Spring Boot. Es besteht aus einer Vielzahl von Geschäftsmodulen, die es dem Nutzer ermöglichen, darauf aufbauend anspruchsvolle Webanwendungen zu implementieren.
 |Bootstrap | UI | Stellt Seiten-Layout-Tools und vordefinierte HTML-Elemente zu Verfügung. 
 |===
+
 NOTE: If you use JavaScript frameworks like Bootstrap, HTMX, etc. you have to add them to the list. The category is
 mostly _UI_ and/or _Communication_.
-|===
+
 
 [options="header", cols="1,2,3"]
 |===
