@@ -1,11 +1,8 @@
+
 package flowershop.models.orders;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import flowershop.models.Client;
-import jakarta.persistence.ManyToOne;
-import org.jetbrains.annotations.NotNull;
-import org.salespointframework.order.OrderStatus;
 import org.salespointframework.useraccount.UserAccount;
 
 import java.time.LocalDate;
@@ -15,43 +12,39 @@ import java.time.LocalDate;
  * specified period, such as weekly or monthly deliveries.
  *
  * <p>Example use cases include corporate clients who require regular flower arrangements
- *  * for office spaces, or individual clients who want fresh flowers delivered to their homes
- *  * periodically.</p>
+ * * for office spaces, or individual clients who want fresh flowers delivered to their homes
+ * * periodically.</p>
  */
+
 @Entity
 public class ContractOrder extends AbstractOrder {
 
-	private String frequency;
+	private String contractType;
 	private LocalDate startDate;
 	private LocalDate endDate;
-	private OrderStatus orderStatus;
+	private String address;
+	private String frequency;
+	private Integer customFrequency;
+	private String customUnit;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	private Client client;
-
-	public ContractOrder(UserAccount userAccount, String frequency, LocalDate startDate, LocalDate endDate, OrderStatus orderStatus, Client client) {
-		super(userAccount);
-		this.frequency = frequency;
+	public ContractOrder(String contractType, LocalDate startDate, LocalDate endDate, String address, UserAccount orderProcessingEmployee, Client client) {
+		super(orderProcessingEmployee, client);
+		this.contractType = contractType;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.orderStatus = orderStatus;
-		this.client = client;
+		this.address = address;
 	}
 
-	public ContractOrder(UserAccount user) {
-		super(user);
+	public ContractOrder() {
+		super();
 	}
 
-	protected ContractOrder() {
-
+	public String getContractType() {
+		return contractType;
 	}
 
-	public String getFrequency() {
-		return frequency;
-	}
-
-	public void setFrequency(String frequency) {
-		this.frequency = frequency;
+	public void setContractType(String contractType) {
+		this.contractType = contractType;
 	}
 
 	public LocalDate getStartDate() {
@@ -70,17 +63,36 @@ public class ContractOrder extends AbstractOrder {
 		this.endDate = endDate;
 	}
 
-	@NotNull
-	@Override
-	public OrderStatus getOrderStatus() {
-		return orderStatus;
+	public String getAddress() {
+		return address;
 	}
 
-	public void setOrderStatus(OrderStatus orderStatus) {
-		this.orderStatus = orderStatus;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
-	public Client getClient() {
-		return client;
+	public String getFrequency() {
+		return frequency;
+	}
+
+	public void setFrequency(String frequency) {
+		this.frequency = frequency;
+	}
+
+	public Integer getCustomFrequency() {
+		return customFrequency;
+	}
+
+	public void setCustomFrequency(Integer customFrequency) {
+		this.customFrequency = customFrequency;
+	}
+
+	public String getCustomUnit() {
+		return customUnit;
+	}
+
+	public void setCustomUnit(String customUnit) {
+		this.customUnit = customUnit;
 	}
 }
+ 

@@ -5,14 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="#{services.title}">Services</title>
     <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-    />
-  </head>
-  <body>
-    <div class="container mt-5">
-      <div class="text-center mb-4">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-2">
+    <div class="text-center mb-4">
         <h1 th:text="#{services.title}">Services</h1>
       </div>
 
@@ -59,68 +56,41 @@
         </li>
       </ul>
 
-      <!-- Button to create a new service -->
-      <div class="d-flex justify-content-right mb-4">
-        <button
-          class="btn btn-primary"
-          th:text="#{services.create_new}"
-          th:href="@{/services/new}"
-        >
-          new service
-        </button>
-      </div>
+    <!-- Button to create a new service -->
+    <div class="d-flex justify-content-end mt-2 mb-1">
+        <a class="btn btn-primary" th:text="#{services.create}" th:href="@{/services/create}">
+            Create service
+        </a>
+    </div>
 
       <!-- Tab Content -->
       <div class="tab-content" id="serviceTabsContent">
         <!-- Contracts Tab -->
-        <div
-          class="tab-pane fade show active"
-          id="contracts"
-          role="tabpanel"
-          aria-labelledby="contracts-tab"
-        >
-          <div class="row mt-3">
-            <div class="col-md-4 mb-4" th:each="contract : ${contracts}">
-              <div class="card h-100">
-                <div class="card-body">
-                  <h5 class="card-title">
-                    <span th:text="#{client.name}">Client Name</span>:
-                    <span th:text="${contract.client.name}">Not found</span>
-                  </h5>
-                  <p class="card-text">
-                    <span th:text="#{contract.frequency}">Frequency</span>:
-                    <span th:text="${contract.frequency}">Not found</span>
-                  </p>
-                  <p class="card-text">
-                    <span th:text="#{contract.startDate}">Start Date</span>:
-                    <span th:text="${contract.startDate}">Not found</span>
-                  </p>
-                  <p class="card-text">
-                    <span th:text="#{contract.endDate}">End Date</span>:
-                    <span th:text="${contract.endDate}">Not found</span>
-                  </p>
-                  <p class="card-text">
-                    <span th:text="#{contract.orderStatus}">Status</span>:
-                    <span th:text="${contract.orderStatus}">Not found</span>
-                  </p>
+        <div class="tab-pane fade show active" id="contracts" role="tabpanel" aria-labelledby="contracts-tab">
+            <div class="row mt-3">
+                <div class="col-md-4 mb-4" th:each="contract : ${contracts}">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title"><span th:text="#{client.name}">Client Name</span>: <span
+                                    th:text="${contract.client.name}">Not found</span></h5>
+                            <p class="card-text"><span th:text="#{contract.frequency}">Frequency</span>: <span
+                                    th:text="${contract.contractType}">Not found</span></p>
+                            <p class="card-text"><span th:text="#{contract.startDate}">Start Date</span>: <span
+                                    th:text="${contract.startDate}">Not found</span></p>
+                            <p class="card-text"><span th:text="#{contract.endDate}">End Date</span>: <span
+                                    th:text="${contract.endDate}">Not found</span></p>
+                            <p class="card-text"><span th:text="#{contract.orderStatus}">Status</span>: <span
+                                    th:text="${contract.orderStatus}">Not found</span></p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between">
+                            <a th:href="@{/services/contracts/edit/{id}(id=${contract.id})}" class="btn btn-secondary"
+                               th:text="#{action.edit}">Edit</a>
+                            <a th:href="@{/services/contracts/delete/{id}(id=${contract.id})}" class="btn btn-danger"
+                               th:text="#{action.delete}">Delete</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-footer d-flex justify-content-between">
-                  <a
-                    th:href="@{/services/contracts/edit/{id}(id=${contract.id})}"
-                    class="btn btn-secondary"
-                    th:text="#{action.edit}"
-                    >Edit</a
-                  >
-                  <a
-                    th:href="@{/services/contracts/delete/{id}(id=${contract.id})}"
-                    class="btn btn-danger"
-                    th:text="#{action.delete}"
-                    >Delete</a
-                  >
-                </div>
-              </div>
             </div>
-          </div>
         </div>
 
         <!-- Events Tab -->

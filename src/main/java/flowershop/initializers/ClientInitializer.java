@@ -25,8 +25,8 @@ public class ClientInitializer implements DataInitializer {
 		}
 
 		// Добавляем несколько клиентов
-		clientRepository.save(new Client("John Doe", "123 Main St", "+123456789"));
-		clientRepository.save(new Client("Jane Smith", "456 Elm St", "+987654321"));
-		clientRepository.save(new Client("Alice Johnson", "789 Oak St", "+555123456"));
+		clientRepository.save(new Client("John Doe", "+123456789"));
+		clientRepository.save(new Client("Jane Smith", "+987654321"));
+		clientRepository.save(new Client("Alice Johnson", "+555123456"));
 	}
 }

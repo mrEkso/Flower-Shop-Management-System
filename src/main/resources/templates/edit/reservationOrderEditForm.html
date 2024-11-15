@@ -16,34 +16,25 @@
         <!-- Company Name -->
         <div class="mb-3">
             <label for="companyName" class="form-label">Company Name</label>
-            <input type="text" class="form-control" id="companyName" name="companyName" required>
+            <input type="text" class="form-control" th:value="${reservationOrder.client.name}" id="companyName" name="companyName" required>
         </div>
 
         <!-- Service Date and Time -->
         <div class="mb-3">
-            <label for="serviceTime" class="form-label">Service Time</label>
-            <input type="datetime-local" class="form-control" id="serviceTime" name="serviceTime" required>
+            <label for="reservationDateTime" class="form-label">Pick-up Time</label>
+            <input type="datetime-local" class="form-control" th:value="${reservationOrder.reservationDateTime}" id="reservationDateTime" name="reservationDateTime" required>
         </div>
 
         <!-- Contact Phone -->
         <div class="mb-3">
             <label for="phone" class="form-label">Phone</label>
-            <input type="tel" class="form-control" id="phone" name="phone" placeholder="+1 xxx xxx xxx" required>
-        </div>
-
-        <!-- Frequency -->
-        <div class="mb-3">
-            <label for="frequency" class="form-label">Frequency</label>
-            <select id="frequency" class="form-control" name="frequency" required>
-                <option value="One-Time">One-Time</option>
-                <option value="Recurring">Recurring</option>
-            </select>
+            <input type="tel" class="form-control" th:value="${reservationOrder.client.phone}" id="phone" name="phone" placeholder="+1 xxx xxx xxx" required>
         </div>
 
         <!-- Notes -->
         <div class="mb-3">
             <label for="notes" class="form-label">Notes</label>
-            <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter any additional notes here"></textarea>
+            <textarea class="form-control" th:value="${reservationOrder.notes}" id="notes" name="notes" rows="3" placeholder="Enter any additional notes here"></textarea>
         </div>
 
         <!-- Submit Button -->
