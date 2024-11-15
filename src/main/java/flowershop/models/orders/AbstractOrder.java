@@ -27,11 +27,16 @@ public abstract class AbstractOrder extends Order {
 	the client to whom the order is given. Depending on the type of order,
 	various other fields will be added.
 	 */
+	public AbstractOrder(UserAccount orderProcessingEmployee, Client client, String notes) {
+		super(Objects.requireNonNull(orderProcessingEmployee.getId()));
+		this.client = client;
+		this.notes = notes;
+	}
+
 	public AbstractOrder(UserAccount orderProcessingEmployee, Client client) {
 		super(Objects.requireNonNull(orderProcessingEmployee.getId()));
 		this.client = client;
 	}
-
 
 	@SuppressWarnings({"unused", "deprecation"})
 	public AbstractOrder() {

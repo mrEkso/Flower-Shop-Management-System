@@ -12,20 +12,17 @@ public class Client {
 	private Long id;
 
 	private String name;
-	private String address;
-	private String contactPhoneNumber;
+	private String phone;
 
-	public Client(Long id, String name, String address, String contactPhoneNumber) {
+	public Client(Long id, String name, String phone) {
 		this.id = id;
 		this.name = name;
-		this.address = address;
-		this.contactPhoneNumber = contactPhoneNumber;
+		this.phone = phone;
 	}
 
-	public Client(String name, String address, String contactPhoneNumber) {
+	public Client(String name, String phone) {
 		this.name = name;
-		this.address = address;
-		this.contactPhoneNumber = contactPhoneNumber;
+		this.phone = phone;
 	}
 
 	public Client() {
@@ -43,19 +40,11 @@ public class Client {
 		this.name = name;
 	}
 
-	public String getAddress() {
-		return address;
+	public String getPhone() {
+		return phone;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getContactPhoneNumber() {
-		return contactPhoneNumber;
-	}
-
-	public void setContactPhoneNumber(String contactPhoneNumber) {
-		this.contactPhoneNumber = contactPhoneNumber;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 }

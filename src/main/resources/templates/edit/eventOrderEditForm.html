@@ -27,8 +27,8 @@
 
         <!-- Contact Phone -->
         <div class="mb-3">
-            <label for="contactPhoneNumber" class="form-label">Phone</label>
-            <input type="tel" class="form-control" th:value="${eventOrder.client.contactPhoneNumber}" id="contactPhoneNumber" name="contactPhoneNumber" placeholder="+1 xxx xxx xxx" required>
+            <label for="phone" class="form-label">Phone</label>
+            <input type="tel" class="form-control" th:value="${eventOrder.client.phone}" id="phone" name="phone" placeholder="+1 xxx xxx xxx" required>
         </div>
 
         <!-- Delivery Address -->
@@ -40,7 +40,7 @@
         <!-- Notes -->
         <div class="mb-3">
             <label for="notes" class="form-label">Notes</label>
-            <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter any additional notes here"></textarea>
+            <textarea class="form-control" th:value="${eventOrder.notes}" id="notes" name="notes" rows="3" placeholder="Enter any additional notes here"></textarea>
         </div>
 
         <!-- Submit Button -->

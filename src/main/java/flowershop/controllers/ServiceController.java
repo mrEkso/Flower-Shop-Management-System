@@ -1,22 +1,23 @@
 package flowershop.controllers;
 
+import flowershop.models.Client;
 import flowershop.models.orders.ContractOrder;
 import flowershop.models.orders.EventOrder;
 import flowershop.models.orders.ReservationOrder;
 import flowershop.services.order.ContractOrderService;
 import flowershop.services.order.EventOrderService;
 import flowershop.services.order.ReservationOrderService;
-import org.salespointframework.order.Order;
+import org.salespointframework.useraccount.UserAccount;
+import org.salespointframework.useraccount.UserAccountManagement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 @Controller
 @RequestMapping("/services")
@@ -25,13 +26,16 @@ public class ServiceController {
 	private final EventOrderService eventOrderService;
 	private final ReservationOrderService reservationOrderService;
 	private final ContractOrderService contractOrderService;
+	private final UserAccountManagement userAccountManagement;
 
 	public ServiceController(EventOrderService eventOrderService,
 							 ReservationOrderService reservationOrderService,
-							 ContractOrderService contractOrderService) {
+							 ContractOrderService contractOrderService,
+							 UserAccountManagement userAccountManagement) {
 		this.eventOrderService = eventOrderService;
 		this.reservationOrderService = reservationOrderService;
 		this.contractOrderService = contractOrderService;
+		this.userAccountManagement = userAccountManagement;
 	}
 
 	@GetMapping("")
@@ -46,60 +50,125 @@ public class ServiceController {
 	/* GET BY ID ENDPOINT */
 	@GetMapping("/{type}/{id}")
 	public ResponseEntity<?> getOrderById(@PathVariable String type, @PathVariable UUID id) {
-		return switch (type) {
-			case "events" -> handleGetOrder(eventOrderService.getById(id));
-			case "reservations" -> handleGetOrder(reservationOrderService.getById(id));
-			case "contracts" -> handleGetOrder(contractOrderService.getById(id));
-			default -> new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		};
+		switch (type) {
+			case "events" -> {
+				return eventOrderService.getById(id)
+					.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+					.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+			}
+			case "reservations" -> {
+				return reservationOrderService.getById(id)
+					.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+					.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+			}
+			case "contracts" -> {
+				return contractOrderService.getById(id)
+					.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+					.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+			}
+			default -> {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+		}
 	}
 
+	/* CREATE ENDPOINTS */
+	@GetMapping("/create")
+	public String getNewOrderPage() {
+		return "services/create_service";
+	}
+
+	@PostMapping("/events/create")
+	public String createEventOrder(
+		@RequestParam String companyName,
+		@RequestParam("eventDate") LocalDate eventDate,
+		@RequestParam("phone") String phone,
+		@RequestParam("deliveryAddress") String deliveryAddress,
+		@RequestParam("notes") String notes) {
+//		UserAccount frauFloris = userAccountManagement.findByUsername("frau_floris").orElseThrow(() ->
+//			new IllegalArgumentException("Frau Floris account not found"));
+//		EventOrder eventOrder = new EventOrder(eventDate, deliveryAddress, frauFloris, new Client(companyName, phone));
+//		eventOrderService.create(eventOrder);
+		return "redirect:/services";
+	}
+
+	@PostMapping("/reservations/create")
+	public String createReservationOrder(@RequestParam String companyName,
+										 @RequestParam("reservationDateTime") LocalDateTime reservationDateTime,
+										 @RequestParam("contactPhoneNumber") String phone,
+										 @RequestParam("notes") String notes) {
+		UserAccount frauFloris = userAccountManagement.findByUsername("frau_floris")
+			.orElseThrow(() -> new IllegalArgumentException("Frau Floris account not found"));
+		ReservationOrder reservationOrder = new ReservationOrder(reservationDateTime, frauFloris, new Client(companyName, phone));
+		reservationOrderService.create(reservationOrder);
+		return "redirect:/services";
+	}
+
+	@PostMapping("/contracts/create")
+	public String createContractOrder(@RequestParam String companyName,
+									  @RequestParam("contractType") String contractType,
+									  @RequestParam("startDate") LocalDate startDate,
+									  @RequestParam("endDate") LocalDate endDate,
+									  @RequestParam("address") String address,
+									  @RequestParam("phone") String phone,
+									  @RequestParam("notes") String notes) {
+//		UserAccount frauFloris = userAccountManagement.findByUsername("frau_floris")
+//			.orElseThrow(() -> new IllegalArgumentException("Frau Floris account not found"));
+//		ContractOrder contractOrder = new ContractOrder(contractType, startDate, endDate, address, frauFloris, new Client(companyName, phone));
+//		contractOrderService.create(contractOrder);
+		return "redirect:/services";
+	}
+
+	/* EDIT ENDPOINTS */
 	@GetMapping("/events/edit/{id}")
 	public String getEventOrderEditPage(@PathVariable UUID id,
-										Model model){
+										Model model) {
 		EventOrder dbEventOrder = eventOrderService.getById(id).get();
 		model.addAttribute("eventOrder", dbEventOrder);
 		return "edit/eventOrderEditForm";
 	}
 
-	/* CREATE ENDPOINTS */
-	@PostMapping("/events")
-	public ResponseEntity<EventOrder> createEventOrder(@RequestBody EventOrder eventOrder) {
-		return new ResponseEntity<>(eventOrderService.create(eventOrder), HttpStatus.CREATED);
+	@GetMapping("/contracts/edit/{id}")
+	public String getContractOrderEditPage(@PathVariable UUID id,
+										   Model model) {
+		ContractOrder dbContractOrder = contractOrderService.getById(id).get();
+		model.addAttribute("contractOrder", dbContractOrder);
+		return "edit/contractOrderEditForm";
 	}
 
-	@PostMapping("/reservations")
-	public ResponseEntity<ReservationOrder> createReservationOrder(@RequestBody ReservationOrder reservationOrder) {
-		return new ResponseEntity<>(reservationOrderService.create(reservationOrder), HttpStatus.CREATED);
-	}
-
-	@PostMapping("/contracts")
-	public ResponseEntity<ContractOrder> createContractOrder(@RequestBody ContractOrder contractOrder) {
-		return new ResponseEntity<>(contractOrderService.create(contractOrder), HttpStatus.CREATED);
+	@GetMapping("/reservations/edit/{id}")
+	public String getReservationOrderEditPage(@PathVariable UUID id,
+											  Model model) {
+		ReservationOrder dbReservationOrder = reservationOrderService.getById(id).get();
+		model.addAttribute("reservationOrder", dbReservationOrder);
+		return "edit/reservationOrderEditForm";
 	}
 
 	/* DELETE ORDER ENDPOINT */
 	@DeleteMapping("/{type}/{id}")
 	public ResponseEntity<?> deleteOrder(@PathVariable String type, @PathVariable UUID id) {
-		return switch (type) {
-			case "events" -> handleDeleteOrder(eventOrderService.getById(id), eventOrderService::delete);
-			case "reservations" ->
-				handleDeleteOrder(reservationOrderService.getById(id), reservationOrderService::delete);
-			case "contracts" -> handleDeleteOrder(contractOrderService.getById(id), contractOrderService::delete);
-			default -> new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		};
-	}
-
-	/* PRIVATE HELPER METHODS */
-	private <T> ResponseEntity<T> handleGetOrder(Optional<T> order) {
-		return order.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-			.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-	}
-
-	private <T extends Order> ResponseEntity<?> handleDeleteOrder(Optional<T> order, Consumer<T> deleteFunction) {
-		return order.map(value -> {
-			deleteFunction.accept(value);
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+		switch (type) {
+			case "events" -> {
+				return eventOrderService.getById(id).map(value -> {
+					eventOrderService.delete(value);
+					return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				}).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+			}
+			case "reservations" -> {
+				return reservationOrderService.getById(id).map(value -> {
+					reservationOrderService.delete(value);
+					return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				}).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+			}
+			case "contracts" -> {
+				return contractOrderService.getById(id).map(value -> {
+					contractOrderService.delete(value);
+					return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				}).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+			}
+			default -> {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+		}
 	}
 }
