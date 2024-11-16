@@ -3,24 +3,66 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link th:href="@{/resources/css/navbar.css}" rel="stylesheet" />
     <link th:href="@{/resources/css/finances.css}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Finances page</title>
 </head>
 <body>
-    <h2>Transactions History</h2>
-    <div th:replace="navbar"></div>
-    <p th:text="#{sell.description}"></p>
-    <div>
-        <p>Von</p>
-        <input type="date">
-        <p>bis</p>
-        <input type="date">
-        <select name="filter" id="filter">
-            <option value="all">Alles</option>
-            <option value="income">Nur Einkommen</option>
-            <option value="spendings">Nut Ausgaben</option>
-
-        </select>
+    <div class="content">
+        <div th:replace="navbar"></div>
+        <div>
+            <h2 th:text="#{finances.title}">Transactions History</h2>
+            <button th:text="#{finances.dailyReport}"></button>
+            <button th:text="#{finances.monthlyReport}"></button>
+        </div>
+        <div>
+            <p th:text="#{finances.from}"></p>
+            <input type="date">
+            <p th:text="#{finances.until}"></p>
+            <input type="date">
+            <select name="filter" id="filter">
+                <option value="all" th:text="#{finances.filter.everything}"/>
+                <option value="income" th:text="#{finances.filter.income}"/>
+                <option value="spendings" th:text="#{finances.filter.spendings}"/>
+                <option value="simple order" th:text="#{finances.filter.simple}"/>
+                <option value="reserved order" th:text="#{finances.filter.reserved}"/>
+                <option value="event order" th:text="#{finances.filter.event}"/>
+                <option value="contract order" th:text="#{finances.filter.contract}"/>
+                <option value="wholesaler" th:text="#{finances.filter.wholesaler}"/>
+            </select>
+        </div>
+        <table id="finances-table">
+            <thead>
+                <div class="table-header">
+                    <tr></tr>
+                    <th th:text="#{sell.table.head.icon}"></th>
+                    <th th:text="#{sell.table.head.name}"></th>
+                    <th th:text="#{sell.table.head.color}"></th>
+                    <th th:text="#{sell.table.head.quantity}"></th>
+                    <th th:text="#{sell.table.head.price}"></th>
+                    <th></th>
+                    </tr>
+                </div>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${transactions}">
+                <td th:text="${order.timestamp}"></td>
+                <td th:text="${order.category}" th:classappend="${order.category.equals('Einkauf') ? 'red' : 'green'}"></td>
+                <td>
+                    <ul>
+                        <li th:each="entry : ${order.items}" th:text="${entry.key}"></li>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <li th:each="entry : ${order.items}" th:text="${entry.value}"></li>
+                    </ul>
+                </td>
+                <td th:text="${order.value}"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </body>
 </html>
