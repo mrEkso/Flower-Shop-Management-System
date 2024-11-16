@@ -69,4 +69,11 @@ public class FlowerShopController {
 
         return "buy";
     }
+
+    @GetMapping("/")
+    public String index(){
+        return "redirect:sell";
+    }
+
 }
+ 

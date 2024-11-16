@@ -1,1 +1,48 @@
-<div class="basket" th:fragment="basket"></div>
+<div class="basket" th:fragment="basket">
+  <h2 class="basket-head">Modify order</h2>
+  <div class="basket-head">
+    <img class="basket-img" th:src="@{/resources/img/shopping-basket.png}" />
+    <b class="basket-header">Your basket</b>
+  </div>
+  <table class="basket-table">
+    <tbody>
+      <!-- <tr th:each="flower : ${flowers}">
+        <td><img th:src="@{/resources/img/rose.png}" /></td>
+      </tr> -->
+      <tr th:each="selectedFlower : ${flowers}">
+        <td>
+          <div class="basket-card">
+            <div class="basket-card-header">
+              <span
+                class="basket-card-name"
+                th:text="${selectedFlower.name}"
+              ></span>
+              <img
+                class="basket-img close-btn"
+                th:src="@{/resources/img/close.png}"
+              />
+            </div>
+            <div class="basket-card-body">
+              <!-- th:text="${selectedFlower.description}" -->
+              <p
+                class="basket-card-text"
+                th:text="3x + ${selectedFlower.pricing.sellPrice}"
+              ></p>
+            </div>
+            <div class="basket-card-footer">
+              <!-- th:text="${selectedFlower.price} + ' EUR'" -->
+              <span>15.3 EUR</span>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="basket-footer">
+    <input
+      class="basket-submit-btn"
+      type="button"
+      th:value="#{busket.footer.button}"
+    />
+  </div>
+</div>
