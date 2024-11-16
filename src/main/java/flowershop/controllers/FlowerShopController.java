@@ -47,21 +47,6 @@ public class FlowerShopController {
         return "sell";
     }
 
-    @GetMapping("/basket")
-    public String basket(Model model){
-
-        List<Flower> flowers = productCatalog.findAll()
-        .filter(product -> product instanceof Flower)
-        .map(product -> (Flower) product).toList();
-        
-        System.out.println("------------------basket---------------");
-        System.out.println(flowers);
-
-        model.addAttribute("selectedFlowers", flowers);
-
-        return "basket";
-    }
-
     @GetMapping("/buy")
     public String buy(Model model){
         
@@ -84,4 +69,10 @@ public class FlowerShopController {
 
         return "buy";
     }
+
+    @GetMapping("/")
+    public String index(){
+        return "redirect:sell";
+    }
 }
+ 
