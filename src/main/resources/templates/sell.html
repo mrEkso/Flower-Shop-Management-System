@@ -16,7 +16,6 @@
       <div class = "inputs-div">
         <input id ="search-input" type="text" th:placeholder = "#{sell.search}">
         <div id="filter-div">
-          <form action="#" th:action="@{/sell}" method="get">
             <select id="filter-dd" th:value="${selectedItem}">
               <option th:each="type : ${typeList}" 
                       th:value="${type}"
@@ -24,7 +23,6 @@
               </option>
             </select>
             <img th:src="@{/resources/img/filter.png}" />
-          </form>
         </div>
       </div>
       <table id="flower-table">
