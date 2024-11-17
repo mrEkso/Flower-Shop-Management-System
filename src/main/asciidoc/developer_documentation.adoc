@@ -8,7 +8,7 @@
 |===
 |Version | Datum   | Autor | Beschreibung
 |0.1	| 15.11 | Andrejs | Package Diagram + External Dependencies
-|...	| ... | ... | ...
+|0.2	| 18.11 | Oleh | Start of package diagram for sales package
 |...	| ... | ... | ...
 |===
 
