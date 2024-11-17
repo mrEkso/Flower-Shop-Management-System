@@ -47,7 +47,7 @@ public class CalendarController {
 		model.addAttribute("currentMonth", month);
 		model.addAttribute("currentYear", year);
 
-		return "calendar";
+		return "calendar/calendar";
 	}
 
 	@GetMapping("/calendar/next")
@@ -70,13 +70,23 @@ public class CalendarController {
 		}
 		return "redirect:/calendar?month=" + month + "&year=" + year;
 	}
+
+	@GetMapping("/calendar/new")
+	public String addE(Model model) {
+		return "calendar/create_event";
+	}
+
 	@PostMapping("/calendar/add")
 	public String addEvent(@ModelAttribute Event event) {
 		service.save(event);
 		return "redirect:/calendar";
 	}
 
-
+	@PostMapping("/calendar/delete")
+	public String deleteEvent(@RequestParam Long id) {
+		service.delete(id);
+		return "redirect:/calendar";
+	}
 	private List<CalendarDay> generateCalendarDays(LocalDate firstDayOfMonth, List<Event> events) {
 		List<CalendarDay> calendarDays = new ArrayList<>();
 
