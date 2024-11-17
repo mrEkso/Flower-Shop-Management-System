@@ -4,10 +4,12 @@
 :numbered:
 
 [options="header"]
-[cols="1, 3, 3"]
+[cols="1, 1, 3, 3"]
 |===
-|Version | Bearbeitungsdatum   | Autor 
-|...	| ... | ...
+|Version | Datum   | Autor | Beschreibung
+|0.1	| 15.11 | Andrejs | Package Diagram + External Dependencies
+|...	| ... | ... | ...
+|...	| ... | ... | ...
 |===
 
 
@@ -39,6 +41,27 @@
 * Benutzeroberfläche
 * Verwendung externer Frameworks
 
+=== Use of external frameworks
+
+NOTE: Name the used external frameworks, in which packages you used them, and why you used them in your application. You only need to describe the high level artifact.
+
+
+[options="header"]
+|===
+|Exterenes Framework|Kategorie|Beschreibung
+|Spring Boot |General purpose |…
+|Spring Data JPA |Persistence |…
+|Spring Security |Security |…
+|Semantic UI |UI |…
+|jQuery |UI |…
+|salespointframework |Backend | Zur Entwicklung von Point-of-Sales-Anwendungen (PoS) mit Spring Framework und Spring Boot. Es besteht aus einer Vielzahl von Geschäftsmodulen, die es dem Nutzer ermöglichen, darauf aufbauend anspruchsvolle Webanwendungen zu implementieren.
+|Bootstrap | UI | Stellt Seiten-Layout-Tools und vordefinierte HTML-Elemente zu Verfügung. 
+|===
+
+NOTE: If you use JavaScript frameworks like Bootstrap, HTMX, etc. you have to add them to the list. The category is
+mostly _UI_ and/or _Communication_.
+
+
 [options="header", cols="1,2,3"]
 |===
 |Externes Package |Verwendet von |Warum
@@ -47,6 +70,11 @@
 
 == Bausteinsicht
 * Package-Diagramm
+
+[[package_diagram]]
+image::./models/images/package_diagram_c.svg[package diagram]
+
+
 * Entwurfsklassendiagramme der einzelnen Packages
 
 [options="header"]
