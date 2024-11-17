@@ -72,7 +72,7 @@ mostly _UI_ and/or _Communication_.
 * Package-Diagramm
 
 [[package_diagram]]
-image::./models/images/package_diagram_a.svg[package diagram]
+image::./models/images/package_diagram_b.svg[package diagram]
 
 
 * Entwurfsklassendiagramme der einzelnen Packages
