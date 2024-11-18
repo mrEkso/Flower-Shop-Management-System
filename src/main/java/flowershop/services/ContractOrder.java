@@ -31,7 +31,7 @@ public class ContractOrder extends AbstractOrder {
 	private Client client;
 
 	public ContractOrder(UserAccount user, String contractType, LocalDate startDate, LocalDate endDate, String address, Client client, String notes) {
-		super(user);
+		super(user, notes);
 		this.client = client;
 		this.contractType = contractType;
 		this.startDate = startDate;
@@ -39,14 +39,6 @@ public class ContractOrder extends AbstractOrder {
 		this.address = address;
 	}
 
-	public ContractOrder(UserAccount user, String contractType, LocalDate startDate, LocalDate endDate, String address , Client client) {
-		super(user);
-		this.contractType = contractType;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.address = address;
-		this.client = client;
-	}
 
 	public ContractOrder() {
 		super();

@@ -22,7 +22,6 @@ public class UserInitializer implements DataInitializer {
 
 	@Override
 	public void initialize() {
-		System.out.println("-------------------------- initialize --------------------------");
 
 		// Creating Frau Floris
 		UserAccount frauFloris = userAccountManagement.create("frau_floris", Password.UnencryptedPassword.of("password"), Role.of("ROLE_ADMIN"));
@@ -41,6 +40,5 @@ public class UserInitializer implements DataInitializer {
 		dummyShopWorker.setFirstname("Shop");
 		dummyShopWorker.setLastname("Worker");
 		userAccountManagement.save(dummyShopWorker);
-		System.out.println("-------------------------- Default user created --------------------------");
 	}
 }
