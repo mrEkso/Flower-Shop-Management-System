@@ -133,7 +133,7 @@ public class SalesController {
 
 	@GetMapping("/")
 	public String index() {
-		return "redirect:sales/sell";
+		return "redirect:/sell";
 	}
 
 	@PostMapping("/remove-from-basket")
