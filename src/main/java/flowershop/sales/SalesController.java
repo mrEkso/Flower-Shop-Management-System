@@ -38,7 +38,6 @@ public class SalesController {
         Set<String> colors = flowers.stream()
         .map(Flower::getColor)
         .collect(Collectors.toSet());
-
         
         model.addAttribute("typeList", colors);
         model.addAttribute("selectedItem", selectedItem);

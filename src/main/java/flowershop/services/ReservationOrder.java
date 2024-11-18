@@ -39,8 +39,8 @@ public class ReservationOrder extends AbstractOrder {
 		this.reservationStatus = reservationStatus;
 	}
 
-	public ReservationOrder(UserAccount userAccount, LocalDateTime dateTime, Client client) {
-		super(userAccount);
+	public ReservationOrder(UserAccount userAccount, LocalDateTime dateTime, Client client, String notes) {
+		super(userAccount, notes);
 		this.reservationDateTime = dateTime;
 		this.client = client;
 		this.reservationStatus = ReservationStatus.IN_PROCESS;

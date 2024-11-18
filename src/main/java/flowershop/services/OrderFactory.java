@@ -29,19 +29,31 @@ public class OrderFactory {
 		return new SimpleOrder(getDefaultUserAccount());
 	}
 
+	public EventOrder createEventOrder(LocalDate eventDate, String deliveryAddress, Client client, String notes) {
+		return new EventOrder(getDefaultUserAccount(), eventDate, deliveryAddress, client, notes);
+	}
+
 	public EventOrder createEventOrder(LocalDate eventDate, String deliveryAddress, Client client) {
-		return new EventOrder(getDefaultUserAccount(), eventDate, deliveryAddress, client);
+		return new EventOrder(getDefaultUserAccount(), eventDate, deliveryAddress, client, "");
+	}
+
+	public ContractOrder createContractOrder(String contractType, String frequency, LocalDate startDate, LocalDate endDate, Client client, String notes) {
+		return new ContractOrder(getDefaultUserAccount(), contractType, startDate, endDate, frequency, client, notes);
 	}
 
 	public ContractOrder createContractOrder(String contractType, String frequency, LocalDate startDate, LocalDate endDate, Client client) {
-		return new ContractOrder(getDefaultUserAccount(), contractType, startDate, endDate, frequency, client);
+		return new ContractOrder(getDefaultUserAccount(), contractType, startDate, endDate, frequency, client, "");
+	}
+
+	public ReservationOrder createReservationOrder(LocalDateTime dateTime, Client client, String notes) {
+		return new ReservationOrder(getDefaultUserAccount(), dateTime, client, notes);
 	}
 
 	public ReservationOrder createReservationOrder(LocalDateTime dateTime, Client client) {
-		return new ReservationOrder(getDefaultUserAccount(), dateTime, client);
+		return new ReservationOrder(getDefaultUserAccount(), dateTime, client, "");
 	}
 
-	 // This cannot be in the constructor because of some very complicated spring bean init logic.
+	// This cannot be in the constructor because of some very complicated spring bean init logic.
 	//  Just believe me that it should be here in a method and not a private field.
 	private UserAccount getDefaultUserAccount() {
 		return userAccountManagement.findByUsername("shop_worker")

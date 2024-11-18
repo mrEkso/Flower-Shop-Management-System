@@ -22,18 +22,8 @@ public class EventOrder extends AbstractOrder {
 	@ManyToOne
 	private Client client;
 
-	public void setClient(Client client) {
-		this.client = client;
-	}
-
-	public EventOrder(LocalDate eventDate, String deliveryAddress, UserAccount orderProcessingEmployee, Client client, String notes) {
-		super(orderProcessingEmployee, notes);
-		this.eventDate = eventDate;
-		this.deliveryAddress = deliveryAddress;
-	}
-
-	public EventOrder(UserAccount user, LocalDate eventDate, String deliveryAddress, Client client) {
-		super(user);
+	public EventOrder( UserAccount user, LocalDate eventDate, String deliveryAddress, Client client, String notes) {
+		super(user, notes);
 		this.client = client;
 		this.eventDate = eventDate;
 		this.deliveryAddress = deliveryAddress;
@@ -60,5 +50,9 @@ public class EventOrder extends AbstractOrder {
 
 	public Client getClient() {
 		return client;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
 	}
 }

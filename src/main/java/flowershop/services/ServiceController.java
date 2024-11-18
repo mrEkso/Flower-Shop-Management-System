@@ -24,14 +24,17 @@ public class ServiceController {
 	private final ProductService productService;
 	private final ClientService clientService;
 	private final UserAccountManagement userAccountManagement;
+	private final OrderFactory orderFactory;
 
-	public ServiceController(EventOrderService eventOrderService, ContractOrderService contractOrderService, ReservationOrderService reservationOrderService, ProductService productService, ClientService clientService, UserAccountManagement userAccountManagement) {
+	public ServiceController(EventOrderService eventOrderService, ContractOrderService contractOrderService, ReservationOrderService reservationOrderService,
+							 ProductService productService, ClientService clientService, UserAccountManagement userAccountManagement, OrderFactory orderFactory) {
 		this.eventOrderService = eventOrderService;
 		this.contractOrderService = contractOrderService;
 		this.reservationOrderService = reservationOrderService;
 		this.productService = productService;
 		this.clientService = clientService;
 		this.userAccountManagement = userAccountManagement;
+		this.orderFactory = orderFactory;
 	}
 
 	@GetMapping("")
@@ -113,8 +116,7 @@ public class ServiceController {
 		@RequestParam("deliveryAddress") String deliveryAddress,
 		@RequestParam Map<String, String> products,
 		@RequestParam("notes") String notes) {
-		EventOrder eventOrder = new EventOrder(eventDate, deliveryAddress,
-			getFrauFlorisAccount(), getOrCreateClient(clientName, phone), notes);
+		EventOrder eventOrder = orderFactory.createEventOrder(eventDate, deliveryAddress, getOrCreateClient(clientName, phone), notes);
 		eventOrderService.save(eventOrder, products);
 		return "redirect:/services";
 	}
