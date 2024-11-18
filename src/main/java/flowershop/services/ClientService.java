@@ -1,7 +1,5 @@
 package flowershop.services;
 
-import flowershop.models.Client;
-import flowershop.repositories.ClientRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
