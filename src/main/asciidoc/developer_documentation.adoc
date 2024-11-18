@@ -18,7 +18,7 @@
 * Aufgabenstellung
 
 == Randbedingungen
-* Hardware-Vorgaben
+=== Hardware-Vorgaben
 
 [cols="1, 1"]
 |===
@@ -28,7 +28,7 @@
 |Server mit Linux	| Unternehmen
 |===
 
-* Software-Vorgaben
+=== Software-Vorgaben
 
 The following (or newer) Java version is necessary to run the application:
 
@@ -47,7 +47,7 @@ The following (or newer) browser versions are necessary to use the application:
 |Safari |18.0
 |===
 
-* Vorgaben zum Betrieb der Software
+=== Vorgaben zum Betrieb der Software
 Das Program soll in dem Blumenladen intern (d.h. von den Mitarbeitern) bedient werden, um die Geschäftsprozesse (u.a. Verkauf, Einkauf, Bluemnpflegen-Dienstleistungen usw.) zu digitalisieren und vereinfachen. 
 
 Das Backend soll auf einem Server mindestens in Arbeitszeiten (oder länger) laufen und mittels des Netzwerkes zugänglich für Enduser-Rechener sein.
