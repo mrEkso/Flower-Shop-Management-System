@@ -30,8 +30,4 @@ public class BasketItem {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-
-    public double getTotalPrice() {
-        return this.flower.getPricing().getSellPrice().getNumber().doubleValue();
-    }
 }

@@ -31,12 +31,14 @@
             <div class="basket-card-body">
               <p
                 class="basket-card-text"
-                th:text="${selectedBusket.quantity} + 'x' + ${selectedBusket.flower.pricing.sellPrice} + ' EUR'"
+                th:text="${selectedBusket.quantity} + 'x' + ${selectedBusket.flower.pricing.sellPrice.number*1.0} + ' EUR'"
               ></p>
             </div>
             <div class="basket-card-footer">
               <!-- th:text="${selectedFlower.price} + ' EUR'" -->
-              <span>15.3 EUR</span>
+              <span
+                th:text="${selectedBusket.quantity*selectedBusket.flower.pricing.sellPrice.number*1.0} + ' EUR'"
+              ></span>
             </div>
           </div>
         </td>
