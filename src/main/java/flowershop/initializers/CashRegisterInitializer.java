@@ -13,6 +13,7 @@ import org.springframework.util.Assert;
 import static org.salespointframework.core.Currencies.EURO;
 
 @Component
+@Order(20)
 public class CashRegisterInitializer implements DataInitializer {
 	private final CashRegisterRepository cashRegisterRepository;
 
@@ -27,5 +28,6 @@ public class CashRegisterInitializer implements DataInitializer {
 		}
 		CashRegister cashRegister = new CashRegister(Streamable.empty(), Money.of(5000, EURO));
 		cashRegisterRepository.save(cashRegister);
+
 	}
 }

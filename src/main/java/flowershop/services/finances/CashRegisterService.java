@@ -52,9 +52,16 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		}
 	}
 
+
+
 	public CashRegister getCashRegisterById(Long id) {
 		return cashRegisterRepository.findById(id)
 			.orElseThrow(() -> new IllegalStateException("Product not found with id " + id));
+	}
+
+	public MonetaryAmount getBalance()
+	{
+		return this.getCashRegister().getBalance();
 	}
 
 	@Override
