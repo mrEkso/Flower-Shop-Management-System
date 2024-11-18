@@ -9,6 +9,7 @@
 |Version | Datum   | Autor | Beschreibung
 |0.1	| 15.11 | Andrejs | Package Diagram + External Dependencies
 |0.2	| 18.11 | Oleh | Start of package diagram for sales package
+|0.3	| 18.11 | Andrejs | Vorgaben zum Betrieb der Software
 |...	| ... | ... | ...
 |===
 
@@ -18,8 +19,42 @@
 
 == Randbedingungen
 * Hardware-Vorgaben
+
+[cols="1, 1"]
+|===
+|Maus	| Benutzer 
+|Tastatur	| Benutzer 
+|Rechner mit Internetverbindung | Benutzer
+|Server mit Linux	| Unternehmen
+|===
+
 * Software-Vorgaben
+
+The following (or newer) Java version is necessary to run the application:
+
+[cols="1"]
+|===
+|Java 21
+|===
+
+The following (or newer) browser versions are necessary to use the application:
+[cols="1, 1"]
+|===
+|Firefox |130.0.0
+|Google Chrome |131.0.0
+|Chromium based browsers |130.0.0
+|Opera |114.0.0
+|Safari |18.0
+|===
+
 * Vorgaben zum Betrieb der Software
+Das Program soll in dem Blumenladen intern (d.h. von den Mitarbeitern) bedient werden, um die Geschäftsprozesse (u.a. Verkauf, Einkauf, Bluemnpflegen-Dienstleistungen usw.) zu digitalisieren und vereinfachen. 
+
+Das Backend soll auf einem Server mindestens in Arbeitszeiten (oder länger) laufen und mittels des Netzwerkes zugänglich für Enduser-Rechener sein.
+
+Die Nutzer sind Frau Floris (Besitzerin) und ihre Nichte (Mitarbeiterin im Service). Es wird vorausgesetzt, dass sie den Rechner im Wesentlichen bedienen können.  
+
+Das System soll keiner technischen Wartung bedürfen. Sämtliche Daten sollen persistent in einer Datenbank gespeichert und über die Anwendung zugänglich sein (z.B. sollten für Frau Floris keine SQL-Kenntnisse erforderlich sein).
 
 == Kontextabgrenzung
 * Kontextdiagramm
@@ -65,7 +100,9 @@ mostly _UI_ and/or _Communication_.
 [options="header", cols="1,2,3"]
 |===
 |Externes Package |Verwendet von |Warum
-|... |... |...
+|salespointframework |Backend | Zur Entwicklung von Point-of-Sales-Anwendungen (PoS) mit Spring Framework und Spring Boot. Ermöglicht, darauf aufbauend anspruchsvolle Webanwendungen zu implementieren.
+|Bootstrap | Frontend | Stellt Seiten-Layout-Tools und vordefinierte HTML-Elemente zu Verfügung. 
+|Thymeleaf | Frontend | ...
 |===
 
 == Bausteinsicht
