@@ -1,14 +1,17 @@
 package flowershop.models.accounting;
 
 import flowershop.models.orders.*;
+import flowershop.models.orders.AbstractOrder;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.order.ChargeLine;
 import org.salespointframework.order.OrderLine;
 import org.salespointframework.order.Totalable;
 import org.salespointframework.quantity.Quantity;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class AccountancyEntryWrapper extends AccountancyEntry {
 	// For every entry:
@@ -28,15 +31,25 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		Vertraglicher_Verkauf,
 		Einkauf
 	}
-	public String categoryToString(Category category){
+	public static String categoryToString(Category category){
 		return category.toString().replace('_',' ');
 	}
 
-	public Category getCategory() {
-		return category;
+	public String getCategory() {
+		return this.categoryToString(this.category);
 	}
 
-	public Map<String, Quantity> getItemQuantityMap() {
+	public LocalDateTime getTimestamp() {
+		Optional<LocalDateTime> envelope = this.getDate();
+		if(envelope.isEmpty()){
+			return null;
+		}
+		else{
+			return envelope.get();
+		}
+	}
+
+	public Map<String, Quantity> getItems() {
 		return itemQuantityMap;
 	}
 

@@ -26,6 +26,7 @@ import java.util.Optional;
 public class CashRegister  {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	//private final OrderManagement<AbstractOrder> orderManagement;

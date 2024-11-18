@@ -39,6 +39,7 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 	//private final CashRegister cashRegister;
 	private final CashRegisterRepository cashRegisterRepository;
 
+
 	@Autowired
 	public CashRegisterService(OrderManagement<AbstractOrder> orderManagement,
 							   CashRegisterRepository cashRegisterRepository) {
@@ -51,9 +52,16 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		}
 	}
 
+
+
 	public CashRegister getCashRegisterById(Long id) {
 		return cashRegisterRepository.findById(id)
 			.orElseThrow(() -> new IllegalStateException("Product not found with id " + id));
+	}
+
+	public MonetaryAmount getBalance()
+	{
+		return this.getCashRegister().getBalance();
 	}
 
 	@Override
@@ -87,7 +95,7 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 	public Streamable<AccountancyEntry> filterEntries(AccountancyEntryWrapper.Category category) {
 		Streamable<AccountancyEntry> filteredEntries = Streamable.empty();
 		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
-			if (((AccountancyEntryWrapper)entry).getCategory() == category){
+			if (((AccountancyEntryWrapper)entry).getCategory().equals(AccountancyEntryWrapper.categoryToString(category))){
 				filteredEntries.and(entry);
 			}
 		}
