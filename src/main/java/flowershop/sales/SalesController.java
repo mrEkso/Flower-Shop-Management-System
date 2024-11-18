@@ -23,30 +23,34 @@ public class SalesController {
     }
 
     @GetMapping("/sell")
-    public String sell(Model model, @RequestParam(value = "color", required = false) String selectedItem){
-
+    public String sell(Model model, @RequestParam(required = false) String filterItem) {
+    
         List<Flower> flowers = productCatalog.findAll()
-        .filter(product -> product instanceof Flower)
-        .map(product -> (Flower) product).toList();
+            .filter(product -> product instanceof Flower)
+            .map(product -> (Flower) product)
+            .toList();
+        
+        System.out.println(filterItem);
 
-        if (selectedItem != null && !selectedItem.isEmpty()) {
+        if (filterItem != null && !filterItem.isEmpty()) {
             flowers = flowers.stream()
-                    .filter(flower -> flower.getColor().equalsIgnoreCase(selectedItem))
+                    .filter(flower -> flower.getColor().equalsIgnoreCase(filterItem))
                     .collect(Collectors.toList());
         }
-
-        Set<String> colors = flowers.stream()
-        .map(Flower::getColor)
+    
+        Set<String> colors = productCatalog.findAll()
+        .filter(product -> product instanceof Flower)
+        .map(product -> (Flower) product)
+        .toList().stream().map(Flower::getColor)
         .collect(Collectors.toSet());
-
-        
+    
         model.addAttribute("typeList", colors);
-        model.addAttribute("selectedItem", selectedItem);
+        model.addAttribute("filterItem", filterItem);
         model.addAttribute("flowers", flowers);
-
+    
         return "sell";
     }
-
+    
     @GetMapping("/buy")
     public String buy(Model model){
         
