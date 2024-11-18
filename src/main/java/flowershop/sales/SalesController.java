@@ -3,6 +3,9 @@ package flowershop.sales;
 import flowershop.product.Bouquet;
 import flowershop.product.Flower;
 import flowershop.product.ProductService;
+import flowershop.services.OrderFactory;
+import org.salespointframework.order.OrderEvents;
+import org.salespointframework.payment.PaymentMethod;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,9 +29,13 @@ import jakarta.servlet.http.HttpServletRequest;
 public class SalesController {
 
 	private final ProductService productService;
+	private final OrderFactory orderFactory;
+	private final SimpleOrderService simpleOrderService;
 
-	SalesController(ProductService productService) {
+	SalesController(ProductService productService, OrderFactory orderFactory, SimpleOrderService simpleOrderService) {
 		this.productService = productService;
+		this.orderFactory = orderFactory;
+		this.simpleOrderService = simpleOrderService;
 	}
 
 	@ModelAttribute("basket")
@@ -155,19 +162,21 @@ public class SalesController {
 			return "sales/buy";
 		}
 
+
 		for (BasketItem basketItem : basket) {
 			Product product = basketItem.getProduct();
 
 			if (product instanceof Flower) {
-				productService.addFlowers((Flower) product, basketItem.getQuantity());
+				productService.addFlowers((Flower) product, basketItem.getQuantityAsInteger());
 			} else if (product instanceof Bouquet) {
-				productService.addBouquets((Bouquet) product, basketItem.getQuantity());
+				productService.addBouquets((Bouquet) product, basketItem.getQuantityAsInteger());
 			}
+
 		}
 
-		basket.clear();
 
-		// Optionally, you could create an order or transaction record in the database here
+
+		basket.clear();
 
 		model.addAttribute("message", "Your order has been successfully placed.");
 		String referer = request.getHeader("Referer").split("http://localhost:8080/")[1];
@@ -186,19 +195,26 @@ public class SalesController {
 			return "sell";
 		}
 
+		SimpleOrder simpleOrder = orderFactory.createSimpleOrder();
 		for (BasketItem basketItem : basket) {
 			Product product = basketItem.getProduct();
 
 			if (product instanceof Flower) {
-				productService.removeFlowers((Flower) product, basketItem.getQuantity());
+				productService.removeFlowers((Flower) product, basketItem.getQuantityAsInteger());
 			} else if (product instanceof Bouquet) {
 				//productService.removeBouquet((Bouquet) product, basketItem.getQuantity());
 				productService.removeBouquet((Bouquet) product);
 			}
+			simpleOrder.addOrderLine(product, basketItem.getQuantity());
+
 		}
+		simpleOrder.setPaymentMethod("Cash");
+
+		simpleOrderService.create(simpleOrder);
+		var orderPaid = OrderEvents.OrderPaid.of(simpleOrder);
+
 		basket.clear();
 
-		// Optionally, you could create an order or transaction record in the database here
 
 		model.addAttribute("message", "Your order has been successfully placed.");
 		String referer = request.getHeader("Referer").split("http://localhost:8080/")[1];
