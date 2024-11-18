@@ -49,11 +49,19 @@
             <td><div class="text-cell type-cell" th:text="${flower.color}"></div></td>
             <td><div class="text-cell quantity-cell" th:text="${flower.quantity}"></div></td>
             <td><div class="text-cell price-cell" th:text="${flower.pricing.buyPrice}"></div></td>
-            <td ><img th:src="@{/resources/img/shopping-basket.png}" /></td>
+            <td >
+              <form method="post" action="/add-to-basket">
+                <input type="hidden" name="redirectPage" value="buy" />
+                <input type="hidden" name="flowerName" th:value="${flower.name}" />
+                <button type="submit">
+                  <img th:src="@{/resources/img/shopping-basket.png}" />
+                </button>
+              </form>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div th:replace="~{basket}"></div>
+    <div th:replace="~{basket :: basket}"></div>
   </body>
 </html>
