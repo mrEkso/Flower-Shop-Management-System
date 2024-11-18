@@ -115,20 +115,20 @@ public class SalesController {
     @PostMapping("/add-to-basket")
     public String addToBasket(
         Model model,
-        @RequestParam String flowerName, 
+        @RequestParam String productName,
         @RequestParam(required = false) String redirectPage,
         @ModelAttribute("basket") List<BasketItem> basket
     ) {
         Flower flower = productCatalog.findAll()
             .filter(product -> product instanceof Flower)
             .map(product -> (Flower) product)
-            .filter(f -> f.getName().equalsIgnoreCase(flowerName))
+            .filter(f -> f.getName().equalsIgnoreCase(productName))
             .stream()
             .findFirst()
             .orElse(null);
 
         Optional<BasketItem> basketItem = basket.stream()
-        .filter(item -> item.getFlower().equals(flower))
+        .filter(item -> item.getProduct().equals(flower))
         .findFirst();
 
         if (flower != null) {
@@ -146,12 +146,12 @@ public class SalesController {
 
     @PostMapping("/remove-from-basket")
     public String removeFromBasket(
-        @RequestParam String flowerName,
+        @RequestParam String productName,
         @ModelAttribute("basket") List<BasketItem> basket,
         HttpServletRequest request
     ) {
         String referer = request.getHeader("Referer").split("http://localhost:8080/")[1];
-        basket.removeIf(b -> b.getFlower().getName().equalsIgnoreCase(flowerName));
+        basket.removeIf(b -> b.getProduct().getName().equalsIgnoreCase(productName));
         
         return "redirect:/" + (referer == null? "/sell": referer);
     }

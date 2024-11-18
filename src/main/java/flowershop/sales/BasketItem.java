@@ -1,22 +1,22 @@
 package flowershop.sales;
 
-import flowershop.product.Flower;
+import org.salespointframework.catalog.Product;
 
 public class BasketItem {
-    private Flower flower;
+    private Product product;
     private int quantity;
 
-    public BasketItem(Flower flower, int quantity) {
-        this.flower = flower;
+    public BasketItem(Product product, int quantity) {
+        this.product = product;
         this.quantity = quantity;
     }
 
-    public Flower getFlower() {
-        return flower;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setFlower(Flower flower) {
-        this.flower = flower;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public int getQuantity() {

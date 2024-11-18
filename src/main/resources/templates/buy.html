@@ -52,7 +52,7 @@
             <td >
               <form method="post" action="/add-to-basket">
                 <input type="hidden" name="redirectPage" value="buy" />
-                <input type="hidden" name="flowerName" th:value="${flower.name}" />
+                <input type="hidden" name="productName" th:value="${flower.name}" />
                 <button type="submit">
                   <img th:src="@{/resources/img/shopping-basket.png}" />
                 </button>
@@ -76,13 +76,13 @@
                 <div class="basket-card-header">
                   <span
                     class="basket-card-name"
-                    th:text="${selectedBasket.flower.name}"
+                    th:text="${selectedBasket.product.name}"
                   ></span>
                   <form method="post" action="/remove-from-basket">
                     <input
                       type="hidden"
-                      name="flowerName"
-                      th:value="${selectedBasket.flower.name}"
+                      name="productName"
+                      th:value="${selectedBasket.product.name}"
                     />
                     <button type="submit">
                       <img
@@ -95,13 +95,12 @@
                 <div class="basket-card-body">
                   <p
                     class="basket-card-text"
-                    th:text="${selectedBasket.quantity} + 'x' + ${selectedBasket.flower.pricing.buyPrice.number*1.0} + ' EUR'"
+                    th:text="${selectedBasket.quantity} + 'x' + ${selectedBasket.product.pricing.buyPrice.number*1.0} + ' EUR'"
                   ></p>
                 </div>
                 <div class="basket-card-footer">
-                  <!-- th:text="${selectedFlower.price} + ' EUR'" -->
                   <span
-                    th:text="${(selectedBasket.quantity * 1.0) * selectedBasket.flower.pricing.buyPrice.number*1.0} + ' EUR'"
+                    th:text="${(selectedBasket.quantity * 1.0) * selectedBasket.product.pricing.buyPrice.number*1.0} + ' EUR'"
                   ></span>
                 </div>
               </div>
