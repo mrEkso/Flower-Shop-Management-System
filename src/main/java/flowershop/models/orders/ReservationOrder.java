@@ -1,8 +1,10 @@
 package flowershop.models.orders;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import flowershop.models.Client;
 
+import jakarta.persistence.ManyToOne;
 import org.salespointframework.useraccount.UserAccount;
 import org.springframework.util.Assert;
 
@@ -28,16 +30,21 @@ public class ReservationOrder extends AbstractOrder {
 	 reservationStatus field that shows the progress of the reservation process itself. */
 	private ReservationStatus reservationStatus;
 
+	@ManyToOne(cascade = CascadeType.ALL)
+	private Client client;
+
 	public ReservationOrder(LocalDateTime reservationDateTime, UserAccount orderProcessingEmployee, Client client, String notes) {
-		super(orderProcessingEmployee, client, notes);
+		super(orderProcessingEmployee, notes);
 		this.reservationDateTime = reservationDateTime;
 		this.reservationStatus = ReservationStatus.IN_PROCESS;
+		this.client = client;
 	}
 
 	public ReservationOrder(LocalDateTime reservationDateTime, UserAccount orderProcessingEmployee, Client client) {
-		super(orderProcessingEmployee, client);
+		super(orderProcessingEmployee);
 		this.reservationDateTime = reservationDateTime;
 		this.reservationStatus = ReservationStatus.IN_PROCESS;
+		this.client = client;
 	}
 
 	public ReservationOrder() {
@@ -69,5 +76,13 @@ public class ReservationOrder extends AbstractOrder {
 		Assert.isTrue(this.isPaid(), "A reservation must be paid to be picked up!");
 		this.reservationStatus = ReservationStatus.PICKED_UP;
 		return this;
+	}
+
+	public Client getClient() {
+		return client;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
 	}
 }

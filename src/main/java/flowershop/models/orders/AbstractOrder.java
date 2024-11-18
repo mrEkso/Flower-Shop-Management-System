@@ -25,8 +25,6 @@ import java.util.Objects;
  */
 @MappedSuperclass
 public abstract class AbstractOrder extends Order {
-	@ManyToOne(cascade = CascadeType.ALL)
-	private Client client;
 
 	private String notes;
 
@@ -35,28 +33,18 @@ public abstract class AbstractOrder extends Order {
 	the client to whom the order is given. Depending on the type of order,
 	various other fields will be added.
 	 */
-	public AbstractOrder(UserAccount orderProcessingEmployee, Client client, String notes) {
+	public AbstractOrder(UserAccount orderProcessingEmployee, String notes) {
 		super(Objects.requireNonNull(orderProcessingEmployee.getId()));
-		this.client = client;
 		this.notes = notes;
 	}
 
-	public AbstractOrder(UserAccount orderProcessingEmployee, Client client) {
+	public AbstractOrder(UserAccount orderProcessingEmployee) {
 		super(Objects.requireNonNull(orderProcessingEmployee.getId()));
-		this.client = client;
 	}
 
 	@SuppressWarnings({"unused", "deprecation"})
 	public AbstractOrder() {
 		super();
-	}
-
-	public Client getClient() {
-		return client;
-	}
-
-	public void setClient(Client client) {
-		this.client = client;
 	}
 
 	public String getNotes() {
