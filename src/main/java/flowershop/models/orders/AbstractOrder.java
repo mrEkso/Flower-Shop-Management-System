@@ -1,12 +1,20 @@
 package flowershop.models.orders;
 
+import flowershop.models.payments.CardPayment;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
 import flowershop.models.Client;
 import org.salespointframework.order.Order;
+import org.salespointframework.payment.Cash;
+import org.salespointframework.payment.CreditCard;
+import org.salespointframework.payment.DebitCard;
 import org.salespointframework.useraccount.UserAccount;
 
+import javax.money.Monetary;
+import javax.money.MonetaryAmount;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /*
@@ -57,5 +65,13 @@ public abstract class AbstractOrder extends Order {
 
 	public void setNotes(String notes) {
 		this.notes = notes;
+	}
+
+	public void setPaymentMethod(String paymentMethod) {
+		if (paymentMethod.equals("Cash")) {
+			this.setPaymentMethod(Cash.CASH);
+		} else if (paymentMethod.equals("Card")) {
+			this.setPaymentMethod(new CardPayment());
+		}
 	}
 }

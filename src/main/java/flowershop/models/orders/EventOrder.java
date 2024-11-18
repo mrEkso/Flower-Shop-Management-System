@@ -20,6 +20,12 @@ public class EventOrder extends AbstractOrder {
 	private LocalDate eventDate;
 	private String deliveryAddress;
 
+	public EventOrder(LocalDate eventDate, String deliveryAddress, UserAccount orderProcessingEmployee, Client client, String notes) {
+		super(orderProcessingEmployee, client, notes);
+		this.eventDate = eventDate;
+		this.deliveryAddress = deliveryAddress;
+	}
+
 	public EventOrder(LocalDate eventDate, String deliveryAddress, UserAccount orderProcessingEmployee, Client client) {
 		super(orderProcessingEmployee, client);
 		this.eventDate = eventDate;

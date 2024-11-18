@@ -5,10 +5,12 @@ import flowershop.models.Client;
 import flowershop.models.orders.ContractOrder;
 import flowershop.models.orders.EventOrder;
 import flowershop.models.orders.ReservationOrder;
+import flowershop.models.payments.CardPayment;
 import flowershop.repositories.ClientRepository;
 import flowershop.repositories.orders.OrderFactoryRepository;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.core.DataInitializer;
+import org.salespointframework.payment.Cash;
 import org.salespointframework.quantity.Quantity;
 import org.salespointframework.useraccount.UserAccount;
 import org.salespointframework.useraccount.UserAccountManagement;
@@ -60,30 +62,40 @@ public class OrderCatalogInitializer implements DataInitializer {
 		Client client2 = clientRepository.findByName("Alice Johnson")
 			.orElseThrow(() -> new IllegalArgumentException("Client not found"));
 
-		// Create orders
-		//	EventOrders
-		EventOrder eventOrder1 = new EventOrder(LocalDate.now(),
-			"Nöthnitzer Str. 46, 01187 Dresden", frauFloris, client1);
-		Product product = productCatalog.findByName("Rose")
+		// Create order lines
+		Product rose = productCatalog.findByName("Rose")
 			.stream().findFirst().orElseThrow(() -> new IllegalArgumentException("Product not found"));
-		eventOrder1.addOrderLine(product, Quantity.of(2));
-		orderFactoryRepository.getEventOrderRepository().save(eventOrder1);
+		Product roseLilyBouquet = productCatalog.findByName("Rose and Lily Bouquet")
+			.stream().findFirst().orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
-		EventOrder eventOrder2 = new EventOrder(LocalDate.now(),
-			"Nöthnitzer Str. 46, 01187 Dresden", florisNichte, client2);
-		eventOrder2.addOrderLine(product, Quantity.of(1));
-		orderFactoryRepository.getEventOrderRepository().save(eventOrder2);
+		// Create orders
 		//	ContractOrders
 		ContractOrder contractOrder = new ContractOrder("once a week", LocalDate.now(),
 			LocalDate.of(2026, 1, 1),
 			"Nöthnitzer Str. 46, 01187 Dresden", frauFloris, client1);
-		contractOrder.addOrderLine(product, Quantity.of(30));
+		contractOrder.addOrderLine(rose, Quantity.of(30));
+		contractOrder.addOrderLine(roseLilyBouquet, Quantity.of(2));
+		contractOrder.setPaymentMethod(Cash.CASH);
 		orderFactoryRepository.getContractOrderRepository().save(contractOrder);
+
+		//	EventOrders
+		EventOrder eventOrder1 = new EventOrder(LocalDate.now(),
+			"Nöthnitzer Str. 46, 01187 Dresden", frauFloris, client1);
+		eventOrder1.addOrderLine(rose, Quantity.of(2));
+		eventOrder1.setPaymentMethod(Cash.CASH);
+		orderFactoryRepository.getEventOrderRepository().save(eventOrder1);
+
+		EventOrder eventOrder2 = new EventOrder(LocalDate.now(),
+			"Nöthnitzer Str. 46, 01187 Dresden", florisNichte, client2);
+		eventOrder2.addOrderLine(roseLilyBouquet, Quantity.of(1));
+		eventOrder2.setPaymentMethod(Cash.CASH);
+		orderFactoryRepository.getEventOrderRepository().save(eventOrder2);
 
 		//	ReservationOrders
 		ReservationOrder reservationOrder = new ReservationOrder(
 			LocalDate.of(2025, 1, 1).atStartOfDay(), florisNichte, client2);
-		reservationOrder.addOrderLine(product, Quantity.of(5));
+		reservationOrder.addOrderLine(roseLilyBouquet, Quantity.of(5));
+		reservationOrder.setPaymentMethod(new CardPayment());
 		orderFactoryRepository.getReservationOrderRepository().save(reservationOrder);
 	}
 }

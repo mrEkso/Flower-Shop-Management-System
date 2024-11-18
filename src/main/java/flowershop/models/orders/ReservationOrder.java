@@ -28,6 +28,12 @@ public class ReservationOrder extends AbstractOrder {
 	 reservationStatus field that shows the progress of the reservation process itself. */
 	private ReservationStatus reservationStatus;
 
+	public ReservationOrder(LocalDateTime reservationDateTime, UserAccount orderProcessingEmployee, Client client, String notes) {
+		super(orderProcessingEmployee, client, notes);
+		this.reservationDateTime = reservationDateTime;
+		this.reservationStatus = ReservationStatus.IN_PROCESS;
+	}
+
 	public ReservationOrder(LocalDateTime reservationDateTime, UserAccount orderProcessingEmployee, Client client) {
 		super(orderProcessingEmployee, client);
 		this.reservationDateTime = reservationDateTime;

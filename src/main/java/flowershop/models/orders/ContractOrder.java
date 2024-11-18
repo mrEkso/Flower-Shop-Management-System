@@ -20,12 +20,20 @@ import java.time.LocalDate;
 public class ContractOrder extends AbstractOrder {
 
 	private String contractType;
-	private LocalDate startDate;
-	private LocalDate endDate;
-	private String address;
 	private String frequency;
 	private Integer customFrequency;
 	private String customUnit;
+	private LocalDate startDate;
+	private LocalDate endDate;
+	private String address;
+
+	public ContractOrder(String contractType, LocalDate startDate, LocalDate endDate, String address, UserAccount orderProcessingEmployee, Client client, String notes) {
+		super(orderProcessingEmployee, client, notes);
+		this.contractType = contractType;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.address = address;
+	}
 
 	public ContractOrder(String contractType, LocalDate startDate, LocalDate endDate, String address, UserAccount orderProcessingEmployee, Client client) {
 		super(orderProcessingEmployee, client);
