@@ -34,55 +34,30 @@
         <!-- Contract Form Tab -->
         <div class="tab-pane fade show active" id="contracts" role="tabpanel" aria-labelledby="contracts-tab">
             <form th:action="@{/services/contracts/create}" method="post" class="p-4 border rounded shadow-sm">
-                <input type="hidden" name="serviceType" th:value="${type}">
-
-                <!-- Company Name -->
+                <!-- Client Name -->
                 <div class="mb-3">
-                    <label for="companyName" class="form-label">Company Name</label>
-                    <input type="text" class="form-control" id="companyName"
-                           name="companyName" required>
-                </div>
-
-                <!-- Contract start and end date -->
-                <div class="mb-3">
-                    <label for="startDate" class="form-label">Start date</label>
-                    <input type="date" class="form-control" id="startDate" name="startDate" required>
-                </div>
-                <div class="mb-3">
-                    <label for="endDate" class="form-label">End date</label>
-                    <input type="date" class="form-control" id="endDate" name="endDate" required>
-                </div>
-
-                <!-- Contact Phone -->
-                <div class="mb-3">
-                    <label for="phone" class="form-label">Phone</label>
-                    <input type="tel" class="form-control"
-                           id="phone" name="phone" placeholder="+1 xxx xxx xxx" required>
-                </div>
-
-                <!-- Delivery Address -->
-                <div class="mb-3">
-                    <label for="address" class="form-label">Delivery Address</label>
-                    <input type="text" class="form-control" id="address" name="address" placeholder="Street, House number, PLC, City" required>
+                    <label for="contractClientName" class="form-label" th:text="#{client.name}">Client Name</label>
+                    <input type="text" class="form-control" id="contractClientName" name="clientName"
+                           value="Test client name" required>
                 </div>
 
                 <!-- Frequency -->
                 <!-- Step 1: Choose between One-Time or Recurring -->
                 <div class="mb-3">
-                    <label for="contractType" class="form-label">Contract Type</label>
+                    <label for="contractType" class="form-label" th:text="#{contract.type}">Contract Type</label>
                     <select id="contractType" class="form-control" name="contractType" required>
-                        <option value="One-Time">One-Time</option>
-                        <option value="Recurring">Recurring</option>
+                        <option value="One-Time" th:text="#{contract.type.oneTime}">One-Time</option>
+                        <option value="Recurring" th:text="#{contract.type.recurring}">Recurring</option>
                     </select>
                 </div>
                 <!-- Step 2: Frequency options -->
                 <div id="frequencyOptions" class="form-group d-none">
-                    <label for="frequency">Frequency</label>
+                    <label for="frequency" th:text="#{contract.frequency}">Frequency</label>
                     <select id="frequency" name="frequency" class="form-control">
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly">Monthly</option>
-                        <option value="custom">Custom</option>
+                        <option value="daily" th:text="#{frequency.daily}">Daily</option>
+                        <option value="weekly" th:text="#{frequency.weekly}">Weekly</option>
+                        <option value="monthly" th:text="#{frequency.monthly}">Monthly</option>
+                        <option value="custom" th:text="#{frequency.custom}">Custom</option>
                     </select>
                 </div>
                 <!-- Step 3: Custom options -->
@@ -98,16 +73,60 @@
                     </select>
                 </div>
 
-                <!-- Notes -->
+                <!-- Contract start and end date -->
                 <div class="mb-3">
-                    <label for="notes" class="form-label">Notes</label>
-                    <textarea class="form-control" id="notes" name="notes" rows="3"
-                              placeholder="Enter any additional notes here"></textarea>
+                    <label for="startDate" class="form-label" th:text="#{contract.startDate}">Start Date</label>
+                    <input type="date" class="form-control" id="startDate" name="startDate" value="2024-01-01" required>
+                </div>
+                <div class="mb-3">
+                    <label for="endDate" class="form-label" th:text="#{contract.endDate}">End Date</label>
+                    <input type="date" class="form-control" id="endDate" name="endDate" value="2025-01-01" required>
                 </div>
 
-                <!-- Submit Button -->
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                <!-- Address -->
+                <div class="mb-3">
+                    <label for="address" class="form-label" th:text="#{contract.deliveryAddress}">Delivery
+                        Address</label>
+                    <input type="text" class="form-control" id="address" name="address"
+                           placeholder="Street, House number, PLC, City" value="Test address" required>
+                </div>
+
+                <!-- Contact Phone -->
+                <div class="mb-3">
+                    <label for="phone" class="form-label" th:text="#{contract.phone}">Phone</label>
+                    <input type="tel" class="form-control"
+                           id="phone" name="phone" placeholder="+49 xxx xxx xxx" value="+49151232232" required>
+                </div>
+
+                <!-- Products Section -->
+                <div class="mb-3">
+                    <input type="hidden" id="product-index" name="index" value="0">
+                    <label class="form-label" th:text="#{order.selectProducts}">Select Products</label>
+                    <div id="product-container" data-index="0">
+                    </div>
+                    <button
+                            hx-get="/services/add-product-row"
+                            hx-target="#product-container"
+                            hx-swap="beforeend"
+                            hx-include="#product-index"
+                            hx-on="htmx:afterRequest: document.getElementById('product-index').value = parseInt(document.getElementById('product-index').value) + 1;"
+                            type="button"
+                            class="btn btn-outline-primary mt-2">
+                        Add Product
+                    </button>
+                </div>
+
+                <!-- Notes -->
+                <div class="mb-3">
+                    <label for="contractNotes" class="form-label" th:text="#{contract.notes}">Notes</label>
+                    <textarea class="form-control" id="contractNotes" name="notes" rows="3"
+                              placeholder="Enter any additional notes here">Test notes</textarea>
+                </div>
+
+                <!-- Submit and Cancel Buttons -->
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary mr-2" th:text="#{action.submit}">Submit</button>
+                    <a href="/services" class="btn btn-secondary" th:text="#{action.cancel}">Cancel</a>
                 </div>
             </form>
         </div>
@@ -115,44 +134,45 @@
         <!-- Event Form Tab -->
         <div class="tab-pane fade" id="events" role="tabpanel" aria-labelledby="events-tab">
             <form th:action="@{/services/events/create}" method="post" class="p-4 border rounded shadow-sm">
-                <input type="hidden" name="serviceType" th:value="${type}">
-
-                <!-- Company Name -->
+                <!-- Client Name -->
                 <div class="mb-3">
-                    <label for="companyName" class="form-label">Company Name</label>
-                    <input type="text" class="form-control" name="companyName" required>
+                    <label for="eventClientName" class="form-label" th:text="#{client.name}">Client Name</label>
+                    <input type="text" class="form-control" id="eventClientName" name="clientName"
+                           value="Test client name" required>
                 </div>
 
-                <!-- Service Date and Time -->
+                <!-- Event Date and Time -->
                 <div class="mb-3">
-                    <label for="eventDate" class="form-label">Service Time</label>
-                    <input type="datetime-local" class="form-control" id="eventDate" name="eventDate" required>
-                </div>
-
-                <!-- Contact Phone -->
-                <div class="mb-3">
-                    <label for="contactPhoneNumber" class="form-label">Phone</label>
-                    <input type="tel" class="form-control" name="contactPhoneNumber" placeholder="+1 xxx xxx xxx"
-                           required>
+                    <label for="eventDate" class="form-label" th:text="#{event.eventDate}">Event Date</label>
+                    <input type="date" class="form-control" id="eventDate" name="eventDate" value="2025-01-01" required>
                 </div>
 
                 <!-- Delivery Address -->
                 <div class="mb-3">
-                    <label for="deliveryAddress" class="form-label">Delivery Address</label>
-                    <input class="form-control" id="deliveryAddress" name="deliveryAddress" rows="3"
-                           placeholder="Please enter address">
+                    <label for="eventDeliveryAddress" class="form-label" th:text="#{event.deliveryAddress}">Delivery
+                        Address</label>
+                    <input class="form-control" id="eventDeliveryAddress" name="deliveryAddress"
+                           placeholder="Street, House number, PLC, City" value="Test delivery address" required>
+                </div>
+
+                <!-- Contact Phone -->
+                <div class="mb-3">
+                    <label for="eventClientPhone" class="form-label" th:text="#{contract.phone}">Phone</label>
+                    <input type="tel" class="form-control" id="eventClientPhone" name="phone"
+                           placeholder="+1 xxx xxx xxx" value="+49151232233" required>
                 </div>
 
                 <!-- Notes -->
                 <div class="mb-3">
-                    <label for="notes" class="form-label">Notes</label>
-                    <textarea class="form-control" id="nodsdtes" name="notes" rows="3"
-                              placeholder="Enter any additional notes here"></textarea>
+                    <label for="eventNotes" class="form-label" th:text="#{event.notes}">Notes</label>
+                    <textarea class="form-control" id="eventNotes" name="notes" rows="3"
+                              placeholder="Enter any additional notes here">Test notes</textarea>
                 </div>
 
-                <!-- Submit Button -->
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                <!-- Submit and Cancel Buttons -->
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary mr-2" th:text="#{action.submit}">Submit</button>
+                    <a href="/services" class="btn btn-secondary" th:text="#{action.cancel}">Cancel</a>
                 </div>
             </form>
         </div>
@@ -160,37 +180,39 @@
         <!-- Reservation Form Tab -->
         <div class="tab-pane fade" id="reservations" role="tabpanel" aria-labelledby="reservations-tab">
             <form th:action="@{/services/reservations/create}" method="post" class="p-4 border rounded shadow-sm">
-                <input type="hidden" name="serviceType" th:value="${type}">
-
-                <!-- Company Name -->
+                <!-- Client Name -->
                 <div class="mb-3">
-                    <label for="companyName" class="form-label">Company Name</label>
-                    <input type="text" class="form-control" id="reservationCompanyName" name="companyName" required>
+                    <label for="reservationClientName" class="form-label" th:text="#{client.name}">Client Name</label>
+                    <input type="text" class="form-control" id="reservationClientName" name="clientName"
+                           value="Test client name" required>
                 </div>
 
-                <!-- Service Date and Time -->
+                <!-- Reservation Date and Time -->
                 <div class="mb-3">
-                    <label for="serviceTime" class="form-label">Service Time</label>
-                    <input type="datetime-local" class="form-control" id="serviceTime" name="serviceTime" required>
+                    <label for="reservationDateTime" class="form-label" th:text="#{reservation.dateTime}">Reservation
+                        Date and Time</label>
+                    <input type="datetime-local" class="form-control" id="reservationDateTime"
+                           name="reservationDateTime" value="2025-02-14T12:30" required>
                 </div>
 
                 <!-- Contact Phone -->
                 <div class="mb-3">
-                    <label for="contactPhoneNumber" class="form-label">Phone</label>
-                    <input type="tel" class="form-control" id="reservationClientPhone" name="contactPhoneNumber"
-                           placeholder="+1 xxx xxx xxx" required>
+                    <label for="reservationClientPhone" class="form-label" th:text="#{contract.phone}">Phone</label>
+                    <input type="tel" class="form-control" id="reservationClientPhone" name="phone"
+                           placeholder="+1 xxx xxx xxx" value="+49151232234" required>
                 </div>
 
                 <!-- Notes -->
                 <div class="mb-3">
-                    <label for="notes" class="form-label">Notes</label>
+                    <label for="reservationNotes" class="form-label" th:text="#{reservation.notes}">Notes</label>
                     <textarea class="form-control" id="reservationNotes" name="notes" rows="3"
-                              placeholder="Enter any additional notes here"></textarea>
+                              placeholder="Enter any additional notes here">Test notes</textarea>
                 </div>
 
-                <!-- Submit Button -->
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                <!-- Submit and Cancel Buttons -->
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary mr-2" th:text="#{action.submit}">Submit</button>
+                    <a href="/services" class="btn btn-secondary" th:text="#{action.cancel}">Cancel</a>
                 </div>
             </form>
         </div>
@@ -198,6 +220,7 @@
 </div>
 
 <!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://unpkg.com/htmx.org"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

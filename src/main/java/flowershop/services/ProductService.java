@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ProductService {
@@ -38,15 +39,15 @@ public class ProductService {
 		return productCatalog.findAll();
 	}
 
-	public Optional<Product> getProductById(Long id) {
+	public Optional<Product> getProductById(UUID id) {
 		return productCatalog.findById(getProductId(id));
 	}
 
-	public void deleteProductById(Long id) {
+	public void deleteProductById(UUID id) {
 		productCatalog.findById(getProductId(id)).ifPresent(productCatalog::delete);
 	}
 
-	private Product.ProductIdentifier getProductId(Long id) {
+	private Product.ProductIdentifier getProductId(UUID id) {
 		return Product.ProductIdentifier.of(id.toString());
 	}
 }

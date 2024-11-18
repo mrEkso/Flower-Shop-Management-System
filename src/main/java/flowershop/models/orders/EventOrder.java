@@ -21,12 +21,14 @@ public class EventOrder extends AbstractOrder {
 	private LocalDate eventDate;
 	private String deliveryAddress;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	private Client client;
+	public EventOrder(LocalDate eventDate, String deliveryAddress, UserAccount orderProcessingEmployee, Client client, String notes) {
+		super(orderProcessingEmployee, client, notes);
+		this.eventDate = eventDate;
+		this.deliveryAddress = deliveryAddress;
+	}
 
-	public EventOrder(UserAccount userAccount, LocalDate eventDate, String deliveryAddress, Client client) {
-		super(userAccount);
-		this.client = client;
+	public EventOrder(LocalDate eventDate, String deliveryAddress, UserAccount orderProcessingEmployee, Client client) {
+		super(orderProcessingEmployee, client);
 		this.eventDate = eventDate;
 		this.deliveryAddress = deliveryAddress;
 	}

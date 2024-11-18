@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/products")
@@ -28,7 +29,7 @@ public class ProductController {
 
 	// Endpoint to get a product by ID
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getProductById(@PathVariable Long id) {
+	public ResponseEntity<?> getProductById(@PathVariable UUID id) {
 		Optional<?> product = productService.getProductById(id);
 		return product.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
 			.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -50,7 +51,7 @@ public class ProductController {
 
 	// Endpoint to delete a product by ID
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteProductById(@PathVariable Long id) {
+	public ResponseEntity<Void> deleteProductById(@PathVariable UUID id) {
 		productService.deleteProductById(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}

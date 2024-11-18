@@ -20,10 +20,17 @@ import java.time.LocalDateTime;
 @Entity
 public class ReservationOrder extends AbstractOrder {
 
-	private LocalDateTime dateTime; // Date and time for the reservation
+	private LocalDateTime reservationDateTime; // Date and time for the reservation
+	/* In addition to the orderStatus field built into the Order parent class,
+	 which can be “Open”, “Paid”, “Completed”, “Canceled”, we will have a
+	 reservationStatus field that shows the progress of the reservation process itself. */
+	private ReservationStatus reservationStatus;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	private Client client;
+	public ReservationOrder(LocalDateTime reservationDateTime, UserAccount orderProcessingEmployee, Client client, String notes) {
+		super(orderProcessingEmployee, client, notes);
+		this.reservationDateTime = reservationDateTime;
+		this.reservationStatus = ReservationStatus.IN_PROCESS;
+	}
 
 	public ReservationOrder(UserAccount userAccount, OrderStatus orderStatus, LocalDateTime dateTime, Client client) {
 		super(userAccount);
