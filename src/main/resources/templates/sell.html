@@ -70,19 +70,19 @@
       </div>
       <table class="basket-table">
         <tbody>
-          <tr th:each="selectedBusket : ${basket}">
+          <tr th:each="selectedBasket : ${basket}">
             <td>
               <div class="basket-card">
                 <div class="basket-card-header">
                   <span
                     class="basket-card-name"
-                    th:text="${selectedBusket.flower.name}"
+                    th:text="${selectedBasket.flower.name}"
                   ></span>
                   <form method="post" action="/remove-from-basket">
                     <input
                       type="hidden"
                       name="flowerName"
-                      th:value="${selectedBusket.flower.name}"
+                      th:value="${selectedBasket.flower.name}"
                     />
                     <button type="submit">
                       <img
@@ -95,13 +95,13 @@
                 <div class="basket-card-body">
                   <p
                     class="basket-card-text"
-                    th:text="${selectedBusket.quantity} + 'x' + ${selectedBusket.flower.pricing.sellPrice.number} + ' EUR'"
+                    th:text="${selectedBasket.quantity} + 'x' + ${selectedBasket.flower.pricing.sellPrice.number*1.0} + ' EUR'"
                   ></p>
                 </div>
                 <div class="basket-card-footer">
                   <!-- th:text="${selectedFlower.price} + ' EUR'" -->
                   <span
-                    th:text="${selectedBusket.quantity*selectedBusket.flower.pricing.sellPrice.number*1.0} + ' EUR'"
+                    th:text="${(selectedBasket.quantity * 1.0) * selectedBasket.flower.pricing.sellPrice.number * 1.0} + ' EUR'"
                   ></span>
                 </div>
               </div>
