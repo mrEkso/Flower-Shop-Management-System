@@ -44,8 +44,6 @@ public class SalesController {
 
 		List<Flower> flowers = productService.getAllFlowers();
 
-		System.out.println(basket);
-
 		if (filterItem != null && !filterItem.isEmpty()) {
 			flowers = flowers.stream()
 				.filter(flower -> flower.getColor().equalsIgnoreCase(filterItem))
@@ -76,8 +74,6 @@ public class SalesController {
 					  @ModelAttribute("basket") List<BasketItem> basket) {
 
 		List<Flower> flowers = productService.getAllFlowers();
-
-		System.out.println(basket);
 
 		if (filterItem != null && !filterItem.isEmpty()) {
 			flowers = flowers.stream()
