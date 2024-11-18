@@ -10,13 +10,17 @@ import org.salespointframework.payment.Cash;
 import org.salespointframework.quantity.Quantity;
 import org.salespointframework.useraccount.UserAccount;
 import org.salespointframework.useraccount.UserAccountManagement;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
+import java.util.ServiceLoader;
 
 @Component
+@DependsOn("userInitializer")
 @org.springframework.core.annotation.Order(20)
 public class OrderCatalogInitializer implements DataInitializer {
 
@@ -27,16 +31,17 @@ public class OrderCatalogInitializer implements DataInitializer {
 	private final ClientRepository clientRepository;
 	private final OrderFactory orderFactory;
 
-	public OrderCatalogInitializer(OrderManagement<AbstractOrder> orderManagement, ProductCatalog productCatalog, UserAccountManagement userAccountManagement, OrderRepositoryFactory orderFactoryRepository, ClientRepository clientRepository, OrderFactory orderFactory) {
+
+	public OrderCatalogInitializer(OrderManagement<AbstractOrder> orderManagement, ProductCatalog productCatalog, UserAccountManagement userAccountManagement, OrderRepositoryFactory orderFactoryRepository, ClientRepository clientRepository, OrderFactory orderFactory ) {
 		Assert.notNull(orderManagement, "OrderManagement must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(userAccountManagement, "UserAccountManagement must not be null!");
+		Assert.notNull(orderFactory, "OrderFactory must not be null!");
 		//this.orderManagement = orderManagement;
 		this.productCatalog = productCatalog;
 		this.userAccountManagement = userAccountManagement;
 		this.orderFactoryRepository = orderFactoryRepository;
 		this.clientRepository = clientRepository;
-		//this.orderFactory = new OrderFactory(userAccountManagement);
 		this.orderFactory = orderFactory;
 	}
 
