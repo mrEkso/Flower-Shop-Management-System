@@ -72,8 +72,7 @@ public class FinancesController {
 		this.filteredByDates = new HashSet<>();
 		this.date1=LocalDate.of(1970,1,1);
 		this.date2=LocalDate.now();
-		// TODO Extend the list
-		prepareFinancesModel(model,filteredAndCutOrdersList);
+		prepareFinancesModel(model,this.filteredByCategory.stream().toList());
 		return "finances";
 	}
 
@@ -81,8 +80,7 @@ public class FinancesController {
 	public String resetCategory(Model model) {
 		this.filteredByCategory = new HashSet<>();
 		this.category="all";
-		// TODO Extend the list
-		prepareFinancesModel(model,filteredAndCutOrdersList);
+		prepareFinancesModel(model,this.filteredByDates.stream().toList());
 		return "finances";
 	}
 
