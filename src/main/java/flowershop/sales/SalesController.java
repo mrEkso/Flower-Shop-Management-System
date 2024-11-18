@@ -23,21 +23,29 @@ public class SalesController {
     }
 
     @GetMapping("/sell")
-    public String sell(Model model, @RequestParam(required = false) String filterItem) {
+    public String sell(Model model, 
+        @RequestParam(required = false) String filterItem, 
+        @RequestParam(required = false) String searchInput) {
     
         List<Flower> flowers = productCatalog.findAll()
             .filter(product -> product instanceof Flower)
             .map(product -> (Flower) product)
             .toList();
         
-        System.out.println(filterItem);
+        // System.out.println(filterItem);
 
         if (filterItem != null && !filterItem.isEmpty()) {
             flowers = flowers.stream()
                     .filter(flower -> flower.getColor().equalsIgnoreCase(filterItem))
-                    .collect(Collectors.toList());
+                    .toList();
         }
     
+        if (searchInput != null && !searchInput.isEmpty()) {
+            flowers = flowers.stream()
+                    .filter(flower -> flower.getName().toLowerCase().contains(searchInput.toLowerCase()))
+                    .toList();
+        }
+
         Set<String> colors = productCatalog.findAll()
         .filter(product -> product instanceof Flower)
         .map(product -> (Flower) product)
@@ -46,30 +54,46 @@ public class SalesController {
     
         model.addAttribute("typeList", colors);
         model.addAttribute("filterItem", filterItem);
+        model.addAttribute("searchInput", searchInput);
         model.addAttribute("flowers", flowers);
     
         return "sell";
     }
     
     @GetMapping("/buy")
-    public String buy(Model model){
-        
-        List<Flower> flowers = productCatalog.findAll()
-        .filter(product -> product instanceof Flower)
-        .map(product -> (Flower) product).toList();
+    public String buy(Model model,
+        @RequestParam(required = false) String filterItem, 
+        @RequestParam(required = false) String searchInput) {
 
-        Set<String> colors = flowers.stream()
-        .map(Flower::getColor)
+        List<Flower> flowers = productCatalog.findAll()
+            .filter(product -> product instanceof Flower)
+            .map(product -> (Flower) product)
+            .toList();
+        
+        // System.out.println(filterItem);
+
+        if (filterItem != null && !filterItem.isEmpty()) {
+            flowers = flowers.stream()
+                    .filter(flower -> flower.getColor().equalsIgnoreCase(filterItem))
+                    .toList();
+        }
+
+        if (searchInput != null && !searchInput.isEmpty()) {
+            flowers = flowers.stream()
+                    .filter(flower -> flower.getName().toLowerCase().contains(searchInput.toLowerCase()))
+                    .toList();
+        }
+
+        Set<String> colors = productCatalog.findAll()
+        .filter(product -> product instanceof Flower)
+        .map(product -> (Flower) product)
+        .toList().stream().map(Flower::getColor)
         .collect(Collectors.toSet());
 
+        model.addAttribute("typeList", colors);
+        model.addAttribute("filterItem", filterItem);
+        model.addAttribute("searchInput", searchInput);
         model.addAttribute("flowers", flowers);
-        
-        List<String> typeList = new ArrayList<>();
-        typeList.addAll(colors);
-        model.addAttribute("typeList", typeList);
-
-        String selectedItem = "";
-        model.addAttribute("selectedItem", selectedItem);
 
         return "buy";
     }

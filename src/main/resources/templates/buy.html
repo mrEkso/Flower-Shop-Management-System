@@ -14,15 +14,20 @@
       <h2 th:text="#{buy.header}"></h2>
       <p th:text="#{buy.description}"></p>
       <div class = "inputs-div">
-        <input id ="search-input" type="text" th:placeholder = "#{buy.search}">
-        <div id="filter-div">
-          <select id="filter-dd" th:field="${selectedItem}">
+        <form method="get" action="/sell">
+          <input id="search-input" type="text" name="searchInput" th:placeholder="#{sell.search}" th:value="${searchInput}" />
+          <!-- <div id="filter-div"> -->
+          <select id="filter-dd" name="filterItem"  th:value="${filterItem}">
+            <option value="">All</option>
             <option th:each="type : ${typeList}" 
                     th:value="${type}"
-                    th:text="${type}">
+                    th:text="${type}"
+                    th:selected="${type == filterItem}">
             </option>
           </select>
-        <img th:src="@{/resources/img/filter.png}" /></div>
+          <!-- </div> -->
+          <button type="submit"><img th:src="@{/resources/img/filter.png}" /></button>
+        </form>
       </div>
       <table id="flower-table">
         <thead>
