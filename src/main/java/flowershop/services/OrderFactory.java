@@ -14,13 +14,14 @@
   * It encapsulates the workaround of assigning a default {@link UserAccount}
   * to every {@link org.salespointframework.order.Order}, without which the framework seems not to work.
   */
-  @Service
+//   @Service
   // FIXME: For some reason it doesn't work in runtime. It can't find the default user in userAccountManagement, therefore the exception.
  public class OrderFactory {
 
  	private final UserAccount defaultUserAccount;
 
  	public OrderFactory(UserAccountManagement userAccountManagement) {
+		System.out.println("-------------------------------hui------------------------");
  		this.defaultUserAccount = userAccountManagement.findByUsername("shop_worker")
  			.orElseThrow(() -> new IllegalArgumentException("Default UserAccount shop_worker not found"));
  	}

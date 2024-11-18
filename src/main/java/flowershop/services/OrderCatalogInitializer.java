@@ -10,6 +10,7 @@ import org.salespointframework.payment.Cash;
 import org.salespointframework.quantity.Quantity;
 import org.salespointframework.useraccount.UserAccount;
 import org.salespointframework.useraccount.UserAccountManagement;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -17,7 +18,7 @@ import org.springframework.util.Assert;
 import java.time.LocalDate;
 
 @Component
-@org.springframework.core.annotation.Order(20)
+@Order(20)
 public class OrderCatalogInitializer implements DataInitializer {
 
 	private final OrderRepositoryFactory orderFactoryRepository;
@@ -25,9 +26,9 @@ public class OrderCatalogInitializer implements DataInitializer {
 	private final ProductCatalog productCatalog;
 	private final UserAccountManagement userAccountManagement;
 	private final ClientRepository clientRepository;
-	private final OrderFactory orderFactory;
+	// private final OrderFactory orderFactory;
 
-	public OrderCatalogInitializer(OrderManagement<AbstractOrder> orderManagement, ProductCatalog productCatalog, UserAccountManagement userAccountManagement, OrderRepositoryFactory orderFactoryRepository, ClientRepository clientRepository, OrderFactory orderFactory) {
+	public OrderCatalogInitializer(OrderManagement<AbstractOrder> orderManagement, ProductCatalog productCatalog, UserAccountManagement userAccountManagement, OrderRepositoryFactory orderFactoryRepository, ClientRepository clientRepository/* , OrderFactory orderFactory*/) {
 		Assert.notNull(orderManagement, "OrderManagement must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(userAccountManagement, "UserAccountManagement must not be null!");
@@ -37,7 +38,7 @@ public class OrderCatalogInitializer implements DataInitializer {
 		this.orderFactoryRepository = orderFactoryRepository;
 		this.clientRepository = clientRepository;
 		//this.orderFactory = new OrderFactory(userAccountManagement);
-		this.orderFactory = orderFactory;
+		// this.orderFactory = orderFactory;
 	}
 
 	@Override
@@ -70,8 +71,12 @@ public class OrderCatalogInitializer implements DataInitializer {
 
 		// Create and save orders using OrderFactory
 		// ContractOrders
-		ContractOrder contractOrder = orderFactory.createContractOrder(
-			"once a week", "weekly", LocalDate.now(), LocalDate.of(2026, 1, 1),
+
+		UserAccount defaultUserAccount = userAccountManagement.findByUsername("shop_worker")
+ 			.orElseThrow(() -> new IllegalArgumentException("Default UserAccount shop_worker not found"));
+
+		ContractOrder contractOrder = new ContractOrder(defaultUserAccount, 
+			"once a week", LocalDate.now(), LocalDate.of(2026, 1, 1), "weekly",
 			client1);
 		contractOrder.addOrderLine(rose, Quantity.of(30));
 		contractOrder.addOrderLine(roseLilyBouquet, Quantity.of(2));
@@ -79,20 +84,20 @@ public class OrderCatalogInitializer implements DataInitializer {
 		orderFactoryRepository.getContractOrderRepository().save(contractOrder);
 
 		// EventOrders
-		EventOrder eventOrder1 = orderFactory.createEventOrder(
+		EventOrder eventOrder1 = new EventOrder(defaultUserAccount, 
 			LocalDate.now(), "Nöthnitzer Str. 46, 01187 Dresden", client1);
 		eventOrder1.addOrderLine(rose, Quantity.of(2));
 		eventOrder1.setPaymentMethod(Cash.CASH);
 		orderFactoryRepository.getEventOrderRepository().save(eventOrder1);
 
-		EventOrder eventOrder2 = orderFactory.createEventOrder(
+		EventOrder eventOrder2 = new EventOrder(defaultUserAccount,
 			LocalDate.now(), "Nöthnitzer Str. 46, 01187 Dresden", client2);
 		eventOrder2.addOrderLine(roseLilyBouquet, Quantity.of(1));
 		eventOrder2.setPaymentMethod(Cash.CASH);
 		orderFactoryRepository.getEventOrderRepository().save(eventOrder2);
 
 		// ReservationOrders
-		ReservationOrder reservationOrder = orderFactory.createReservationOrder(
+		ReservationOrder reservationOrder = new ReservationOrder(defaultUserAccount,
 			LocalDate.of(2025, 1, 1).atStartOfDay(), client2);
 		reservationOrder.addOrderLine(roseLilyBouquet, Quantity.of(5));
 		reservationOrder.setPaymentMethod(new CardPayment());
