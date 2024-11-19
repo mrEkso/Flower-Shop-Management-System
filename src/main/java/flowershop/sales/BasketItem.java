@@ -33,7 +33,7 @@ public class BasketItem {
     }
 
     public Boolean tryDecreaseQuantity(){
-        if(this.quantity < 2) return false;
+        if(this.quantity <= 1) return false;
 
         this.decreaseQuantity();
         return true;

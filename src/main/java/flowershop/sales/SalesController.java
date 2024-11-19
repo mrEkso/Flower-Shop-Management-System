@@ -63,17 +63,17 @@ public class SalesController {
 		// Filter by color
 		if (filterItem != null && !filterItem.isEmpty()) {
 			flowers = flowers
-			.stream()
-			.filter(flower -> flower.getColor().equalsIgnoreCase(filterItem))
-			.toList();
+				.stream()
+				.filter(flower -> flower.getColor().equalsIgnoreCase(filterItem))
+				.toList();
 			bouquets = new ArrayList<>();
 		}
 
 		// Search by name
 		if (searchInput != null && !searchInput.isEmpty()) {
 			flowers = flowers.stream().
-			filter(flower -> flower.getName().toLowerCase().contains(searchInput.toLowerCase()))
-			.toList();
+				filter(flower -> flower.getName().toLowerCase().contains(searchInput.toLowerCase()))
+				.toList();
 			bouquets = new ArrayList<>();
 		}
 
@@ -102,15 +102,15 @@ public class SalesController {
 		// Only by color? Seems reasonable but who knows.
 		if (filterItem != null && !filterItem.isEmpty()) {
 			flowers = flowers
-			.stream()
-			.filter(flower -> flower.getColor().equalsIgnoreCase(filterItem))
-			.toList();
+				.stream()
+				.filter(flower -> flower.getColor().equalsIgnoreCase(filterItem))
+				.toList();
 		}
 
 		if (searchInput != null && !searchInput.isEmpty()) {
 			flowers = flowers.stream().
-			filter(flower -> flower.getName().toLowerCase().contains(searchInput.toLowerCase()))
-			.toList();
+				filter(flower -> flower.getName().toLowerCase().contains(searchInput.toLowerCase()))
+				.toList();
 		}
 
 		Set<String> colors = productService.getAllFlowerColors();
@@ -233,11 +233,6 @@ public class SalesController {
 
 	/**
 	 * Registers a {@link WholesalerOrder} instance based on the {@link BasketItem}s.
-	 *
-	 * @param basket
-	 * @param request
-	 * @param model
-	 * @return
 	 */
 	@PostMapping("buy-from-buyBasket")
 	public String buyFromBasket(
@@ -278,11 +273,6 @@ public class SalesController {
 
 	/**
 	 * Registers a {@link SimpleOrder} instance based on the {@link BasketItem}s.
-	 *
-	 * @param basket
-	 * @param request
-	 * @param model
-	 * @return
 	 */
 	@PostMapping("/sell-from-basket")
 	public String sellFromBasket(
@@ -320,6 +310,21 @@ public class SalesController {
 		return "redirect:" + (referer == null ? "sell" : referer);
 	}
 
+	@PostMapping("/increase-from-sellBasket")
+	public String increaseFromSellBasket(
+		@RequestParam String productName,
+		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
+	) {
+
+		sellBasket.stream()
+			.filter(b -> b.getProduct().getName().equalsIgnoreCase(productName))
+			.findFirst()
+			.get()
+			.increaseQuantity();
+
+		return "redirect:/sell";
+	}
+
 	@PostMapping("/decrease-from-sellBasket")
 	public String decreaseFromSellBasket(
 		@RequestParam String productName,
@@ -331,6 +336,21 @@ public class SalesController {
 		return "redirect:/sell";
 	}
 
+	@PostMapping("/increase-from-buyBasket")
+	public String increaseFromBuyBasket(
+		@RequestParam String productName,
+		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
+	) {
+
+		buyBasket.stream()
+			.filter(b -> b.getProduct().getName().equalsIgnoreCase(productName))
+			.findFirst()
+			.get()
+			.increaseQuantity();
+
+		return "redirect:/buy";
+	}
+
 	@PostMapping("/decrease-from-buyBasket")
 	public String decreaseFromBuyBasket(
 		@RequestParam String productName,
@@ -338,9 +358,8 @@ public class SalesController {
 	) {
 		Boolean isLast = buyBasket.stream().filter(b -> b.getProduct().getName().equalsIgnoreCase(productName)).findFirst().get().tryDecreaseQuantity();
 		if (!isLast) buyBasket.removeIf(b -> b.getProduct().getName().equalsIgnoreCase(productName));
-		
+
 		return "redirect:/buy";
 	}
-
 }
  

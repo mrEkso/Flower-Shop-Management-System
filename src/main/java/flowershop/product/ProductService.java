@@ -159,6 +159,15 @@ public class ProductService {
 			.orElse(null);
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T extends Product> T findByName(String productName, Class<T> type) {
+		return (T) productCatalog.findAll()
+			.filter(product -> product.getName().equalsIgnoreCase(productName) && type.isInstance(product))
+			.stream()
+			.findFirst()
+			.orElse(null);
+	}
+
 	public List<Flower> findFlowersByName(String subString) {
 		return productCatalog.findAll()
 			.stream()
