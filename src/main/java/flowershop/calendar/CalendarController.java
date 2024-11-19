@@ -38,7 +38,7 @@ public class CalendarController {
 
 		List<Event> events = service.findAllByDateBetween(startOfMonth, endOfMonth);
 
-		List<CalendarDay> calendarDays = generateCalendarDays(firstDayOfMonth, events);
+		List<CalendarDay> calendarDays = service.generateCalendarDays(firstDayOfMonth, events);
 
 		model.addAttribute("calendarDays", calendarDays);
 		model.addAttribute("currentMonth", month);
@@ -84,25 +84,6 @@ public class CalendarController {
 		service.delete(id);
 		return "redirect:/calendar";
 	}
-	private List<CalendarDay> generateCalendarDays(LocalDate firstDayOfMonth, List<Event> events) {
-		List<CalendarDay> calendarDays = new ArrayList<>();
 
-		LocalDate startOfGrid = firstDayOfMonth.withDayOfMonth(1).with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
-
-		for (int i = 0; i < 42; i++) {
-			LocalDate currentDay = startOfGrid.plusDays(i);
-			CalendarDay calendarDay = new CalendarDay(currentDay);
-
-			for (Event event : events) {
-				if (event.getDate().toLocalDate().equals(currentDay)) {
-					calendarDay.addEvent(event);
-				}
-			}
-
-			calendarDays.add(calendarDay);
-		}
-
-		return calendarDays;
-	}
 
 }
