@@ -95,7 +95,6 @@ public class ProductService {
 	}
 
 
-
 	public void removeBouquet(Bouquet bouquet) {
 		// Find the existing bouquet in the catalog
 		Bouquet existingBouquet = (Bouquet) productCatalog.findById(bouquet.getId()).orElse(null);
@@ -153,6 +152,22 @@ public class ProductService {
 			.stream()
 			.findFirst()
 			.orElse(null);
+	}
+
+	public List<Flower> findFlowersByName(String productName) {
+		return productCatalog.findAll()
+			.stream()
+			.filter(product -> product instanceof Flower)
+			.map(product -> (Flower) product)
+			.filter(flower -> flower.getName().equalsIgnoreCase(productName))
+			.collect(Collectors.toList());
+	}
+
+	public List<Flower> findFlowersByColor(String color) {
+		return getAllFlowers()
+			.stream()
+			.filter(flower -> flower.getColor().equalsIgnoreCase(color))
+			.toList();
 	}
 
 	public Optional<Product> getProductById(UUID id) {

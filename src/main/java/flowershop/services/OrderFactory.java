@@ -1,6 +1,7 @@
 package flowershop.services;
 
 import flowershop.sales.SimpleOrder;
+import flowershop.sales.WholesalerOrder;
 import jakarta.annotation.PostConstruct;
 import org.salespointframework.order.OrderStatus;
 import org.salespointframework.useraccount.UserAccount;
@@ -53,8 +54,12 @@ public class OrderFactory {
 		return new ReservationOrder(getDefaultUserAccount(), dateTime, client, "");
 	}
 
+	public WholesalerOrder createWholesalerOrder() {
+		return new WholesalerOrder(getDefaultUserAccount());
+	}
+
+	// Just believe me that this should be here in a method and not stored in private field.
 	// This cannot be in the constructor because of some very complicated spring bean init logic.
-	//  Just believe me that it should be here in a method and not a private field.
 	private UserAccount getDefaultUserAccount() {
 		return userAccountManagement.findByUsername("shop_worker")
 			.orElseThrow(() -> new IllegalArgumentException("Default UserAccount shop_worker not found"));

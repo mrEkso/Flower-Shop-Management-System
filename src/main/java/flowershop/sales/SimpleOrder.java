@@ -22,6 +22,5 @@ public class SimpleOrder extends AbstractOrder {
 	}
 
 	protected SimpleOrder() {
-
 	}
 }
