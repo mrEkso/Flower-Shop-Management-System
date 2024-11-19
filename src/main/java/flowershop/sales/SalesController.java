@@ -241,7 +241,7 @@ public class SalesController {
 	 * @param model
 	 * @return
 	 */
-	@PostMapping("/buy-from-basket")
+	@PostMapping("buy-from-buyBasket")
 	public String buyFromBasket(
 		@ModelAttribute("buyBasket") List<BasketItem> buyBasket,
 		HttpServletRequest request,
