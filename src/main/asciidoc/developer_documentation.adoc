@@ -10,6 +10,7 @@
 |0.1	| 15.11 | Andrejs | Package Diagram + External Dependencies
 |0.2	| 18.11 | Oleh | Start of package diagram for sales package
 |0.3	| 18.11 | Andrejs | Vorgaben zum Betrieb der Software
+|0.4	| 19.11 | Oleh | Kontextdiagramm
 |...	| ... | ... | ...
 |===
 
@@ -57,7 +58,10 @@ Die Nutzer sind Frau Floris (Besitzerin) und ihre Nichte (Mitarbeiterin im Servi
 Das System soll keiner technischen Wartung bedürfen. Sämtliche Daten sollen persistent in einer Datenbank gespeichert und über die Anwendung zugänglich sein (z.B. sollten für Frau Floris keine SQL-Kenntnisse erforderlich sein).
 
 == Kontextabgrenzung
-* Kontextdiagramm
+
+[[context_diagram]]
+image::./models/images/context_diagram_dd_a.svg[context diagram, 100%, 100%, pdfwidth=100%, title= "Kontextdiagramm für Blumenladen in C4", align=center]
+
 
 == Lösungsstrategie
 === Erfüllung der Qualitätsziele
@@ -116,8 +120,8 @@ image::./models/images/package_diagram_c.svg[package diagram]
 
 === Sales
 
-[[top_level_diagram]]
-image::./models/images/package-diagram-sales-a.svg[package diagram, 100%, 100%, pdfwidth=100%, title= "Package diagramm für sales packge in UML", align=center]
+[[class_diagram_sales]]
+image::./models/images/package-diagram-sales-a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für sales packge in UML", align=center]
 
 [options="header"]
 |=== 
