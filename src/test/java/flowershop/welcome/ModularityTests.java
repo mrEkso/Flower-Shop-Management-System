@@ -32,20 +32,20 @@ import org.springframework.modulith.docs.Documenter.DiagramOptions;
  * @author Oliver Drotbohm
  */
 class ModularityTests {
-
-	ApplicationModules modules = ApplicationModules.of(Application.class);
-
-	@Test
-	@Disabled
-	void verifyModularity() {
-		modules.verify();
-	}
-
-	@Test
-	@Disabled
-	void generateDocs() throws IOException {
-
-		new Documenter(modules)
-				.writeDocumentation(DiagramOptions.defaults(), CanvasOptions.defaults());
-	}
+//
+//	ApplicationModules modules = ApplicationModules.of(Application.class);
+//
+//	@Test
+//	@Disabled
+//	void verifyModularity() {
+//		modules.verify();
+//	}
+//
+//	@Test
+//	@Disabled
+//	void generateDocs() throws IOException {
+//
+//		new Documenter(modules)
+//				.writeDocumentation(DiagramOptions.defaults(), CanvasOptions.defaults());
+//	}
 }
