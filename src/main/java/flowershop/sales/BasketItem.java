@@ -27,9 +27,14 @@ public class BasketItem {
 	public int getQuantityAsInteger() {
 		return quantity;
 	}
+
     public void increaseQuantity() {
         this.quantity++;
     }
+
+	public void decreaseQuantity() {
+		this.quantity--;
+	}
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
