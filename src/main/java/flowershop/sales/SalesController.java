@@ -23,7 +23,7 @@ import org.springframework.ui.Model;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-@SessionAttributes("basket")
+@SessionAttributes({"buyBasket", "sellBasket"})
 @Controller
 public class SalesController {
 
@@ -39,8 +39,13 @@ public class SalesController {
 		this.wholesalerOrderService = wholesalerOrderService;
 	}
 
-	@ModelAttribute("basket")
-	public List<BasketItem> createBasket() {
+	@ModelAttribute("buyBasket")
+	public List<BasketItem> createBuyBasket() {
+		return new ArrayList<>();
+	}
+
+	@ModelAttribute("sellBasket")
+	public List<BasketItem> createSellBasket() {
 		return new ArrayList<>();
 	}
 
@@ -48,12 +53,10 @@ public class SalesController {
 	public String sell(Model model,
 					   @RequestParam(required = false) String filterItem,
 					   @RequestParam(required = false) String searchInput,
-					   @ModelAttribute("basket") List<BasketItem> basket) {
+					   @ModelAttribute("sellBasket") List<BasketItem> sellBasket) {
 
-		// FIXME: does not allow to work with bouquets!
 		List<Flower> flowers = productService.getAllFlowers();
 		List<Bouquet> bouquets = productService.getAllBouquets();
-		System.out.println(bouquets.getFirst().getPrice().getNumber());
 
 		//List<Product> products = productService.getAllProducts(); // -------------- Please use me <3
 
@@ -64,7 +67,6 @@ public class SalesController {
 		}
 
 		// Search by name
-		// TODO: search by something else?
 		if (searchInput != null && !searchInput.isEmpty()) {
 			flowers = productService.findFlowersByName(searchInput);
 		}
@@ -77,7 +79,7 @@ public class SalesController {
 
 		model.addAttribute("flowers", flowers);
 		model.addAttribute("bouquets", bouquets);
-		model.addAttribute("basket", basket);
+		model.addAttribute("sellBasket", sellBasket);
 
 		return "sales/sell";
 	}
@@ -86,7 +88,7 @@ public class SalesController {
 	public String buy(Model model,
 					  @RequestParam(required = false) String filterItem,
 					  @RequestParam(required = false) String searchInput,
-					  @ModelAttribute("basket") List<BasketItem> basket) {
+					  @ModelAttribute("buyBasket") List<BasketItem> buyBasket) {
 
 		// Shouldn't allow to work with bouquets because wholesalers sell only flowers.
 		List<Flower> flowers = productService.getAllFlowers();
@@ -106,21 +108,21 @@ public class SalesController {
 		model.addAttribute("filterItem", filterItem);
 		model.addAttribute("searchInput", searchInput);
 		model.addAttribute("flowers", flowers);
-		model.addAttribute("basket", basket);
+		model.addAttribute("buyBasket", buyBasket);
 
 		return "sales/buy";
 	}
 
-	@PostMapping("/add-to-basket")
-	public String addToBasket(
+	@PostMapping("/add-to-buyBasket")
+	public String addToBuyBasket(
 		Model model,
 		@RequestParam String productName,
 		@RequestParam(required = false) String redirectPage,
-		@ModelAttribute("basket") List<BasketItem> basket
+		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
 	) {
 		Product product = productService.findByName(productName);
 
-		Optional<BasketItem> basketItem = basket.stream()
+		Optional<BasketItem> basketItem = buyBasket.stream()
 			.filter(item -> item.getProduct().equals(product))
 			.findFirst();
 
@@ -128,13 +130,65 @@ public class SalesController {
 			if (basketItem.isPresent()) {
 				basketItem.get().increaseQuantity();
 			} else {
-				basket.add(new BasketItem(product, 1));
+				buyBasket.add(new BasketItem(product, 1));
 			}
 		}
 
-		model.addAttribute("basket", basket);
+		model.addAttribute("buyBasket", buyBasket);
 
 		return "redirect:/" + redirectPage; // Reload the page
+	}
+
+	@PostMapping("/add-to-sellBasket")
+	public String addToSellBasket(
+		Model model,
+		@RequestParam String productName,
+		@RequestParam(required = false) String redirectPage,
+		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
+	) {
+		Product product = productService.findByName(productName);
+
+		Optional<BasketItem> basketItem = sellBasket.stream()
+			.filter(item -> item.getProduct().equals(product))
+			.findFirst();
+
+		if (product != null) {
+			if (basketItem.isPresent()) {
+				basketItem.get().increaseQuantity();
+			} else {
+				sellBasket.add(new BasketItem(product, 1));
+			}
+		}
+
+		model.addAttribute("sellBasket", sellBasket);
+
+		return "redirect:/" + redirectPage; // Reload the page
+	}
+
+	@PostMapping("/add-to-sellBasket-bouqet")
+	public String addBouquetToBasket(
+		Model model,
+		@RequestParam String productName,
+		@RequestParam(required = false) String redirectPage,
+		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
+	) {
+		Product product = productService.findByName(productName);
+
+		Optional<BasketItem> basketItem = sellBasket.stream()
+			.filter(item -> item.getProduct().equals(product))
+			.findFirst();
+
+		if (product != null) {
+			if (basketItem.isPresent()) {
+				basketItem.get().increaseQuantity();
+			} else {
+				sellBasket.add(new BasketItem(product, 1));
+			}
+		}
+
+		model.addAttribute("sellBasket", sellBasket);
+
+		return "redirect:/" + redirectPage;
 	}
 
 	@GetMapping("/")
@@ -142,14 +196,26 @@ public class SalesController {
 		return "redirect:/sell";
 	}
 
-	@PostMapping("/remove-from-basket")
-	public String removeFromBasket(
+	@PostMapping("/remove-from-sellBasket")
+	public String removeFromSellBasket(
 		@RequestParam String productName,
-		@ModelAttribute("basket") List<BasketItem> basket,
+		@ModelAttribute("sellBasket") List<BasketItem> sellBasket,
 		HttpServletRequest request
 	) {
 		String referer = request.getHeader("Referer").split("http://localhost:8080/")[1];
-		basket.removeIf(b -> b.getProduct().getName().equalsIgnoreCase(productName));
+		sellBasket.removeIf(b -> b.getProduct().getName().equalsIgnoreCase(productName));
+
+		return "redirect:/" + (referer == null ? "sell" : referer);
+	}
+
+	@PostMapping("/remove-from-buyBasket")
+	public String removeFromBuyBasket(
+		@RequestParam String productName,
+		@ModelAttribute("buyBasket") List<BasketItem> buyBasket,
+		HttpServletRequest request
+	) {
+		String referer = request.getHeader("Referer").split("http://localhost:8080/")[1];
+		buyBasket.removeIf(b -> b.getProduct().getName().equalsIgnoreCase(productName));
 
 		return "redirect:/" + (referer == null ? "sell" : referer);
 	}
@@ -164,18 +230,18 @@ public class SalesController {
 	 */
 	@PostMapping("/buy-from-basket")
 	public String buyFromBasket(
-		@ModelAttribute("basket") List<BasketItem> basket,
+		@ModelAttribute("buyBasket") List<BasketItem> buyBasket,
 		HttpServletRequest request,
 		Model model
 	) {
-		if (basket == null || basket.isEmpty()) {
-			model.addAttribute("message", "Your basket is empty.");
+		if (buyBasket == null || buyBasket.isEmpty()) {
+			model.addAttribute("message", "Your buyBasket is empty.");
 			return "sales/buy";
 		}
 
 		WholesalerOrder wholesalerOrder = orderFactory.createWholesalerOrder();
 
-		for (BasketItem basketItem : basket) {
+		for (BasketItem basketItem : buyBasket) {
 			Product product = basketItem.getProduct();
 
 			if (product instanceof Flower) {
@@ -192,7 +258,7 @@ public class SalesController {
 		wholesalerOrderService.create(wholesalerOrder);
 		var orderPaid = OrderEvents.OrderPaid.of(wholesalerOrder); // TODO: hide this logic somewhere maybe
 
-		basket.clear();
+		buyBasket.clear();
 
 		model.addAttribute("message", "Your order has been successfully placed.");
 		String referer = request.getHeader("Referer").split("http://localhost:8080/")[1];
@@ -209,17 +275,17 @@ public class SalesController {
 	 */
 	@PostMapping("/sell-from-basket")
 	public String sellFromBasket(
-		@ModelAttribute("basket") List<BasketItem> basket,
+		@ModelAttribute("sellBasket") List<BasketItem> sellBasket,
 		HttpServletRequest request,
 		Model model
 	) {
-		if (basket == null || basket.isEmpty()) {
+		if (sellBasket == null || sellBasket.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "sell";
 		}
 
 		SimpleOrder simpleOrder = orderFactory.createSimpleOrder();
-		for (BasketItem basketItem : basket) {
+		for (BasketItem basketItem : sellBasket) {
 			Product product = basketItem.getProduct();
 
 			if (product instanceof Flower) {
@@ -236,11 +302,12 @@ public class SalesController {
 		simpleOrderService.create(simpleOrder);
 		var orderPaid = OrderEvents.OrderPaid.of(simpleOrder); // TODO: hide this logic somewhere maybe
 
-		basket.clear();
+		sellBasket.clear();
 
 		model.addAttribute("message", "Your order has been successfully placed.");
 		String referer = request.getHeader("Referer").split("http://localhost:8080/")[1];
 		return "redirect:" + (referer == null ? "sell" : referer);
 	}
+
 }
  

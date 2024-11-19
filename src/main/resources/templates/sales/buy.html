@@ -59,7 +59,7 @@
                 <div class="text-cell price-cell" th:text="${flower.pricing.buyPrice}"></div>
             </td>
             <td>
-                <form method="post" action="/add-to-basket">
+                <form method="post" action="/add-to-buyBasket">
                     <input type="hidden" name="redirectPage" value="buy"/>
                     <input type="hidden" name="productName" th:value="${flower.name}"/>
                     <button type="submit">
@@ -79,7 +79,7 @@
     </div>
     <table class="basket-table">
         <tbody>
-        <tr th:each="selectedBasket : ${basket}">
+        <tr th:each="selectedBasket : ${buyBasket}">
             <td>
                 <div class="basket-card">
                     <div class="basket-card-header">
@@ -87,7 +87,7 @@
                           class="basket-card-name"
                           th:text="${selectedBasket.product.name}"
                   ></span>
-                        <form method="post" action="/remove-from-basket">
+                        <form method="post" action="/remove-from-buyBasket">
                             <input
                                     type="hidden"
                                     name="productName"
@@ -117,8 +117,8 @@
         </tr>
         </tbody>
     </table>
-    <div class="basket-footer" th:unless="${basket.isEmpty()}">
-        <form th:action="@{/buy-from-basket}" method="post">
+    <div class="basket-footer" th:unless="${buyBasket.isEmpty()}">
+        <form th:action="@{/buy-from-buyBasket}" method="post">
             <input
                     class="basket-submit-btn"
                     type="submit"
