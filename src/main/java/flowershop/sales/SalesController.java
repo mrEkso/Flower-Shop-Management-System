@@ -322,5 +322,27 @@ public class SalesController {
 		return "redirect:" + (referer == null ? "sell" : referer);
 	}
 
+	@PostMapping("/decrease-from-sellBasket")
+	public String decreaseFromSellBasket(
+		@RequestParam String productName,
+		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
+	) {
+		Boolean isLast = sellBasket.stream().filter(b -> b.getProduct().getName().equalsIgnoreCase(productName)).findFirst().get().tryDecreaseQuantity();
+		if (!isLast) sellBasket.removeIf(b -> b.getProduct().getName().equalsIgnoreCase(productName));
+
+		return "redirect:/sell";
+	}
+
+	@PostMapping("/decrease-from-buyBasket")
+	public String decreaseFromBuyBasket(
+		@RequestParam String productName,
+		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
+	) {
+		Boolean isLast = buyBasket.stream().filter(b -> b.getProduct().getName().equalsIgnoreCase(productName)).findFirst().get().tryDecreaseQuantity();
+		if (!isLast) buyBasket.removeIf(b -> b.getProduct().getName().equalsIgnoreCase(productName));
+		
+		return "redirect:/buy";
+	}
+
 }
  

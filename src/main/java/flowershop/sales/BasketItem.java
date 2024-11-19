@@ -32,8 +32,15 @@ public class BasketItem {
         this.quantity++;
     }
 
+    public Boolean tryDecreaseQuantity(){
+        if(this.quantity < 2) return false;
+
+        this.decreaseQuantity();
+        return true;
+    }
+
 	public void decreaseQuantity() {
-		this.quantity--;
+            this.quantity--;
 	}
 
     public void setQuantity(int quantity) {

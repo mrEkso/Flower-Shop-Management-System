@@ -106,6 +106,14 @@
                                 class="basket-card-text"
                                 th:text="${selectedBasket.quantityAsInteger} + 'x' + ${selectedBasket.product.pricing.buyPrice.number*1.0} + ' EUR'"
                         ></p>
+                        <form method="post" action="/decrease-from-buyBasket">
+                            <input
+                                    type="hidden"
+                                    name="productName"
+                                    th:value="${selectedBasket.product.name}"
+                            />
+                            <button class="basket-minus-btn" type="submit">-</button>
+                        </form>
                     </div>
                     <div class="basket-card-footer">
                   <span
