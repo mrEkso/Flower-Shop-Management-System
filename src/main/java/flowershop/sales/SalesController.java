@@ -29,14 +29,16 @@ public class SalesController {
 
 	private final ProductService productService;
 	private final OrderFactory orderFactory;
-	private final SimpleOrderService simpleOrderService;
+	private final SalesService salesService;
 	private final WholesalerOrderService wholesalerOrderService;
+	private final WholesalerService wholesalerService;
 
-	SalesController(ProductService productService, OrderFactory orderFactory, SimpleOrderService simpleOrderService, WholesalerOrderService wholesalerOrderService) {
+	SalesController(ProductService productService, OrderFactory orderFactory, SalesService salesService, WholesalerOrderService wholesalerOrderService, WholesalerService wholesalerService) {
 		this.productService = productService;
 		this.orderFactory = orderFactory;
-		this.simpleOrderService = simpleOrderService;
+		this.salesService = salesService;
 		this.wholesalerOrderService = wholesalerOrderService;
+		this.wholesalerService = wholesalerService;
 	}
 
 	@ModelAttribute("buyBasket")
@@ -55,26 +57,21 @@ public class SalesController {
 					   @RequestParam(required = false) String searchInput,
 					   @ModelAttribute("sellBasket") List<BasketItem> sellBasket) {
 
-		List<Flower> flowers = productService.getAllFlowers();
-		List<Bouquet> bouquets = productService.getAllBouquets();
+		List<Flower> flowers = productService.findAllFlowers();
+		List<Bouquet> bouquets = productService.findAllBouquets();
 
 		//List<Product> products = productService.getAllProducts(); // -------------- Please use me <3
 
 		// Filter by color
 		if (filterItem != null && !filterItem.isEmpty()) {
-			flowers = flowers
-				.stream()
-				.filter(flower -> flower.getColor().equalsIgnoreCase(filterItem))
-				.toList();
+			flowers = productService.findFlowersByColor(filterItem);
 			bouquets = new ArrayList<>();
 		}
 
 		// Search by name
 		if (searchInput != null && !searchInput.isEmpty()) {
-			flowers = flowers.stream().
-				filter(flower -> flower.getName().toLowerCase().contains(searchInput.toLowerCase()))
-				.toList();
-			bouquets = new ArrayList<>();
+			flowers = productService.findFlowersByName(searchInput);
+			bouquets = new ArrayList<>();    // FIXME: allow search for bouquets!
 		}
 
 		Set<String> colors = productService.getAllFlowerColors();
@@ -97,23 +94,18 @@ public class SalesController {
 					  @ModelAttribute("buyBasket") List<BasketItem> buyBasket) {
 
 		// Shouldn't allow to work with bouquets because wholesalers sell only flowers.
-		List<Flower> flowers = productService.getAllFlowers();
+		List<Flower> flowers = wholesalerService.findAllFlowers();
 
 		// Only by color? Seems reasonable but who knows.
 		if (filterItem != null && !filterItem.isEmpty()) {
-			flowers = flowers
-				.stream()
-				.filter(flower -> flower.getColor().equalsIgnoreCase(filterItem))
-				.toList();
+			flowers = wholesalerService.findFlowersByColor(filterItem);
 		}
 
 		if (searchInput != null && !searchInput.isEmpty()) {
-			flowers = flowers.stream().
-				filter(flower -> flower.getName().toLowerCase().contains(searchInput.toLowerCase()))
-				.toList();
+			flowers = wholesalerService.findFlowersByName(searchInput);
 		}
 
-		Set<String> colors = productService.getAllFlowerColors();
+		Set<String> colors = wholesalerService.findAllFlowerColors();
 
 		model.addAttribute("typeList", colors);
 		model.addAttribute("filterItem", filterItem);
@@ -127,7 +119,7 @@ public class SalesController {
 	@PostMapping("/add-to-buyBasket")
 	public String addToBuyBasket(
 		Model model,
-		@RequestParam String productName,
+		@RequestParam String productName, // FIXME Use ID!
 		@RequestParam(required = false) String redirectPage,
 		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
 	) {
@@ -153,7 +145,7 @@ public class SalesController {
 	@PostMapping("/add-to-sellBasket")
 	public String addToSellBasket(
 		Model model,
-		@RequestParam String productName,
+		@RequestParam String productName,// FIXME Use ID!
 		@RequestParam(required = false) String redirectPage,
 		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
 	) {
@@ -179,7 +171,7 @@ public class SalesController {
 	@PostMapping("/add-to-sellBasket-bouqet")
 	public String addBouquetToBasket(
 		Model model,
-		@RequestParam String productName,
+		@RequestParam String productName,// FIXME Use ID!
 		@RequestParam(required = false) String redirectPage,
 		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
 	) {
@@ -209,7 +201,7 @@ public class SalesController {
 
 	@PostMapping("/remove-from-sellBasket")
 	public String removeFromSellBasket(
-		@RequestParam String productName,
+		@RequestParam String productName,// FIXME Use ID!
 		@ModelAttribute("sellBasket") List<BasketItem> sellBasket,
 		HttpServletRequest request
 	) {
@@ -221,7 +213,7 @@ public class SalesController {
 
 	@PostMapping("/remove-from-buyBasket")
 	public String removeFromBuyBasket(
-		@RequestParam String productName,
+		@RequestParam String productName,// FIXME Use ID!
 		@ModelAttribute("buyBasket") List<BasketItem> buyBasket,
 		HttpServletRequest request
 	) {
@@ -245,26 +237,7 @@ public class SalesController {
 			return "sales/buy";
 		}
 
-		WholesalerOrder wholesalerOrder = orderFactory.createWholesalerOrder();
-
-		for (BasketItem basketItem : buyBasket) {
-			Product product = basketItem.getProduct();
-
-			if (product instanceof Flower) {
-				productService.addFlowers((Flower) product, basketItem.getQuantityAsInteger());
-				wholesalerOrder.addOrderLine(product, basketItem.getQuantity());
-			} else if (product instanceof Bouquet) {
-				model.addAttribute("message", "Cannot buy bouquets from Wholesaler.");
-				return "sales/buy";
-				//productService.addBouquets((Bouquet) product, basketItem.getQuantityAsInteger());
-			}
-		}
-		wholesalerOrder.setPaymentMethod("Card");
-
-		wholesalerOrderService.create(wholesalerOrder);
-		var orderPaid = OrderEvents.OrderPaid.of(wholesalerOrder); // TODO: hide this logic somewhere maybe
-
-		buyBasket.clear();
+		salesService.buyProductsFromBasket(buyBasket, "Card");
 
 		model.addAttribute("message", "Your order has been successfully placed.");
 		String referer = request.getHeader("Referer").split("http://localhost:8080/")[1];
@@ -285,25 +258,7 @@ public class SalesController {
 			return "sell";
 		}
 
-		SimpleOrder simpleOrder = orderFactory.createSimpleOrder();
-		for (BasketItem basketItem : sellBasket) {
-			Product product = basketItem.getProduct();
-
-			if (product instanceof Flower) {
-				productService.removeFlowers((Flower) product, basketItem.getQuantityAsInteger());
-			} else if (product instanceof Bouquet) {
-				//productService.removeBouquet((Bouquet) product, basketItem.getQuantity());
-				productService.removeBouquet((Bouquet) product);
-			}
-			simpleOrder.addOrderLine(product, basketItem.getQuantity());
-
-		}
-		simpleOrder.setPaymentMethod("Cash");
-
-		simpleOrderService.create(simpleOrder);
-		var orderPaid = OrderEvents.OrderPaid.of(simpleOrder); // TODO: hide this logic somewhere maybe
-
-		sellBasket.clear();
+		salesService.sellProductsFromBasket(sellBasket, "Cash");
 
 		model.addAttribute("message", "Your order has been successfully placed.");
 		String referer = request.getHeader("Referer").split("http://localhost:8080/")[1];

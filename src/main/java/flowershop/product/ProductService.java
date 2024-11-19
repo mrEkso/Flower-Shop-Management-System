@@ -1,19 +1,14 @@
 package flowershop.product;
 
-import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static org.salespointframework.core.Currencies.EURO;
 
 @Service
 public class ProductService {
@@ -79,7 +74,7 @@ public class ProductService {
 		return productCatalog.save(bouquet);
 	}
 
-	public void removeFlowers(Flower flower, int quantity) {
+	public void removeFlowers(Flower flower, int quantity) throws IllegalStateException {
 		// Find the existing flower
 		Flower existingFlower = (Flower) productCatalog.findById(flower.getId()).orElse(null);
 
@@ -100,28 +95,26 @@ public class ProductService {
 	}
 
 
-	public void removeBouquet(Bouquet bouquet) {
-		// Find the existing bouquet in the catalog
+	public void removeBouquet(Bouquet bouquet, int quantity) throws IllegalStateException {
 		Bouquet existingBouquet = (Bouquet) productCatalog.findById(bouquet.getId()).orElse(null);
 
-		if (existingBouquet != null) {
-			// Calculate the new quantity
-			int newQuantity = existingBouquet.getQuantity() - bouquet.getQuantity();
+		if (existingBouquet == null) {
+			throw new IllegalStateException("Bouquet not found in the catalog.");
+		} else {
+			int newQuantity = existingBouquet.getQuantity() - quantity;
 
 			if (newQuantity > 0) {
 				// Update the quantity if it's still positive
 				existingBouquet.setQuantity(newQuantity);
 				productCatalog.save(existingBouquet);
 			} else if (newQuantity == 0) {
+				// FIXME ---------------------------------------------  Store data about
 				// Remove the bouquet completely if the quantity becomes zero
-				productCatalog.delete(existingBouquet);
+				//productCatalog.delete(existingBouquet);
 			} else {
 				// Handle the case where there's an attempt to remove more than available
 				throw new IllegalStateException("Insufficient stock to remove the specified quantity of bouquets.");
 			}
-		} else {
-			// Handle the case where the bouquet doesn't exist in the catalog
-			throw new IllegalStateException("Bouquet not found in the catalog.");
 		}
 	}
 
@@ -130,14 +123,14 @@ public class ProductService {
 		return productCatalog.findAll();
 	}
 
-	public List<Flower> getAllFlowers() {
+	public List<Flower> findAllFlowers() {
 		return productCatalog.findAll()
 			.filter(product -> product instanceof Flower)
 			.map(product -> (Flower) product)
 			.toList();
 	}
 
-	public List<Bouquet> getAllBouquets() {
+	public List<Bouquet> findAllBouquets() {
 		return productCatalog.findAll()
 			.filter(product -> product instanceof Bouquet)
 			.map(product -> (Bouquet) product)
@@ -145,7 +138,7 @@ public class ProductService {
 	}
 
 	public Set<String> getAllFlowerColors() {
-		return getAllFlowers()
+		return findAllFlowers()
 			.stream()
 			.map(Flower::getColor)
 			.collect(Collectors.toSet());
@@ -178,7 +171,7 @@ public class ProductService {
 	}
 
 	public List<Flower> findFlowersByColor(String color) {
-		return getAllFlowers()
+		return findAllFlowers()
 			.stream()
 			.filter(flower -> flower.getColor().equalsIgnoreCase(color))
 			.toList();
