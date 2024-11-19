@@ -1,7 +1,9 @@
 package flowershop.finances;
 
 import flowershop.sales.SimpleOrder;
-import flowershop.services.*;
+import flowershop.services.ContractOrder;
+import flowershop.services.EventOrder;
+import flowershop.services.ReservationOrder;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.order.ChargeLine;
 import org.salespointframework.order.Order;

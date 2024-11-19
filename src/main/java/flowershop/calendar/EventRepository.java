@@ -1,8 +1,8 @@
-package flowershop.services;
+package flowershop.calendar;
 
-import flowershop.calendar.Event;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+
 import java.time.LocalDateTime;
 import java.util.List;
 

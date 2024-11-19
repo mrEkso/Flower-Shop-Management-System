@@ -1,10 +1,10 @@
 package flowershop.calendar;
 
-import flowershop.services.EventRepository;
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.util.List;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class CalendarService {

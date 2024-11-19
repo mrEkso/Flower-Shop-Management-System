@@ -1,10 +1,9 @@
 package flowershop.sales;
 
-import flowershop.services.OrderRepositoryFactory;
 import org.salespointframework.order.Order;
 import org.springframework.data.domain.Pageable;
-import org.springframework.util.Assert;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,26 +12,26 @@ import java.util.UUID;
 @Service
 public class SimpleOrderService {
 
-	private final OrderRepositoryFactory orderFactoryRepository;
+	private final SimpleOrderRepository simpleOrderRepository;
 
-	public SimpleOrderService(OrderRepositoryFactory orderFactoryRepository) {
-		Assert.notNull(orderFactoryRepository, "OrderFactoryRepository must not be null!");
-		this.orderFactoryRepository = orderFactoryRepository;
+	public SimpleOrderService(SimpleOrderRepository simpleOrderRepository) {
+		Assert.notNull(simpleOrderRepository, "SimpleOrderRepository must not be null!");
+		this.simpleOrderRepository = simpleOrderRepository;
 	}
 
 	public List<SimpleOrder> findAll() {
-		return orderFactoryRepository.getSimpleOrderRepository().findAll(Pageable.unpaged()).toList();
+		return simpleOrderRepository.findAll(Pageable.unpaged()).toList();
 	}
 
 	public Optional<SimpleOrder> getById(UUID id) {
-		return orderFactoryRepository.getSimpleOrderRepository().findById(Order.OrderIdentifier.of(id.toString()));
+		return simpleOrderRepository.findById(Order.OrderIdentifier.of(id.toString()));
 	}
 
 	public SimpleOrder create(SimpleOrder order) {
-		return orderFactoryRepository.getSimpleOrderRepository().save(order);
+		return simpleOrderRepository.save(order);
 	}
 
 	public void delete(SimpleOrder order) {
-		orderFactoryRepository.getSimpleOrderRepository().delete(order);
+		simpleOrderRepository.delete(order);
 	}
 }

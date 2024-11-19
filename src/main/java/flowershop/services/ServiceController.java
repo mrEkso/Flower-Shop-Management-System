@@ -1,8 +1,6 @@
 package flowershop.services;
 
 import flowershop.product.ProductService;
-import org.salespointframework.useraccount.UserAccount;
-import org.salespointframework.useraccount.UserAccountManagement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,23 +21,20 @@ public class ServiceController {
 	private final ReservationOrderService reservationOrderService;
 	private final ProductService productService;
 	private final ClientService clientService;
-	private final UserAccountManagement userAccountManagement;
 	private final OrderFactory orderFactory;
 
 	public ServiceController(EventOrderService eventOrderService, ContractOrderService contractOrderService, ReservationOrderService reservationOrderService,
-							 ProductService productService, ClientService clientService, UserAccountManagement userAccountManagement, OrderFactory orderFactory) {
+							 ProductService productService, ClientService clientService, OrderFactory orderFactory) {
 		this.eventOrderService = eventOrderService;
 		this.contractOrderService = contractOrderService;
 		this.reservationOrderService = reservationOrderService;
 		this.productService = productService;
 		this.clientService = clientService;
-		this.userAccountManagement = userAccountManagement;
 		this.orderFactory = orderFactory;
 	}
 
 	@GetMapping("")
 	public String getAllServices(Model model) {
-		// Fetching all orders by type and adding to the model
 		model.addAttribute("contracts", contractOrderService.findAll());
 		model.addAttribute("events", eventOrderService.findAll());
 		model.addAttribute("reservations", reservationOrderService.findAll());
@@ -96,15 +91,15 @@ public class ServiceController {
 									  @RequestParam("phone") String phone,
 									  @RequestParam Map<String, String> products,
 									  @RequestParam("notes") String notes) {
-//		ContractOrder contractOrder = new ContractOrder(contractType, startDate, endDate, address,
-//			getFrauFlorisAccount(), getOrCreateClient(clientName, phone), notes);
-//		if ("recurring".equals(frequency)) {
-//			contractOrder.setFrequency(frequency);
-//		} else if ("custom".equals(frequency)) {
-//			contractOrder.setCustomFrequency(customFrequency);
-//			contractOrder.setCustomUnit(customUnit);
-//		}
-//		contractOrderService.save(contractOrder, products);
+		ContractOrder contractOrder = orderFactory.createContractOrder(contractType,
+			startDate, endDate, address, getOrCreateClient(clientName, phone), notes);
+		if ("recurring".equals(frequency)) {
+			contractOrder.setFrequency(frequency);
+		} else if ("custom".equals(frequency)) {
+			contractOrder.setCustomFrequency(customFrequency);
+			contractOrder.setCustomUnit(customUnit);
+		}
+		contractOrderService.save(contractOrder, products);
 		return "redirect:/services";
 	}
 
@@ -116,7 +111,8 @@ public class ServiceController {
 		@RequestParam("deliveryAddress") String deliveryAddress,
 		@RequestParam Map<String, String> products,
 		@RequestParam("notes") String notes) {
-		EventOrder eventOrder = orderFactory.createEventOrder(eventDate, deliveryAddress, getOrCreateClient(clientName, phone), notes);
+		EventOrder eventOrder = orderFactory.createEventOrder(eventDate,
+			deliveryAddress, getOrCreateClient(clientName, phone), notes);
 		eventOrderService.save(eventOrder, products);
 		return "redirect:/services";
 	}
@@ -127,9 +123,9 @@ public class ServiceController {
 										 @RequestParam("phone") String phone,
 										 @RequestParam Map<String, String> products,
 										 @RequestParam("notes") String notes) {
-//		ReservationOrder reservationOrder = new ReservationOrder(reservationDateTime,
-//			getFrauFlorisAccount(), getOrCreateClient(clientName, phone), notes);
-		//reservationOrderService.save(reservationOrder, products);
+		ReservationOrder reservationOrder = orderFactory.createReservationOrder(reservationDateTime,
+			getOrCreateClient(clientName, phone), notes);
+		reservationOrderService.save(reservationOrder, products);
 		return "redirect:/services";
 	}
 
@@ -167,8 +163,6 @@ public class ServiceController {
 		contractOrder.setAddress(address);
 		contractOrder.setNotes(notes);
 		contractOrder.setPaymentMethod(paymentMethod);
-		System.out.println(paymentMethod);
-		System.out.println(contractOrder.getPaymentMethod());
 		if ("recurring".equals(frequency)) {
 			contractOrder.setFrequency(frequency);
 		} else if ("custom".equals(frequency)) {
@@ -235,11 +229,6 @@ public class ServiceController {
 		reservationOrder.setPaymentMethod(paymentMethod);
 		reservationOrderService.update(reservationOrder, products, orderStatus, cancelReason);
 		return "redirect:/services";
-	}
-
-	private UserAccount getFrauFlorisAccount() {
-		return userAccountManagement.findByUsername("frau_floris")
-			.orElseThrow(() -> new IllegalArgumentException("Frau Floris account not found"));
 	}
 
 	private Client getOrCreateClient(String name, String phone) {

@@ -1,7 +1,6 @@
 package flowershop.services;
 
 import flowershop.product.ProductCatalog;
-
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderManagement;
@@ -15,25 +14,25 @@ import java.util.*;
 
 @Service
 public class ContractOrderService {
-	private final OrderRepositoryFactory orderFactoryRepository;
+	private final ContractOrderRepository contractOrderRepository;
 	private final ProductCatalog productCatalog;
 	private final OrderManagement<ContractOrder> orderManagement;
 
-	public ContractOrderService(OrderRepositoryFactory orderFactoryRepository, ProductCatalog productCatalog, OrderManagement<ContractOrder> orderManagement) {
-		Assert.notNull(orderFactoryRepository, "OrderFactoryRepository must not be null!");
+	public ContractOrderService(ContractOrderRepository contractOrderRepository, ProductCatalog productCatalog, OrderManagement<ContractOrder> orderManagement) {
+		Assert.notNull(contractOrderRepository, "ContractOrderRepository must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(orderManagement, "OrderManagement must not be null!");
-		this.orderFactoryRepository = orderFactoryRepository;
+		this.contractOrderRepository = contractOrderRepository;
 		this.productCatalog = productCatalog;
 		this.orderManagement = orderManagement;
 	}
 
 	public List<ContractOrder> findAll() {
-		return orderFactoryRepository.getContractOrderRepository().findAll(Pageable.unpaged()).toList();
+		return contractOrderRepository.findAll(Pageable.unpaged()).toList();
 	}
 
 	public Optional<ContractOrder> getById(UUID id) {
-		return orderFactoryRepository.getContractOrderRepository().findById(Order.OrderIdentifier.of(id.toString()));
+		return contractOrderRepository.findById(Order.OrderIdentifier.of(id.toString()));
 	}
 
 	public ContractOrder save(ContractOrder order, Map<String, String> products) {
@@ -51,7 +50,7 @@ public class ContractOrderService {
 				}
 			}
 		});
-		return orderFactoryRepository.getContractOrderRepository().save(order);
+		return contractOrderRepository.save(order);
 	}
 
 	public ContractOrder update(ContractOrder order, Map<String, String> products, String orderStatus, String cancelReason) {
@@ -68,11 +67,11 @@ public class ContractOrderService {
 				order.getOrderLines(product).toList().forEach(order::remove);
 				order.addOrderLine(product, Quantity.of(quantity));
 			}));
-		return orderFactoryRepository.getContractOrderRepository().save(order);
+		return contractOrderRepository.save(order);
 	}
 
 	public void delete(ContractOrder order) {
-		orderFactoryRepository.getContractOrderRepository().delete(order);
+		contractOrderRepository.delete(order);
 	}
 
 	private Map<UUID, Integer> extractProducts(Map<String, String> products) {

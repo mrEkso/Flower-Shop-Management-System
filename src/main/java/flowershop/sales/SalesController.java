@@ -4,24 +4,17 @@ import flowershop.product.Bouquet;
 import flowershop.product.Flower;
 import flowershop.product.ProductService;
 import flowershop.services.OrderFactory;
-import org.salespointframework.order.OrderEvents;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import jakarta.servlet.http.HttpServletRequest;
 import org.salespointframework.catalog.Product;
+import org.salespointframework.order.OrderEvents;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @SessionAttributes("basket")
 @Controller

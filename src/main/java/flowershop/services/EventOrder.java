@@ -22,7 +22,7 @@ public class EventOrder extends AbstractOrder {
 	@ManyToOne
 	private Client client;
 
-	public EventOrder( UserAccount user, LocalDate eventDate, String deliveryAddress, Client client, String notes) {
+	public EventOrder(UserAccount user, LocalDate eventDate, String deliveryAddress, Client client, String notes) {
 		super(user, notes);
 		this.client = client;
 		this.eventDate = eventDate;

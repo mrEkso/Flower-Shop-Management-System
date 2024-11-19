@@ -2,8 +2,6 @@ package flowershop.services;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
-import org.aspectj.weaver.ast.Or;
-import org.salespointframework.order.OrderStatus;
 import org.salespointframework.useraccount.UserAccount;
 
 import java.time.LocalDateTime;
@@ -44,10 +42,6 @@ public class ReservationOrder extends AbstractOrder {
 		this.reservationDateTime = dateTime;
 		this.client = client;
 		this.reservationStatus = ReservationStatus.IN_PROCESS;
-	}
-
-	public ReservationOrder(UserAccount userAccount) {
-		super(userAccount);
 	}
 
 	protected ReservationOrder() {

@@ -1,7 +1,6 @@
 package flowershop.services;
 
 import flowershop.product.ProductCatalog;
-
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderManagement;
@@ -15,25 +14,25 @@ import java.util.*;
 
 @Service
 public class ReservationOrderService {
-	private final OrderRepositoryFactory orderFactoryRepository;
+	private final ReservationOrderRepository reservationOrderRepository;
 	private final ProductCatalog productCatalog;
 	private final OrderManagement<ReservationOrder> orderManagement;
 
-	public ReservationOrderService(OrderRepositoryFactory orderFactoryRepository, ProductCatalog productCatalog, OrderManagement<ReservationOrder> orderManagement) {
-		Assert.notNull(orderFactoryRepository, "OrderFactoryRepository must not be null!");
+	public ReservationOrderService(ReservationOrderRepository reservationOrderRepository, ProductCatalog productCatalog, OrderManagement<ReservationOrder> orderManagement) {
+		Assert.notNull(reservationOrderRepository, "ReservationOrderRepository must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(orderManagement, "OrderManagement must not be null!");
-		this.orderFactoryRepository = orderFactoryRepository;
+		this.reservationOrderRepository = reservationOrderRepository;
 		this.productCatalog = productCatalog;
 		this.orderManagement = orderManagement;
 	}
 
 	public List<ReservationOrder> findAll() {
-		return orderFactoryRepository.getReservationOrderRepository().findAll(Pageable.unpaged()).toList();
+		return reservationOrderRepository.findAll(Pageable.unpaged()).toList();
 	}
 
 	public Optional<ReservationOrder> getById(UUID id) {
-		return orderFactoryRepository.getReservationOrderRepository().findById(Order.OrderIdentifier.of(id.toString()));
+		return reservationOrderRepository.findById(Order.OrderIdentifier.of(id.toString()));
 	}
 
 	public ReservationOrder save(ReservationOrder order, Map<String, String> products) {
@@ -51,7 +50,7 @@ public class ReservationOrderService {
 				}
 			}
 		});
-		return orderFactoryRepository.getReservationOrderRepository().save(order);
+		return reservationOrderRepository.save(order);
 	}
 
 	public ReservationOrder update(ReservationOrder order, Map<String, String> products, String orderStatus, String cancelReason) {
@@ -68,11 +67,11 @@ public class ReservationOrderService {
 				order.getOrderLines(product).toList().forEach(order::remove);
 				order.addOrderLine(product, Quantity.of(quantity));
 			}));
-		return orderFactoryRepository.getReservationOrderRepository().save(order);
+		return reservationOrderRepository.save(order);
 	}
 
 	public void delete(ReservationOrder order) {
-		orderFactoryRepository.getReservationOrderRepository().delete(order);
+		reservationOrderRepository.delete(order);
 	}
 
 	private Map<UUID, Integer> extractProducts(Map<String, String> products) {
