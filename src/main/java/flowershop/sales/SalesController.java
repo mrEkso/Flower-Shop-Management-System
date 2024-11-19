@@ -23,6 +23,7 @@ import org.springframework.ui.Model;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+
 @SessionAttributes({"buyBasket", "sellBasket"})
 @Controller
 public class SalesController {
@@ -63,12 +64,19 @@ public class SalesController {
 		// Filter by color
 		// TODO: filter by something else?
 		if (filterItem != null && !filterItem.isEmpty()) {
-			flowers = productService.findFlowersByColor(filterItem);
+			flowers = flowers
+			.stream()
+			.filter(flower -> flower.getColor().equalsIgnoreCase(filterItem))
+			.toList();
+			bouquets = new ArrayList<>();
 		}
 
 		// Search by name
 		if (searchInput != null && !searchInput.isEmpty()) {
-			flowers = productService.findFlowersByName(searchInput);
+			flowers = flowers.stream().
+			filter(flower -> flower.getName().toLowerCase().contains(searchInput.toLowerCase()))
+			.toList();
+			bouquets = new ArrayList<>();
 		}
 
 		Set<String> colors = productService.getAllFlowerColors();
@@ -95,11 +103,16 @@ public class SalesController {
 
 		// Only by color? Seems reasonable but who knows.
 		if (filterItem != null && !filterItem.isEmpty()) {
-			flowers = productService.findFlowersByColor(filterItem);
+			flowers = flowers
+			.stream()
+			.filter(flower -> flower.getColor().equalsIgnoreCase(filterItem))
+			.toList();
 		}
 
 		if (searchInput != null && !searchInput.isEmpty()) {
-			flowers = productService.findFlowersByName(searchInput);
+			flowers = flowers.stream().
+			filter(flower -> flower.getName().toLowerCase().contains(searchInput.toLowerCase()))
+			.toList();
 		}
 
 		Set<String> colors = productService.getAllFlowerColors();

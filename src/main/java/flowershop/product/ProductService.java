@@ -1,14 +1,19 @@
 package flowershop.product;
 
+import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static org.salespointframework.core.Currencies.EURO;
 
 @Service
 public class ProductService {
@@ -154,12 +159,12 @@ public class ProductService {
 			.orElse(null);
 	}
 
-	public List<Flower> findFlowersByName(String productName) {
+	public List<Flower> findFlowersByName(String subString) {
 		return productCatalog.findAll()
 			.stream()
 			.filter(product -> product instanceof Flower)
 			.map(product -> (Flower) product)
-			.filter(flower -> flower.getName().equalsIgnoreCase(productName))
+			.filter(flower -> flower.getName().toLowerCase().contains(subString.toLowerCase()))
 			.collect(Collectors.toList());
 	}
 

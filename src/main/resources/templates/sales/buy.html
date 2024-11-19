@@ -14,8 +14,8 @@
     <h2 th:text="#{buy.header}"></h2>
     <p th:text="#{buy.description}"></p>
     <div class="inputs-div">
-        <form method="get" action="/sell">
-            <input id="search-input" type="text" name="searchInput" th:placeholder="#{sell.search}"
+        <form method="get" action="/buy">
+            <input id="search-input" type="text" name="searchInput" th:placeholder="#{buy.search}"
                    th:value="${searchInput}"/>
             <!-- <div id="filter-div"> -->
             <select id="filter-dd" name="filterItem" th:value="${filterItem}">
