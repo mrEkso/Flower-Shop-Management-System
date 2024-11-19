@@ -3,7 +3,8 @@
   margin-right: 240px;
 }
 
-#flower-table {
+#flower-table,
+#bouquet-table {
   width: 100%;
   border-collapse: collapse;
 }
@@ -17,11 +18,13 @@
 }
 
 #flower-table td,
-#flower-table th {
+#flower-table th,
+#bouquet-table td {
   border: none;
 }
 
-#flower-table tbody tr {
+#flower-table tbody tr,
+#bouquet-table tbody tr {
   border-top: 1px solid #000;
 }
 
@@ -33,19 +36,22 @@
   border-bottom: 1px solid #000;
 }
 
-#flower-table tbody td {
+#flower-table tbody td,
+#bouquet-table tbody td {
   padding: 10px;
   text-align: center;
   vertical-align: middle;
   border: none;
 }
 
-#flower-table td:first-child {
+#flower-table td:first-child,
+#bouquet-table td:first-child {
   width: 5%;
   text-align: center;
 }
 
-#flower-table td img {
+#flower-table td img,
+#bouquet-table td img {
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -54,12 +60,22 @@
 #flower-table td:nth-child(2),
 #flower-table td:nth-child(3),
 #flower-table td:nth-child(4),
-#flower-table td:nth-child(5) {
+#flower-table td:nth-child(5),
+#bouquet-table td:nth-child(2),
+#bouquet-table td:nth-child(3),
+#bouquet-table td:nth-child(4),
+#bouquet-table td:nth-child(5) {
   text-align: left;
   padding-left: 10px;
+  width: 150px;
+  max-width: 150px;
+  overflow: hidden;
+  /* text-overflow: ellipsis; */
+  /* white-space: nowrap; */
 }
 
-#flower-table td:last-child {
+#flower-table td:last-child,
+#bouquet-table td:last-child {
   width: 5%;
   text-align: center;
 }

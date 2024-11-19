@@ -132,10 +132,10 @@ public class ProductService {
 			.toList();
 	}
 
-	public List<Flower> getAllBouquets() {
+	public List<Bouquet> getAllBouquets() {
 		return productCatalog.findAll()
 			.filter(product -> product instanceof Bouquet)
-			.map(product -> (Flower) product)
+			.map(product -> (Bouquet) product)
 			.toList();
 	}
 

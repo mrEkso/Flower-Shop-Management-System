@@ -22,10 +22,11 @@ public class Bouquet extends Product {
 
 	private int quantity;
 
-	public Bouquet(String name, List<Flower> flowers, Money additionalPrice) {
+	public Bouquet(String name, List<Flower> flowers, Money additionalPrice, int quantity) {
 		super(name, calculateTotalPricing(flowers, additionalPrice).getSellPrice());
 		this.flowers = flowers;
 		this.additionalPrice = additionalPrice;
+		this.quantity =	quantity;
 	}
 
 	@SuppressWarnings({"unused", "deprecation"})
@@ -56,8 +57,6 @@ public class Bouquet extends Product {
 	public void setAdditionalPrice(Money additionalPrice) {
 		this.additionalPrice = additionalPrice;
 	}
-
-
 	
 	private static Pricing calculateTotalPricing(List<Flower> flowers, Money additionalPrice) {
 		

@@ -84,6 +84,34 @@
         </tr>
         </tbody>
     </table>
+    <table id="bouquet-table">
+        <tbody>
+        <tr th:each="bouquet : ${bouquets}">
+            <td><img th:src="@{/resources/img/rose.png}"/></td>
+            <td>
+                <div class="text-cell name-cell" th:text="${bouquet.name}"></div>
+            </td>
+            <td>
+                <div class="text-cell type-cell" th:text="none"></div>
+            </td>
+            <td>
+                <div class="text-cell quantity-cell" th:text="${bouquet.quantity}"></div>
+            </td>
+            <td>
+                <div class="text-cell price-cell" th:text="${bouquet.price}"></div>
+            </td>
+            <td>
+                <form method="post" action="/add-to-basket">
+                    <input type="hidden" name="redirectPage" value="sell"/>
+                    <input type="hidden" name="productName" th:value="${bouquet.name}"/>
+                    <button type="submit">
+                        <img th:src="@{/resources/img/shopping-basket.png}"/>
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 <div class="basket">

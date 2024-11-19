@@ -52,6 +52,8 @@ public class SalesController {
 
 		// FIXME: does not allow to work with bouquets!
 		List<Flower> flowers = productService.getAllFlowers();
+		List<Bouquet> bouquets = productService.getAllBouquets();
+		System.out.println(bouquets.getFirst().getPrice().getNumber());
 
 		//List<Product> products = productService.getAllProducts(); // -------------- Please use me <3
 
@@ -72,7 +74,9 @@ public class SalesController {
 		model.addAttribute("typeList", colors);
 		model.addAttribute("filterItem", filterItem);
 		model.addAttribute("searchInput", searchInput);
+
 		model.addAttribute("flowers", flowers);
+		model.addAttribute("bouquets", bouquets);
 		model.addAttribute("basket", basket);
 
 		return "sales/sell";

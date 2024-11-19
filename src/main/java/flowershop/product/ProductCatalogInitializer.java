@@ -32,7 +32,7 @@ public class ProductCatalogInitializer implements DataInitializer {
 		Flower rose = new Flower("Rose", new Pricing(Money.of(10.0, EURO), Money.of(20.0, EURO)), "Red", 10);
 		Flower sunflower = new Flower("Sunflower", new Pricing(Money.of(2.5, EURO), Money.of(5.0, EURO)), "Yellow", 20);
 		Flower lily = new Flower("Lily", new Pricing(Money.of(9.0, EURO), Money.of(18.0, EURO)), "White", 11);
-		Flower lily2 = new Flower("Lily2", new Pricing(Money.of(10.0, EURO), Money.of(19.0, EURO)), "White", 7);
+		Flower lily2 = new Flower("Lily2ssssssssssssssssssssssssssssssssssssssssssssssssssss", new Pricing(Money.of(10.0, EURO), Money.of(19.0, EURO)), "White", 7);
 		Flower lily3 = new Flower("Lily3", new Pricing(Money.of(11.0, EURO), Money.of(20.0, EURO)), "Purple", 73);
 
 		// Saving flowers to the catalog
@@ -47,10 +47,20 @@ public class ProductCatalogInitializer implements DataInitializer {
 		Bouquet roseLilyBouquet = new Bouquet(
 			"Rose and Lily Bouquet",
 			bouquetFlowers,
-			Money.of(5.0, EURO) // Additional price for the bouquet
+			Money.of(5.0, EURO), // Additional price for the bouquet
+			5
+		);
+
+		List<Flower> bouquetFlowers2 = Arrays.asList(lily2, lily3);
+		Bouquet roseLilyBouquet2 = new Bouquet(
+			"Rose and Lily Bouquet2222",
+			bouquetFlowers2,
+			Money.of(8.0, EURO), // Additional price for the bouquet
+			50
 		);
 
 		// Saving bouquet to the catalog
 		productCatalog.save(roseLilyBouquet);
+		productCatalog.save(roseLilyBouquet2);
 	}
 }
