@@ -74,7 +74,7 @@ public class ProductService {
 		return productCatalog.save(bouquet);
 	}
 
-	public void removeFlowers(Flower flower, int quantity) {
+	public void removeFlowers(Flower flower, int quantity) throws IllegalStateException {
 		// Find the existing flower
 		Flower existingFlower = (Flower) productCatalog.findById(flower.getId()).orElse(null);
 
@@ -95,28 +95,26 @@ public class ProductService {
 	}
 
 
-	public void removeBouquet(Bouquet bouquet) {
-		// Find the existing bouquet in the catalog
+	public void removeBouquet(Bouquet bouquet, int quantity) throws IllegalStateException {
 		Bouquet existingBouquet = (Bouquet) productCatalog.findById(bouquet.getId()).orElse(null);
 
-		if (existingBouquet != null) {
-			// Calculate the new quantity
-			int newQuantity = existingBouquet.getQuantity() - bouquet.getQuantity();
+		if (existingBouquet == null) {
+			throw new IllegalStateException("Bouquet not found in the catalog.");
+		} else {
+			int newQuantity = existingBouquet.getQuantity() - quantity;
 
 			if (newQuantity > 0) {
 				// Update the quantity if it's still positive
 				existingBouquet.setQuantity(newQuantity);
 				productCatalog.save(existingBouquet);
 			} else if (newQuantity == 0) {
+				// FIXME ---------------------------------------------  Store data about
 				// Remove the bouquet completely if the quantity becomes zero
-				productCatalog.delete(existingBouquet);
+				//productCatalog.delete(existingBouquet);
 			} else {
 				// Handle the case where there's an attempt to remove more than available
 				throw new IllegalStateException("Insufficient stock to remove the specified quantity of bouquets.");
 			}
-		} else {
-			// Handle the case where the bouquet doesn't exist in the catalog
-			throw new IllegalStateException("Bouquet not found in the catalog.");
 		}
 	}
 
@@ -125,22 +123,22 @@ public class ProductService {
 		return productCatalog.findAll();
 	}
 
-	public List<Flower> getAllFlowers() {
+	public List<Flower> findAllFlowers() {
 		return productCatalog.findAll()
 			.filter(product -> product instanceof Flower)
 			.map(product -> (Flower) product)
 			.toList();
 	}
 
-	public List<Flower> getAllBouquets() {
+	public List<Bouquet> findAllBouquets() {
 		return productCatalog.findAll()
 			.filter(product -> product instanceof Bouquet)
-			.map(product -> (Flower) product)
+			.map(product -> (Bouquet) product)
 			.toList();
 	}
 
 	public Set<String> getAllFlowerColors() {
-		return getAllFlowers()
+		return findAllFlowers()
 			.stream()
 			.map(Flower::getColor)
 			.collect(Collectors.toSet());
@@ -154,17 +152,26 @@ public class ProductService {
 			.orElse(null);
 	}
 
-	public List<Flower> findFlowersByName(String productName) {
+	@SuppressWarnings("unchecked")
+	public <T extends Product> T findByName(String productName, Class<T> type) {
+		return (T) productCatalog.findAll()
+			.filter(product -> product.getName().equalsIgnoreCase(productName) && type.isInstance(product))
+			.stream()
+			.findFirst()
+			.orElse(null);
+	}
+
+	public List<Flower> findFlowersByName(String subString) {
 		return productCatalog.findAll()
 			.stream()
 			.filter(product -> product instanceof Flower)
 			.map(product -> (Flower) product)
-			.filter(flower -> flower.getName().equalsIgnoreCase(productName))
+			.filter(flower -> flower.getName().toLowerCase().contains(subString.toLowerCase()))
 			.collect(Collectors.toList());
 	}
 
 	public List<Flower> findFlowersByColor(String color) {
-		return getAllFlowers()
+		return findAllFlowers()
 			.stream()
 			.filter(flower -> flower.getColor().equalsIgnoreCase(color))
 			.toList();
