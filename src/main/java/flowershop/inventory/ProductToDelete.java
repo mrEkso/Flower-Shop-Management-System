@@ -2,35 +2,29 @@ package flowershop.inventory;
 
 public class ProductToDelete {
 	private String name;
-	private String type;
-	private int quantity;
 	private double pricePerUnit;
+	private int quantityDeleted;
+	private double totalLoss;
 
-	public ProductToDelete(String name, String type, int quantity, double pricePerUnit) {
+	public ProductToDelete(String name, double pricePerUnit, int quantityDeleted, double totalLoss) {
 		this.name = name;
-		this.type = type;
-		this.quantity = quantity;
 		this.pricePerUnit = pricePerUnit;
+		this.quantityDeleted = quantityDeleted;
+		this.totalLoss = totalLoss;
 	}
-
-	// Getters and setters
 	public String getName() {
 		return name;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public int getQuantity() {
-		return quantity;
 	}
 
 	public double getPricePerUnit() {
 		return pricePerUnit;
 	}
 
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
+	public int getQuantityDeleted() {
+		return quantityDeleted;
+	}
+
+	public double getTotalLoss() {
+		return totalLoss;
 	}
 }
