@@ -94,7 +94,7 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return Streamable.of();
 	}
 
-	public Streamable<AccountancyEntry> filterEntries(AccountancyEntryWrapper.Category category) {
+	public Streamable<AccountancyEntry> filterEntries(Category category) {
 		Streamable<AccountancyEntry> filteredEntries = Streamable.empty();
 		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
 			if (((AccountancyEntryWrapper)entry).getCategory().equals(AccountancyEntryWrapper.categoryToString(category))){

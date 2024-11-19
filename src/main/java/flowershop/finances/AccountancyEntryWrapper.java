@@ -34,14 +34,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 	private Map<String, Quantity> itemQuantityMap = new HashMap<String,Quantity>();
 	private Category category;
 	private LocalDateTime timestamp;
-	// PLEASE DONT CHANGE THIS FORMAT OF ENUMS!!!
-	public enum Category{
-		Einfacher_Verkauf,
-		Reservierter_Verkauf,
-		Veranstaltung_Verkauf,
-		Vertraglicher_Verkauf,
-		Einkauf
-	}
+
 	public static String categoryToString(Category category){
 		return category.toString().replace('_',' ');
 	}
