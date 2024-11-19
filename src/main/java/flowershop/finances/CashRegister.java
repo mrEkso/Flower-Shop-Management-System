@@ -5,6 +5,9 @@ import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.springframework.data.util.Streamable;
 
+import java.util.List;
+import java.util.Set;
+
 @Entity
 public class CashRegister  {
 
@@ -13,17 +16,18 @@ public class CashRegister  {
 	private Long id;
 
 	//private final OrderManagement<AbstractOrder> orderManagement;
-	@Transient
-	private Streamable<AccountancyEntry> accountancyEntries = Streamable.empty();
+	//@Transient
+	@OneToMany(cascade = CascadeType.ALL)
+	private Set<AccountancyEntry> accountancyEntries; //= Streamable.empty();
 
 	private Money balance;
 
 
-	public Streamable<AccountancyEntry> getAccountancyEntries() {
+	public Set<AccountancyEntry> getAccountancyEntries() {
 		return accountancyEntries;
 	}
 
-	public void setAccountancyEntries(Streamable<AccountancyEntry> accountancyEntries) {
+	public void setAccountancyEntries(Set<AccountancyEntry> accountancyEntries) {
 		this.accountancyEntries = accountancyEntries;
 	}
 
@@ -38,7 +42,7 @@ public class CashRegister  {
 		return balance;
 	}
 
-	public CashRegister(Streamable<AccountancyEntry> accountancyEntries,
+	public CashRegister(Set<AccountancyEntry> accountancyEntries,
 						Money balance) {
 		this.accountancyEntries = accountancyEntries;
 		this.balance = balance;

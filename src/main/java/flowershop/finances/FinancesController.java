@@ -5,6 +5,7 @@ import org.salespointframework.time.Interval;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
@@ -23,6 +24,8 @@ public class FinancesController {
 	private HashSet<AccountancyEntryWrapper> filteredByCategory = new HashSet<>();
 	private LocalDate date1;
 	private LocalDate date2;
+	private boolean isFilteredByDates;
+	private boolean isFilteredByCategory;
 	private String category;
 
 	public FinancesController(CashRegisterService cashRegisterService) {
@@ -53,10 +56,12 @@ public class FinancesController {
 		}
 		this.filteredByDates = filteredList;
 		if(!this.filteredByCategory.isEmpty()) {
-			Set<AccountancyEntryWrapper> intersection = new HashSet<>(filteredList);
-			intersection.retainAll(this.filteredByCategory);
+			setFilteredOrdersList(intersection(filteredList,this.filteredByCategory).stream().toList(),20);
 		}
-		setFilteredOrdersList(filteredList.stream().toList(),20);
+		else {
+			setFilteredOrdersList(filteredList.stream().toList(), 20);
+		}
+		this.isFilteredByDates=true;
 		prepareFinancesModel(model,filteredAndCutOrdersList);
 		return "finances";
 	}
@@ -64,17 +69,33 @@ public class FinancesController {
 	@GetMapping("/resetDates")
 	public String resetDates(Model model) {
 		this.filteredByDates = new HashSet<>();
+		this.isFilteredByDates = false;
 		this.date1=LocalDate.of(1970,1,1);
 		this.date2=LocalDate.now();
-		prepareFinancesModel(model,this.filteredByCategory.stream().toList());
+		getTransactionPage(model);
+		if(this.isFilteredByCategory) {
+			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByCategory).stream().toList(),20);
+		}
+		prepareFinancesModel(model,filteredAndCutOrdersList);
 		return "finances";
 	}
 
 	@GetMapping("/resetCategory")
 	public String resetCategory(Model model) {
 		this.filteredByCategory = new HashSet<>();
+		this.isFilteredByCategory = false;
 		this.category="all";
-		prepareFinancesModel(model,this.filteredByDates.stream().toList());
+		getTransactionPage(model);
+		if(this.isFilteredByDates) {
+			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByDates).stream().toList(),20);
+		}
+		/*
+		else{
+			getTransactionPage(model);
+		}
+
+		 */
+		prepareFinancesModel(model,filteredAndCutOrdersList);
 		return "finances";
 	}
 
@@ -91,10 +112,10 @@ public class FinancesController {
 		Collections.sort(tempList, new Comparator<AccountancyEntry>() {
 			@Override
 			public int compare(AccountancyEntry first, AccountancyEntry second) {
-				Optional<LocalDateTime> ldt1 = first.getDate();
-				Optional<LocalDateTime> ldt2 = second.getDate();
-				if (ldt1.isPresent() && ldt2.isPresent()) {
-					return ldt2.get().compareTo(ldt1.get());
+				LocalDateTime ldt1 = ((AccountancyEntryWrapper)first).getTimestamp();
+				LocalDateTime ldt2 = ((AccountancyEntryWrapper)second).getTimestamp();
+				if (ldt1 != null && ldt2 != null) {
+					return ldt2.compareTo(ldt1);
 				}
 				else{
 					throw new IllegalStateException("Some entries dont have date assigned");
@@ -107,7 +128,8 @@ public class FinancesController {
 
 	@GetMapping("/finances")
 	public String getTransactionPage(Model model) {
-		for (AccountancyEntry i: this.cashRegisterService.findAll().toList()){
+		this.filteredOrdersList = new LinkedList<>();
+		for (AccountancyEntry i : this.cashRegisterService.findAll().toList()) {
 			this.filteredOrdersList.add((AccountancyEntryWrapper) i);
 		}
 
@@ -121,7 +143,7 @@ public class FinancesController {
 	public String filterCategories(@RequestParam("filter") String category, Model model) {
 		//this.categorySet = category;
 		if(category.equals("all")){
-			this.filteredByCategory = new HashSet<>();
+			return this.resetCategory(model);
 		}
 		else {
 			List<AccountancyEntry> lst;
@@ -145,15 +167,14 @@ public class FinancesController {
 				this.filteredByCategory.add((AccountancyEntryWrapper) i);
 			}
 			if (!this.filteredByDates.isEmpty()) {
-				Set<AccountancyEntryWrapper> intersection = new HashSet<>(this.filteredByDates);
-				intersection.retainAll(this.filteredByCategory);
-				setFilteredOrdersList(intersection.stream().toList(), 20);
+				setFilteredOrdersList(this.intersection(this.filteredByCategory,this.filteredByDates).stream().toList(), 20);
 			}
 			else{
 				setFilteredOrdersList(this.filteredByCategory.stream().toList(),20);
 			}
 		}
 		prepareFinancesModel(model,filteredAndCutOrdersList);
+		this.isFilteredByCategory=true;
 		return "finances";
 	}
 
@@ -161,6 +182,14 @@ public class FinancesController {
 		if(this.filteredOrdersList.size() > 20){
 			this.filteredAndCutOrdersList = this.filteredOrdersList.subList(0, 20);
 		}
+		else{
+			this.filteredAndCutOrdersList = this.filteredOrdersList;
+		}
+	}
+	private Set<AccountancyEntryWrapper> intersection(Set<AccountancyEntryWrapper> set1, Set<AccountancyEntryWrapper> set2) {
+		Set<AccountancyEntryWrapper> intersection = new HashSet<>(set1);
+		intersection.retainAll(set2);
+		return intersection;
 	}
 
 }
