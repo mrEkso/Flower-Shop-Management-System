@@ -8,6 +8,8 @@ import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.util.Set;
+
 import static org.salespointframework.core.Currencies.EURO;
 
 @Component
@@ -24,7 +26,7 @@ public class CashRegisterInitializer implements DataInitializer {
 		if (cashRegisterRepository.findAll().iterator().hasNext()) {
 			return; // Skip initialization if products already exist
 		}
-		CashRegister cashRegister = new CashRegister(Streamable.empty(), Money.of(5000, EURO));
+		CashRegister cashRegister = new CashRegister(Set.of(), Money.of(5000, EURO));
 		cashRegisterRepository.save(cashRegister);
 
 	}

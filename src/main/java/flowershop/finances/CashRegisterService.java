@@ -4,6 +4,7 @@ import flowershop.services.AbstractOrder;
 import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.Accountancy;
 import org.salespointframework.accountancy.AccountancyEntry;
+import org.salespointframework.accountancy.OrderPaymentEntry;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderEvents;
 import org.salespointframework.order.OrderManagement;
@@ -14,14 +15,12 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.money.MonetaryAmount;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Primary
@@ -31,8 +30,9 @@ Class with simply getters and setters, completely based on CashRegistered (all f
  */
 
 	private final OrderManagement<AbstractOrder> orderManagement;
-	//private final CashRegister cashRegister;
+	//private CashRegister cashRegister = new CashRegister();
 	private final CashRegisterRepository cashRegisterRepository;
+	//private long cashRegisterId;
 
 
 	@Autowired
@@ -45,6 +45,7 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order);
 			this.add(convertedOrder);
 		}
+		//this.cashRegister=getCashRegister();
 	}
 
 
@@ -60,26 +61,32 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 	}
 
 	@Override
+	//@Transactional
 	public <T extends AccountancyEntry> T add(T entry){
-		if(entry == null){
+		if(entry == null || entry instanceof OrderPaymentEntry){ //because salespoint is also doing it apparently
 			return null;
 		}
+
 		CashRegister cashRegister = getCashRegister();
-		cashRegister.getAccountancyEntries().and((AccountancyEntryWrapper)entry);
+		Set<AccountancyEntry> existing = cashRegister.getAccountancyEntries();
+		existing.add(entry);
+		cashRegister.setAccountancyEntries(existing); // removed the cast to Acc..Wrapper
 		cashRegister.setBalance((Money) entry.getValue().add(cashRegister.getBalance()));
+		cashRegisterRepository.save(cashRegister);
 		return entry;
 	}
+
 	@EventListener
 	public void onOrderPaid(OrderEvents.OrderPaid event){
 		AbstractOrder order = (AbstractOrder) event.getOrder();
 		//convert order to AccountancyEntry
-		AccountancyEntry convertedOrder = new AccountancyEntryWrapper(order);
+		AccountancyEntryWrapper convertedOrder = new AccountancyEntryWrapper(order);
 		this.add(convertedOrder);
 	}
 
 	@Override
 	public Streamable<AccountancyEntry> findAll() {
-		return this.getCashRegister().getAccountancyEntries();
+		return Streamable.of(this.getCashRegister().getAccountancyEntries());
 	}
 
 	@Override
@@ -91,7 +98,7 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		Streamable<AccountancyEntry> filteredEntries = Streamable.empty();
 		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
 			if (((AccountancyEntryWrapper)entry).getCategory().equals(AccountancyEntryWrapper.categoryToString(category))){
-				filteredEntries.and(entry);
+				filteredEntries = filteredEntries.and(entry);
 			}
 		}
 		return filteredEntries;
@@ -121,11 +128,11 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 	public Streamable<AccountancyEntry> find(Interval interval) {
 		Streamable<AccountancyEntry> output = Streamable.of();
 		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
-			if(entry.getDate().isEmpty()){
+			if(((AccountancyEntryWrapper)entry).getTimestamp() == null){
 				continue;
 			}
-			if(interval.contains(entry.getDate().get())){
-				output.and(entry);
+			if(interval.contains(((AccountancyEntryWrapper)entry).getTimestamp())){
+				output = output.and(entry);
 			}
 		}
 		return output;
@@ -214,6 +221,16 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 	}
 
 	public CashRegister getCashRegister() {
+		List<CashRegister> test = cashRegisterRepository.findAll();
+		/*
+		if(test.isEmpty()){
+			throw new IllegalStateException("CashRegister instance not found");
+		}
+
+		if(this.cashRegister.getBalance() != null){
+			this.cashRegister = cashRegisterRepository.findFirstByOrderById().get();
+		}
+		 */
 		return cashRegisterRepository.findFirstByOrderById()
 			.orElseThrow(() -> new IllegalStateException("CashRegister instance not found"));
 	}

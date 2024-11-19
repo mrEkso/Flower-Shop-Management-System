@@ -7,6 +7,8 @@ import flowershop.services.OrderFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.OrderEvents;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,8 @@ public class SalesController {
 	private final OrderFactory orderFactory;
 	private final SimpleOrderService simpleOrderService;
 	private final WholesalerOrderService wholesalerOrderService;
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
 
 	SalesController(ProductService productService, OrderFactory orderFactory, SimpleOrderService simpleOrderService, WholesalerOrderService wholesalerOrderService) {
 		this.productService = productService;
@@ -180,7 +184,7 @@ public class SalesController {
 
 		wholesalerOrderService.create(wholesalerOrder);
 		var orderPaid = OrderEvents.OrderPaid.of(wholesalerOrder); // TODO: hide this logic somewhere maybe
-
+		eventPublisher.publishEvent(orderPaid);
 		basket.clear();
 
 		model.addAttribute("message", "Your order has been successfully placed.");
@@ -224,6 +228,7 @@ public class SalesController {
 
 		simpleOrderService.create(simpleOrder);
 		var orderPaid = OrderEvents.OrderPaid.of(simpleOrder); // TODO: hide this logic somewhere maybe
+		eventPublisher.publishEvent(orderPaid);
 
 		basket.clear();
 
