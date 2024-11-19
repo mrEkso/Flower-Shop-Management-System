@@ -88,9 +88,9 @@ NOTE: Name the used external frameworks, in which packages you used them, and wh
 [options="header"]
 |===
 |Exterenes Framework|Kategorie|Beschreibung
-|Spring Boot |General purpose |…
-|Spring Data JPA |Persistence |…
-|Spring Security |Security |…
+|Spring Boot |General purpose |Vereinfacht die Entwicklung eigenständiger, produktionsreifer Anwendungen auf Basis von Spring.
+|Spring Data JPA |Persistence |Verwaltet den Datenzugriff und die Datenpersistenz unter Verwendung der Java Persistence API (JPA).
+|Spring Security |Security |Bietet Authentifizierung, Autorisierung und Schutz vor gängigen Sicherheitslücken.
 |Semantic UI |UI |…
 |jQuery |UI |…
 |salespointframework |Backend | Zur Entwicklung von Point-of-Sales-Anwendungen (PoS) mit Spring Framework und Spring Boot. Es besteht aus einer Vielzahl von Geschäftsmodulen, die es dem Nutzer ermöglichen, darauf aufbauend anspruchsvolle Webanwendungen zu implementieren.
@@ -106,7 +106,7 @@ mostly _UI_ and/or _Communication_.
 |Externes Package |Verwendet von |Warum
 |salespointframework |Backend | Zur Entwicklung von Point-of-Sales-Anwendungen (PoS) mit Spring Framework und Spring Boot. Ermöglicht, darauf aufbauend anspruchsvolle Webanwendungen zu implementieren.
 |Bootstrap | Frontend | Stellt Seiten-Layout-Tools und vordefinierte HTML-Elemente zu Verfügung. 
-|Thymeleaf | Frontend | ...
+|Thymeleaf | Frontend | Ermöglicht die dynamische Generierung von HTML mit serverseitigen Vorlagen für eine nahtlose Integration in Spring MVC.
 |===
 
 == Bausteinsicht
