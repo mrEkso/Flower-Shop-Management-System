@@ -25,6 +25,7 @@ public class Bouquet extends Product {
 		super(name, calculateTotalPricing(flowers, additionalPrice).getSellPrice());
 		this.flowers = flowers;
 		this.additionalPrice = additionalPrice;
+		this.pricing = calculateTotalPricing(flowers, additionalPrice); // Fix: Assign the calculated pricing
 	}
 
 	@SuppressWarnings({"unused", "deprecation"})
@@ -56,21 +57,16 @@ public class Bouquet extends Product {
 		this.additionalPrice = additionalPrice;
 	}
 
-
-	
 	private static Pricing calculateTotalPricing(List<Flower> flowers, Money additionalPrice) {
-		
 		Money totalBuyPrice = flowers.stream()
-			.map(flower -> flower.getPricing().getBuyPrice()) 
-			.reduce(Money.of(0, additionalPrice.getCurrency()), Money::add); 
+			.map(flower -> flower.getPricing().getBuyPrice())
+			.reduce(Money.of(0, additionalPrice.getCurrency()), Money::add);
 
-		
 		Money totalSellPrice = flowers.stream()
-			.map(flower -> flower.getPricing().getSellPrice()) 
-			.reduce(Money.of(0, additionalPrice.getCurrency()), Money::add) 
-			.add(additionalPrice); 
+			.map(flower -> flower.getPricing().getSellPrice())
+			.reduce(Money.of(0, additionalPrice.getCurrency()), Money::add)
+			.add(additionalPrice);
 
 		return new Pricing(totalBuyPrice, totalSellPrice);
 	}
-
 }

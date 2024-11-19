@@ -1,62 +1,72 @@
 package flowershop.controllers;
 
+import flowershop.initializers.InventoryInitializer;
+import flowershop.models.products.Product;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import flowershop.models.products.Product;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
 public class InventoryController {
 
-	private List<Product> products = new ArrayList<>();
-	private List<Map<String, Object>> deletedProducts = new ArrayList<>();
-	private List<Product> bouquets = new ArrayList<>();
+	private final InventoryInitializer inventoryInitializer;
+	private final List<Product> products;
+	private final List<Product> bouquets = new ArrayList<>();
+	private final List<DeletedProduct> deletedProducts = new ArrayList<>();
+	private final List<Product> selectedFlowersForBouquet = new ArrayList<>(); // Store selected flowers for the bouquet
 
-	public InventoryController() {
-		// Initializing products
-		products.add(new Product("Rose", "Flower", 50, 2.00));
-		products.add(new Product("Sunflower", "Flower", 30, 1.50));
-		products.add(new Product("Tulip", "Flower", 40, 2.50));
-		products.add(new Product("Hibiscus", "Flower", 20, 3.00));
-		products.add(new Product("Daisy", "Flower", 60, 1.20));
-		products.add(new Product("Spring Bouquet", "Bouquet", 15, 12.00));
-		products.add(new Product("Romantic Bouquet", "Bouquet", 25, 15.00));
-		products.add(new Product("Tulip Mix", "Bouquet", 10, 18.00));
-		products.add(new Product("Sunshine Bouquet", "Bouquet", 12, 20.00));
-		products.add(new Product("Mixed Flowers", "Bouquet", 18, 10.00));
+	public InventoryController(InventoryInitializer inventoryInitializer) {
+		this.inventoryInitializer = inventoryInitializer;
+		this.products = inventoryInitializer.initializeProducts();
 	}
+
+	private Optional<Product> findProductByName(String name) {
+		return products.stream()
+			.filter(product -> product.getName().equalsIgnoreCase(name))
+			.findFirst();
+	}
+
+	private boolean updateStock(String productName, int quantityChange) {
+		for (Product product : products) {
+			if (product.getName().equalsIgnoreCase(productName)) {
+				int newQuantity = product.getQuantity() + quantityChange;
+				if (newQuantity >= 0) {
+					product.setQuantity(newQuantity);
+					return true;
+				}
+				break;
+			}
+		}
+		return false;
+	}
+
 
 	@GetMapping("/inventory")
 	public String inventoryMode(@RequestParam(required = false) String search,
 								@RequestParam(required = false, defaultValue = "all") String filter, Model model) {
 		List<Product> filteredProducts = products;
 
-		// Filter by search
 		if (search != null && !search.isEmpty()) {
 			filteredProducts = filteredProducts.stream()
 				.filter(product -> product.getName().toLowerCase().contains(search.toLowerCase()))
 				.collect(Collectors.toList());
 		}
 
-		// Filter by type
 		if (!filter.equals("all")) {
 			filteredProducts = filteredProducts.stream()
 				.filter(product -> product.getType().equalsIgnoreCase(filter))
 				.collect(Collectors.toList());
 		}
 
-		// Add attributes for inventory view
 		model.addAttribute("products", filteredProducts);
-		model.addAttribute("createBouquetMode", false); // Inventory mode
+		model.addAttribute("createBouquetMode", false);
 		model.addAttribute("showModal", false);
 		model.addAttribute("showDeletedModal", false);
 		return "inventory";
@@ -64,107 +74,111 @@ public class InventoryController {
 
 	@GetMapping("/inventory/create-bouquet")
 	public String createBouquetMode(Model model) {
-		// Filter only flower products
 		List<Product> flowersOnly = products.stream()
 			.filter(product -> product.getType().equalsIgnoreCase("Flower"))
 			.collect(Collectors.toList());
 
 		model.addAttribute("products", flowersOnly);
-		model.addAttribute("createBouquetMode", true); // Bouquet creation mode
+		model.addAttribute("createBouquetMode", true);
 		model.addAttribute("showModal", false);
 		model.addAttribute("showDeletedModal", false);
 		return "inventory";
 	}
 
-
-	@GetMapping("/inventory/choose-flower")
-	public String showChooseModal(@RequestParam String flowerName, Model model) {
+	@PostMapping("/inventory/add-flower")
+	public String addFlowerToBouquet(@RequestParam String flowerName, @RequestParam int chooseQuantity, Model model) {
 		Product selectedFlower = products.stream()
 			.filter(product -> product.getName().equalsIgnoreCase(flowerName))
 			.findFirst()
 			.orElse(null);
 
-		if (selectedFlower != null) {
-			model.addAttribute("showChooseModal", true); // Modal will be shown
-			model.addAttribute("selectedFlower", selectedFlower);
-		}
-
-		model.addAttribute("createBouquetMode", true);  // Ensure bouquet creation mode is still active
-		model.addAttribute("showModal", false);
-		model.addAttribute("showDeletedModal", false);
-		model.addAttribute("products", products);
-		return "inventory"; // Render the page with modal visible
-	}
-
-
-
-	@PostMapping("/create-bouquet")
-	public String createBouquet(@RequestParam String flowerName, @RequestParam int chooseQuantity, Model model) {
-		Product selectedFlower = products.stream()
-			.filter(product -> product.getName().equalsIgnoreCase(flowerName))
-			.findFirst()
-			.orElse(null);
-
-		if (selectedFlower != null && selectedFlower.getQuantity() >= chooseQuantity && chooseQuantity >= 2) {
+		if (selectedFlower != null && selectedFlower.getQuantity() >= chooseQuantity) {
+			// Add selected flower to the bouquet list
 			selectedFlower.setQuantity(selectedFlower.getQuantity() - chooseQuantity);
-
-			// Create the bouquet product
-			Product bouquet = new Product(selectedFlower.getName() + " Bouquet", "Bouquet", chooseQuantity, selectedFlower.getPricePerUnit() * chooseQuantity);
-			bouquets.add(bouquet);  // Add the bouquet to the bouquet list
-
-			// Add success message
-			model.addAttribute("success", "Bouquet created successfully!");
+			selectedFlowersForBouquet.add(new Product(selectedFlower.getName(), selectedFlower.getType(), chooseQuantity, selectedFlower.getPricePerUnit()));
+			model.addAttribute("success", "Flower added to bouquet.");
 		} else {
 			model.addAttribute("error", "Not enough stock or invalid quantity.");
 		}
 
-		model.addAttribute("createBouquetMode", true); // Keep bouquet creation mode
-		model.addAttribute("showModal", false);
-		model.addAttribute("showDeletedModal", false);
+		model.addAttribute("createBouquetMode", true);
 		model.addAttribute("products", products);
-		return "inventory"; // Return to inventory page
+		model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
+		return "inventory";
+	}
+
+	@PostMapping("/create-custom-bouquet")
+	public String createCustomBouquet(@RequestParam String bouquetName, Model model) {
+		if (!selectedFlowersForBouquet.isEmpty() && bouquetName != null && !bouquetName.isEmpty()) {
+			double totalPrice = selectedFlowersForBouquet.stream()
+				.mapToDouble(flower -> flower.getPricePerUnit() * flower.getQuantity())
+				.sum();
+
+			Product customBouquet = new Product(bouquetName, "Bouquet", 1, totalPrice);
+			bouquets.add(customBouquet);
+			products.add(customBouquet);
+
+			selectedFlowersForBouquet.clear();
+			model.addAttribute("success", "Custom bouquet created successfully.");
+		} else {
+			model.addAttribute("error", "Bouquet name is required, and at least one flower must be added.");
+		}
+
+		model.addAttribute("createBouquetMode", false);
+		model.addAttribute("products", products);
+		return "inventory";
 	}
 
 
 
+	@GetMapping("/inventory/choose-flower")
+	public String showChooseModal(@RequestParam String flowerName, Model model) {
+		Optional<Product> selectedFlower = findProductByName(flowerName);
+
+		selectedFlower.ifPresent(flower -> {
+			model.addAttribute("showChooseModal", true);
+			model.addAttribute("selectedFlower", flower);
+		});
+
+		model.addAttribute("createBouquetMode", true);
+		model.addAttribute("products", products);
+		return "inventory";
+	}
 
 	@GetMapping("/inventory/delete")
 	public String showDeleteModal(@RequestParam String productName, Model model) {
-		Product selectedProduct = products.stream()
-			.filter(product -> product.getName().equalsIgnoreCase(productName))
-			.findFirst()
-			.orElse(null);
+		Optional<Product> selectedProduct = findProductByName(productName);
 
-		if (selectedProduct != null) {
-			model.addAttribute("showModal", true);
-			model.addAttribute("selectedProduct", selectedProduct);
-		}
+		selectedProduct.ifPresent(product -> model.addAttribute("selectedProduct", product));
 
+		model.addAttribute("showModal", true);
 		model.addAttribute("createBouquetMode", false);
-		model.addAttribute("showDeletedModal", false);
-		model.addAttribute("products", products); // Ensure products are displayed
+		model.addAttribute("products", products);
 		return "inventory";
 	}
 
 	@PostMapping("/delete-product")
 	public String deleteProduct(@RequestParam String productName, @RequestParam int deleteQuantity, Model model) {
-		for (Product product : products) {
-			if (product.getName().equalsIgnoreCase(productName)) {
-				if (product.getQuantity() >= deleteQuantity) {
-					product.setQuantity(product.getQuantity() - deleteQuantity);
+		Optional<Product> selectedProductOpt = findProductByName(productName);
 
-					Map<String, Object> deletedProductData = new HashMap<>();
-					deletedProductData.put("name", product.getName());
-					deletedProductData.put("pricePerUnit", product.getPricePerUnit());
-					deletedProductData.put("quantityDeleted", deleteQuantity);
-					deletedProductData.put("totalLoss", product.getPricePerUnit() * deleteQuantity);
+		if (selectedProductOpt.isPresent()) {
+			Product product = selectedProductOpt.get();
 
-					deletedProducts.add(deletedProductData);
-				} else {
-					model.addAttribute("error", "Not enough stock available to delete.");
-				}
-				break;
+			if (product.getQuantity() >= deleteQuantity) {
+				updateStock(productName, -deleteQuantity);
+
+				DeletedProduct deletedProduct = new DeletedProduct(
+					product.getName(),
+					product.getPricePerUnit(),
+					deleteQuantity,
+					product.getPricePerUnit() * deleteQuantity
+				);
+				deletedProducts.add(deletedProduct);
+			} else {
+				model.addAttribute("error", "Not enough stock available to delete.");
 			}
+		} else {
+			model.addAttribute("error", "Product not found.");
 		}
 		return "redirect:/inventory";
 	}
@@ -172,16 +186,46 @@ public class InventoryController {
 	@GetMapping("/inventory/deleted-products")
 	public String showDeletedProducts(Model model) {
 		double totalLossSum = deletedProducts.stream()
-			.mapToDouble(product -> (double) product.get("totalLoss"))
+			.mapToDouble(DeletedProduct::getTotalLoss)
 			.sum();
 
 		model.addAttribute("deletedProducts", deletedProducts);
 		model.addAttribute("totalLossSum", totalLossSum);
-		model.addAttribute("showDeletedModal", true);
+		model.addAttribute("showDeletedModal", !deletedProducts.isEmpty());
 
 		model.addAttribute("createBouquetMode", false);
 		model.addAttribute("showModal", false);
 		model.addAttribute("products", products);
 		return "inventory";
+	}
+
+	// Inner class for deleted products
+	public static class DeletedProduct {
+		private String name;
+		private double pricePerUnit;
+		private int quantityDeleted;
+		private double totalLoss;
+
+		public DeletedProduct(String name, double pricePerUnit, int quantityDeleted, double totalLoss) {
+			this.name = name;
+			this.pricePerUnit = pricePerUnit;
+			this.quantityDeleted = quantityDeleted;
+			this.totalLoss = totalLoss;
+		}
+		public String getName() {
+			return name;
+		}
+
+		public double getPricePerUnit() {
+			return pricePerUnit;
+		}
+
+		public int getQuantityDeleted() {
+			return quantityDeleted;
+		}
+
+		public double getTotalLoss() {
+			return totalLoss;
+		}
 	}
 }
