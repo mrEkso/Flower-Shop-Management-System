@@ -1,32 +1,63 @@
+<head>
+    <!-- Bootstrap CSS -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-rbsA2VBKQnNf1RM4FSC/JvLa3XAMiL6dV4+CQ5lR9h6m+moWrECL1ChPm1P7I8zT"
+            crossorigin="anonymous"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+            rel="stylesheet"
+    />
+    <link th:href="@{/resources/css/bootstrap.min.css}" rel="stylesheet"/>
+    <script th:src="@{/resources/js/bootstrap.bundle.min.js}"></script>
+</head>
+
 <div>
-  <nav th:fragment="navbar" class="d-flex flex-column vh-100 bg-light">
-    <header class="navbar navbar-light"></header>
-    <ul class="nav flex-column">
-      <li class="nav-item">
-        <a class="nav-link active" th:href="@{/sell}"
-          ><i class="fa fa-shopping-cart" th:text="#{navbar.sell}"></i
-        ></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" th:href="@{/buy}"
-          ><i class="fa fa-shopping-cart" th:text="#{navbar.buy}"></i
-        ></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" th:href="@{/service}"
-          ><i class="fa fa-cog" th:text="#{navbar.services}"></i
-        ></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" th:href="@{/finance}"
-          ><i class="fa fa-dollar-sign" th:text="#{navbar.finances}"></i
-        ></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" th:href="@{/calendar}"
-          ><i class="fa fa-calendar-alt" th:text="#{navbar.calendar}"></i
-        ></a>
-      </li>
-    </ul>
-  </nav>
+    <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/sell}">
+                            <i class="fa fa-shopping-cart"></i>
+                            <span th:text="#{navbar.sell}">Sell</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/buy}">
+                            <i class="fa fa-shopping-cart"></i>
+                            <span th:text="#{navbar.buy}">Buy</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/inventory}">
+                            <i class="fa fa-box"></i>
+                            <span th:text="#{navbar.inventory}">Inventory</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/services}">
+                            <i class="fa fa-cog"></i>
+                            <span th:text="#{navbar.services}">Services</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/finances}">
+                            <i class="fa fa-dollar-sign"></i>
+                            <span th:text="#{navbar.finances}">Finances</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/calendar}">
+                            <i class="fa fa-calendar-alt"></i>
+                            <span th:text="#{navbar.calendar}">Calendar</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 </div>

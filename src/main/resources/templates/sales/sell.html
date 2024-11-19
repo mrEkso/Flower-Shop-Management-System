@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Bootstrap CSS -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-rbsA2VBKQnNf1RM4FSC/JvLa3XAMiL6dV4+CQ5lR9h6m+moWrECL1ChPm1P7I8zT"
+            crossorigin="anonymous"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+            rel="stylesheet"
+    />
+
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link th:href="@{/resources/css/sell.css}" rel="stylesheet"/>
+    <link th:href="@{/resources/css/navbar.css}" rel="stylesheet"/>
+    <link th:href="@{/resources/css/basket.css}" rel="stylesheet"/>
+    <title th:text="#{sell.title}"></title>
+</head>
+<body>
+<div th:replace="~{navbar}"></div>
+<div class="content">
+    <h2 th:text="#{sell.header}"></h2>
+    <p th:text="#{sell.description}"></p>
+    <div class="inputs-div">
+        <form method="get" action="/sell">
+            <input id="search-input" type="text" name="searchInput" th:placeholder="#{sell.search}"
+                   th:value="${searchInput}"/>
+            <!-- <div id="filter-div"> -->
+            <select id="filter-dd" name="filterItem" th:value="${filterItem}">
+                <option value="">All</option>
+                <option th:each="type : ${typeList}"
+                        th:value="${type}"
+                        th:text="${type}"
+                        th:selected="${type == filterItem}">
+                </option>
+            </select>
+            <!-- </div> -->
+            <button type="submit"><img th:src="@{/resources/img/filter.png}"/></button>
+        </form>
+    </div>
+    <table id="flower-table">
+        <thead>
+        <div class="table-header">
+            <tr></tr>
+            <th th:text="#{sell.table.head.icon}"></th>
+            <th th:text="#{sell.table.head.name}"></th>
+            <th th:text="#{sell.table.head.color}"></th>
+            <th th:text="#{sell.table.head.quantity}"></th>
+            <th th:text="#{sell.table.head.price}"></th>
+            <th></th>
+            </tr>
+        </div>
+        </thead>
+        <tbody>
+        <tr th:each="flower : ${flowers}">
+            <td><img th:src="@{/resources/img/rose.png}"/></td>
+            <td>
+                <div class="text-cell name-cell" th:text="${flower.name}"></div>
+            </td>
+            <td>
+                <div class="text-cell type-cell" th:text="${flower.color}"></div>
+            </td>
+            <td>
+                <div class="text-cell quantity-cell" th:text="${flower.quantity}"></div>
+            </td>
+            <td>
+                <div class="text-cell price-cell" th:text="${flower.pricing.sellPrice}"></div>
+            </td>
+            <td>
+                <form method="post" action="/add-to-basket">
+                    <input type="hidden" name="redirectPage" value="sell"/>
+                    <input type="hidden" name="productName" th:value="${flower.name}"/>
+                    <button type="submit">
+                        <img th:src="@{/resources/img/shopping-basket.png}"/>
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="basket">
+    <h2 class="basket-head">Modify order</h2>
+    <div class="basket-head">
+        <img class="basket-img" th:src="@{/resources/img/shopping-basket.png}"/>
+        <b class="basket-header">Your basket</b>
+    </div>
+    <table class="basket-table">
+        <tbody>
+        <tr th:each="selectedBasket : ${basket}">
+            <td>
+                <div class="basket-card">
+                    <div class="basket-card-header">
+                  <span
+                          class="basket-card-name"
+                          th:text="${selectedBasket.product.name}"
+                  ></span>
+                        <form method="post" action="/remove-from-basket">
+                            <input
+                                    type="hidden"
+                                    name="productName"
+                                    th:value="${selectedBasket.product.name}"
+                            />
+                            <button type="submit">
+                                <img
+                                        class="basket-img close-btn"
+                                        th:src="@{/resources/img/close.png}"
+                                />
+                            </button>
+                        </form>
+                    </div>
+                    <div class="basket-card-body">
+                        <p
+                                class="basket-card-text"
+                                th:text="${selectedBasket.quantityAsInteger} + 'x' + ${selectedBasket.product.pricing.sellPrice.number * 1.0} + ' EUR'"
+                        ></p>
+                    </div>
+                    <div class="basket-card-footer">
+                        <!-- th:text="${selectedFlower.price} + ' EUR'" -->
+                        <span
+                                th:text="${(selectedBasket.quantityAsInteger * 1.0) * selectedBasket.product.pricing.sellPrice.number * 1.0} + ' EUR'"
+                        ></span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="basket-footer" th:unless="${basket.isEmpty()}">
+        <form th:action="@{/sell-from-basket}" method="post">
+            <input
+                    class="basket-submit-btn"
+                    type="submit"
+                    th:value="#{basket.footer.button}"/>
+        </form>
+    </div>
+</div>
+</body>
+</html>
