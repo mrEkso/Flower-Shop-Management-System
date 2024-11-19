@@ -152,15 +152,15 @@ public class FinancesController {
 			} else if (category.equals("spendings")) {
 				lst = this.cashRegisterService.filterIncomeOrSpending(false);
 			} else if (category.equals("simple order")) {
-				lst = this.cashRegisterService.filterEntries(AccountancyEntryWrapper.Category.Einfacher_Verkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.Einfacher_Verkauf).stream().toList();
 			} else if (category.equals("reserved order")) {
-				lst = this.cashRegisterService.filterEntries(AccountancyEntryWrapper.Category.Reservierter_Verkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.Reservierter_Verkauf).stream().toList();
 			} else if (category.equals("event order")) {
-				lst = this.cashRegisterService.filterEntries(AccountancyEntryWrapper.Category.Veranstaltung_Verkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.Veranstaltung_Verkauf).stream().toList();
 			} else if (category.equals("contract order")) {
-				lst = this.cashRegisterService.filterEntries(AccountancyEntryWrapper.Category.Vertraglicher_Verkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.Vertraglicher_Verkauf).stream().toList();
 			} else {
-				lst = this.cashRegisterService.filterEntries(AccountancyEntryWrapper.Category.Einkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.Einkauf).stream().toList();
 			}
 			this.filteredByCategory = new HashSet<>();
 			for (AccountancyEntry i : lst) {
