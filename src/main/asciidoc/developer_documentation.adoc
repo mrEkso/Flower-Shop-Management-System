@@ -74,6 +74,14 @@ image::./models/images/context_diagram_dd_a.svg[context diagram, 100%, 100%, pdf
 === Softwarearchitektur
 * Beschreibung der Architektur anhand der Top-Level-Architektur oder eines Client-Server-Diagramms
 
+image::./models/images/ClientServerDiagram.jpg[Client-Server-Modell der Anwendung]
+
+HTML-Templates werden auf dem Server gerendert von Controllers und im Client angezeigt, dabei werden sie mit CSS gestylt.
+Thymeleaf übernimmt das Rendering und fügt dynamisch die Daten ein, die von den serverseitigen Controllern bereitgestellt werden.
+Diese Controller – wie Sales, Inventory, Services, Finances und Calendar – rufen Daten über Modellklassen ab und verwalten sie.
+Die Daten werden über Repository-Klassen gespeichert, die im Diagramm als *„Salespoint / Repositories“* gekennzeichnet sind.
+Die Datenbank wird über JPA und Hibernate angesprochen, die die Daten in der Datenbank speichern und abrufen.
+
 === Entwurfsentscheidungen
 * Verwendete Muster
 * Persistenz
@@ -122,6 +130,10 @@ image::./models/images/package_diagram_c.svg[package diagram]
 
 [[class_diagram_sales]]
 image::./models/images/package-diagram-sales-a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für sales packge in UML", align=center]
+
+=== Calendar
+[[class_diagram_calendar]]
+image::./models/images/CalendarPackageDiagram.jpg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für calendar packge in UML", align=center]
 
 [options="header"]
 |=== 
