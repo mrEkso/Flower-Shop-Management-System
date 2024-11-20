@@ -25,6 +25,7 @@ __Teilnehmer:__
 
 == Bemerkungen
 Sechstes Treffen. Termin für die Developer Dokumentation ist verpasst
+
 == Retrospektive des letzten Sprints
 // Wie ist der Status der im letzten Sprint erstellten Issues/veteilten Aufgaben?
 
@@ -35,8 +36,8 @@ Sechstes Treffen. Termin für die Developer Dokumentation ist verpasst
 |1     |Developer Dokumentation |Fast am Anfang |Muss bis Mittwoch abend komplett gemacht werden
 |2      |Finances |Back-End fertig, aber nicht getested. Front-End existiert |
 |3      |Sales    |Front-End fertig, keine Interaktion mit dem Back-End |
-|4      |Calendar |Fast fertig |
-|5      |Services |Mitte |
+|4      |Calendar |Fast fertig | 
+|5      |Services |Mitte | 
 |6      |Front-End fertig, Back-End muss neuentwurfen werden |Modul war nicht verbunden mit Salespoint
 |===
 
