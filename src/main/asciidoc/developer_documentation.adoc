@@ -226,9 +226,8 @@ image::./models/images/finances_uml.svg[class diagram, 100%, 100%, pdfwidth=100%
 |Klasse/Enumeration |Description
 |InventoryController |Kommuniziert mit dem Frontend und geb bescheid welche Modal soll gesehen werden, und welche produkte.
 |ProductToDelete |Hilft der InventoryController bei der Löschen von Produkte
-|InventoryInzializer |gibt es Beispiele für Blumen und Bouquts
+|ProductService |gibt es Beispiele für Blumen und Bouquts
 |Flower |Ein Produkt
-|Bouquet |Ein Produkt und Kann aus Blumen bestehen
 |Product |Der Typ Konnte ein Bouquet oder ein Flower sein, hat Name, Quantität und PricePerUnit
 |Pricing |in dieser Klasse gibt es den Kauf und Verkauf Preis für die Produkte
 |===
