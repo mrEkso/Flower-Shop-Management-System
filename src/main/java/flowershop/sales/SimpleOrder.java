@@ -2,10 +2,8 @@ package flowershop.sales;
 
 import flowershop.services.AbstractOrder;
 import jakarta.persistence.Entity;
-import org.salespointframework.order.Order;
 import org.salespointframework.useraccount.UserAccount;
 
-import java.util.Objects;
 
 /**
  * Represents a basic order created when a client makes a direct purchase in the shop.

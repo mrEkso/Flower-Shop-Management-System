@@ -2,8 +2,6 @@ package flowershop.services;
 
 import flowershop.sales.SimpleOrder;
 import flowershop.sales.WholesalerOrder;
-import jakarta.annotation.PostConstruct;
-import org.salespointframework.order.OrderStatus;
 import org.salespointframework.useraccount.UserAccount;
 import org.salespointframework.useraccount.UserAccountManagement;
 import org.springframework.context.annotation.DependsOn;
@@ -38,8 +36,8 @@ public class OrderFactory {
 		return new EventOrder(getDefaultUserAccount(), eventDate, deliveryAddress, client, "");
 	}
 
-	public ContractOrder createContractOrder(String contractType, String frequency, LocalDate startDate, LocalDate endDate, Client client, String notes) {
-		return new ContractOrder(getDefaultUserAccount(), contractType, startDate, endDate, frequency, client, notes);
+	public ContractOrder createContractOrder(String contractType, LocalDate startDate, LocalDate endDate, String address, Client client, String notes) {
+		return new ContractOrder(getDefaultUserAccount(), contractType, startDate, endDate, address, client, notes);
 	}
 
 	public ContractOrder createContractOrder(String contractType, String frequency, LocalDate startDate, LocalDate endDate, Client client) {

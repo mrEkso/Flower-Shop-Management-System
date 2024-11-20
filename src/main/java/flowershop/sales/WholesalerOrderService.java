@@ -1,6 +1,5 @@
 package flowershop.sales;
 
-import flowershop.services.OrderRepositoryFactory;
 import org.salespointframework.order.Order;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,26 +10,26 @@ import java.util.UUID;
 
 @Service
 public class WholesalerOrderService {
-	private final OrderRepositoryFactory orderFactoryRepository;
+	private final WholesalerOrderRepository wholesalerOrderRepository;
 
-	public WholesalerOrderService(OrderRepositoryFactory orderFactoryRepository) {
-		this.orderFactoryRepository = orderFactoryRepository;
+	public WholesalerOrderService(WholesalerOrderRepository wholesalerOrderRepository) {
+		this.wholesalerOrderRepository = wholesalerOrderRepository;
 	}
 
 	public List<WholesalerOrder> findAll() {
-		return orderFactoryRepository.getWholesalerOrderRepository().findAll(Pageable.unpaged()).toList();
+		return wholesalerOrderRepository.findAll(Pageable.unpaged()).toList();
 	}
 
 	public Optional<WholesalerOrder> getById(UUID id) {
-		return orderFactoryRepository.getWholesalerOrderRepository().findById(Order.OrderIdentifier.of(id.toString()));
+		return wholesalerOrderRepository.findById(Order.OrderIdentifier.of(id.toString()));
 	}
 
 	public WholesalerOrder create(WholesalerOrder order) {
-		return orderFactoryRepository.getWholesalerOrderRepository().save(order);
+		return wholesalerOrderRepository.save(order);
 	}
 
 	public void delete(WholesalerOrder order) {
-		orderFactoryRepository.getWholesalerOrderRepository().delete(order);
+		wholesalerOrderRepository.delete(order);
 	}
 }
 

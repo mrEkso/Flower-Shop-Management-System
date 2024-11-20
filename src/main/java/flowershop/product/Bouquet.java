@@ -1,19 +1,21 @@
 package flowershop.product;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 public class Bouquet extends Product {
 
-	@OneToMany(cascade = CascadeType.ALL)
-	private List<Flower> flowers;
+//	@OneToMany(cascade = CascadeType.ALL)
+//	private List<Flower> flowers;
+
+	@Transient
+	private Map<Flower, Integer> flowers = new HashMap<>();
 
 	@Embedded
 	private Pricing pricing;
@@ -22,10 +24,11 @@ public class Bouquet extends Product {
 
 	private int quantity;
 
-	public Bouquet(String name, List<Flower> flowers, Money additionalPrice) {
+	public Bouquet(String name, Map<Flower, Integer> flowers, Money additionalPrice, int quantity) {
 		super(name, calculateTotalPricing(flowers, additionalPrice).getSellPrice());
 		this.flowers = flowers;
 		this.additionalPrice = additionalPrice;
+		this.quantity = quantity;
 	}
 
 	@SuppressWarnings({"unused", "deprecation"})
@@ -41,12 +44,8 @@ public class Bouquet extends Product {
 		super.setPrice(pricing.getSellPrice());
 	}
 
-	public List<Flower> getFlowers() {
-		return flowers;
-	}
-
-	public void setFlowers(List<Flower> flowers) {
-		this.flowers = flowers;
+	public void addFlower(Flower flower, int quantity) {
+		flowers.put(flower, flowers.getOrDefault(flower, 0) + quantity);
 	}
 
 	public Money getAdditionalPrice() {
@@ -57,21 +56,24 @@ public class Bouquet extends Product {
 		this.additionalPrice = additionalPrice;
 	}
 
+	private static Pricing calculateTotalPricing(Map<Flower, Integer> flowers, Money additionalPrice) {
 
-	
-	private static Pricing calculateTotalPricing(List<Flower> flowers, Money additionalPrice) {
-		
-		Money totalBuyPrice = flowers.stream()
-			.map(flower -> flower.getPricing().getBuyPrice()) 
-			.reduce(Money.of(0, additionalPrice.getCurrency()), Money::add); 
+		// Calculate total buy price
+		Money totalBuyPrice = flowers.entrySet().stream()
+			.map(entry -> entry.getKey().getPricing().getBuyPrice().multiply(entry.getValue()))
+			.reduce(Money.of(0, additionalPrice.getCurrency()), Money::add);
 
-		
-		Money totalSellPrice = flowers.stream()
-			.map(flower -> flower.getPricing().getSellPrice()) 
-			.reduce(Money.of(0, additionalPrice.getCurrency()), Money::add) 
-			.add(additionalPrice); 
+		// Calculate total sell price
+		Money totalSellPrice = flowers.entrySet().stream()
+			.map(entry -> entry.getKey().getPricing().getSellPrice().multiply(entry.getValue()))
+			.reduce(Money.of(0, additionalPrice.getCurrency()), Money::add)
+			.add(additionalPrice);
 
 		return new Pricing(totalBuyPrice, totalSellPrice);
+	}
+
+	public Map<Flower, Integer> getFlowers() {
+		return flowers;
 	}
 
 	public int getQuantity() {

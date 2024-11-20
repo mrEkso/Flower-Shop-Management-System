@@ -1,11 +1,11 @@
 package flowershop.services;
 
 import flowershop.product.ProductCatalog;
-
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderManagement;
 import org.salespointframework.order.OrderStatus;
+import org.salespointframework.payment.Cash;
 import org.salespointframework.quantity.Quantity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,30 +15,29 @@ import java.util.*;
 
 @Service
 public class EventOrderService {
-	private final OrderRepositoryFactory orderFactoryRepository;
+	private final EventOrderRepository eventOrderRepository;
 	private final ProductCatalog productCatalog;
 	private final OrderManagement<EventOrder> orderManagement;
-	private final EventOrderRepository eventOrderRepository;
 
-	public EventOrderService(OrderRepositoryFactory orderFactoryRepository, ProductCatalog productCatalog, OrderManagement<EventOrder> orderManagement, EventOrderRepository eventOrderRepository) {
-		Assert.notNull(orderFactoryRepository, "OrderFactoryRepository must not be null!");
+	public EventOrderService(EventOrderRepository eventOrderRepository, ProductCatalog productCatalog, OrderManagement<EventOrder> orderManagement) {
+		Assert.notNull(eventOrderRepository, "EventOrderRepository must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(orderManagement, "OrderManagement must not be null!");
-		this.orderFactoryRepository = orderFactoryRepository;
+		this.eventOrderRepository = eventOrderRepository;
 		this.productCatalog = productCatalog;
 		this.orderManagement = orderManagement;
-		this.eventOrderRepository = eventOrderRepository;
 	}
 
 	public List<EventOrder> findAll() {
-		return orderFactoryRepository.getEventOrderRepository().findAll(Pageable.unpaged()).toList();
+		return eventOrderRepository.findAll(Pageable.unpaged()).toList();
 	}
 
 	public Optional<EventOrder> getById(UUID id) {
-		return orderFactoryRepository.getEventOrderRepository().findById(Order.OrderIdentifier.of(id.toString()));
+		return eventOrderRepository.findById(Order.OrderIdentifier.of(id.toString()));
 	}
 
 	public EventOrder save(EventOrder order, Map<String, String> products) {
+		order.setPaymentMethod(Cash.CASH);
 		products.forEach((key, value) -> {
 			if (key.startsWith("products[")) {
 				String index = key.substring(9, key.length() - 1);
@@ -53,28 +52,30 @@ public class EventOrderService {
 				}
 			}
 		});
-		return orderFactoryRepository.getEventOrderRepository().save(order);
+		return eventOrderRepository.save(order);
 	}
 
 	public EventOrder update(EventOrder order, Map<String, String> products, String orderStatus, String cancelReason) {
+		if (!order.getOrderStatus().equals(OrderStatus.PAID)) {
+			Map<UUID, Integer> incoming = extractProducts(products);
+			order.getOrderLines().toList().forEach(line -> {
+				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) order.remove(line);
+			});
+			incoming.forEach((productId, quantity) -> productCatalog.findById(Product.ProductIdentifier.of(productId.toString()))
+				.ifPresent(product -> {
+					order.getOrderLines(product).toList().forEach(order::remove);
+					order.addOrderLine(product, Quantity.of(quantity));
+				}));
+		}
 		if (OrderStatus.PAID.name().equals(orderStatus)) orderManagement.payOrder(order);
 		else if (OrderStatus.COMPLETED.name().equals(orderStatus)) orderManagement.completeOrder(order);
 		else if (OrderStatus.CANCELED.name().equals(orderStatus))
 			orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
-		Map<UUID, Integer> incoming = extractProducts(products);
-		order.getOrderLines().toList().forEach(line -> {
-			if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) order.remove(line);
-		});
-		incoming.forEach((productId, quantity) -> productCatalog.findById(Product.ProductIdentifier.of(productId.toString()))
-			.ifPresent(product -> {
-				order.getOrderLines(product).toList().forEach(order::remove);
-				order.addOrderLine(product, Quantity.of(quantity));
-			}));
-		return orderFactoryRepository.getEventOrderRepository().save(order);
+		return eventOrderRepository.save(order);
 	}
 
 	public void delete(EventOrder order) {
-		orderFactoryRepository.getEventOrderRepository().delete(order);
+		eventOrderRepository.delete(order);
 	}
 
 	private Map<UUID, Integer> extractProducts(Map<String, String> products) {
