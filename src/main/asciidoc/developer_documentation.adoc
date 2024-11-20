@@ -230,7 +230,7 @@ _Die folgende Tabelle zeigt die Rückverfolgbarkeit zwischen Entwurfs- und Analy
 * Darstellung der Komponenteninteraktion anhand eines Sequenzdiagramms, welches die relevantesten Interaktionen darstellt.
 
 === Inventory Sequence Diagram
-[[Inventory Sequence Diagram]]
+[[Inventory_Sequence_Diagram]]
 image::./models/images/InventorySequenceDiagram.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für inventory packge in UML", align=center]
 
 
