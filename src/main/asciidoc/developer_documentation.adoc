@@ -260,3 +260,7 @@ image::./models/images/CalendarSequenceDiagram.jpg[Sequence Diagram, 100%, 100%,
 
 [[sequence_diagram_sales]]
 image::./models/images/sequence_diagram_sales_dd_a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für sales packge", align=center]
+
+=== Finances
+[[sequence_diagram_finances]]
+image::./models/images/finances_sequence.svg[Sequence Diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm der Finanzübersicht", align=center]
