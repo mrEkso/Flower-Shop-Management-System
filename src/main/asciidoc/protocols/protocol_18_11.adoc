@@ -38,7 +38,7 @@ Sechstes Treffen. Termin für die Developer Dokumentation ist verpasst
 |3      |Sales    |Front-End fertig, keine Interaktion mit dem Back-End |
 |4      |Calendar |Fast fertig | 
 |5      |Services |Mitte | 
-|6      |Front-End fertig, Back-End muss neuentwurfen werden |Modul war nicht verbunden mit Salespoint
+|6      |Inventar |Front-End fertig, Back-End muss neuentwurfen werden |Modul war nicht verbunden mit Salespoint
 |===
 
 
