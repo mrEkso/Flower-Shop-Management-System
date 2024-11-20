@@ -1,12 +1,12 @@
 package flowershop.inventory;
 
-public class ProductToDelete {
+public class DeletedProduct {
 	private String name;
 	private double pricePerUnit;
 	private int quantityDeleted;
 	private double totalLoss;
 
-	public ProductToDelete(String name, double pricePerUnit, int quantityDeleted, double totalLoss) {
+	public DeletedProduct(String name, double pricePerUnit, int quantityDeleted, double totalLoss) {
 		this.name = name;
 		this.pricePerUnit = pricePerUnit;
 		this.quantityDeleted = quantityDeleted;

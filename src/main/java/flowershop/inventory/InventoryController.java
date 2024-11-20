@@ -1,6 +1,11 @@
 package flowershop.inventory;
 
-import flowershop.product.Product;
+import flowershop.product.Bouquet;
+import flowershop.product.Flower;
+// import flowershop.product.Product;
+import flowershop.product.ProductService;
+
+import org.salespointframework.catalog.Product;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,15 +20,21 @@ import java.util.stream.Collectors;
 @Controller
 public class InventoryController {
 
-	private final InventoryInitializer inventoryInitializer;
+	// private final InventoryInitializer inventoryInitializer;
 	private final List<Product> products;
+	private final List<Flower> flowersList;
+	private final List<Bouquet> bouquetsList;
+	private final ProductService productService;
 	private final List<Product> bouquets = new ArrayList<>();
-	private final List<ProductToDelete> deletedProducts = new ArrayList<>();
+	private final List<DeletedProduct> deletedProducts = new ArrayList<>();
 	private final List<Product> selectedFlowersForBouquet = new ArrayList<>(); // Store selected flowers for the bouquet
 
-	public InventoryController(InventoryInitializer inventoryInitializer) {
+	public InventoryController(ProductService productService) {
 		this.inventoryInitializer = inventoryInitializer;
-		this.products = inventoryInitializer.initializeProducts();
+		this.productService = productService;
+		// this.products = productService.getAllProducts();
+		this.flowersList = productService.getAllFlowers();
+		this.bouquetsList = productService.getAllBouquets();
 	}
 
 	private Optional<Product> findProductByName(String name) {
@@ -165,7 +176,7 @@ public class InventoryController {
 			if (product.getQuantity() >= deleteQuantity) {
 				updateStock(productName, -deleteQuantity);
 
-				ProductToDelete deletedProduct = new ProductToDelete(
+				DeletedProduct deletedProduct = new DeletedProduct(
 						product.getName(),
 						product.getPricePerUnit(),
 						deleteQuantity,
@@ -184,7 +195,7 @@ public class InventoryController {
 	@GetMapping("/inventory/deleted-products")
 	public String showDeletedProducts(Model model) {
 		double totalLossSum = deletedProducts.stream()
-				.mapToDouble(ProductToDelete::getTotalLoss)
+				.mapToDouble(DeletedProduct::getTotalLoss)
 				.sum();
 
 
