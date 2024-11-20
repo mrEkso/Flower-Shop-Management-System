@@ -185,7 +185,7 @@ mostly _UI_ and/or _Communication_.
 |===
 
 == Bausteinsicht
-* Package-Diagramm
+=== Package-Diagramm
 
 [[package_diagram]]
 image::./models/images/package_diagram_dd_a.svg[package diagram, 100%, 100%, pdfwidth=100%, title= "Paketdiagramm in UML", align=center]
