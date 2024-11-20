@@ -234,5 +234,5 @@ _Die folgende Tabelle zeigt die Rückverfolgbarkeit zwischen Entwurfs- und Analy
 image::./models/images/InventorySequenceDiagram.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für inventory packge in UML", align=center]
 
 [[sequence_diagram_calendar]]
-image::./models/images/CalendarSequenceDiagram.jpg[Sequence Diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm", align=center]
+image::./models/images/CalendarSequenceDiagram.jpg[Sequence Diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm der Seite", align=center]
 
