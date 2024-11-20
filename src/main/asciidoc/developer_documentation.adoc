@@ -104,10 +104,12 @@ Die Daten werden über Repository-Klassen gespeichert, die im Diagramm als *„S
 Die Datenbank wird über JPA und Hibernate angesprochen, die die Daten in der Datenbank speichern und abrufen.
 
 === Entwurfsentscheidungen
-* Verwendete Muster
-* Persistenz
-* Benutzeroberfläche
-* Verwendung externer Frameworks
+
+==== Verwendete Muster
+* Spring MVC
+
+==== Persistenz
+==== Benutzeroberfläche
 
 === Use of external frameworks
 
