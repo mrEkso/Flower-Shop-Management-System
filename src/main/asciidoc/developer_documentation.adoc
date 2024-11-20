@@ -270,7 +270,25 @@ _Die folgende Tabelle zeigt die Rückverfolgbarkeit zwischen Entwurfs- und Analy
 [options="header"]
 |===
 |Klasse/Enumeration (Analysemodell) |Klasse/Enumeration (Entwurfsmodell)
-|... |...
+|Flower |flowershop.product.Flower
+|Bouquet |flowershop.product.Bouquet
+| Product | org.salespointframework.catalog.Product;
+| Storage | flowershop.product.ProductCatalog
+| FlowerShop | ...
+| CashRegister | flowershop.finances.CashRegister
+| OrderStatus | org.salespointframework.order.OrderStatus
+| Order |
+						* org.salespointframework.order.Order
+						* flowershop.services.AbstractOrder
+            * flowershop.sales.SimpleOrder
+| Invoice | ...
+| PaymentMethod | String
+| Contract | flowershop.services.ContractOrder
+| Reservation | flowershop.services.ReservationOrder
+| Client | flowershop.services.Client
+| FinancialReport | flowershop.finances.FinancialReport
+| DailyFinancialReport | flowershop.finances.DailyFinancialReport
+| MonthlyFinancialReport | flowershop.finances.MonthlyFinancialReport
 |===
 
 == Laufzeitsicht
