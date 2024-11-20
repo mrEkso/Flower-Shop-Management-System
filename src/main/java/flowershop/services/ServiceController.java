@@ -78,7 +78,6 @@ public class ServiceController {
 		model.addAttribute("products", productService.getAllProducts());
 		return "fragments/product-row :: productRow";
 	}
-
 	@PostMapping("/contracts/create")
 	public String createContractOrder(@RequestParam("clientName") String clientName,
 									  @RequestParam("contractType") String contractType,
@@ -137,7 +136,6 @@ public class ServiceController {
 		model.addAttribute("products", productService.getAllProducts());
 		return "edit/contractOrderEditForm";
 	}
-
 	@PutMapping("/contracts/edit/{id}")
 	public String editContractOrder(@PathVariable UUID id,
 									@RequestParam("clientName") String clientName,
@@ -210,7 +208,6 @@ public class ServiceController {
 		model.addAttribute("products", productService.getAllProducts());
 		return "edit/reservationOrderEditForm";
 	}
-
 	@PutMapping("/reservations/edit/{id}")
 	public String editReservationOrder(@PathVariable UUID id,
 									   @RequestParam String clientName,
@@ -220,6 +217,7 @@ public class ServiceController {
 									   @RequestParam("paymentMethod") String paymentMethod,
 									   @RequestParam("orderStatus") String orderStatus,
 									   @RequestParam(value = "cancelReason", required = false) String cancelReason,
+									   @RequestParam("reservationStatus") String reservationStatus,
 									   @RequestParam("notes") String notes) {
 		ReservationOrder reservationOrder = reservationOrderService.getById(id)
 			.orElseThrow(() -> new IllegalArgumentException("Reservation order not found"));
@@ -227,7 +225,7 @@ public class ServiceController {
 		reservationOrder.setReservationDateTime(reservationDateTime);
 		reservationOrder.setNotes(notes);
 		reservationOrder.setPaymentMethod(paymentMethod);
-		reservationOrderService.update(reservationOrder, products, orderStatus, cancelReason);
+		reservationOrderService.update(reservationOrder, products, orderStatus, cancelReason, reservationStatus);
 		return "redirect:/services";
 	}
 
