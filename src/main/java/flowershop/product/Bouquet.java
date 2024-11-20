@@ -56,7 +56,7 @@ public class Bouquet extends Product {
 		this.additionalPrice = additionalPrice;
 	}
 
-	private static Pricing calculateTotalPricing(Map<Flower, Integer> flowers, Money additionalPrice) {
+	public static Pricing calculateTotalPricing(Map<Flower, Integer> flowers, Money additionalPrice) {
 
 		// Calculate total buy price
 		Money totalBuyPrice = flowers.entrySet().stream()
