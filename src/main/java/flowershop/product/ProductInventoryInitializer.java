@@ -51,14 +51,14 @@ public class ProductInventoryInitializer implements DataInitializer {
 		productCatalog.save(lily2);
 		productCatalog.save(lily3);
 
-		// Creating a bouquet with a Map of flowers and their quantities
+
 		Map<Flower, Integer> bouquetFlowersMap1 = new HashMap<>();
-		bouquetFlowersMap1.put(rose, 3);  // 3 roses
-		bouquetFlowersMap1.put(lily, 2);  // 2 lilies
+		bouquetFlowersMap1.put(rose, 3);
+		bouquetFlowersMap1.put(lily, 2);
 		Bouquet roseLilyBouquet = new Bouquet(
 			"Rose and Lily Bouquet",
-			bouquetFlowersMap1,   // Pass the Map to the Bouquet constructor
-			Money.of(5.0, EURO),   // Additional price for the bouquet
+			bouquetFlowersMap1,
+			Money.of(5.0, EURO),
 			5                      // Quantity of the bouquet
 		);
 
@@ -73,15 +73,8 @@ public class ProductInventoryInitializer implements DataInitializer {
 		);
 		productService.addBouquet(roseLilyBouquet);
 		productService.addBouquet(roseLilyBouquet2);
-		// Saving bouquets to the catalog
-		productCatalog.save(roseLilyBouquet);
 
-		// Initialize inventory with 10 items of each product
-		productCatalog.findAll().forEach(flower -> {
-			if (inventory.findByProduct(flower).isEmpty()) {
-				inventory.save(new UniqueInventoryItem(flower, Quantity.of(10)));
-			}
-		});
+		productCatalog.save(roseLilyBouquet);
 		productCatalog.save(roseLilyBouquet2);
 	}
 }
