@@ -11,6 +11,8 @@
 |0.2	| 18.11 | Oleh | Start of package diagram for sales package
 |0.3	| 18.11 | Andrejs | Vorgaben zum Betrieb der Software
 |0.4	| 19.11 | Oleh | Kontextdiagramm
+|0.5	| 19.11 | Davyd | Erfüllung der Qualitätsziele
+|0.6	| 20.11 | Oleh | Sequenzdiagramm + Paketdiagramm
 |...	| ... | ... | ...
 |===
 
@@ -66,8 +68,8 @@ aufnehmen können.
 
 [cols="1, 1"]
 |===
-|Maus	| Benutzer 
-|Tastatur	| Benutzer 
+|Maus	| Benutzer
+|Tastatur	| Benutzer
 |Rechner mit Internetverbindung | Benutzer
 |Server mit Linux	| Unternehmen
 |===
@@ -92,11 +94,11 @@ The following (or newer) browser versions are necessary to use the application:
 |===
 
 === Vorgaben zum Betrieb der Software
-Das Program soll in dem Blumenladen intern (d.h. von den Mitarbeitern) bedient werden, um die Geschäftsprozesse (u.a. Verkauf, Einkauf, Bluemnpflegen-Dienstleistungen usw.) zu digitalisieren und vereinfachen. 
+Das Program soll in dem Blumenladen intern (d.h. von den Mitarbeitern) bedient werden, um die Geschäftsprozesse (u.a. Verkauf, Einkauf, Bluemnpflegen-Dienstleistungen usw.) zu digitalisieren und vereinfachen.
 
 Das Backend soll auf einem Server mindestens in Arbeitszeiten (oder länger) laufen und mittels des Netzwerkes zugänglich für Enduser-Rechener sein.
 
-Die Nutzer sind Frau Floris (Besitzerin) und ihre Nichte (Mitarbeiterin im Service). Es wird vorausgesetzt, dass sie den Rechner im Wesentlichen bedienen können.  
+Die Nutzer sind Frau Floris (Besitzerin) und ihre Nichte (Mitarbeiterin im Service). Es wird vorausgesetzt, dass sie den Rechner im Wesentlichen bedienen können.
 
 Das System soll keiner technischen Wartung bedürfen. Sämtliche Daten sollen persistent in einer Datenbank gespeichert und über die Anwendung zugänglich sein (z.B. sollten für Frau Floris keine SQL-Kenntnisse erforderlich sein).
 
@@ -136,7 +138,6 @@ image::./models/images/context_diagram_dd_a.svg[context diagram, 100%, 100%, pdf
 |===
 
 === Softwarearchitektur
-* Beschreibung der Architektur anhand der Top-Level-Architektur oder eines Client-Server-Diagramms
 
 image::./models/images/ClientServerDiagram.jpg[Client-Server-Modell der Anwendung]
 
@@ -152,7 +153,17 @@ Die Datenbank wird über JPA und Hibernate angesprochen, die die Daten in der Da
 * Spring MVC
 
 ==== Persistenz
+Die Anwendung verwendet *Hibernate Annotation Based Mapping*, um Java-Klassen Datenbanktabellen zuzuordnen. Als Datenbank wird *H2* verwendet.
+Die Persistenz ist standardmäßig deaktiviert. Um den Persistenzspeicher zu aktivieren, müssen die folgenden beiden Zeilen in der Datei _application.properties_ auskommentiert werden:
+....
+# spring.datasource.url=jdbc:h2:./db/kickstart
+# spring.jpa.hibernate.ddl-auto=update
+....
+
 ==== Benutzeroberfläche
+image::./models/images/siteMap.png[context diagram c4, 100%, 100%, pdfwidth=100%, title= "Dialog Map of the Videoshop", align=center]
+
+HINWEIS: Die grünen Kästchen zeigen eine HTML-Vorlage an. Die weißen Kästchen innerhalb der Vorlagen stellen Schaltflächen dar, die zu den Vorlagen weiterleiten, auf die ihre ausgehenden Pfeile zeigen._
 
 === Use of external frameworks
 
@@ -168,7 +179,7 @@ NOTE: Name the used external frameworks, in which packages you used them, and wh
 |Semantic UI |UI |…
 |jQuery |UI |…
 |salespointframework |Backend | Zur Entwicklung von Point-of-Sales-Anwendungen (PoS) mit Spring Framework und Spring Boot. Es besteht aus einer Vielzahl von Geschäftsmodulen, die es dem Nutzer ermöglichen, darauf aufbauend anspruchsvolle Webanwendungen zu implementieren.
-|Bootstrap | UI | Stellt Seiten-Layout-Tools und vordefinierte HTML-Elemente zu Verfügung. 
+|Bootstrap | UI | Stellt Seiten-Layout-Tools und vordefinierte HTML-Elemente zu Verfügung.
 |===
 
 NOTE: If you use JavaScript frameworks like Bootstrap, HTMX, etc. you have to add them to the list. The category is
@@ -179,31 +190,38 @@ mostly _UI_ and/or _Communication_.
 |===
 |Externes Package |Verwendet von |Warum
 |salespointframework |Backend | Zur Entwicklung von Point-of-Sales-Anwendungen (PoS) mit Spring Framework und Spring Boot. Ermöglicht, darauf aufbauend anspruchsvolle Webanwendungen zu implementieren.
-|Bootstrap | Frontend | Stellt Seiten-Layout-Tools und vordefinierte HTML-Elemente zu Verfügung. 
+|Bootstrap | Frontend | Stellt Seiten-Layout-Tools und vordefinierte HTML-Elemente zu Verfügung.
 |Thymeleaf | Frontend | Ermöglicht die dynamische Generierung von HTML mit serverseitigen Vorlagen für eine nahtlose Integration in Spring MVC.
 |===
 
 == Bausteinsicht
-* Package-Diagramm
+=== Package-Diagramm
 
 [[package_diagram]]
-image::./models/images/package_diagram_c.svg[package diagram]
+image::./models/images/package_diagram_e.svg[package diagram, 100%, 100%, pdfwidth=100%, title= "Paketdiagramm in UML", align=center]
 
 
 * Entwurfsklassendiagramme der einzelnen Packages
 
-=== Sales
+=== Product
+[[class_diagram_product]]
+image::./models/images/product_package_a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für product package in UML", align=center]
 
+=== Sales
 [[class_diagram_sales]]
-image::./models/images/package-diagram-sales-a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für sales packge in UML", align=center]
+image::./models/images/sales_package_a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für sales package in UML", align=center]
 
 === Calendar
 [[class_diagram_calendar]]
-image::./models/images/CalendarPackageDiagram.jpg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für calendar packge in UML", align=center]
+image::./models/images/CalendarPackageDiagram.jpg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für calendar package in UML", align=center]
 
 === Inventory
-[[class_diagram_calendar]]
-image::./models/images/InventoryPackage.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für inventory packge in UML", align=center]
+[[class_diagram_inventory]]
+image::./models/images/InventoryPackage.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für inventory package in UML", align=center]
+
+=== Finances
+[[class_diagram_finances]]
+image::./models/images/finances_uml.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für finances package in UML", align=center]
 
 [options="header"]
 |=== 
@@ -229,4 +247,19 @@ _Die folgende Tabelle zeigt die Rückverfolgbarkeit zwischen Entwurfs- und Analy
 == Laufzeitsicht
 * Darstellung der Komponenteninteraktion anhand eines Sequenzdiagramms, welches die relevantesten Interaktionen darstellt.
 
+=== Inventory
+[[Inventory_Sequence_Diagram]]
+image::./models/images/InventorySequenceDiagram.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für inventory packge in UML", align=center]
 
+=== Calendar
+[[sequence_diagram_calendar]]
+image::./models/images/CalendarSequenceDiagram.jpg[Sequence Diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm der Seite", align=center]
+
+=== Sales
+
+[[sequence_diagram_sales]]
+image::./models/images/sequence_diagram_sales_dd_a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für sales packge", align=center]
+
+=== Finances
+[[sequence_diagram_finances]]
+image::./models/images/finances_diagram.svg[Sequence Diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm der Finanzübersicht", align=center]

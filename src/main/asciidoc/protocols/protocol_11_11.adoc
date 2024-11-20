@@ -1,0 +1,62 @@
+= Protokoll Gruppe 07
+
+Treffen am 11.11.2024
+
+Ort:      APB +
+Beginn:   9:30 Uhr +
+Ende:     10:00 Uhr
+
+__Schriftführer: Vadym Zaitsev__
+
+*Nächstes Treffen:* +
+18.11.2024, 9:20 Uhr, APB
+
+__Teilnehmer:__
+//Tabellarisch oder Aufzählung, Kennzeichnung von Teilnehmern mit besonderer Rolle (z.B. Kunde)
+
+- Vincent Kruse, Tutor
+- Andrejs Borodajevs, Scrum-master
+- Vadym Zaitsev, Schriftfuehrer
+- Oleh Khmelyk
+- Bechir Sayadi
+- Davyd Okaianchenko
+- Paul-Valentin Vela
+- Valeriia Sarkisian
+
+== Bemerkungen
+Fünftes Treffen. In einer Woche muss der Prototyp fertig sein, als auch die Developer Dokumentation. Nächste Woche, entweder Donnerstag oder Freitag, findet die Zwischenpräsentation statt.
+
+== Retrospektive des letzten Sprints
+
+// Wie ist der Status der im letzten Sprint erstellten Issues/veteilten Aufgaben?
+
+// See http://asciidoctor.org/docs/user-manual/=tables
+[option="headers"]
+|===
+|Issue |Aufgabe |Status |Bemerkung
+|1     |Developer Dokumentation |Anfang |
+|2      |Finances |Anfang |
+|3      |Sales    |Anfang |
+|4      |Calendar |Anfang | 
+|5      |Services |Anfang | 
+|6      |Inventar |Anfang |
+|===
+
+
+== Aktueller Stand
+Wir dachten, dass wir noch eine Woche bis abgabe hatten, deswegen werden wir alles dieser Woche machen.
+
+== Planung des nächsten Sprints
+*Issue referenziert die Issue ID von GitHub*
+
+// See http://asciidoctor.org/docs/user-manual/=tables
+[option="headers"]
+|===
+|Titel |Verantwortlicher |Status
+|Finances     |Vadym                |Am Anfang
+|Calendar |Paul und Bechir |Am Anfang
+|Lager |Paul und Bechir |Am Anfang
+|Sales |Andrejs und Oleh |Am Anfang
+|Services |Valeriia und Davyd |Am Anfang
+|Developer Dokumentation |Alle |Anfang
+|===
