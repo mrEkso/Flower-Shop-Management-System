@@ -11,6 +11,7 @@
 |0.2	| 18.11 | Oleh | Start of package diagram for sales package
 |0.3	| 18.11 | Andrejs | Vorgaben zum Betrieb der Software
 |0.4	| 19.11 | Oleh | Kontextdiagramm
+|0.5	| 19.11 | Davyd | Erfüllung der Qualitätsziele
 |0.6	| 20.11 | Oleh | Sequenzdiagramm + Paketdiagramm
 |...	| ... | ... | ...
 |===
