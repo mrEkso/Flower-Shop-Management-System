@@ -277,7 +277,7 @@ _Die folgende Tabelle zeigt die Rückverfolgbarkeit zwischen Entwurfs- und Analy
 | FlowerShop | ...
 | CashRegister | flowershop.finances.CashRegister
 | OrderStatus | org.salespointframework.order.OrderStatus
-| Order |
+| Order a|
 						* org.salespointframework.order.Order
 						* flowershop.services.AbstractOrder
             * flowershop.sales.SimpleOrder
