@@ -13,7 +13,7 @@
 |0.4	| 19.11 | Oleh | Kontextdiagramm
 |0.5	| 19.11 | Davyd | Erfüllung der Qualitätsziele
 |0.6	| 20.11 | Oleh | Sequenzdiagramm + Paketdiagramm
-|...	| ... | ... | ...
+|0.7	| 20.11 | Davyd | ServiceSequenzdiagramm
 |===
 
 
@@ -260,3 +260,7 @@ image::./models/images/sequence_diagram_sales_dd_a.svg[class diagram, 100%, 100%
 === Finances
 [[sequence_diagram_finances]]
 image::./models/images/finances_diagram.svg[Sequence Diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm der Finanzübersicht", align=center]
+
+=== Services
+[[sequence_diagram_services]]
+image::./models/images/sequence_diagram_service.svg[Sequence Diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm der Serviceübersicht", align=center]
