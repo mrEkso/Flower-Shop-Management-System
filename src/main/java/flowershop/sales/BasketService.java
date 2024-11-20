@@ -16,7 +16,7 @@ public class BasketService {
 		this.productService = productService;
 	}
 
-	public boolean getIsLastItem(List<BasketItem> basket, UUID productID) {
+	private boolean getIsLastItem(List<BasketItem> basket, UUID productID) {
 		var existingProductOptional = productService.getProductById(productID);
 		var existingProduct = existingProductOptional.get();
 
