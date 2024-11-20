@@ -154,7 +154,17 @@ Die Datenbank wird über JPA und Hibernate angesprochen, die die Daten in der Da
 * Spring MVC
 
 ==== Persistenz
+Die Anwendung verwendet *Hibernate Annotation Based Mapping*, um Java-Klassen Datenbanktabellen zuzuordnen. Als Datenbank wird *H2* verwendet.
+Die Persistenz ist standardmäßig deaktiviert. Um den Persistenzspeicher zu aktivieren, müssen die folgenden beiden Zeilen in der Datei _application.properties_ auskommentiert werden:
+....
+# spring.datasource.url=jdbc:h2:./db/kickstart
+# spring.jpa.hibernate.ddl-auto=update
+....
+
 ==== Benutzeroberfläche
+image::./models/images/siteMap.svg[context diagram c4, 100%, 100%, pdfwidth=100%, title= "Dialog Map of the Videoshop", align=center]
+
+HINWEIS: Die blauen Kästchen zeigen eine HTML-Vorlage an. Die weißen Kästchen innerhalb der Vorlagen stellen Schaltflächen dar, die zu den Vorlagen weiterleiten, auf die ihre ausgehenden Pfeile zeigen._
 
 === Use of external frameworks
 
