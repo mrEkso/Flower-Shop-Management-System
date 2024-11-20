@@ -68,8 +68,8 @@ aufnehmen können.
 
 [cols="1, 1"]
 |===
-|Maus	| Benutzer 
-|Tastatur	| Benutzer 
+|Maus	| Benutzer
+|Tastatur	| Benutzer
 |Rechner mit Internetverbindung | Benutzer
 |Server mit Linux	| Unternehmen
 |===
@@ -94,11 +94,11 @@ The following (or newer) browser versions are necessary to use the application:
 |===
 
 === Vorgaben zum Betrieb der Software
-Das Program soll in dem Blumenladen intern (d.h. von den Mitarbeitern) bedient werden, um die Geschäftsprozesse (u.a. Verkauf, Einkauf, Bluemnpflegen-Dienstleistungen usw.) zu digitalisieren und vereinfachen. 
+Das Program soll in dem Blumenladen intern (d.h. von den Mitarbeitern) bedient werden, um die Geschäftsprozesse (u.a. Verkauf, Einkauf, Bluemnpflegen-Dienstleistungen usw.) zu digitalisieren und vereinfachen.
 
 Das Backend soll auf einem Server mindestens in Arbeitszeiten (oder länger) laufen und mittels des Netzwerkes zugänglich für Enduser-Rechener sein.
 
-Die Nutzer sind Frau Floris (Besitzerin) und ihre Nichte (Mitarbeiterin im Service). Es wird vorausgesetzt, dass sie den Rechner im Wesentlichen bedienen können.  
+Die Nutzer sind Frau Floris (Besitzerin) und ihre Nichte (Mitarbeiterin im Service). Es wird vorausgesetzt, dass sie den Rechner im Wesentlichen bedienen können.
 
 Das System soll keiner technischen Wartung bedürfen. Sämtliche Daten sollen persistent in einer Datenbank gespeichert und über die Anwendung zugänglich sein (z.B. sollten für Frau Floris keine SQL-Kenntnisse erforderlich sein).
 
@@ -138,7 +138,6 @@ image::./models/images/context_diagram_dd_a.svg[context diagram, 100%, 100%, pdf
 |===
 
 === Softwarearchitektur
-* Beschreibung der Architektur anhand der Top-Level-Architektur oder eines Client-Server-Diagramms
 
 image::./models/images/ClientServerDiagram.jpg[Client-Server-Modell der Anwendung]
 
@@ -180,7 +179,7 @@ NOTE: Name the used external frameworks, in which packages you used them, and wh
 |Semantic UI |UI |…
 |jQuery |UI |…
 |salespointframework |Backend | Zur Entwicklung von Point-of-Sales-Anwendungen (PoS) mit Spring Framework und Spring Boot. Es besteht aus einer Vielzahl von Geschäftsmodulen, die es dem Nutzer ermöglichen, darauf aufbauend anspruchsvolle Webanwendungen zu implementieren.
-|Bootstrap | UI | Stellt Seiten-Layout-Tools und vordefinierte HTML-Elemente zu Verfügung. 
+|Bootstrap | UI | Stellt Seiten-Layout-Tools und vordefinierte HTML-Elemente zu Verfügung.
 |===
 
 NOTE: If you use JavaScript frameworks like Bootstrap, HTMX, etc. you have to add them to the list. The category is
@@ -191,7 +190,7 @@ mostly _UI_ and/or _Communication_.
 |===
 |Externes Package |Verwendet von |Warum
 |salespointframework |Backend | Zur Entwicklung von Point-of-Sales-Anwendungen (PoS) mit Spring Framework und Spring Boot. Ermöglicht, darauf aufbauend anspruchsvolle Webanwendungen zu implementieren.
-|Bootstrap | Frontend | Stellt Seiten-Layout-Tools und vordefinierte HTML-Elemente zu Verfügung. 
+|Bootstrap | Frontend | Stellt Seiten-Layout-Tools und vordefinierte HTML-Elemente zu Verfügung.
 |Thymeleaf | Frontend | Ermöglicht die dynamische Generierung von HTML mit serverseitigen Vorlagen für eine nahtlose Integration in Spring MVC.
 |===
 
