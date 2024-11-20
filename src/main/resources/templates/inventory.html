@@ -46,11 +46,11 @@
             <td th:text="${product.quantity}"></td>
             <td th:text="${product.pricePerUnit}"></td>
             <td>
-                <a th:if="${createBouquetMode}" th:href="@{/inventory/choose-flower(flowerName=${product.name})}">
+                <a th:if="${createBouquetMode}" th:href="@{/inventory/choose-flower(flowerID=${product.id})}">
                     <button type="button">Choose</button>
                 </a>
 
-                <a th:if="${!createBouquetMode}" th:href="@{/inventory/delete(productName=${product.name})}">
+                <a th:if="${!createBouquetMode}" th:href="@{/inventory/delete(productID=${product.id})}">
                     <button type="button">Delete</button>
                 </a>
             </td>
@@ -125,7 +125,7 @@
     <div class="modal-content">
         <h2 th:text="'Create Bouquet from ' + ${selectedFlower.name}"></h2>
         <form action="/inventory/add-flower" method="post">
-            <input type="hidden" th:value="${selectedFlower.name}" name="flowerName">
+            <input type="hidden" th:value="${selectedFlower.id}" name="flowerID">
 
             <label for="chooseQuantity">Quantity to use:</label>
             <input type="number" id="chooseQuantity" name="chooseQuantity" min="2" required>
