@@ -207,7 +207,7 @@ image::./models/images/InventoryPackage.svg[class diagram, 100%, 100%, pdfwidth=
 
 === Finances
 [[class_diagram_finances]]
-image::./models/images/finances_uml.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für calendar packge in UML", align=center]
+image::./models/images/finances_uml.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für finances packge in UML", align=center]
 
 [options="header"]
 |=== 
