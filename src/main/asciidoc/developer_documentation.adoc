@@ -162,7 +162,7 @@ Die Persistenz ist standardmäßig deaktiviert. Um den Persistenzspeicher zu akt
 ....
 
 ==== Benutzeroberfläche
-image::./models/images/siteMap.svg[context diagram c4, 100%, 100%, pdfwidth=100%, title= "Dialog Map of the Videoshop", align=center]
+image::./models/images/siteMap.png[context diagram c4, 100%, 100%, pdfwidth=100%, title= "Dialog Map of the Videoshop", align=center]
 
 HINWEIS: Die blauen Kästchen zeigen eine HTML-Vorlage an. Die weißen Kästchen innerhalb der Vorlagen stellen Schaltflächen dar, die zu den Vorlagen weiterleiten, auf die ihre ausgehenden Pfeile zeigen._
 
