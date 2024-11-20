@@ -78,7 +78,6 @@ public class ServiceController {
 		model.addAttribute("products", productService.getAllProducts());
 		return "fragments/product-row :: productRow";
 	}
-
 	@PostMapping("/contracts/create")
 	public String createContractOrder(@RequestParam("clientName") String clientName,
 									  @RequestParam("contractType") String contractType,
@@ -137,7 +136,6 @@ public class ServiceController {
 		model.addAttribute("products", productService.getAllProducts());
 		return "edit/contractOrderEditForm";
 	}
-
 	@PutMapping("/contracts/edit/{id}")
 	public String editContractOrder(@PathVariable UUID id,
 									@RequestParam("clientName") String clientName,
@@ -210,7 +208,6 @@ public class ServiceController {
 		model.addAttribute("products", productService.getAllProducts());
 		return "edit/reservationOrderEditForm";
 	}
-
 	@PutMapping("/reservations/edit/{id}")
 	public String editReservationOrder(@PathVariable UUID id,
 									   @RequestParam String clientName,

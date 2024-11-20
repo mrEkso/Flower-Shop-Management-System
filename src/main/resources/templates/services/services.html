@@ -119,9 +119,8 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="card-footer d-flex justify-content-between">
-                            <a th:href="@{/services/events/edit/{id}(id=${event.id})}" class="btn btn-secondary"
-                               th:text="#{action.edit}">Edit</a>
+                        <div class="card-footer d-flex justify-content-between">${contract.paymentMethod.toString().contains('Card')}"<a th:href="@{/services/events/edit/{id}(id=${event.id})}" class="btn btn-secondary"
+                                                                                                                                         th:text="#{action.edit}">Edit</a>
                         </div>
                     </div>
                 </div>

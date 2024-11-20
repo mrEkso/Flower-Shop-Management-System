@@ -79,7 +79,6 @@ public class ReservationOrderService {
 	public void delete(ReservationOrder order) {
 		reservationOrderRepository.delete(order);
 	}
-
 	private Map<UUID, Integer> extractProducts(Map<String, String> products) {
 		Map<UUID, Integer> productQuantities = new HashMap<>();
 		products.forEach((key, value) -> {
