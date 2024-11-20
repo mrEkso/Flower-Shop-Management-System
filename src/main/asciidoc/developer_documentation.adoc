@@ -221,6 +221,10 @@ image::./models/images/InventoryPackage.svg[class diagram, 100%, 100%, pdfwidth=
 [[class_diagram_finances]]
 image::./models/images/finances_uml.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für finances package in UML", align=center]
 
+=== Services
+[[class_diagram_services]]
+image::./models/images/services_package.jpg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für services package in UML", align=center]
+
 [options="header"]
 |=== 
 |Klasse/Enumeration |Description
