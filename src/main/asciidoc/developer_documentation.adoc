@@ -193,22 +193,25 @@ image::./models/images/package_diagram_dd_a.svg[package diagram, 100%, 100%, pdf
 
 * Entwurfsklassendiagramme der einzelnen Packages
 
-=== Sales
+=== Product
+[[class_diagram_product]]
+image::./models/images/product_package_a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für product package in UML", align=center]
 
+=== Sales
 [[class_diagram_sales]]
-image::./models/images/sales_package_a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für sales packge in UML", align=center]
+image::./models/images/sales_package_a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für sales package in UML", align=center]
 
 === Calendar
 [[class_diagram_calendar]]
-image::./models/images/CalendarPackageDiagram.jpg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für calendar packge in UML", align=center]
+image::./models/images/CalendarPackageDiagram.jpg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für calendar package in UML", align=center]
 
 === Inventory
 [[class_diagram_inventory]]
-image::./models/images/InventoryPackage.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für inventory packge in UML", align=center]
+image::./models/images/InventoryPackage.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für inventory package in UML", align=center]
 
 === Finances
 [[class_diagram_finances]]
-image::./models/images/finances_uml.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für finances packge in UML", align=center]
+image::./models/images/finances_uml.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für finances package in UML", align=center]
 
 [options="header"]
 |=== 
