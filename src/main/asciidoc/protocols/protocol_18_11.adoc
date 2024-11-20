@@ -1,0 +1,60 @@
+= Protokoll Gruppe 07
+
+Treffen am 18.11.2024
+
+Ort:      APB +
+Beginn:   9:30 Uhr +
+Ende:     10:30 Uhr
+
+__Schriftführer: Vadym Zaitsev__
+
+*Nächstes Treffen:* +
+25.11.2024, 9:20 Uhr, JAN/0027/H
+
+__Teilnehmer:__
+//Tabellarisch oder Aufzählung, Kennzeichnung von Teilnehmern mit besonderer Rolle (z.B. Kunde)
+
+- Vincent Kruse, Tutor
+- Andrejs Borodajevs, Scrum-master
+- Vadym Zaitsev, Schriftfuehrer
+- Oleh Khmelyk
+- Bechir Sayadi
+- Davyd Okaianchenko
+- Paul-Valentin Vela
+- Valeriia Sarkisian
+
+== Bemerkungen
+Sechstes Treffen. Termin für die Developer Dokumentation ist verpasst
+== Retrospektive des letzten Sprints
+// Wie ist der Status der im letzten Sprint erstellten Issues/veteilten Aufgaben?
+
+// See http://asciidoctor.org/docs/user-manual/=tables
+[option="headers"]
+|===
+|Issue |Aufgabe |Status |Bemerkung
+|1     |Developer Dokumentation |Fast am Anfang |Muss bis Mittwoch abend komplett gemacht werden
+|2      |Finances |Back-End fertig, aber nicht getested. Front-End existiert |
+|3      |Sales    |Front-End fertig, keine Interaktion mit dem Back-End |
+|4      |Calendar |Fast fertig |
+|5      |Services |Mitte |
+|6      |Front-End fertig, Back-End muss neuentwurfen werden |Modul war nicht verbunden mit Salespoint
+|===
+
+
+== Aktueller Stand
+Debugging im Prozess. Developer Dokumentation wird gefertigt bis Mittwoch
+
+== Planung des nächsten Sprints
+*Issue referenziert die Issue ID von GitHub*
+
+// See http://asciidoctor.org/docs/user-manual/=tables
+[option="headers"]
+|===
+|Titel |Verantwortlicher |Status
+|Finances     |Vadym                |Testen
+|Calendar |Paul und Bechir |Verbesserung
+|Lager |Paul und Bechir |Wiederaufbau
+|Sales |Andrejs und Oleh |Verbindung mit Backend
+|Services |Valeriia und Davyd |Fortsetzung der Arbeit
+|Developer Dokumentation |Alle |Anfang
+|===
