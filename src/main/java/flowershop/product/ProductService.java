@@ -98,8 +98,8 @@ public class ProductService {
 	}
 
 
-	public Iterable<Product> getAllProducts() {
-		return productCatalog.findAll();
+	public List<Product> getAllProducts() {
+		return productCatalog.findAll().toList();
 	}
 
 	public List<Flower> findAllFlowers() {
