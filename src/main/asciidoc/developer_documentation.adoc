@@ -11,6 +11,7 @@
 |0.2	| 18.11 | Oleh | Start of package diagram for sales package
 |0.3	| 18.11 | Andrejs | Vorgaben zum Betrieb der Software
 |0.4	| 19.11 | Oleh | Kontextdiagramm
+|0.6	| 20.11 | Oleh | Sequenzdiagramm + Paketdiagramm
 |...	| ... | ... | ...
 |===
 
@@ -187,7 +188,7 @@ mostly _UI_ and/or _Communication_.
 * Package-Diagramm
 
 [[package_diagram]]
-image::./models/images/package_diagram_c.svg[package diagram]
+image::./models/images/package_diagram_dd_a.svg[package diagram, 100%, 100%, pdfwidth=100%, title= "Paketdiagramm in UML", align=center]
 
 
 * Entwurfsklassendiagramme der einzelnen Packages
