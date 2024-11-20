@@ -16,7 +16,50 @@
 
 
 == Einführung
-* Aufgabenstellung
+Zuallererst braucht die Software eine Übersicht von dem Angebot des Großhändlers. Dabei
+soll es möglich sein, Bestellungen aufzunehmen und sofort losschicken. Sobald
+der Großhändler die Bestellung bestätigt hat, können die Angaben in den aktuellen
+Bestand übernommen werden, da die Lieferung umgehend erfolgt. Zu
+jeder Blumensorte stehen im Computer die aktuelle Anzahl sowie der Ein- und
+Verkaufspreis. Außerdem wird die Rechnung des Großhändlers erfasst und der
+Betrag sofort als Ausgabe für die tägliche Abrechnung verbucht.
+Wenn ein Kunde in den Laden kommt und sich seinen Blumenstrauß ausgesucht
+hat, muss in einem Rechnungsformular die Anzahl der dafür verwendeten
+Pflanzen eintragen werden. Die Software berechnet den Verkaufspreis und der
+Kunde kann entscheiden, ob er den Blumenstrauß in dieser Zusammenstellung
+wirklich kaufen möchte. Wenn sich der Kunde entschieden hat, bekommt er
+seine Rechnung, der Blumenbestand wird aktualisiert und der Betrag in der
+Kasse wird angeglichen.
+
+Ähnlich funktioniert es auch bei den Fertigsträußen, die Frau Floris herstellt,
+wenn gerade keine Kunden im Laden sind. Abends stellt die Software die Einnahmen
+und Ausgaben automatisch zusammen und gibt den aktuellen Kassenstand
+aus.
+
+Auch das Problem mit der Organisation für Hochzeiten soll die neue Software
+lösen. Bereits während des Beratungsgespräches werden alle Angaben
+eingegeben. Die endgültige Bestellung wird ausgelöst, wenn man sich über alle
+Details einig geworden ist. Die benötigten Blumen erscheinen einen Tag vor
+dem großen Ereignis automatisch in der Bestellung beim Großhändler und eine
+Rechnung für Frau Meier wird erzeugt. Frau Floris kann diese als “bezahlt”
+markieren, sobald das Geld (bar oder auf dem Konto) eingetroffen ist und somit
+die Abrechnungen aktualisieren.
+
+Der gemeinsam mit der Nichte geplante Pflanzenservice soll auch von der Software
+unterstützt werden. Eine Firma, die eine Ausstattung ihrer Büro- und
+Sitzungsräume mit Grünpflanzen wünscht, erteilt Frau Floris einen entsprechenden
+Auftrag. Sie bestellt die benötigten Pflanzen beim Großhändler und arrangiert
+sie in den Räumlichkeiten der Firma. Zusätzlich kann ein Servicevertrag
+abgeschlossen werden, der die wöchentliche Pflege der Pflanzen durch Frau Floris
+und auf Wunsch und zu anderen Konditionen auch die Versorgung mit frischen
+Schnittblumen umfasst.
+
+Nur die verwelkten Blumen in ihrem Laden kann die neue Software nicht aussortieren.
+Diese müsste Frau Floris abends aber als Verlust in die Abrechnung
+aufnehmen können.
+
+*Also, am Ende soll ein internes Website fertig sein, das alle Geschäftsprozesse in dem Blumenladen von Frau Floris digitalisiert und in einigen Fällen auch automatisiert. Das wird zur einer starken Optimisierung von allen Bereichen der Geschäftsführung.*
+
 
 == Randbedingungen
 === Hardware-Vorgaben
