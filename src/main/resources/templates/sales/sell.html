@@ -76,7 +76,7 @@
                 <form method="post" action="/add-to-sellBasket">
                     <input type="hidden" name="redirectPage" value="sell"/>
                     <input type="hidden" name="productName" th:value="${flower.name}"/>
-                    <button type="submit">
+                    <button type="submit" th:disabled="${flower.quantity == 0}">
                         <img th:src="@{/resources/img/shopping-basket.png}"/>
                     </button>
                 </form>
@@ -162,7 +162,7 @@
                                         name="productName"
                                         th:value="${selectedBasket.product.name}"
                                 />
-                                <button class="basket-minus-btn" type="submit">+</button>
+                                <button class="basket-minus-btn" type="submit" th:disabled="${selectedBasket.product.quantity - selectedBasket.quantityAsInteger == 0}">+</button>
                             </form>
                         </div>
                         <div class="basket-card-footer">
