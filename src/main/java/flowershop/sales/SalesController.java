@@ -3,8 +3,6 @@ package flowershop.sales;
 import flowershop.product.Bouquet;
 import flowershop.product.Flower;
 import flowershop.product.ProductService;
-import flowershop.services.OrderFactory;
-import org.salespointframework.order.OrderEvents;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,16 +26,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public class SalesController {
 
 	private final ProductService productService;
-	private final OrderFactory orderFactory;
 	private final SalesService salesService;
-	private final WholesalerOrderService wholesalerOrderService;
 	private final WholesalerService wholesalerService;
 
-	SalesController(ProductService productService, OrderFactory orderFactory, SalesService salesService, WholesalerOrderService wholesalerOrderService, WholesalerService wholesalerService) {
+	SalesController(ProductService productService, SalesService salesService, WholesalerService wholesalerService) {
 		this.productService = productService;
-		this.orderFactory = orderFactory;
 		this.salesService = salesService;
-		this.wholesalerOrderService = wholesalerOrderService;
 		this.wholesalerService = wholesalerService;
 	}
 
@@ -123,19 +117,7 @@ public class SalesController {
 		@RequestParam(required = false) String redirectPage,
 		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
 	) {
-		Product product = productService.findByName(productName);
-
-		Optional<BasketItem> basketItem = buyBasket.stream()
-			.filter(item -> item.getProduct().equals(product))
-			.findFirst();
-
-		if (product != null) {
-			if (basketItem.isPresent()) {
-				basketItem.get().increaseQuantity();
-			} else {
-				buyBasket.add(new BasketItem(product, 1));
-			}
-		}
+		addToBasket(productName, buyBasket);
 
 		model.addAttribute("buyBasket", buyBasket);
 
@@ -149,35 +131,17 @@ public class SalesController {
 		@RequestParam(required = false) String redirectPage,
 		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
 	) {
-		Product product = productService.findByName(productName);
-
-		Optional<BasketItem> basketItem = sellBasket.stream()
-			.filter(item -> item.getProduct().equals(product))
-			.findFirst();
-
-		if (product != null) {
-			if (basketItem.isPresent()) {
-				basketItem.get().increaseQuantity();
-			} else {
-				sellBasket.add(new BasketItem(product, 1));
-			}
-		}
+		addToBasket(productName, sellBasket);
 
 		model.addAttribute("sellBasket", sellBasket);
 
 		return "redirect:/" + redirectPage; // Reload the page
 	}
 
-	@PostMapping("/add-to-sellBasket-bouqet")
-	public String addBouquetToBasket(
-		Model model,
-		@RequestParam String productName,// FIXME Use ID!
-		@RequestParam(required = false) String redirectPage,
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
-	) {
+	private void addToBasket(String productName, List<BasketItem> basket) {
 		Product product = productService.findByName(productName);
 
-		Optional<BasketItem> basketItem = sellBasket.stream()
+		Optional<BasketItem> basketItem = basket.stream()
 			.filter(item -> item.getProduct().equals(product))
 			.findFirst();
 
@@ -185,9 +149,23 @@ public class SalesController {
 			if (basketItem.isPresent()) {
 				basketItem.get().increaseQuantity();
 			} else {
-				sellBasket.add(new BasketItem(product, 1));
+				basket.add(new BasketItem(product, 1));
 			}
 		}
+	}
+
+	private void removeFromBasket(String productName, List<BasketItem> basket) {
+		basket.removeIf(b -> b.getProduct().getName().equalsIgnoreCase(productName));
+	}
+
+	@PostMapping("/add-to-sellBasket-bouquet")
+	public String addBouquetToBasket(
+		Model model,
+		@RequestParam String productName,    // FIXME Use ID!
+		@RequestParam(required = false) String redirectPage,
+		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
+	) {
+		addToBasket(productName, sellBasket);
 
 		model.addAttribute("sellBasket", sellBasket);
 
@@ -206,7 +184,8 @@ public class SalesController {
 		HttpServletRequest request
 	) {
 		String referer = request.getHeader("Referer").split("http://localhost:8080/")[1];
-		sellBasket.removeIf(b -> b.getProduct().getName().equalsIgnoreCase(productName));
+
+		removeFromBasket(productName, sellBasket);
 
 		return "redirect:/" + (referer == null ? "sell" : referer);
 	}
@@ -218,7 +197,7 @@ public class SalesController {
 		HttpServletRequest request
 	) {
 		String referer = request.getHeader("Referer").split("http://localhost:8080/")[1];
-		buyBasket.removeIf(b -> b.getProduct().getName().equalsIgnoreCase(productName));
+		removeFromBasket(productName, buyBasket);
 
 		return "redirect:/" + (referer == null ? "sell" : referer);
 	}
@@ -286,7 +265,7 @@ public class SalesController {
 		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
 	) {
 		Boolean isLast = sellBasket.stream().filter(b -> b.getProduct().getName().equalsIgnoreCase(productName)).findFirst().get().tryDecreaseQuantity();
-		if (!isLast) sellBasket.removeIf(b -> b.getProduct().getName().equalsIgnoreCase(productName));
+		if (!isLast) removeFromBasket(productName, sellBasket);
 
 		return "redirect:/sell";
 	}
@@ -312,7 +291,7 @@ public class SalesController {
 		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
 	) {
 		Boolean isLast = buyBasket.stream().filter(b -> b.getProduct().getName().equalsIgnoreCase(productName)).findFirst().get().tryDecreaseQuantity();
-		if (!isLast) buyBasket.removeIf(b -> b.getProduct().getName().equalsIgnoreCase(productName));
+		if (!isLast) removeFromBasket(productName, buyBasket);
 
 		return "redirect:/buy";
 	}
