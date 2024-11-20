@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title th:text="#{services.title}">Services</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -11,7 +11,7 @@
 <div class="container mt-2">
     <div class="text-center mb-4">
         <h1 th:text="#{services.title}">Services</h1>
-      </div>
+    </div>
 
     <!-- Navigation Tabs with Button -->
     <div class="d-flex align-items-center">
@@ -35,8 +35,8 @@
         </a>
     </div>
 
-      <!-- Tab Content -->
-      <div class="tab-content" id="serviceTabsContent">
+    <!-- Tab Content -->
+    <div class="tab-content" id="serviceTabsContent">
         <!-- Contracts Tab -->
         <div class="tab-pane fade show active" id="contracts" role="tabpanel" aria-labelledby="contracts-tab">
             <div class="row mt-3">
@@ -51,10 +51,21 @@
                                     th:text="${contract.startDate}">Not found</span></p>
                             <p class="card-text"><span th:text="#{contract.endDate}">End Date</span>: <span
                                     th:text="${contract.endDate}">Not found</span></p>
-                            <p class="card-text"><span th:text="#{contract.orderStatus}">Status</span>: <span
-                                    th:text="${contract.orderStatus}">Not found</span></p>
-                            <p class="card-text"><span th:text="#{order.paymentMethod}">Payment Method</span>: <span
-                                    th:text="${contract.paymentMethod}">Not found</span></p>
+                            <p class="card-text"><span th:text="#{contract.orderStatus}">Order Status</span>:
+                                <span th:switch="${contract.orderStatus.name()}">
+                                    <span th:case="OPEN" th:text="#{order.status.open}">Open</span>
+                                    <span th:case="PAID" th:text="#{order.status.paid}">Paid</span>
+                                    <span th:case="COMPLETED" th:text="#{order.status.completed}">Completed</span>
+                                    <span th:case="CANCELED" th:text="#{order.status.canceled}">Canceled</span>
+                                    <span th:case="*">Not found</span>
+                                </span></p>
+                            <p class="card-text"><span th:text="#{order.paymentMethod}">Payment Method</span>:
+                                <span th:if="${contract.paymentMethod.toString().contains('Cash')}"
+                                      th:text="#{order.payment.cash}">Cash</span>
+                                <span th:if="${contract.paymentMethod.toString().contains('Card')}"
+                                      th:text="#{order.payment.card}">Card</span>
+                                <span th:if="${!contract.paymentMethod.toString().contains('Cash') and !contract.paymentMethod.toString().contains('Card')}">Not found</span>
+                            </p>
                             <h6 th:text="#{order.products}">Products</h6>
                             <ul>
                                 <li th:each="orderLine : ${contract.orderLines}">
@@ -84,10 +95,22 @@
                                     th:text="${event.eventDate}">Not found</span></p>
                             <p class="card-text"><span th:text="#{event.deliveryAddress}">Delivery Address</span>: <span
                                     th:text="${event.deliveryAddress}">Not found</span></p>
-                            <p class="card-text"><span th:text="#{event.orderStatus}">Status</span>: <span
-                                    th:text="${event.orderStatus}">Not found</span></p>
-                            <p class="card-text"><span th:text="#{order.paymentMethod}">Payment Method</span>: <span
-                                    th:text="${event.paymentMethod}">Not found</span></p>
+                            <p class="card-text"><span th:text="#{event.orderStatus}">Status</span>:
+                                <span th:switch="${event.orderStatus.name()}">
+                                    <span th:case="OPEN" th:text="#{order.status.open}">Open</span>
+                                    <span th:case="PAID" th:text="#{order.status.paid}">Paid</span>
+                                    <span th:case="COMPLETED" th:text="#{order.status.completed}">Completed</span>
+                                    <span th:case="CANCELED" th:text="#{order.status.canceled}">Canceled</span>
+                                    <span th:case="*">Not found</span>
+                                </span>
+                            </p>
+                            <p class="card-text"><span th:text="#{order.paymentMethod}">Payment Method</span>:
+                                <span th:if="${event.paymentMethod.toString().contains('Cash')}"
+                                      th:text="#{order.payment.cash}">Cash</span>
+                                <span th:if="${event.paymentMethod.toString().contains('Card')}"
+                                      th:text="#{order.payment.card}">Card</span>
+                                <span th:if="${!event.paymentMethod.toString().contains('Cash') and !event.paymentMethod.toString().contains('Card')}">Not found</span>
+                            </p>
                             <h6 th:text="#{order.products}">Products</h6>
                             <ul>
                                 <li th:each="orderLine : ${event.orderLines}">
@@ -115,12 +138,32 @@
                                     th:text="${reservation.client.name}">Not found</span></h5>
                             <p class="card-text"><span th:text="#{reservation.time}">Reservation Time</span>: <span
                                     th:text="${reservation.reservationDateTime}">Not found</span></p>
-                            <p class="card-text"><span th:text="#{reservation.orderStatus}">Status</span>: <span
-                                    th:text="${reservation.orderStatus}">Not found</span></p>
-                            <p class="card-text"><span th:text="#{reservation.reservationStatus}">Status</span>: <span
-                                    th:text="${reservation.reservationStatus}">Not found</span></p>
-                            <p class="card-text"><span th:text="#{order.paymentMethod}">Payment Method</span>: <span
-                                    th:text="${reservation.paymentMethod}">Not found</span></p>
+                            <p class="card-text"><span th:text="#{reservation.orderStatus}">Order Status</span>:
+                                <span th:switch="${reservation.orderStatus.name()}">
+                                    <span th:case="OPEN" th:text="#{order.status.open}">Open</span>
+                                    <span th:case="PAID" th:text="#{order.status.paid}">Paid</span>
+                                    <span th:case="COMPLETED" th:text="#{order.status.completed}">Completed</span>
+                                    <span th:case="CANCELED" th:text="#{order.status.canceled}">Canceled</span>
+                                    <span th:case="*">Not found</span>
+                                </span>
+                            </p>
+                            <p class="card-text">
+                                <span th:text="#{reservation.reservationStatus}">Reservation Status</span>:
+                                <span th:switch="${reservation.reservationStatus.name()}">
+                                    <span th:case="IN_PROCESS" th:text="#{order.status.inProcess}">In Process</span>
+                                    <span th:case="PAID"
+                                          th:text="#{order.status.readyForPickup}">Ready For Pick-up</span>
+                                    <span th:case="COMPLETED" th:text="#{order.status.pickedUp}">Picked Up</span>
+                                <span th:case="*">Not found</span>
+                                </span>
+                            </p>
+                            <p class="card-text"><span th:text="#{order.paymentMethod}">Payment Method</span>:
+                                <span th:if="${reservation.paymentMethod.toString().contains('Cash')}"
+                                      th:text="#{order.payment.cash}">Cash</span>
+                                <span th:if="${reservation.paymentMethod.toString().contains('Card')}"
+                                      th:text="#{order.payment.card}">Card</span>
+                                <span th:if="${!reservation.paymentMethod.toString().contains('Cash') and !reservation.paymentMethod.toString().contains('Card')}">Not found</span>
+                            </p>
                             <h6 th:text="#{order.products}">Products</h6>
                             <ul>
                                 <li th:each="orderLine : ${reservation.orderLines}">
@@ -137,12 +180,12 @@
                 </div>
             </div>
         </div>
-      </div>
     </div>
+</div>
 
-    <!-- Bootstrap JS, Popper.js, and jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  </body>
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
 </html>

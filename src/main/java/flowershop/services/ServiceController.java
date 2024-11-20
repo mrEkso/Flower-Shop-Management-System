@@ -220,6 +220,7 @@ public class ServiceController {
 									   @RequestParam("paymentMethod") String paymentMethod,
 									   @RequestParam("orderStatus") String orderStatus,
 									   @RequestParam(value = "cancelReason", required = false) String cancelReason,
+									   @RequestParam("reservationStatus") String reservationStatus,
 									   @RequestParam("notes") String notes) {
 		ReservationOrder reservationOrder = reservationOrderService.getById(id)
 			.orElseThrow(() -> new IllegalArgumentException("Reservation order not found"));
@@ -227,7 +228,7 @@ public class ServiceController {
 		reservationOrder.setReservationDateTime(reservationDateTime);
 		reservationOrder.setNotes(notes);
 		reservationOrder.setPaymentMethod(paymentMethod);
-		reservationOrderService.update(reservationOrder, products, orderStatus, cancelReason);
+		reservationOrderService.update(reservationOrder, products, orderStatus, cancelReason, reservationStatus);
 		return "redirect:/services";
 	}
 

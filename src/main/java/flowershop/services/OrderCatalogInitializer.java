@@ -63,7 +63,7 @@ public class OrderCatalogInitializer implements DataInitializer {
 		ContractOrder contractOrder = orderFactory.createContractOrder(
 			"once a week", "weekly", LocalDate.now(), LocalDate.of(2026, 1, 1),
 			client1);
-		contractOrder.addOrderLine(rose, Quantity.of(30));
+		contractOrder.addOrderLine(rose, Quantity.of(8));
 		contractOrder.addOrderLine(roseLilyBouquet, Quantity.of(2));
 		contractOrder.setPaymentMethod(Cash.CASH);
 		contractOrderRepository.save(contractOrder);

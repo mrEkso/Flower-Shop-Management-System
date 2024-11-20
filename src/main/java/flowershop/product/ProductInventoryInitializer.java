@@ -2,6 +2,9 @@ package flowershop.product;
 
 import org.javamoney.moneta.Money;
 import org.salespointframework.core.DataInitializer;
+import org.salespointframework.inventory.UniqueInventory;
+import org.salespointframework.inventory.UniqueInventoryItem;
+import org.salespointframework.quantity.Quantity;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -13,12 +16,15 @@ import static org.salespointframework.core.Currencies.EURO;
 
 @Component
 @Order(15)
-public class ProductCatalogInitializer implements DataInitializer {
+public class ProductInventoryInitializer implements DataInitializer {
 
+	private final UniqueInventory<UniqueInventoryItem> inventory;
 	private final ProductCatalog productCatalog;
 
-	public ProductCatalogInitializer(ProductCatalog productCatalog) {
+	public ProductInventoryInitializer(UniqueInventory<UniqueInventoryItem> inventory, ProductCatalog productCatalog) {
+		Assert.notNull(inventory, "Inventory must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
+		this.inventory = inventory;
 		this.productCatalog = productCatalog;
 	}
 
@@ -52,5 +58,12 @@ public class ProductCatalogInitializer implements DataInitializer {
 
 		// Saving bouquet to the catalog
 		productCatalog.save(roseLilyBouquet);
+
+		// Initialize inventory with 10 items of each product
+		productCatalog.findAll().forEach(flower -> {
+			if (inventory.findByProduct(flower).isEmpty()) {
+				inventory.save(new UniqueInventoryItem(flower, Quantity.of(10)));
+			}
+		});
 	}
 }

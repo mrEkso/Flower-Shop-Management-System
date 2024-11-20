@@ -5,6 +5,7 @@ import org.salespointframework.catalog.Product;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderManagement;
 import org.salespointframework.order.OrderStatus;
+import org.salespointframework.payment.Cash;
 import org.salespointframework.quantity.Quantity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class ContractOrderService {
 	}
 
 	public ContractOrder save(ContractOrder order, Map<String, String> products) {
+		order.setPaymentMethod(Cash.CASH);
 		products.forEach((key, value) -> {
 			if (key.startsWith("products[")) {
 				String index = key.substring(9, key.length() - 1);
@@ -54,19 +56,21 @@ public class ContractOrderService {
 	}
 
 	public ContractOrder update(ContractOrder order, Map<String, String> products, String orderStatus, String cancelReason) {
+		if (order.getOrderStatus().equals(OrderStatus.OPEN)) {
+			Map<UUID, Integer> incoming = extractProducts(products);
+			order.getOrderLines().toList().forEach(line -> {
+				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) order.remove(line);
+			});
+			incoming.forEach((productId, quantity) -> productCatalog.findById(Product.ProductIdentifier.of(productId.toString()))
+				.ifPresent(product -> {
+					order.getOrderLines(product).toList().forEach(order::remove);
+					order.addOrderLine(product, Quantity.of(quantity));
+				}));
+		}
 		if (OrderStatus.PAID.name().equals(orderStatus)) orderManagement.payOrder(order);
 		else if (OrderStatus.COMPLETED.name().equals(orderStatus)) orderManagement.completeOrder(order);
 		else if (OrderStatus.CANCELED.name().equals(orderStatus))
 			orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
-		Map<UUID, Integer> incoming = extractProducts(products);
-		order.getOrderLines().toList().forEach(line -> {
-			if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) order.remove(line);
-		});
-		incoming.forEach((productId, quantity) -> productCatalog.findById(Product.ProductIdentifier.of(productId.toString()))
-			.ifPresent(product -> {
-				order.getOrderLines(product).toList().forEach(order::remove);
-				order.addOrderLine(product, Quantity.of(quantity));
-			}));
 		return contractOrderRepository.save(order);
 	}
 

@@ -131,7 +131,29 @@
             </div>
 
             <!-- Reservation Status -->
-
+            <div class="mb-3">
+                <label class="form-label" th:text="#{reservationOrder.reservationStatus}">Reservation Status</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="reservationStatus" id="statusInProcess" value="IN_PROCESS"
+                           th:checked="${reservationOrder.reservationStatus.name() == 'IN_PROCESS'}">
+                    <label class="form-check-label" for="statusInProcess" th:text="#{order.status.inProcess}">In
+                        Process</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="reservationStatus" id="statusReadyForPickup"
+                           value="READY_FOR_PICKUP"
+                           th:checked="${reservationOrder.reservationStatus.name() == 'READY_FOR_PICKUP'}">
+                    <label class="form-check-label" for="statusReadyForPickup" th:text="#{order.status.readyForPickup}">Ready for
+                        Pick-up</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="reservationStatus" id="statusPickedUp"
+                           value="PICKED_UP"
+                           th:checked="${reservationOrder.reservationStatus.name() == 'PICKED_UP'}">
+                    <label class="form-check-label" for="statusPickedUp"
+                           th:text="#{order.status.pickedUp}">Picked-Up</label>
+                </div>
+            </div>
 
             <!-- Notes -->
             <div class="mb-3">

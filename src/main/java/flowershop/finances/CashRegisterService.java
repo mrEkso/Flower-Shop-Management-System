@@ -65,7 +65,7 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 			return null;
 		}
 		CashRegister cashRegister = getCashRegister();
-		cashRegister.getAccountancyEntries().and((AccountancyEntryWrapper)entry);
+		cashRegister.getAccountancyEntries().and(entry);
 		cashRegister.setBalance((Money) entry.getValue().add(cashRegister.getBalance()));
 		return entry;
 	}
