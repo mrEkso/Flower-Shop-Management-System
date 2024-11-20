@@ -76,5 +76,7 @@ public class ProductInventoryInitializer implements DataInitializer {
 
 		productCatalog.save(roseLilyBouquet);
 		productCatalog.save(roseLilyBouquet2);
+
+		System.out.println("-----------------------------------------");
 	}
 }

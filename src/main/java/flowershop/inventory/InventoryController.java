@@ -25,7 +25,7 @@ public class InventoryController {
 	private final ProductService productService;
 	private final DeletedProductService deletedProductService;
 	private final InventoryService inventoryService;
-	private final List<Product> products;
+	private List<Product> products;
 
 	// Initialize products using the service
 	public InventoryController(ProductService productService,
@@ -37,14 +37,21 @@ public class InventoryController {
 
 		// Use the product service to initialize the products list
 		this.products = productService.getAllProducts();
-		System.out.println("the products are" + products);
+		
+		// System.out.println("the products are" + products);
+		// System.out.println(productService.findAllFlowers());
 	}
 
 	@GetMapping("/inventory")
 	public String inventoryMode(@RequestParam(required = false) String search,
 								@RequestParam(required = false, defaultValue = "all") String filter, Model model) {
+		// System.out.println("-------------inventory--------------");
+		// System.out.println(productService.getAllProducts());
+		// System.out.println(productService.findAllFlowers());
+		this.products = productService.getAllProducts();
+							
 		List<Product> filteredProducts = new ArrayList<>(products);
-
+							
 		if (search != null && !search.isEmpty()) {
 			filteredProducts = filteredProducts.stream()
 				.filter(product -> product.getName().toLowerCase().contains(search.toLowerCase()))
