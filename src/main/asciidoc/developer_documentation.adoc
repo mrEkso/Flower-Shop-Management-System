@@ -205,6 +205,10 @@ image::./models/images/CalendarPackageDiagram.jpg[class diagram, 100%, 100%, pdf
 [[class_diagram_inventory]]
 image::./models/images/InventoryPackage.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für inventory packge in UML", align=center]
 
+=== Finances
+[[class_diagram_finances]]
+image::./models/images/finances_uml.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für calendar packge in UML", align=center]
+
 [options="header"]
 |=== 
 |Klasse/Enumeration |Description
