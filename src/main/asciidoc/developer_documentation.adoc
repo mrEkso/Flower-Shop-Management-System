@@ -68,7 +68,28 @@ image::./models/images/context_diagram_dd_a.svg[context diagram, 100%, 100%, pdf
 [options="header"]
 |=== 
 |Qualitätsziel |Lösungsansatz
-|... |...
+|Verfügbarkeit a|
+* Nutzen Sie einen globalen Fehlerbehandlungsmechanismus mit @ControllerAdvice in Spring, um alle möglichen Fehler abzufangen und benutzerfreundliche Fehlermeldungen zurückzugeben.
+* Verhindern von Unterbrechungen der Geschäftsprozesse, um Umsatzverluste und Kundenunzufriedenheit zu vermeiden. Alle möglichen Fehler müssen abgefangen und richtig behandelt werden.
+* Lagern Sie kritische statische Dateien wie Bilder, CSS und JS lokal auf dem Server, um die Abhängigkeit von externen Diensten zu reduzieren.
+|Leistungsfähigkeit a|
+* Vermeiden Sie redundante Logik in Controllern und Services. Jede Funktion sollte nur einmal in der entsprechenden Schicht implementiert sein, um den Overhead zu reduzieren.
+* Entfernen Sie nicht benötigte Abhängigkeiten und Module aus der Spring-Konfiguration, um die Startzeit der Anwendung zu verkürzen und Ressourcen zu sparen.
+* Reduzieren Sie den Overhead durch klare Trennung der Controller-Logik. Z. B. sollte ein Controller nur eine kleine Menge an Logik ausführen und ansonsten auf Services delegieren, um die Performance nicht zu beeinträchtigen.
+|Benutzerfreundlichkeit a|
+* Nutzen Sie Thymeleaf-Layouts (layout:decorator), um ein einheitliches Erscheinungsbild auf allen Seiten zu gewährleisten.
+* Sie müssen sicherstellen, dass der Stil der Anwendung auf allen Seiten gleich ist, um den Lernaufwand zu minimieren.
+* Der Benutzer sollte von jedem Punkt der Anwendung aus zu einem anderen Funktionsbereich wechseln können (z. B. von den Services zum Lagerbestand usw.).
+* Schützen Sie den Benutzer vor Fehlern. Ungültige Eingaben dürfen nicht zu ungültigen Systemzuständen führen.
+|Sicherheit a|
+* Stellen Sie sicher, dass nur die Personen auf die Daten zugreifen können, die dazu berechtigt sind. Dies kann mit Spring Security und Thymeleaf (sec:authorize - Tag) realisiert werden.
+* Verhindern Sie die unbefugte Änderung von Daten. Dies kann mit Spring Security (@PreAuthorize - Annotation) realisiert werden.
+* Rückverfolgbarkeit von Aktionen oder Ereignissen zu einer eindeutigen Entität oder Person. Für diese Anwendung sollte jede Bestellung mit einem Kunden verknüpft sein.
+|Wartbarkeit a|
+* Entwickeln einer modularen Architektur, die mit minimalem Aufwand angepasst und erweitert werden kann.
+* Dokumentieren des Codes sorgfältig, um eine kosteneffiziente langfristige Wartung zu ermöglichen.
+* Sicherstellen, dass die Anwendung modifiziert oder erweitert werden kann, ohne dass Fehler auftreten oder die Produktqualität beeinträchtigt wird.
+* Testabdeckung: Schreiben Sie Unit-Tests für kritische Logik mit JUnit.
 |===
 
 === Softwarearchitektur
