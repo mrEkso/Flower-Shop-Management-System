@@ -59,8 +59,7 @@
             </td>
             <td>
                 <form method="post" action="/add-to-buyBasket">
-                    <input type="hidden" name="redirectPage" value="buy"/>
-                    <input type="hidden" name="productName" th:value="${flower.name}"/>
+                    <input type="hidden" name="productId" th:value="${flower.id}"/>
                     <button type="submit">
                         <img th:src="@{/resources/img/shopping-basket.png}"/>
                     </button>
@@ -89,8 +88,8 @@
                         <form method="post" action="/remove-from-buyBasket">
                             <input
                                     type="hidden"
-                                    name="productName"
-                                    th:value="${selectedBasket.product.name}"
+                                    name="productId"
+                                    th:value="${selectedBasket.product.id}"
                             />
                             <button type="submit">
                                 <img
@@ -108,16 +107,16 @@
                         <form method="post" action="/decrease-from-buyBasket">
                             <input
                                     type="hidden"
-                                    name="productName"
-                                    th:value="${selectedBasket.product.name}"
+                                    name="productId"
+                                    th:value="${selectedBasket.product.id}"
                             />
                             <button class="basket-minus-btn" type="submit">-</button>
                         </form>
                         <form method="post" action="/increase-from-buyBasket">
                             <input
                                     type="hidden"
-                                    name="productName"
-                                    th:value="${selectedBasket.product.name}"
+                                    name="productId"
+                                    th:value="${selectedBasket.product.id}"
                             />
                             <button class="basket-minus-btn" type="submit">+</button>
                         </form>

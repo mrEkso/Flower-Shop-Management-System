@@ -75,7 +75,7 @@
             <td>
                 <form method="post" action="/add-to-sellBasket">
                     <input type="hidden" name="redirectPage" value="sell"/>
-                    <input type="hidden" name="productName" th:value="${flower.name}"/>
+                    <input type="hidden" name="productId" th:value="${flower.id}"/>
                     <button type="submit" th:disabled="${flower.quantity == 0}">
                         <img th:src="@{/resources/img/shopping-basket.png}"/>
                     </button>
@@ -92,7 +92,7 @@
                 <div class="text-cell name-cell" th:text="${bouquet.name}"></div>
             </td>
             <td>
-                <div class="text-cell type-cell" th:text="none"></div>
+                <div class="text-cell type-cell" th:text="Bouquet"></div>
             </td>
             <td>
                 <div class="text-cell quantity-cell" th:text="${bouquet.quantity}"></div>
@@ -101,10 +101,10 @@
                 <div class="text-cell price-cell" th:text="${bouquet.price}"></div>
             </td>
             <td>
-                <form method="post" action="/add-to-sellBasket-bouqet">
+                <form method="post" action="/add-to-sellBasket">
                     <input type="hidden" name="redirectPage" value="sell"/>
-                    <input type="hidden" name="productName" th:value="${bouquet.name}"/>
-                    <button type="submit">
+                    <input type="hidden" name="productId" th:value="${bouquet.id}"/>
+                    <button type="submit" th:disabled="${bouquet.quantity == 0}">
                         <img th:src="@{/resources/img/shopping-basket.png}"/>
                     </button>
                 </form>
@@ -132,8 +132,8 @@
                             <form method="post" action="/remove-from-sellBasket">
                                 <input
                                         type="hidden"
-                                        name="productName"
-                                        th:value="${selectedBasket.product.name}"
+                                        name="productId"
+                                        th:value="${selectedBasket.product.id}"
                                 />
                                 <button type="submit">
                                     <img
@@ -151,16 +151,16 @@
                             <form method="post" action="/decrease-from-sellBasket">
                                 <input
                                         type="hidden"
-                                        name="productName"
-                                        th:value="${selectedBasket.product.name}"
+                                        name="productId"
+                                        th:value="${selectedBasket.product.id}"
                                 />
                                 <button class="basket-minus-btn" type="submit">-</button>
                             </form>
                             <form method="post" action="/increase-from-sellBasket">
                                 <input
                                         type="hidden"
-                                        name="productName"
-                                        th:value="${selectedBasket.product.name}"
+                                        name="productId"
+                                        th:value="${selectedBasket.product.id}"
                                 />
                                 <button class="basket-minus-btn" type="submit" th:disabled="${selectedBasket.product.quantity - selectedBasket.quantityAsInteger == 0}">+</button>
                             </form>

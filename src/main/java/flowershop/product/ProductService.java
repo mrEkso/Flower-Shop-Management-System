@@ -123,21 +123,15 @@ public class ProductService {
 			.collect(Collectors.toSet());
 	}
 
-	public Product findByName(String productName) {
-		return productCatalog.findAll()
-			.filter(product -> product.getName().equalsIgnoreCase(productName))
-			.stream()
-			.findFirst()
-			.orElse(null);
-	}
 
-	@SuppressWarnings("unchecked")
-	public <T extends Product> T findByName(String productName, Class<T> type) {
-		return (T) productCatalog.findAll()
-			.filter(product -> product.getName().equalsIgnoreCase(productName) && type.isInstance(product))
+
+	public List<Bouquet> findBouquetsByName(String subString) {
+		return productCatalog.findAll()
 			.stream()
-			.findFirst()
-			.orElse(null);
+			.filter(product -> product instanceof Bouquet)
+			.map(product -> (Bouquet) product)
+			.filter(bouquet -> bouquet.getName().toLowerCase().contains(subString.toLowerCase()))
+			.collect(Collectors.toList());
 	}
 
 	public List<Flower> findFlowersByName(String subString) {
