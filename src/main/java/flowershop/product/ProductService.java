@@ -1,13 +1,11 @@
 package flowershop.product;
 
+import org.jetbrains.annotations.NotNull;
 import org.salespointframework.catalog.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,46 +36,25 @@ public class ProductService {
 		return addFlowers(flower, flower.getQuantity());
 	}
 
-	public Bouquet addBouquet(Bouquet bouquet) {
-		return addBouquets(bouquet, bouquet.getQuantity());
-	}
+	public Bouquet addBouquet(@NotNull Bouquet bouquet) throws IllegalStateException {
+		var bouquetQuantity = bouquet.getQuantity();
 
-	public Bouquet addBouquets(Bouquet bouquet, int quantity) {
-		// Check if sufficient stock of each flower is available for the requested quantity of bouquets
-		for (Flower flower : bouquet.getFlowers()) {
-			Flower existingFlower = (Flower) productCatalog.findById(flower.getId()).orElse(null);
+		for (int n = 0; n < bouquetQuantity; n++) {
+			// remove for every single bouquet
+			for (Map.Entry<Flower, Integer> entry : bouquet.getFlowers().entrySet()) {
+				Flower flower = entry.getKey();
+				Integer quant = entry.getValue();
 
-			if (existingFlower == null) {
-				throw new IllegalStateException("Flower with id " + flower.getId() + " not found!");
-			} else {
-				// Calculate the total quantity required for the bouquets
-				int totalRequired = flower.getQuantity() * quantity;
-				if (existingFlower.getQuantity() < totalRequired) {
-					throw new IllegalStateException(
-						"Not enough stock for flower with id " + flower.getId() +
-							". Required: " + totalRequired + ", Available: " + existingFlower.getQuantity()
-					);
-				}
+				removeFlowers(flower, quant);
 			}
 		}
 
-		// Deduct the required quantities from the stock
-		for (Flower flower : bouquet.getFlowers()) {
-			Flower existingFlower = (Flower) productCatalog.findById(flower.getId()).orElse(null);
-			int totalRequired = flower.getQuantity() * quantity;
-			existingFlower.setQuantity(existingFlower.getQuantity() - totalRequired);
-			productCatalog.save(existingFlower);
-		}
-
-		// Save the bouquet with the specified quantity
-		bouquet.setQuantity(quantity);
+		bouquet.setQuantity(bouquetQuantity);
 		return productCatalog.save(bouquet);
 	}
 
-	public void removeFlowers(Flower flower, int quantity) throws IllegalStateException {
-		// Find the existing flower
+	public void removeFlowers(@NotNull Flower flower, int quantity) throws IllegalStateException {
 		Flower existingFlower = (Flower) productCatalog.findById(flower.getId()).orElse(null);
-
 		if (existingFlower == null) {
 			throw new IllegalStateException("Flower not found in the catalog.");
 		} else {
@@ -89,7 +66,10 @@ public class ProductService {
 				existingFlower.setQuantity(newQuantity);
 				productCatalog.save(existingFlower);
 			} else {
-				throw new IllegalStateException("Insufficient stock to remove the specified quantity of flowers.");
+				throw new IllegalStateException(
+					"Insufficient stock for flower: " + existingFlower.getName() +
+						" [ID: " + existingFlower.getId() + "]. Required: " + quantity +
+						", Available: " + existingFlower.getQuantity());
 			}
 		}
 	}
@@ -103,14 +83,13 @@ public class ProductService {
 		} else {
 			int newQuantity = existingBouquet.getQuantity() - quantity;
 
-			if (newQuantity > 0) {
+			if (newQuantity >= 0) {
 				// Update the quantity if it's still positive
 				existingBouquet.setQuantity(newQuantity);
 				productCatalog.save(existingBouquet);
-			} else if (newQuantity == 0) {
-				// FIXME ---------------------------------------------  Store data about
-				// Remove the bouquet completely if the quantity becomes zero
-				//productCatalog.delete(existingBouquet);
+//			} else if (newQuantity == 0) {
+//				// Remove the bouquet completely if the quantity becomes zero
+//				//productCatalog.delete(existingBouquet); 	// <----------- This will cause database errors
 			} else {
 				// Handle the case where there's an attempt to remove more than available
 				throw new IllegalStateException("Insufficient stock to remove the specified quantity of bouquets.");
