@@ -11,6 +11,7 @@
 |0.2	| 18.11 | Oleh | Start of package diagram for sales package
 |0.3	| 18.11 | Andrejs | Vorgaben zum Betrieb der Software
 |0.4	| 19.11 | Oleh | Kontextdiagramm
+|0.5	| 19.11 | Davyd | Erfüllung der Qualitätsziele
 |0.6	| 20.11 | Oleh | Sequenzdiagramm + Paketdiagramm
 |...	| ... | ... | ...
 |===
@@ -153,7 +154,17 @@ Die Datenbank wird über JPA und Hibernate angesprochen, die die Daten in der Da
 * Spring MVC
 
 ==== Persistenz
+Die Anwendung verwendet *Hibernate Annotation Based Mapping*, um Java-Klassen Datenbanktabellen zuzuordnen. Als Datenbank wird *H2* verwendet.
+Die Persistenz ist standardmäßig deaktiviert. Um den Persistenzspeicher zu aktivieren, müssen die folgenden beiden Zeilen in der Datei _application.properties_ auskommentiert werden:
+....
+# spring.datasource.url=jdbc:h2:./db/kickstart
+# spring.jpa.hibernate.ddl-auto=update
+....
+
 ==== Benutzeroberfläche
+image::./models/images/siteMap.png[context diagram c4, 100%, 100%, pdfwidth=100%, title= "Dialog Map of the Videoshop", align=center]
+
+HINWEIS: Die grünen Kästchen zeigen eine HTML-Vorlage an. Die weißen Kästchen innerhalb der Vorlagen stellen Schaltflächen dar, die zu den Vorlagen weiterleiten, auf die ihre ausgehenden Pfeile zeigen._
 
 === Use of external frameworks
 
@@ -249,3 +260,7 @@ image::./models/images/CalendarSequenceDiagram.jpg[Sequence Diagram, 100%, 100%,
 
 [[sequence_diagram_sales]]
 image::./models/images/sequence_diagram_sales_dd_a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm für sales packge", align=center]
+
+=== Finances
+[[sequence_diagram_finances]]
+image::./models/images/finances_diagram.svg[Sequence Diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm der Finanzübersicht", align=center]
