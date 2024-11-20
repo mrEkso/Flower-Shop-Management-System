@@ -51,7 +51,7 @@ public class SalesController {
 	}
 
 	@GetMapping("/sell")
-	public String sell(Model model,
+	public String sellCatalog(Model model,
 					   @RequestParam(required = false) String filterItem,
 					   @RequestParam(required = false) String searchInput,
 					   @ModelAttribute("sellBasket") List<BasketItem> sellBasket) {
@@ -87,7 +87,7 @@ public class SalesController {
 	}
 
 	@GetMapping("/buy")
-	public String buy(Model model,
+	public String buyCatalog(Model model,
 					  @RequestParam(required = false) String filterItem,
 					  @RequestParam(required = false) String searchInput,
 					  @ModelAttribute("buyBasket") List<BasketItem> buyBasket) {
