@@ -202,7 +202,7 @@ image::./models/images/package-diagram-sales-a.svg[class diagram, 100%, 100%, pd
 image::./models/images/CalendarPackageDiagram.jpg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für calendar packge in UML", align=center]
 
 === Inventory
-[[class_diagram_calendar]]
+[[class_diagram_inventory]]
 image::./models/images/InventoryPackage.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für inventory packge in UML", align=center]
 
 [options="header"]
@@ -228,5 +228,9 @@ _Die folgende Tabelle zeigt die Rückverfolgbarkeit zwischen Entwurfs- und Analy
 
 == Laufzeitsicht
 * Darstellung der Komponenteninteraktion anhand eines Sequenzdiagramms, welches die relevantesten Interaktionen darstellt.
+
+=== Inventory Sequence Diagram
+[[Inventory Sequence Diagram]]
+image::./models/images/InventorySequenceDiagram.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für inventory packge in UML", align=center]
 
 
