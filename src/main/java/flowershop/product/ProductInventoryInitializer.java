@@ -9,8 +9,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.salespointframework.core.Currencies.EURO;
 
@@ -20,12 +20,15 @@ public class ProductInventoryInitializer implements DataInitializer {
 
 	private final UniqueInventory<UniqueInventoryItem> inventory;
 	private final ProductCatalog productCatalog;
+	private final ProductService productService;
 
-	public ProductInventoryInitializer(UniqueInventory<UniqueInventoryItem> inventory, ProductCatalog productCatalog) {
+	public ProductInventoryInitializer(UniqueInventory<UniqueInventoryItem> inventory, ProductCatalog productCatalog, ProductService productService) {
 		Assert.notNull(inventory, "Inventory must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
+		Assert.notNull(productService, "ProductService must not be null!");
 		this.inventory = inventory;
 		this.productCatalog = productCatalog;
+		this.productService = productService;
 	}
 
 	@Override
@@ -35,10 +38,10 @@ public class ProductInventoryInitializer implements DataInitializer {
 		}
 
 		// Creating specific flowers with Pricing and color
-		Flower rose = new Flower("Rose", new Pricing(Money.of(10.0, EURO), Money.of(20.0, EURO)), "Red", 10);
+		Flower rose = new Flower("Rose", new Pricing(Money.of(10.0, EURO), Money.of(20.0, EURO)), "Red", 50);
 		Flower sunflower = new Flower("Sunflower", new Pricing(Money.of(2.5, EURO), Money.of(5.0, EURO)), "Yellow", 20);
-		Flower lily = new Flower("Lily", new Pricing(Money.of(9.0, EURO), Money.of(18.0, EURO)), "White", 11);
-		Flower lily2 = new Flower("Lily2", new Pricing(Money.of(10.0, EURO), Money.of(19.0, EURO)), "White", 7);
+		Flower lily = new Flower("Lily", new Pricing(Money.of(9.0, EURO), Money.of(18.0, EURO)), "White", 20);
+		Flower lily2 = new Flower("Lily2", new Pricing(Money.of(10.0, EURO), Money.of(19.0, EURO)), "White", 30);
 		Flower lily3 = new Flower("Lily3", new Pricing(Money.of(11.0, EURO), Money.of(20.0, EURO)), "Purple", 73);
 
 		// Saving flowers to the catalog
@@ -48,15 +51,29 @@ public class ProductInventoryInitializer implements DataInitializer {
 		productCatalog.save(lily2);
 		productCatalog.save(lily3);
 
-		// Creating a bouquet with a list of flowers and additional price
-		List<Flower> bouquetFlowers = Arrays.asList(rose, lily);
+		// Creating a bouquet with a Map of flowers and their quantities
+		Map<Flower, Integer> bouquetFlowersMap1 = new HashMap<>();
+		bouquetFlowersMap1.put(rose, 3);  // 3 roses
+		bouquetFlowersMap1.put(lily, 2);  // 2 lilies
 		Bouquet roseLilyBouquet = new Bouquet(
 			"Rose and Lily Bouquet",
-			bouquetFlowers,
-			Money.of(5.0, EURO) // Additional price for the bouquet
+			bouquetFlowersMap1,   // Pass the Map to the Bouquet constructor
+			Money.of(5.0, EURO),   // Additional price for the bouquet
+			5                      // Quantity of the bouquet
 		);
 
-		// Saving bouquet to the catalog
+		Map<Flower, Integer> bouquetFlowersMap2 = new HashMap<>();
+		bouquetFlowersMap2.put(sunflower, 5);
+		bouquetFlowersMap2.put(rose, 7);
+		Bouquet roseLilyBouquet2 = new Bouquet(
+			"Perfect Spring Bouquet",
+			bouquetFlowersMap2,
+			Money.of(8.0, EURO),
+			2
+		);
+		productService.addBouquet(roseLilyBouquet);
+		productService.addBouquet(roseLilyBouquet2);
+		// Saving bouquets to the catalog
 		productCatalog.save(roseLilyBouquet);
 
 		// Initialize inventory with 10 items of each product
@@ -65,5 +82,6 @@ public class ProductInventoryInitializer implements DataInitializer {
 				inventory.save(new UniqueInventoryItem(flower, Quantity.of(10)));
 			}
 		});
+		productCatalog.save(roseLilyBouquet2);
 	}
 }

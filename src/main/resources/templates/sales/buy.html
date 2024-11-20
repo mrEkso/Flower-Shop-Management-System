@@ -14,8 +14,8 @@
     <h2 th:text="#{buy.header}"></h2>
     <p th:text="#{buy.description}"></p>
     <div class="inputs-div">
-        <form method="get" action="/sell">
-            <input id="search-input" type="text" name="searchInput" th:placeholder="#{sell.search}"
+        <form method="get" action="/buy">
+            <input id="search-input" type="text" name="searchInput" th:placeholder="#{buy.search}"
                    th:value="${searchInput}"/>
             <!-- <div id="filter-div"> -->
             <select id="filter-dd" name="filterItem" th:value="${filterItem}">
@@ -33,13 +33,12 @@
     <table id="flower-table">
         <thead>
         <div class="table-header">
-            <tr></tr>
-            <th th:text="#{buy.table.head.icon}"></th>
-            <th th:text="#{buy.table.head.name}"></th>
-            <th th:text="#{buy.table.head.color}"></th>
-            <th th:text="#{buy.table.head.quantity}"></th>
-            <th th:text="#{buy.table.head.price}"></th>
-            <th></th>
+            <tr>
+                <th th:text="#{buy.table.head.icon}"></th>
+                <th th:text="#{buy.table.head.name}"></th>
+                <th th:text="#{buy.table.head.color}"></th>
+                <th th:text="#{buy.table.head.quantity}"></th>
+                <th th:text="#{buy.table.head.price}"></th>
             </tr>
         </div>
         </thead>
@@ -59,7 +58,7 @@
                 <div class="text-cell price-cell" th:text="${flower.pricing.buyPrice}"></div>
             </td>
             <td>
-                <form method="post" action="/add-to-basket">
+                <form method="post" action="/add-to-buyBasket">
                     <input type="hidden" name="redirectPage" value="buy"/>
                     <input type="hidden" name="productName" th:value="${flower.name}"/>
                     <button type="submit">
@@ -79,7 +78,7 @@
     </div>
     <table class="basket-table">
         <tbody>
-        <tr th:each="selectedBasket : ${basket}">
+        <tr th:each="selectedBasket : ${buyBasket}">
             <td>
                 <div class="basket-card">
                     <div class="basket-card-header">
@@ -87,7 +86,7 @@
                           class="basket-card-name"
                           th:text="${selectedBasket.product.name}"
                   ></span>
-                        <form method="post" action="/remove-from-basket">
+                        <form method="post" action="/remove-from-buyBasket">
                             <input
                                     type="hidden"
                                     name="productName"
@@ -106,6 +105,22 @@
                                 class="basket-card-text"
                                 th:text="${selectedBasket.quantityAsInteger} + 'x' + ${selectedBasket.product.pricing.buyPrice.number*1.0} + ' EUR'"
                         ></p>
+                        <form method="post" action="/decrease-from-buyBasket">
+                            <input
+                                    type="hidden"
+                                    name="productName"
+                                    th:value="${selectedBasket.product.name}"
+                            />
+                            <button class="basket-minus-btn" type="submit">-</button>
+                        </form>
+                        <form method="post" action="/increase-from-buyBasket">
+                            <input
+                                    type="hidden"
+                                    name="productName"
+                                    th:value="${selectedBasket.product.name}"
+                            />
+                            <button class="basket-minus-btn" type="submit">+</button>
+                        </form>
                     </div>
                     <div class="basket-card-footer">
                   <span
@@ -117,8 +132,8 @@
         </tr>
         </tbody>
     </table>
-    <div class="basket-footer" th:unless="${basket.isEmpty()}">
-        <form th:action="@{/buy-from-basket}" method="post">
+    <div class="basket-footer" th:unless="${buyBasket.isEmpty()}">
+        <form th:action="@{/buy-from-buyBasket}" method="post">
             <input
                     class="basket-submit-btn"
                     type="submit"

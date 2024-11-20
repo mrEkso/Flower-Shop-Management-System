@@ -31,12 +31,17 @@
 |===
 
 === Softwarearchitektur
-* Beschreibung der Architektur anhand der Top-Level-Architektur oder eines Client-Server-Diagramms
+image::./models/images/ClientServerDiagram.jpg[Client-Server-Modell der Anwendung]
+HTML-Templates werden auf dem Server gerendert von Controllers und im Client angezeigt, dabei werden sie mit CSS gestylt.
+Thymeleaf übernimmt das Rendering und fügt dynamisch die Daten ein, die von den serverseitigen Controllern bereitgestellt werden.
+Diese Controller – wie Sales, Inventory, Services, Finances und Calendar – rufen Daten über Modellklassen ab und verwalten sie.
+Die Daten werden über Repository-Klassen gespeichert, die im Diagramm als *„Salespoint / Repositories“* gekennzeichnet sind.
+Die Datenbank wird über JPA und Hibernate angesprochen, die die Daten in der Datenbank speichern und abrufen.
 
 === Entwurfsentscheidungen
 * Verwendete Muster
 * Persistenz
-* Benutzeroberfläche
+* Benutizeroberfläche
 * Verwendung externer Frameworks
 
 [options="header", cols="1,2,3"]

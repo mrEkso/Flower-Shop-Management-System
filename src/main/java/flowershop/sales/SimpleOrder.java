@@ -4,6 +4,7 @@ import flowershop.services.AbstractOrder;
 import jakarta.persistence.Entity;
 import org.salespointframework.useraccount.UserAccount;
 
+
 /**
  * Represents a basic order created when a client makes a direct purchase in the shop.
  * This type of order is used for straightforward transactions where no special delivery
