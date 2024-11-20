@@ -227,6 +227,7 @@ _Die folgende Tabelle zeigt die Rückverfolgbarkeit zwischen Entwurfs- und Analy
 |===
 
 == Laufzeitsicht
-* Darstellung der Komponenteninteraktion anhand eines Sequenzdiagramms, welches die relevantesten Interaktionen darstellt.
 
+[[sequence_diagram_calendar]]
+image::./models/images/CalendarSequenceDiagram.jpg[Sequence Diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm", align=center]
 
