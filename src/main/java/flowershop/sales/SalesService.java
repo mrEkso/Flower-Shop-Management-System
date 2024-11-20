@@ -68,7 +68,7 @@ public class SalesService {
 
 			if (product instanceof Flower) {
 				productService.addFlowers((Flower) product, basketItem.getQuantityAsInteger());
-				wholesalerOrder.addOrderLine(product, basketItem.getQuantity()); // FIXME: use buy and not sell price (somehow)
+				wholesalerOrder.addOrderLine(product, basketItem.getQuantity());
 			} else if (product instanceof Bouquet) {
 				throw new IllegalArgumentException("Unsupported product type: Bouquet cannot be bought from Wholesaler.");
 			} else {
