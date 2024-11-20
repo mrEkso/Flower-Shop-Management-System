@@ -263,4 +263,4 @@ image::./models/images/sequence_diagram_sales_dd_a.svg[class diagram, 100%, 100%
 
 === Finances
 [[sequence_diagram_finances]]
-image::./models/images/finances_sequence.svg[Sequence Diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm der Finanzübersicht", align=center]
+image::./models/images/finances_diagram.svg[Sequence Diagram, 100%, 100%, pdfwidth=100%, title= "Sequenzdiagramm der Finanzübersicht", align=center]
