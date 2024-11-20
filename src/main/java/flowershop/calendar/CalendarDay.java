@@ -8,6 +8,7 @@ public class CalendarDay {
 
 	private LocalDate date;
 	private List<Event> events;
+	private boolean belongsToCurrentMonth;
 
 	public CalendarDay(LocalDate date) {
 		this.date = date;
@@ -24,5 +25,12 @@ public class CalendarDay {
 
 	public List<Event> getEvents() {
 		return events;
+	}
+
+	public boolean getState() {
+		return belongsToCurrentMonth;
+	}
+	public void setState(boolean belongsToCurrentMonth) {
+		this.belongsToCurrentMonth = belongsToCurrentMonth;
 	}
 }

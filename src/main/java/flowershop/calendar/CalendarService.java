@@ -28,21 +28,27 @@ public class CalendarService {
 		return eventRepository.findAllByDateBetween(startDate, endDate);
 	}
 	public List<CalendarDay> generateCalendarDays(LocalDate firstDayOfMonth, List<Event> events) {
+
 		List<CalendarDay> calendarDays = new ArrayList<>();
 
-		LocalDate startOfGrid = firstDayOfMonth.withDayOfMonth(1).with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
+		LocalDate startOfGrid = firstDayOfMonth.withDayOfMonth(1)
+			.with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SUNDAY));
 
-		for (int i = 0; i < 31; i++) {
-			LocalDate currentDay = startOfGrid.plusDays(i);
+		LocalDate endOfGrid = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth())
+			.with(java.time.temporal.TemporalAdjusters.nextOrSame(java.time.DayOfWeek.SATURDAY));
+
+		LocalDate currentDay = startOfGrid;
+
+		while (!currentDay.isAfter(endOfGrid)) {
 			CalendarDay calendarDay = new CalendarDay(currentDay);
-
 			for (Event event : events) {
 				if (event.getDate().toLocalDate().equals(currentDay)) {
 					calendarDay.addEvent(event);
 				}
 			}
-
+			calendarDay.setState(currentDay.getMonth() == firstDayOfMonth.getMonth());
 			calendarDays.add(calendarDay);
+			currentDay = currentDay.plusDays(1);
 		}
 
 		return calendarDays;

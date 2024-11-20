@@ -17,14 +17,15 @@
     <div class="container-fluid d-flex flex-column justify-content-center">
 
 
+    <div class="d-flex flex-row align-content-center justify-content-left font-weight-bold">
 
-            <h1 class="text-center">Calendar - <span th:text="${currentYear}"></span> - <span th:text="${currentMonth}"></span></h1>
-            <div class="text-center calendar-nav">
                 <a th:href="@{/calendar/previous(month=${currentMonth}, year=${currentYear})}">&lt; Previous</a>
+                <div class="me-3">Calendar - <span th:text="${currentYear}"></span> - <span th:text="${currentMonth}"></span></div>
                 <a th:href="@{/calendar/next(month=${currentMonth}, year=${currentYear})}">Next &gt;</a>
-            </div>
 
-            <div class="calendar row w-100">
+    </div>
+
+        <div class="calendar row w-100">
                 <div class="calendar-header">
                     <div>Sun</div>
                     <div>Mon</div>
@@ -35,10 +36,10 @@
                     <div>Sat</div>
                 </div>
                 <div class="calendar-grid">
-                    <div th:each="day : ${calendarDays}" class="day" th:class="${day.date}">
-                        <div th:text="${day.date.dayOfMonth}"></div>
+                    <div th:each="day:${calendarDays}" class="day"
+                    th:classappend="${day.getState()} ? 'current-month' : 'other-month'">
+                        <div class="date" th:text="${day.getDate().dayOfMonth}"></div>
                         <div th:each="event : ${day.events}" class="event">
-
                             <div class="font-weight-bold" th:text="${event.name}"></div>
                             <div class="font-italic" th:text="${event.description}"></div>
                             <form th:action="@{/calendar/delete}" method="post" class="d-inline">
