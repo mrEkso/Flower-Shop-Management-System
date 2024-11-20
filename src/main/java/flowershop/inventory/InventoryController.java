@@ -22,19 +22,18 @@ public class InventoryController {
 
 	// private final InventoryInitializer inventoryInitializer;
 	private final List<Product> products;
-	private final List<Flower> flowersList;
-	private final List<Bouquet> bouquetsList;
+	// private final List<Flower> flowersList;
+	// private final List<Bouquet> bouquetsList;
 	private final ProductService productService;
 	private final List<Product> bouquets = new ArrayList<>();
 	private final List<DeletedProduct> deletedProducts = new ArrayList<>();
 	private final List<Product> selectedFlowersForBouquet = new ArrayList<>(); // Store selected flowers for the bouquet
 
 	public InventoryController(ProductService productService) {
-		this.inventoryInitializer = inventoryInitializer;
 		this.productService = productService;
-		// this.products = productService.getAllProducts();
-		this.flowersList = productService.getAllFlowers();
-		this.bouquetsList = productService.getAllBouquets();
+		this.products = productService.getAllProducts();
+		// this.flowersList = productService.findAllFlowers();
+		// this.bouquetsList = productService.findAllBouquets();
 	}
 
 	private Optional<Product> findProductByName(String name) {
