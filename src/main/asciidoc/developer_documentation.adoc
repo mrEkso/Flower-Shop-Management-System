@@ -158,6 +158,10 @@ image::./models/images/package-diagram-sales-a.svg[class diagram, 100%, 100%, pd
 [[class_diagram_calendar]]
 image::./models/images/CalendarPackageDiagram.jpg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für calendar packge in UML", align=center]
 
+=== Inventory
+[[class_diagram_calendar]]
+image::./models/images/InventoryPackage.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für inventory packge in UML", align=center]
+
 [options="header"]
 |=== 
 |Klasse/Enumeration |Description
