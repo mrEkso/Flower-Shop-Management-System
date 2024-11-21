@@ -64,6 +64,7 @@ public class ProductCatalogInitializer implements DataInitializer {
 			Money.of(8.0, EURO),
 			2
 		);
+
 		productService.addBouquet(roseLilyBouquet);
 		productService.addBouquet(roseLilyBouquet2);
 		// Saving bouquets to the catalog

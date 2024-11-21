@@ -14,12 +14,12 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
             rel="stylesheet"
     />
-
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link th:href="@{/resources/css/sell.css}" rel="stylesheet"/>
     <link th:href="@{/resources/css/navbar.css}" rel="stylesheet"/>
     <link th:href="@{/resources/css/basket.css}" rel="stylesheet"/>
+    <link th:href="@{/resources/css/product-table.css}" rel="stylesheet"/>
     <title th:text="#{sell.title}"></title>
 </head>
 <body>
@@ -44,74 +44,9 @@
             <button type="submit"><img th:src="@{/resources/img/filter.png}"/></button>
         </form>
     </div>
-    <table id="flower-table">
-        <thead>
-        <div class="table-header">
-            <tr></tr>
-            <th th:text="#{sell.table.head.icon}"></th>
-            <th th:text="#{sell.table.head.name}"></th>
-            <th th:text="#{sell.table.head.color}"></th>
-            <th th:text="#{sell.table.head.quantity}"></th>
-            <th th:text="#{sell.table.head.price}"></th>
-            <th></th>
-            </tr>
-        </div>
-        </thead>
-        <tbody>
-        <tr th:each="flower : ${flowers}">
-            <td><img th:src="@{/resources/img/rose.png}"/></td>
-            <td>
-                <div class="text-cell name-cell" th:text="${flower.name}"></div>
-            </td>
-            <td>
-                <div class="text-cell type-cell" th:text="${flower.color}"></div>
-            </td>
-            <td>
-                <div class="text-cell quantity-cell" th:text="${flower.quantity}"></div>
-            </td>
-            <td>
-                <div class="text-cell price-cell" th:text="${flower.pricing.sellPrice}"></div>
-            </td>
-            <td>
-                <form method="post" action="/add-to-sellBasket">
-                    <input type="hidden" name="redirectPage" value="sell"/>
-                    <input type="hidden" name="productId" th:value="${flower.id}"/>
-                    <button type="submit" th:disabled="${flower.quantity == 0}">
-                        <img th:src="@{/resources/img/shopping-basket.png}"/>
-                    </button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <table id="bouquet-table">
-        <tbody>
-        <tr th:each="bouquet : ${bouquets}">
-            <td><img th:src="@{/resources/img/rose.png}"/></td>
-            <td>
-                <div class="text-cell name-cell" th:text="${bouquet.name}"></div>
-            </td>
-            <td>
-                <div class="text-cell type-cell" th:text="Bouquet"></div>
-            </td>
-            <td>
-                <div class="text-cell quantity-cell" th:text="${bouquet.quantity}"></div>
-            </td>
-            <td>
-                <div class="text-cell price-cell" th:text="${bouquet.price}"></div>
-            </td>
-            <td>
-                <form method="post" action="/add-to-sellBasket">
-                    <input type="hidden" name="redirectPage" value="sell"/>
-                    <input type="hidden" name="productId" th:value="${bouquet.id}"/>
-                    <button type="submit" th:disabled="${bouquet.quantity == 0}">
-                        <img th:src="@{/resources/img/shopping-basket.png}"/>
-                    </button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div
+            th:replace="~{product-table.html :: productTableFragment(products=${products}, type='sell')}">
+    </div>
 </div>
 
 <div class="basket">
@@ -162,7 +97,13 @@
                                         name="productId"
                                         th:value="${selectedBasket.product.id}"
                                 />
-                                <button class="basket-minus-btn" type="submit" th:disabled="${selectedBasket.product.quantity - selectedBasket.quantityAsInteger == 0}">+</button>
+                                <button class="basket-minus-btn" type="submit"
+                                        th:disabled="${(selectedBasket.product instanceof T(flowershop.product.Flower) ? selectedBasket.product.quantity :
+                                                    (selectedBasket.product instanceof T(flowershop.product.Bouquet) ? selectedBasket.product.quantity : 0))
+                                                    - selectedBasket.quantityAsInteger == 0}">
+                                    +
+                                </button>
+
                             </form>
                         </div>
                         <div class="basket-card-footer">
