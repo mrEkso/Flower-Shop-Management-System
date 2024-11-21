@@ -1,0 +1,113 @@
+/* General table styles for the product table */
+
+
+#product-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-style: normal;
+}
+
+
+#product-table td,
+#product-table th {
+    border: none;
+}
+
+#product-table thead th {
+    text-align: left;
+    padding: 10px;
+    background-color: #eeeeee;
+    color: #333;
+    /*border-bottom: 1px solid #000;*/
+}
+
+#product-table tbody td {
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+#product-table td:first-child {
+    width: 5%;
+    text-align: center;
+}
+
+#product-table td img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+#product-table td:nth-child(2),
+#product-table td:nth-child(3),
+#product-table td:nth-child(4),
+#product-table td:nth-child(5),
+#product-table td:nth-child(6) {
+    text-align: left;
+    padding-left: 10px;
+    width: 150px;
+    max-width: 150px;
+    overflow: hidden;
+    border-bottom: 1px solid #ddd;
+}
+
+#product-table td:nth-child(1) {
+    text-align: left;
+    padding-left: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+#product-table td:last-child {
+    width: 5%;
+    text-align: center;
+}
+
+/* Cell Styles */
+.text-cell {
+    display: inline-block;
+    padding: 5px 10px;
+    font-weight: normal;
+    border-radius: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.type-cell {
+    background-color: #f0f4c3;
+    color: #7cb342;
+}
+
+.quantity-cell {
+    background-color: #e8f5e9;
+    color: #4caf50;
+}
+
+.price-cell {
+    background-color: #e3f2fd;
+    color: #2196f3;
+}
+
+.inputs-div {
+    width: 610px;
+    justify-content: space-around;
+    display: flex;
+    align-items: center;
+}
+
+/* Filter Styles */
+#filter-div {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+#filter-dd {
+    margin-right: 8px;
+}
+
+#filter-div img {
+    width: 15px;
+    height: 15px;
+}

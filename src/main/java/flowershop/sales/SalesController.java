@@ -73,12 +73,15 @@ public class SalesController {
 			bouquets = productService.findBouquetsByName(searchInput);
 		}
 
+		List<Product> products = new ArrayList<>();
+		products.addAll(flowers);
+		products.addAll(bouquets);
 		Set<String> colors = productService.getAllFlowerColors();
 
 		model.addAttribute("typeList", colors);
 		model.addAttribute("filterItem", filterItem);
 		model.addAttribute("searchInput", searchInput);
-
+		model.addAttribute("products", products);
 		model.addAttribute("flowers", flowers);
 		model.addAttribute("bouquets", bouquets);
 		model.addAttribute("sellBasket", sellBasket);
@@ -140,7 +143,7 @@ public class SalesController {
 
 		//model.addAttribute("sellBasket", sellBasket);
 
-		return "redirect:/" + redirectPage; // Reload the page
+		return "redirect:/sell";
 	}
 
 	@PostMapping("/remove-from-sellBasket")
