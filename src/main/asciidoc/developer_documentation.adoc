@@ -14,6 +14,7 @@
 |0.5	| 19.11 | Davyd | Erfüllung der Qualitätsziele
 |0.6	| 20.11 | Oleh | Sequenzdiagramm + Paketdiagramm
 |0.7	| 20.11 | Davyd | ServiceSequenzdiagramm
+|1.0	| 20.11 | Alle | Release
 |===
 
 
@@ -240,27 +241,27 @@ image::./models/images/services_package.jpg[class diagram, 100%, 100%, pdfwidth=
 |WholesalerOrderRepository | Klasse, die die Daten einer Bestellung zum Kauf neuer Blumen beim Großhändler speichert
 |WholsalerOrderService | Klasse, die die gesamte Back-End-Logik für eine WholesalerOrder darstellt
 |BasketItem | Klasse, die für einen Artikel im Korb verantwortlich ist
-|SalesController | Eine Klasse, die die Benutzeroberfläche über Dienste mit der Geschäftslogik verbindet und die angezeigten Daten von Sales Paket verwaltet.
+|SalesController | Eine Klasse, die die Benutzeroberfläche über Dienste mit der Geschäftslogik verbindet und die angezeigten Daten von Sales Paket verwaltet
 |BasketService | Klasse, die die gesamte Back-End-Logik für eine Basket darstellt
 |SalesService | Klasse, die die gesamte Back-End-Logik für ein Sales Paket darstellt
-|Event | ...
-|CalendarDay | ...
+|Event | Klasse, die die Details kapselt und ein echtes Veranstaltung abstrahiert
+|CalendarDay | Klasse, die zusammen mit der Event-Klasse eine Aufzeichnung der Ereignisse eines bestimmten Datums enthält
 |CalendarService | Klasse, die die gesamte Back-End-Logik für Calendar Paket darstellt
-|CalendarController | Eine Klasse, die die Benutzeroberfläche über Dienste mit der Geschäftslogik verbindet und die angezeigten Daten von Calendar Paket verwaltet.
+|CalendarController | Eine Klasse, die die Benutzeroberfläche über Dienste mit der Geschäftslogik verbindet und die angezeigten Daten von Calendar Paket verwaltet
 |EventRepository | Klasse, die auf die Daten von Event zugreift
-|InventoryController |Kommuniziert mit dem Frontend und geb bescheid welche Modal soll gesehen werden, und welche produkte.
+|InventoryController |Kommuniziert mit dem Frontend und geb bescheid welche Modal soll gesehen werden, und welche produkte
 |ProductToDelete | Die Daten aller gelöschten Produkte
-|FinancialReport | ...
-|DailyFinancialReport | ...
-|MonthlyFinancialReport | ...
-|CashRegister | ...
+|FinancialReport | Klasse, die für den Finanzbericht verantwortlich ist
+|DailyFinancialReport | Klasse, die für den täglichen Finanzbericht verantwortlich ist
+|MonthlyFinancialReport | Klasse, die für den monatlichen Finanzbericht verantwortlich ist
+|CashRegister | Klasse, die für alle Operationen mit Geld zuständig ist
 |CashRegisterRepository | Klasse, die auf die Daten von CashRegister zugreift
 |CashRegisterInitializer | Klasse, die eine Instanz von CashRegister erstellen
 |CashRegisterService | Klasse, die die gesamte Back-End-Logik für eine CashRegister darstellt
-|IntervalComparator | ...
-|AcountancyEntryWrapper | ...
-|Category | ...
-|FinancesController | Eine Klasse, die die Benutzeroberfläche über Dienste mit der Geschäftslogik verbindet und die angezeigten Daten von Finances Paket verwaltet.
+|IntervalComparator | Klasse, die Intervalle vergleicht
+|AcountancyEntryWrapper | Eine Klasse, die die Grundfunktionalität von AccountancyEntry um Kategorien, Zeitstempel und eine detaillierte Ansicht der Artikel und Mengen für verschiedene Auftragsarten erweitert
+|Category | Enumeration, die für den Auftragstyp verantwortlich ist
+|FinancesController | Eine Klasse, die die Benutzeroberfläche über Dienste mit der Geschäftslogik verbindet und die angezeigten Daten von Finances Paket verwaltet
 |===
 
 === Rückverfolgbarkeit zwischen Analyse- und Entwurfsmodell
