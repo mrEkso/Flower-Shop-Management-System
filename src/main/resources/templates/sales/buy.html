@@ -1,42 +1,46 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link th:href="@{/resources/css/buy.css}" rel="stylesheet"/>
     <link th:href="@{/resources/css/navbar.css}" rel="stylesheet"/>
+    <link th:href="@{/resources/css/buy.css}" rel="stylesheet"/>
     <link th:href="@{/resources/css/basket.css}" rel="stylesheet"/>
     <link th:href="@{/resources/css/product-table.css}" rel="stylesheet"/>
     <title th:text="#{buy.title}"></title>
 </head>
 <body>
-<div>
-    <div th:replace="~{navbar}"></div>
-    <div class="content">
-        <h2 th:text="#{buy.header}"></h2>
-        <p th:text="#{buy.description}"></p>
-        <div class="inputs-div">
-            <form method="get" action="/buy">
-                <input id="search-input" type="text" name="searchInput" th:placeholder="#{buy.search}"
-                       th:value="${searchInput}"/>
-                <!-- <div id="filter-div"> -->
-                <select id="filter-dd" name="filterItem" th:value="${filterItem}">
-                    <option value="">All</option>
-                    <option th:each="type : ${typeList}"
-                            th:value="${type}"
-                            th:text="${type}"
-                            th:selected="${type == filterItem}">
-                    </option>
-                </select>
-                <!-- </div> -->
-                <button type="submit"><img th:src="@{/resources/img/filter.png}"/></button>
-            </form>
+<div class="container-fluid vh-100">
+    <div class="row">
+        <div class="col" th:replace="~{navbar}"></div>
+        <div class="col d-flex flex-column vh-100">
+            <div class="row">
+                <h2 th:text="#{buy.header}"></h2>
+                <p th:text="#{buy.description}"></p>
+            </div>
+            <div class="row inputs-div">
+                <form method="get" action="/buy">
+                    <input id="search-input" type="text" name="searchInput" th:placeholder="#{buy.search}"
+                           th:value="${searchInput}"/>
+                    <!-- <div id="filter-div"> -->
+                    <select id="filter-dd" name="filterItem" th:value="${filterItem}">
+                        <option value="">All</option>
+                        <option th:each="type : ${typeList}"
+                                th:value="${type}"
+                                th:text="${type}"
+                                th:selected="${type == filterItem}">
+                        </option>
+                    </select>
+                    <!-- </div> -->
+                    <button type="submit"><img th:src="@{/resources/img/filter.png}"/></button>
+                </form>
+            </div>
+            <div
+                    th:replace="~{product-table.html :: productTableFragment(products=${flowers}, type='buy')}">
+            </div>
         </div>
-        <div
-                th:replace="~{product-table.html :: productTableFragment(products=${flowers}, type='buy')}">
-        </div>
-    </div>
-    <div class="basket">
+    <div class="basket col-2 vh-100">
         <h2 class="basket-head">Modify order</h2>
         <div class="basket-head">
             <img class="basket-img" th:src="@{/resources/img/shopping-basket.png}"/>
@@ -107,6 +111,8 @@
             </form>
         </div>
     </div>
+    </div>
+
 </div>
 </body>
 </html>
