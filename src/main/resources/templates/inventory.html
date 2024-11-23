@@ -63,12 +63,11 @@
                 <button type="button">Choose</button>
               </a>
 
-              <a
-                th:if="${!createBouquetMode}"
-                th:href="@{/inventory/delete(productID=${product['id']})}"
-              >
-                <button type="button">Delete</button>
-              </a>
+                <a th:if="${!createBouquetMode}"
+                   th:href="@{/inventory/delete(productName=${product['name']})}">
+                    <button type="button">Delete</button>
+                </a>
+
             </td>
           </tr>
           <tr th:if="${#lists.isEmpty(products)}">
@@ -86,72 +85,58 @@
       </form>
     </div>
 
-    <a
-      th:href="${createBouquetMode ? '/inventory' : '/inventory/create-bouquet'}"
-      class="create-bouquet-btn"
-      th:classappend="${createBouquetMode ? 'bouquet-mode' : 'inventory-mode'}"
-    >
-      <span
-        th:text="${createBouquetMode ? 'Exit Bouquet Mode' : 'Create Bouquet'}"
-      ></span>
+    <a th:href="${createBouquetMode ? '/inventory' : '/inventory/create-bouquet'}"
+       class="create-bouquet-btn"
+       th:classappend="${createBouquetMode ? 'bouquet-mode' : 'inventory-mode'}">
+        <span th:text="${createBouquetMode ? 'Exit Bouquet Mode' : 'Create Bouquet'}"></span>
     </a>
 
+
     <div th:if="${showModal}" class="modal">
-      <div class="modal-content">
-        <h2 th:text="'Delete Product: ' + ${selectedProduct.name}"></h2>
-        <form action="/delete-product" method="post">
-          <label for="deleteQuantity">Quantity to delete:</label>
-          <input
-            type="number"
-            id="deleteQuantity"
-            name="deleteQuantity"
-            min="1"
-            required
-          />
-          <input
-            type="hidden"
-            th:value="${selectedProduct.name}"
-            name="productName"
-          />
-          <button type="submit">Confirm Delete</button>
-        </form>
-        <button th:href="@{/inventory}">Cancel</button>
-      </div>
-      1
+        <div class="modal-content">
+            <h2 th:text="'Delete Product: ' + ${selectedProduct['name']}"></h2>
+            <form action="/delete-product" method="post">
+                <label for="deleteQuantity">Quantity to delete:</label>
+                <input type="number" id="deleteQuantity" name="deleteQuantity" min="1" required />
+                <input type="hidden" th:value="${selectedProduct['name']}" name="productName" />
+                <button type="submit">Confirm Delete</button>
+            </form>
+            <button type="button" onclick="window.location.href='/inventory'">Cancel</button>
+        </div>
     </div>
 
+
     <div th:if="${showDeletedModal}" class="modal">
-      <div class="modal-content">
-        <h2>Deleted Products</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Price per Unit</th>
-              <th>Quantity Deleted</th>
-              <th>Total Loss</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="deletedProduct : ${deletedProducts}">
-              <td th:text="${deletedProduct['name']}"></td>
-              <td th:text="${deletedProduct['pricePerUnit']}"></td>
-              <td th:text="${deletedProduct['quantityDeleted']}"></td>
-              <td th:text="${deletedProduct['totalLoss']}"></td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="3" style="text-align: right; font-weight: bold">
-                Total Loss:
-              </td>
-              <td th:text="${totalLossSum}"></td>
-            </tr>
-          </tfoot>
-        </table>
-        <button th:href="@{/inventory}">Close</button>
-      </div>
+        <div class="modal-content">
+            <h2>Deleted Products</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Price per Unit</th>
+                    <th>Quantity Deleted</th>
+                    <th>Total Loss</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="deletedProduct : ${deletedProducts}">
+                    <td th:text="${deletedProduct.name}"></td>
+                    <td th:text="${deletedProduct.pricePerUnit}"></td>
+                    <td th:text="${deletedProduct.quantityDeleted}"></td>
+                    <td th:text="${deletedProduct.totalLoss}"></td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="3" style="text-align: right; font-weight: bold">Total Loss:</td>
+                    <td th:text="${totalLossSum}"></td>
+                </tr>
+                </tfoot>
+            </table>
+            <button type="button" onclick="window.location.href='/inventory'">Close</button>
+        </div>
     </div>
+
 
     <div th:if="${showChooseModal}" class="modal">
       <div class="modal-content">
