@@ -118,8 +118,10 @@ public class InventoryController {
 	// Helper method to compute the price per unit
 	private double computePricePerUnit(Product product) {
 		if (product instanceof Bouquet) {
-			return 100;
+			// System.out.println( );
+			return ((Bouquet)product).getPrice().getNumber().doubleValue();
 		}
+		
 		return product.getPrice().getNumber().doubleValue();
 	}
 
@@ -173,7 +175,7 @@ public class InventoryController {
 			Product product = productOpt.get();
 
 			if (product instanceof Flower selectedFlower) {
-
+				
 				if (selectedFlower.getQuantity() >= chooseQuantity) {
 					selectedFlower.setQuantity(selectedFlower.getQuantity() - chooseQuantity);
 					selectedFlowersForBouquet.add(selectedFlower);
