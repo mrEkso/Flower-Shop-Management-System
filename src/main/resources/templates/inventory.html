@@ -48,24 +48,24 @@
         <tbody>
           <tr
             th:each="product : ${products}"
-            th:if="${!createBouquetMode  || product.type != 'Bouquet'}"
+            th:if="${!createBouquetMode  || product['type'] != 'Bouquet'}"
           >
-            <td th:text="'🌸'"></td>
-            <td th:text="${product.name}"></td>
-            <td th:text="AAAAAAAAAAAAAA"></td>
-            <td th:text="${product.quantity}"></td>
-            <td th:text="product.pricePerUnit"></td>
+              <td th:text="${product['type'] == 'Flower' ? '🌸' : '💐'}"></td>
+              <td th:text="${product['name']}"></td>
+              <td th:text="${product['type']}"></td>
+              <td th:text="${product['quantity']}"></td>
+              <td th:text="${product['pricePerUnit']}"></td>
             <td>
               <a
                 th:if="${createBouquetMode}"
-                th:href="@{/inventory/choose-flower(flowerID=${product.id})}"
+                th:href="@{/inventory/choose-flower(flowerID=${product['id']})}"
               >
                 <button type="button">Choose</button>
               </a>
 
               <a
                 th:if="${!createBouquetMode}"
-                th:href="@{/inventory/delete(productID=${product.id})}"
+                th:href="@{/inventory/delete(productID=${product['id']})}"
               >
                 <button type="button">Delete</button>
               </a>
@@ -182,7 +182,7 @@
       <h3>Selected Flowers for Bouquet:</h3>
       <ul>
         <li th:each="flower : ${selectedFlowersForBouquet}">
-          <span th:text="${flower.quantity} +' of ' +${flower.name}"></span>
+          <span th:text="${flower['qunatity']} +' of ' +${flower['name']}"></span>
         </li>
       </ul>
 
@@ -192,6 +192,5 @@
         <button type="submit">Create Bouquet</button>
       </form>
     </div>
-    "
   </body>
 </html>
