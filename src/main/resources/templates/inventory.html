@@ -63,10 +63,10 @@
                 <button type="button">Choose</button>
               </a>
 
-                <a th:if="${!createBouquetMode}"
-                   th:href="@{/inventory/delete(productName=${product['name']})}">
+                <a th:if="${!createBouquetMode}" th:href="@{/inventory/delete(productID=${product['id']})}">
                     <button type="button">Delete</button>
                 </a>
+
 
             </td>
           </tr>

@@ -19,11 +19,12 @@ import java.util.stream.Collectors;
 @Controller
 public class InventoryController {
 
-	private final List<DeletedProduct> deletedProducts = new ArrayList<>();
+	private List<DeletedProduct> deletedProducts = new ArrayList<>();
 	private final List<Flower> selectedFlowersForBouquet = new ArrayList<>();
 
 	private final ProductService productService;
 	private List<Product> products;
+	private Bouquet createBouquet;
 
 	// Initialize products using the service
 	public InventoryController(ProductService productService) {
@@ -117,22 +118,22 @@ public class InventoryController {
 	// Helper method to compute the price per unit
 	private double computePricePerUnit(Product product) {
 		if (product instanceof Bouquet) {
-			Bouquet bouquet = (Bouquet) product;
-			return 5;
+			return 100;
 		}
 		return product.getPrice().getNumber().doubleValue();
 	}
 
 	@GetMapping("/inventory/create-bouquet")
 	public String createBouquetMode(Model model) {
-		List<Flower> flowersOnly = products.stream()
-			.filter(product -> product instanceof Flower)
-			.map(product -> (Flower) product)
+		List<Map<String, Object>> flowersOnly = productService.getAllProducts().stream()
+			.filter(product -> product instanceof Flower) // Filter only Flower products
+			.map(this::enrichProductData) // Enrich only Flower products
 			.collect(Collectors.toList());
+
 
 		model.addAttribute("products", flowersOnly);
 		model.addAttribute("createBouquetMode", true);
-		model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
+		//model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
 		model.addAttribute("showModal", false);
 		model.addAttribute("showDeletedModal", false);
 		model.addAttribute("showChooseModal", false);
@@ -140,20 +141,25 @@ public class InventoryController {
 	}
 
 
-
 	@GetMapping("/inventory/choose-flower")
 	public String showChooseModal(@RequestParam UUID flowerID, Model model) {
-		Optional<Product> selectedFlower = productService.getProductById(flowerID);
+		Optional<Product> selectedFlowerOpt = productService.getProductById(flowerID);
 
-		selectedFlower.ifPresent(flower -> {
-			model.addAttribute("selectedFlower", flower);
-			model.addAttribute("showChooseModal", true);
+		selectedFlowerOpt.ifPresent(product -> {
+			if (product instanceof Flower) {
+				model.addAttribute("selectedFlower", (Flower) product);
+				model.addAttribute("showChooseModal", true);
+			} else {
+				model.addAttribute("error", "Selected product is not a flower.");
+			}
 		});
 
 		model.addAttribute("createBouquetMode", true);
-		model.addAttribute("products", productService.getAllProducts());
+		//model.addAttribute("products", productService.getAllProducts());
+
 		return "inventory";
 	}
+
 
 
 	@PostMapping("/inventory/add-flower")
@@ -161,13 +167,12 @@ public class InventoryController {
 									 @RequestParam int chooseQuantity,
 									 Model model) {
 
-		Optional<Product> productOpt = productService.getProductById(flowerID); // Adjust method to return Product
+		Optional<Product> productOpt = productService.getProductById(flowerID);
 
 		if (productOpt.isPresent()) {
 			Product product = productOpt.get();
 
-			if (product instanceof Flower) { // Ensure it is a Flower
-				Flower selectedFlower = (Flower) product;
+			if (product instanceof Flower selectedFlower) {
 
 				if (selectedFlower.getQuantity() >= chooseQuantity) {
 					selectedFlower.setQuantity(selectedFlower.getQuantity() - chooseQuantity);
@@ -184,7 +189,7 @@ public class InventoryController {
 		}
 
 		model.addAttribute("createBouquetMode", true);
-		model.addAttribute("products", productService.getAllProducts());
+		//model.addAttribute("products", productService.getAllProducts());
 		model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
 		return "inventory";
 	}
@@ -226,9 +231,10 @@ public class InventoryController {
 
 	@GetMapping("/inventory/deleted-products")
 	public String showDeletedProducts(Model model) {
-		double totalLossSum = deletedProducts.stream()
-			.mapToDouble(DeletedProduct::getTotalLoss)
-			.sum();
+		double totalLossSum = 0.0;
+		for (DeletedProduct deletedProduct : deletedProducts) {
+			totalLossSum += deletedProduct.getTotalLoss();
+		}
 
 		model.addAttribute("deletedProducts", deletedProducts);
 		model.addAttribute("totalLossSum", totalLossSum);
@@ -243,16 +249,23 @@ public class InventoryController {
 
 
 	@GetMapping("/inventory/delete")
-	public String showDeleteModal(@RequestParam String productName, Model model) {
-		Optional<Product> selectedProduct = findProductByName(productName);
+	public String showDeleteModal(@RequestParam("productID") UUID productID, Model model) {
+		Optional<Product> selectedProductOpt = productService.getProductById(productID);
 
-		selectedProduct.ifPresent(product -> model.addAttribute("selectedProduct", product));
+		if (selectedProductOpt.isPresent()) {
+			model.addAttribute("selectedProduct", selectedProductOpt.get());
+		} else {
+			model.addAttribute("error", "Product not found.");
+		}
 
 		model.addAttribute("showModal", true);
 		model.addAttribute("createBouquetMode", false);
-		model.addAttribute("products", products);
+		//model.addAttribute("products", products);
+
 		return "inventory";
 	}
+
+
 
 
 
@@ -269,37 +282,35 @@ public class InventoryController {
 
 	@PostMapping("/delete-product")
 	public String deleteProduct(@RequestParam String productName, @RequestParam int deleteQuantity, Model model) {
-		Optional<Product> selectedProductOpt = findProductByName(productName);
-
-		if (selectedProductOpt.isPresent()) {
-			Product product = selectedProductOpt.get();
-
-			if (getQuantity(product) >= deleteQuantity) {
-				updateStock(productName, -deleteQuantity);
-				if (product instanceof Flower) {
-					DeletedProduct deletedProduct = new DeletedProduct(
-						product.getName(),
-						((Flower) product).getPricing().getSellPrice().getNumber().doubleValue(),
-						deleteQuantity,
-						((Flower) product).getPricing().getSellPrice().multiply(deleteQuantity).getNumber().doubleValue()
-					);
-					deletedProducts.add(deletedProduct);
+			List<Flower> flowers = productService.findAllFlowers();
+			List<Bouquet> bouquets = productService.findAllBouquets();
+			for (Flower flower : flowers) {
+				if (flower.getName().equals(productName)) {
+					productService.removeFlowers(flower, deleteQuantity);
 				}
-				if (product instanceof Bouquet) {
-					DeletedProduct deletedProduct = new DeletedProduct(
-						product.getName(),
-						((Bouquet) product).getPricing().getSellPrice().getNumber().doubleValue(),
-						deleteQuantity,
-						((Bouquet) product).getPricing().getSellPrice().multiply(deleteQuantity).getNumber().doubleValue()
-					);
-					deletedProducts.add(deletedProduct);
-				}
-			} else {
-				model.addAttribute("error", "Not enough stock available to delete.");
+				DeletedProduct deletedProduct = new DeletedProduct(
+					flower.getName(),
+					flower.getPrice().getNumber().doubleValue(),
+					deleteQuantity,
+					flower.getPrice().getNumber().doubleValue() * deleteQuantity
+				);
+				deletedProducts.add(deletedProduct);
+
 			}
-		} else {
-			model.addAttribute("error", "Product not found.");
-		}
+			for (Bouquet bouquet : bouquets) {
+				if (bouquet.getName().equals(productName)) {
+					productService.removeBouquet(bouquet, deleteQuantity);
+				}
+				DeletedProduct deletedProduct = new DeletedProduct(
+					bouquet.getName(),
+					bouquet.getPrice().getNumber().doubleValue(),
+					deleteQuantity,
+					bouquet.getPrice().getNumber().doubleValue() * deleteQuantity
+				);
+				deletedProducts.add(deletedProduct);
+
+			}
+
 		return "redirect:/inventory";
 	}
 }
