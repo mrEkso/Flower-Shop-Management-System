@@ -115,9 +115,8 @@
           />
           <button type="submit">Confirm Delete</button>
         </form>
-        <button type="button" onclick="window.location.href='/inventory'">
-          Cancel
-        </button>
+          <button type="button" th:href="@{/inventory}">cancel</button>
+
       </div>
     </div>
 
@@ -150,9 +149,7 @@
             </tr>
           </tfoot>
         </table>
-        <button type="button" onclick="window.location.href='/inventory'">
-          Close
-        </button>
+          <button type="button" th:href="@{/inventory}">Close</button>
       </div>
     </div>
 

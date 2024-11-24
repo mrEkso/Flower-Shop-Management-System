@@ -25,7 +25,6 @@ public class InventoryController {
 	private final ProductService productService;
 	private List<Product> products;
 
-	// Initialize products using the service
 	public InventoryController(ProductService productService) {
 		this.productService = productService;
 	}
@@ -62,7 +61,6 @@ public class InventoryController {
 				.collect(Collectors.toList());
 		}
 
-		// Add computed fields to the products
 		List<Map<String, Object>> enrichedProducts = filteredProducts.stream()
 			.map(this::enrichProductData)
 			.collect(Collectors.toList());
@@ -74,7 +72,6 @@ public class InventoryController {
 		return "inventory";
 	}
 
-	// Helper method to enrich product data
 	private Map<String, Object> enrichProductData(Product product) {
 		Map<String, Object> data = new HashMap<>();
 		data.put("name", product.getName());
@@ -85,7 +82,6 @@ public class InventoryController {
 		return data;
 	}
 
-	// Helper method to determine the type of the product
 	private String determineType(Product product) {
 		if (product instanceof Flower) {
 			return "Flower";
@@ -95,7 +91,6 @@ public class InventoryController {
 		return "Unknown";
 	}
 
-	// Helper method to compute the price per unit
 	private double computePricePerUnit(Product product) {
 		if (product instanceof Bouquet) {
 			// System.out.println( );
@@ -191,7 +186,6 @@ public class InventoryController {
 	@PostMapping("/create-custom-bouquet")
 	public String createCustomBouquet(@RequestParam String bouquetName, Model model) {
 		if (!selectedFlowersForBouquet.isEmpty() && bouquetName != null && !bouquetName.isEmpty()) {
-			// Ensure the selected items are Flowers and retrieve their quantities
 			Map<Flower, Integer> flowerMap = selectedFlowersForBouquet.stream()
 				.filter(Objects::nonNull) // Ensure only Flower objects are processed
 				.collect(Collectors.toMap(
@@ -289,29 +283,33 @@ public class InventoryController {
 			List<Bouquet> bouquets = productService.findAllBouquets();
 			for (Flower flower : flowers) {
 				if (flower.getName().equals(productName)) {
-					productService.removeFlowers(flower, deleteQuantity);
-					DeletedProduct deletedProduct = new DeletedProduct(
-						flower.getName(),
-						flower.getPrice().getNumber().doubleValue(),
-						deleteQuantity,
-						flower.getPrice().getNumber().doubleValue() * deleteQuantity
-					);
-					deletedProducts.add(deletedProduct);
-					return "redirect:/inventory";
+					if (flower.getQuantity() >= deleteQuantity) {
+						productService.removeFlowers(flower, deleteQuantity);
+						DeletedProduct deletedProduct = new DeletedProduct(
+							flower.getName(),
+							flower.getPrice().getNumber().doubleValue(),
+							deleteQuantity,
+							flower.getPrice().getNumber().doubleValue() * deleteQuantity
+						);
+						deletedProducts.add(deletedProduct);
+						return "redirect:/inventory";
+					}
 				}
 
 			}
 			for (Bouquet bouquet : bouquets) {
 				if (bouquet.getName().equals(productName)) {
-					productService.removeBouquet(bouquet, deleteQuantity);
-					DeletedProduct deletedProduct = new DeletedProduct(
-						bouquet.getName(),
-						bouquet.getPrice().getNumber().doubleValue(),
-						deleteQuantity,
-						bouquet.getPrice().getNumber().doubleValue() * deleteQuantity
-					);
-					deletedProducts.add(deletedProduct);
-					return "redirect:/inventory";
+					if (bouquet.getQuantity() >= deleteQuantity) {
+						productService.removeBouquet(bouquet, deleteQuantity);
+						DeletedProduct deletedProduct = new DeletedProduct(
+							bouquet.getName(),
+							bouquet.getPrice().getNumber().doubleValue(),
+							deleteQuantity,
+							bouquet.getPrice().getNumber().doubleValue() * deleteQuantity
+						);
+						deletedProducts.add(deletedProduct);
+						return "redirect:/inventory";
+					}
 				}
 			}
 
