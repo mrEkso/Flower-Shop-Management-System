@@ -47,7 +47,7 @@
                 <form method="post"
                       th:action="@{${type == 'sell' ? '/add-to-sellBasket' : '/add-to-buyBasket'}}">
                     <input type="hidden" name="productId" th:value="${product.id}"/>
-                    <button type="submit">
+                    <button type="submit" class="basket-btn">
                         <img th:src="@{/resources/img/shopping-basket.png}"/>
                     </button>
                 </form>
