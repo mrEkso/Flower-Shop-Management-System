@@ -99,22 +99,19 @@
                 </div>
 
                 <!-- Products Section -->
-                <div class="mb-3">
-                    <input type="hidden" id="product-index" name="index" value="0">
-                    <label class="form-label" th:text="#{order.selectProducts}">Select Products</label>
-                    <div id="product-container" data-index="0">
-                    </div>
-                    <button
-                            hx-get="/services/add-product-row"
-                            hx-target="#product-container"
-                            hx-swap="beforeend"
-                            hx-include="#product-index"
-                            hx-on="htmx:afterRequest: document.getElementById('product-index').value = parseInt(document.getElementById('product-index').value) + 1;"
-                            type="button"
-                            class="btn btn-outline-primary mt-2">
-                        Add Product
-                    </button>
-                </div>
+                <!--<div class="mb-3">
+                    <form th:action="@{/services/add-product-row}" method="post">
+                        <input type="hidden" id="product-index" name="index" th:value="${index}">
+                        <label class="form-label" th:text="#{order.selectProducts}">Select Products</label>
+                        <div id="product-container">
+                            <div th:each="i : ${#numbers.sequence(0, index - 1)}">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary mt-2">
+                            Add Product
+                        </button>
+                    </form>
+                </div>-->
 
                 <!-- Notes -->
                 <div class="mb-3">

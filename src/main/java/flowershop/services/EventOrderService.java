@@ -56,7 +56,11 @@ public class EventOrderService {
 	}
 
 	public EventOrder update(EventOrder order, Map<String, String> products, String orderStatus, String cancelReason) {
-		if (!order.getOrderStatus().equals(OrderStatus.PAID)) {
+		if (order.getOrderStatus().equals(OrderStatus.OPEN)) {
+			if (OrderStatus.CANCELED.name().equals(orderStatus)) {
+				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
+				return eventOrderRepository.save(order);
+			}
 			Map<UUID, Integer> incoming = extractProducts(products);
 			order.getOrderLines().toList().forEach(line -> {
 				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) order.remove(line);
@@ -66,11 +70,10 @@ public class EventOrderService {
 					order.getOrderLines(product).toList().forEach(order::remove);
 					order.addOrderLine(product, Quantity.of(quantity));
 				}));
+			if (OrderStatus.PAID.name().equals(orderStatus)) orderManagement.payOrder(order);
 		}
-		if (OrderStatus.PAID.name().equals(orderStatus)) orderManagement.payOrder(order);
-		else if (OrderStatus.COMPLETED.name().equals(orderStatus)) orderManagement.completeOrder(order);
-		else if (OrderStatus.CANCELED.name().equals(orderStatus))
-			orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
+		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
+			OrderStatus.COMPLETED.name().equals(orderStatus)) orderManagement.completeOrder(order);
 		return eventOrderRepository.save(order);
 	}
 
