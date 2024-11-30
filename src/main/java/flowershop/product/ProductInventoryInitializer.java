@@ -93,5 +93,13 @@ public class ProductInventoryInitializer implements DataInitializer {
 		productCatalog.save(roseLilyBouquet);
 		productCatalog.save(roseLilyBouquet2);
 
+		// Initialize inventory with 10 items of each product
+		productCatalog.findAll().forEach(flower -> {
+			if (inventory.findByProduct(flower).isEmpty()) {
+				inventory.save(new UniqueInventoryItem(flower, Quantity.of(10)));
+			}
+		});
+
+		System.out.println("-----------------------------------------");
 	}
 }

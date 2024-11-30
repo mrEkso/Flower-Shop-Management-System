@@ -56,7 +56,14 @@ public class ReservationOrderService {
 	}
 
 	public ReservationOrder update(ReservationOrder order, Map<String, String> products, String orderStatus, String cancelReason, String reservationStatus) {
-		if (!order.getOrderStatus().equals(OrderStatus.PAID)) {
+		if (order.getOrderStatus().equals(OrderStatus.OPEN)) {
+			if (OrderStatus.COMPLETED.name().equals(orderStatus)) {
+				throw new IllegalArgumentException("Order is not paid yet!");
+			}
+			if (OrderStatus.CANCELED.name().equals(orderStatus)) {
+				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
+				return reservationOrderRepository.save(order);
+			}
 			Map<UUID, Integer> incoming = extractProducts(products);
 			order.getOrderLines().toList().forEach(line -> {
 				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) order.remove(line);
@@ -66,11 +73,10 @@ public class ReservationOrderService {
 					order.getOrderLines(product).toList().forEach(order::remove);
 					order.addOrderLine(product, Quantity.of(quantity));
 				}));
+			if (OrderStatus.PAID.name().equals(orderStatus)) orderManagement.payOrder(order);
 		}
-		if (OrderStatus.PAID.name().equals(orderStatus)) orderManagement.payOrder(order);
-		else if (OrderStatus.COMPLETED.name().equals(orderStatus)) orderManagement.completeOrder(order);
-		else if (OrderStatus.CANCELED.name().equals(orderStatus))
-			orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
+		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
+			OrderStatus.COMPLETED.name().equals(orderStatus)) orderManagement.completeOrder(order);
 		if (reservationStatus != null && !reservationStatus.isBlank())
 			order.setReservationStatus(ReservationStatus.valueOf(reservationStatus));
 		return reservationOrderRepository.save(order);
@@ -79,6 +85,7 @@ public class ReservationOrderService {
 	public void delete(ReservationOrder order) {
 		reservationOrderRepository.delete(order);
 	}
+
 	private Map<UUID, Integer> extractProducts(Map<String, String> products) {
 		Map<UUID, Integer> productQuantities = new HashMap<>();
 		products.forEach((key, value) -> {

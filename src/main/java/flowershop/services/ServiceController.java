@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -145,7 +146,7 @@ public class ServiceController {
 										   Model model) {
 		model.addAttribute("contractOrder", contractOrderService.getById(id).get());
 		model.addAttribute("products", productService.getAllProducts());
-		return "edit/contractOrderEditForm";
+		return "services/edit/contractOrderEditForm";
 	}
 
 	@PutMapping("/contracts/edit/{id}")
@@ -163,24 +164,30 @@ public class ServiceController {
 									@RequestParam("paymentMethod") String paymentMethod,
 									@RequestParam("orderStatus") String orderStatus,
 									@RequestParam(value = "cancelReason", required = false) String cancelReason,
-									@RequestParam("notes") String notes) {
-		ContractOrder contractOrder = contractOrderService.getById(id)
-			.orElseThrow(() -> new IllegalArgumentException("Contract order not found"));
-		contractOrder.setClient(getOrCreateClient(clientName, phone));
-		contractOrder.setContractType(contractType);
-		contractOrder.setStartDate(startDate);
-		contractOrder.setEndDate(endDate);
-		contractOrder.setAddress(address);
-		contractOrder.setNotes(notes);
-		contractOrder.setPaymentMethod(paymentMethod);
-		if ("recurring".equals(frequency)) {
-			contractOrder.setFrequency(frequency);
-		} else if ("custom".equals(frequency)) {
-			contractOrder.setCustomFrequency(customFrequency);
-			contractOrder.setCustomUnit(customUnit);
+									@RequestParam("notes") String notes,
+									RedirectAttributes redirectAttributes) {
+		try {
+			ContractOrder contractOrder = contractOrderService.getById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Contract order not found"));
+			contractOrder.setClient(getOrCreateClient(clientName, phone));
+			contractOrder.setContractType(contractType);
+			contractOrder.setStartDate(startDate);
+			contractOrder.setEndDate(endDate);
+			contractOrder.setAddress(address);
+			contractOrder.setNotes(notes);
+			contractOrder.setPaymentMethod(paymentMethod);
+			if ("recurring".equals(frequency)) {
+				contractOrder.setFrequency(frequency);
+			} else if ("custom".equals(frequency)) {
+				contractOrder.setCustomFrequency(customFrequency);
+				contractOrder.setCustomUnit(customUnit);
+			}
+			contractOrderService.update(contractOrder, products, orderStatus, cancelReason);
+			return "redirect:/services";
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+			return "redirect:/services/reservations/edit/" + id;
 		}
-		contractOrderService.update(contractOrder, products, orderStatus, cancelReason);
-		return "redirect:/services";
 	}
 
 	@GetMapping("/events/edit/{id}")
@@ -188,7 +195,7 @@ public class ServiceController {
 										Model model) {
 		model.addAttribute("eventOrder", eventOrderService.getById(id).get());
 		model.addAttribute("products", productService.getAllProducts());
-		return "edit/eventOrderEditForm";
+		return "services/edit/eventOrderEditForm";
 	}
 
 	@PutMapping("/events/edit/{id}")
@@ -201,16 +208,22 @@ public class ServiceController {
 								 @RequestParam("paymentMethod") String paymentMethod,
 								 @RequestParam("orderStatus") String orderStatus,
 								 @RequestParam(value = "cancelReason", required = false) String cancelReason,
-								 @RequestParam("notes") String notes) {
-		EventOrder eventOrder = eventOrderService.getById(id)
-			.orElseThrow(() -> new IllegalArgumentException("Event order not found"));
-		eventOrder.setClient(getOrCreateClient(clientName, phone));
-		eventOrder.setEventDate(eventDate);
-		eventOrder.setDeliveryAddress(deliveryAddress);
-		eventOrder.setNotes(notes);
-		eventOrder.setPaymentMethod(paymentMethod);
-		eventOrderService.update(eventOrder, products, orderStatus, cancelReason);
-		return "redirect:/services";
+								 @RequestParam("notes") String notes,
+								 RedirectAttributes redirectAttributes) {
+		try {
+			EventOrder eventOrder = eventOrderService.getById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Event order not found"));
+			eventOrder.setClient(getOrCreateClient(clientName, phone));
+			eventOrder.setEventDate(eventDate);
+			eventOrder.setDeliveryAddress(deliveryAddress);
+			eventOrder.setNotes(notes);
+			eventOrder.setPaymentMethod(paymentMethod);
+			eventOrderService.update(eventOrder, products, orderStatus, cancelReason);
+			return "redirect:/services";
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+			return "redirect:/services/reservations/edit/" + id;
+		}
 	}
 
 	@GetMapping("/reservations/edit/{id}")
@@ -218,7 +231,7 @@ public class ServiceController {
 											  Model model) {
 		model.addAttribute("reservationOrder", reservationOrderService.getById(id).get());
 		model.addAttribute("products", productService.getAllProducts());
-		return "edit/reservationOrderEditForm";
+		return "services/edit/reservationOrderEditForm";
 	}
 
 	@PutMapping("/reservations/edit/{id}")
@@ -231,15 +244,21 @@ public class ServiceController {
 									   @RequestParam("orderStatus") String orderStatus,
 									   @RequestParam(value = "cancelReason", required = false) String cancelReason,
 									   @RequestParam("reservationStatus") String reservationStatus,
-									   @RequestParam("notes") String notes) {
-		ReservationOrder reservationOrder = reservationOrderService.getById(id)
-			.orElseThrow(() -> new IllegalArgumentException("Reservation order not found"));
-		reservationOrder.setClient(getOrCreateClient(clientName, phone));
-		reservationOrder.setReservationDateTime(reservationDateTime);
-		reservationOrder.setNotes(notes);
-		reservationOrder.setPaymentMethod(paymentMethod);
-		reservationOrderService.update(reservationOrder, products, orderStatus, cancelReason, reservationStatus);
-		return "redirect:/services";
+									   @RequestParam("notes") String notes,
+									   RedirectAttributes redirectAttributes) {
+		try {
+			ReservationOrder reservationOrder = reservationOrderService.getById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Reservation order not found"));
+			reservationOrder.setClient(getOrCreateClient(clientName, phone));
+			reservationOrder.setReservationDateTime(reservationDateTime);
+			reservationOrder.setNotes(notes);
+			reservationOrder.setPaymentMethod(paymentMethod);
+			reservationOrderService.update(reservationOrder, products, orderStatus, cancelReason, reservationStatus);
+			return "redirect:/services";
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+			return "redirect:/services/reservations/edit/" + id;
+		}
 	}
 
 	private Client getOrCreateClient(String name, String phone) {

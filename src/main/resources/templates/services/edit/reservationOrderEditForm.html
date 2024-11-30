@@ -3,94 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{services.contract.edit}">Edit Contract Form</title>
+    <title th:text="#{services.reservation.edit}">Edit Reservation Form</title>
     <!-- Bootstrap CSS CDN -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container mt-2">
     <div class="text-center mb-4">
-        <h1 th:text="#{services.contract.edit}">Edit Contract Form</h1>
+        <h1 th:text="#{services.reservation.edit}">Edit Reservation Form</h1>
     </div>
     <div class="container mt-5">
-        <form th:action="@{/services/contracts/edit/{id}(id=${contractOrder.id})}" method="post"
+        <form th:action="@{/services/reservations/edit/{id}(id=${reservationOrder.id})}" method="post"
               class="p-4 border rounded shadow-sm">
             <input type="hidden" name="_method" value="PUT">
 
             <!-- Company Name -->
             <div class="mb-3">
                 <label for="clientName" class="form-label" th:text="#{client.name}">Client Name</label>
-                <input type="text" class="form-control" th:value="${contractOrder.client.name}" id="clientName"
+                <input type="text" class="form-control" th:value="${reservationOrder.client.name}" id="clientName"
                        name="clientName" required>
             </div>
 
-            <!-- Frequency -->
-            <!-- Step 1: Choose between One-Time or Recurring -->
+            <!-- Service Date and Time -->
             <div class="mb-3">
-                <label for="contractType" class="form-label" th:text="#{contract.type}">Contract Type</label>
-                <select th:value="${contractOrder.contractType}" id="contractType" class="form-control"
-                        name="contractType"
-                        required>
-                    <option value="One-Time" th:text="#{contract.type.oneTime}">One-Time</option>
-                    <option value="Recurring" th:text="#{contract.type.recurring}">Recurring</option>
-                </select>
-            </div>
-            <!-- Step 2: Frequency options -->
-            <div id="frequencyOptions" class="form-group d-none">
-                <label for="frequency">Frequency</label>
-                <select th:value="${contractOrder.frequency}" id="frequency" name="frequency" class="form-control">
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="custom">Custom</option>
-                </select>
-            </div>
-            <!-- Step 3: Custom options -->
-            <div id="customOptions" class="form-group d-none">
-                <label id="customFrequency">Customize Frequency</label>
-                <input th:value="${contractOrder.customFrequency}" type="number" class="form-control"
-                       name="customFrequency" placeholder="Every X days/weeks/etc.">
-                <select th:value="${contractOrder.customUnit}" name="customUnit" class="form-control">
-                    <option value="day">Day</option>
-                    <option value="week">Week</option>
-                    <option value="month">Month</option>
-                    <option value="year">Year</option>
-                </select>
-            </div>
-            <!-- Contract start and end date -->
-            <div class="mb-3">
-                <label for="startDate" class="form-label" th:text="#{contract.startDate}">Start Date</label>
-                <input type="date" class="form-control" th:value="${contractOrder.startDate}" id="startDate"
-                       name="startDate" required>
-            </div>
-            <div class="mb-3">
-                <label for="endDate" class="form-label" th:text="#{contract.endDate}">End Date</label>
-                <input type="date" class="form-control" th:value="${contractOrder.endDate}" id="endDate" name="endDate"
-                       required>
-            </div>
-
-            <!-- Address -->
-            <div class="mb-3">
-                <label for="address" class="form-label" th:text="#{contract.deliveryAddress}">Delivery
-                    Address</label>
-                <input type="text" class="form-control" th:value="${contractOrder.address}" id="address" name="address"
-                       placeholder="Street, House number, PLC, City" required>
+                <label for="reservationDateTime" class="form-label" th:text="#{reservation.dateTime}">Reservation
+                    Date and Time</label>
+                <input type="datetime-local" class="form-control" th:value="${reservationOrder.reservationDateTime}"
+                       id="reservationDateTime" name="reservationDateTime" required>
             </div>
 
             <!-- Contact Phone -->
             <div class="mb-3">
                 <label for="phone" class="form-label" th:text="#{contract.phone}">Phone</label>
-                <input type="tel" class="form-control" th:value="${contractOrder.client.phone}" id="phone" name="phone"
-                       placeholder="+1 xxx xxx xxx" required>
+                <input type="tel" class="form-control" th:value="${reservationOrder.client.phone}" id="phone"
+                       name="phone" placeholder="+1 xxx xxx xxx" required>
             </div>
 
             <!-- Products Section -->
             <div class="mb-3">
-                <input type="hidden" id="product-index" name="index" value=0>
+                <input type="hidden" id="product-index" name="index" value="0">
                 <label class="form-label" th:text="#{order.selectProducts}">Select Products</label>
-                <div id="product-container" data-index=0>
-                    <div th:each="orderLine : ${contractOrder.orderLines}" th:id="product-row-+${orderLine.getId()}"
-                         class="input-group mb-2">
+                <div id="product-container" data-index="0">
+                    <div th:each="orderLine : ${reservationOrder.orderLines}" class="input-group mb-2">
                         <select th:name="'products[' + ${orderLine.productIdentifier} + ']'" class="form-select"
                                 required>
                             <option th:each="product : ${products}"
@@ -129,13 +83,13 @@
             <!-- Payment Method -->
             <div class="mb-3">
                 <label for="paymentMethod" class="form-label" th:text="#{order.paymentMethod}">Payment Method</label>
-                <select th:value="${contractOrder.paymentMethod}" id="paymentMethod" class="form-control"
+                <select th:value="${reservationOrder.paymentMethod}" id="paymentMethod" class="form-control"
                         name="paymentMethod"
                         required>
-                    <option value="Cash" th:selected="${contractOrder.paymentMethod.toString() == 'Cash()'}"
+                    <option value="Cash" th:selected="${reservationOrder.paymentMethod.toString() == 'Cash()'}"
                             th:text="#{order.payment.cash}">Cash
                     </option>
-                    <option value="Card" th:selected="${contractOrder.paymentMethod.toString() == 'Card()'}"
+                    <option value="Card" th:selected="${reservationOrder.paymentMethod.toString() == 'Card()'}"
                             th:text="#{order.payment.card}">Card
                     </option>
                 </select>
@@ -146,41 +100,73 @@
                 <label class="form-label" th:text="#{order.status}">Order Status</label>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="orderStatus" id="statusOpen" value="OPEN"
-                           th:checked="${contractOrder.orderStatus.name() == 'OPEN'}">
+                           th:checked="${reservationOrder.orderStatus.name() == 'OPEN'}">
                     <label class="form-check-label" for="statusOpen" th:text="#{order.status.open}">Open</label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="orderStatus" id="statusPaid" value="PAID"
-                           th:checked="${contractOrder.orderStatus.name() == 'PAID'}">
+                           th:checked="${reservationOrder.orderStatus.name() == 'PAID'}">
                     <label class="form-check-label" for="statusPaid" th:text="#{order.status.paid}">Paid</label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="orderStatus" id="statusCompleted"
                            value="COMPLETED"
-                           th:checked="${contractOrder.orderStatus.name() == 'COMPLETED'}">
+                           th:checked="${reservationOrder.orderStatus.name() == 'COMPLETED'}">
                     <label class="form-check-label" for="statusCompleted"
                            th:text="#{order.status.completed}">Completed</label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="orderStatus" id="statusCanceled" value="CANCELED"
-                           th:checked="${contractOrder.orderStatus.name() == 'CANCELED'}">
+                           th:checked="${reservationOrder.orderStatus.name() == 'CANCELED'}">
                     <label class="form-check-label" for="statusCanceled"
                            th:text="#{order.status.canceled}">Canceled</label>
                 </div>
             </div>
 
             <!-- Cancel Reason (Optional) -->
-            <div class="mb-3" th:if="${contractOrder.orderStatus.name() == 'CANCELED'}">
+            <div class="mb-3" th:if="${reservationOrder.orderStatus.name() == 'CANCELED'}">
                 <label for="cancelReason" class="form-label" th:text="#{order.cancelReason}">Cancel Reason</label>
-                <input type="text" class="form-control" th:value="${contractOrder.cancelReason}" id="cancelReason"
+                <input type="text" class="form-control" th:value="${reservationOrder.cancelReason}" id="cancelReason"
                        name="cancelReason">
+            </div>
+
+            <!-- Reservation Status -->
+            <div class="mb-3">
+                <label class="form-label" th:text="#{reservationOrder.reservationStatus}">Reservation Status</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="reservationStatus" id="statusInProcess"
+                           value="IN_PROCESS"
+                           th:checked="${reservationOrder.reservationStatus.name() == 'IN_PROCESS'}">
+                    <label class="form-check-label" for="statusInProcess" th:text="#{order.status.inProcess}">In
+                        Process</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="reservationStatus" id="statusReadyForPickup"
+                           value="READY_FOR_PICKUP"
+                           th:checked="${reservationOrder.reservationStatus.name() == 'READY_FOR_PICKUP'}">
+                    <label class="form-check-label" for="statusReadyForPickup" th:text="#{order.status.readyForPickup}">Ready
+                        for
+                        Pick-up</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="reservationStatus" id="statusPickedUp"
+                           value="PICKED_UP"
+                           th:checked="${reservationOrder.reservationStatus.name() == 'PICKED_UP'}">
+                    <label class="form-check-label" for="statusPickedUp"
+                           th:text="#{order.status.pickedUp}">Picked-Up</label>
+                </div>
             </div>
 
             <!-- Notes -->
             <div class="mb-3">
-                <label for="notes" class="form-label" th:text="#{contract.notes}">Notes</label>
-                <textarea class="form-control" th:value="${contractOrder.notes}" id="notes" name="notes" rows="3"
+                <label for="notes" class="form-label" th:text="#{reservation.notes}">Notes</label>
+                <textarea class="form-control" th:value="${reservationOrder.notes}" id="notes" name="notes" rows="3"
                           placeholder="Enter any additional notes here"></textarea>
+            </div>
+
+            <!-- Error Message -->
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <span th:text="${error}"></span>
             </div>
 
             <!-- Submit Button -->
@@ -190,11 +176,10 @@
             </div>
         </form>
     </div>
-</div>
-<!-- Bootstrap JS and dependencies -->
-<script src="https://unpkg.com/htmx.org"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
