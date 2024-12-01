@@ -9,9 +9,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+
 import org.salespointframework.catalog.Product;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,8 +24,10 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import static java.util.stream.Collectors.toList;
 
+import java.math.BigDecimal;
 
-@SessionAttributes({"buyBasket", "sellBasket"})
+
+@SessionAttributes({"buyBasket", "sellBasket", "fullSellPrice", "fullBuyPrice"})
 @Controller
 public class SalesController {
 
@@ -132,9 +138,7 @@ public class SalesController {
 	) {
 
 		basketService.addToBasket(buyBasket, productId);
-
-		//model.addAttribute("buyBasket", buyBasket);
-
+		model.addAttribute("fullBuyPrice", calculateFullBasketPrice(buyBasket));
 		return "redirect:/buy";
 	}
 
@@ -146,29 +150,31 @@ public class SalesController {
 		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
 	) {
 		basketService.addToBasket(sellBasket, productId);
-
-		//model.addAttribute("sellBasket", sellBasket);
-
+		model.addAttribute("fullSellPrice", calculateFullBasketPrice(sellBasket));
 		return "redirect:/sell";
 	}
 
 	@PostMapping("/remove-from-sellBasket")
 	public String removeFromSellBasket(
+		Model model,
 		@RequestParam UUID productId, // Use UUID instead of product name
 		@ModelAttribute("sellBasket") List<BasketItem> sellBasket,
 		HttpServletRequest request
 	) {
 		basketService.removeFromBasket(sellBasket, productId);
+		model.addAttribute("fullSellPrice", calculateFullBasketPrice(sellBasket));
 		return "redirect:/sell";
 	}
 
 	@PostMapping("/remove-from-buyBasket")
 	public String removeFromBuyBasket(
+		Model model,
 		@RequestParam UUID productId, // Use UUID instead of product name
 		@ModelAttribute("buyBasket") List<BasketItem> buyBasket,
 		HttpServletRequest request
 	) {
 		basketService.removeFromBasket(buyBasket, productId);
+		model.addAttribute("fullBuyPrice", calculateFullBasketPrice(buyBasket));
 		return "redirect:/buy";
 	}
 
@@ -213,38 +219,63 @@ public class SalesController {
 
 	@PostMapping("/increase-from-sellBasket")
 	public String increaseFromSellBasket(
+		Model model,
 		@RequestParam UUID productId,
 		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
 	) {
 		basketService.increaseQuantity(sellBasket, productId);
+		model.addAttribute("fullSellPrice", calculateFullBasketPrice(sellBasket));
 		return "redirect:/sell";
 	}
 
 	@PostMapping("/decrease-from-sellBasket")
 	public String decreaseFromSellBasket(
+		Model model,
 		@RequestParam UUID productId,
 		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
 	) {
 		basketService.decreaseQuantity(sellBasket, productId);
+		model.addAttribute("fullSellPrice", calculateFullBasketPrice(sellBasket));
 		return "redirect:/sell";
 	}
 
 	@PostMapping("/increase-from-buyBasket")
 	public String increaseFromBuyBasket(
+		Model model,
 		@RequestParam UUID productId,
 		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
 	) {
 		basketService.increaseQuantity(buyBasket, productId);
+		model.addAttribute("fullBuyPrice", calculateFullBasketPrice(buyBasket));
 		return "redirect:/buy";
 	}
 
 	@PostMapping("/decrease-from-buyBasket")
 	public String decreaseFromBuyBasket(
+		Model model,
 		@RequestParam UUID productId,
 		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
 	) {
 		basketService.decreaseQuantity(buyBasket, productId);
+		model.addAttribute("fullBuyPrice", calculateFullBasketPrice(buyBasket));
 		return "redirect:/buy";
+	}
+
+	public double calculateFullBasketPrice(List<BasketItem> basket) {
+
+		double fp = basket.stream()
+		.mapToDouble(bi -> {
+			if (bi.getProduct() instanceof Flower flower) {
+				return flower.getPricing().getSellPrice().getNumber().doubleValue() * 1.0 * bi.getQuantityAsInteger() * 1.0;
+			} else if (bi.getProduct() instanceof Bouquet bouquet) {
+				return bouquet.getPrice().getNumber().doubleValue() * 1.0 * bi.getQuantityAsInteger() * 1.0;
+			} else {
+				return 0;
+			}
+		}).sum();
+		System.out.println(fp);
+
+		return fp;
 	}
 }
  
