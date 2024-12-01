@@ -3,6 +3,10 @@ package flowershop.sales;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.quantity.Quantity;
 
+
+/**
+ * Represents an item in a basket, which includes a product and its associated quantity.
+ */
 public class BasketItem {
     private Product product;
     private int quantity;

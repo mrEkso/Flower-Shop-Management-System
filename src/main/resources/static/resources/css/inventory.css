@@ -3,7 +3,10 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f9f9f9;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
+
 .vertical-nav {
     position: fixed;
     top: 0;
@@ -48,6 +51,8 @@ body {
     padding: 20px;
     width: calc(100% - 150px);
     background-color: #f0f0f0;
+    max-height: 100vh;
+    overflow-y: auto;
 }
 
 .inventory-title {
@@ -147,6 +152,8 @@ th {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     border-radius: 5px;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .modal2 {
@@ -158,4 +165,6 @@ th {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     border-radius: 5px;
+    max-height: 90vh;
+    overflow-y: auto;
 }
