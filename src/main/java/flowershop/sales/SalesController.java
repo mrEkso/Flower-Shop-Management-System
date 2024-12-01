@@ -18,6 +18,8 @@ import org.springframework.ui.Model;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import static java.util.stream.Collectors.toList;
+
 
 @SessionAttributes({"buyBasket", "sellBasket"})
 @Controller
@@ -73,17 +75,21 @@ public class SalesController {
 			bouquets = productService.findBouquetsByName(searchInput);
 		}
 
+		// Filter products with quantity > 0
+		flowers = productService.filterFlowersInStock(flowers);
+		bouquets = productService.filterBouquetsInStock(bouquets);
+
+		// Add both flowers and bouquets together.
 		List<Product> products = new ArrayList<>();
 		products.addAll(flowers);
 		products.addAll(bouquets);
+
 		Set<String> colors = productService.getAllFlowerColors();
 
 		model.addAttribute("typeList", colors);
 		model.addAttribute("filterItem", filterItem);
 		model.addAttribute("searchInput", searchInput);
 		model.addAttribute("products", products);
-		model.addAttribute("flowers", flowers);
-		model.addAttribute("bouquets", bouquets);
 		model.addAttribute("sellBasket", sellBasket);
 
 		return "sales/sell";

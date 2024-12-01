@@ -41,15 +41,30 @@ public class ProductInventoryInitializer implements DataInitializer {
 		Flower rose = new Flower("Rose", new Pricing(Money.of(10.0, EURO), Money.of(20.0, EURO)), "Red", 50);
 		Flower sunflower = new Flower("Sunflower", new Pricing(Money.of(2.5, EURO), Money.of(5.0, EURO)), "Yellow", 20);
 		Flower lily = new Flower("Lily", new Pricing(Money.of(9.0, EURO), Money.of(18.0, EURO)), "White", 20);
-		Flower lily2 = new Flower("Lily2", new Pricing(Money.of(10.0, EURO), Money.of(19.0, EURO)), "White", 30);
-		Flower lily3 = new Flower("Lily3", new Pricing(Money.of(11.0, EURO), Money.of(20.0, EURO)), "Purple", 73);
+		Flower bluebell = new Flower("Bluebell", new Pricing(Money.of(5.0, EURO), Money.of(10.0, EURO)), "Blue", 1);
+		Flower hibiscus = new Flower("Hibiscus", new Pricing(Money.of(7.0, EURO), Money.of(14.0, EURO)), "Crimson", 15);
+		Flower lavender = new Flower("Lavender", new Pricing(Money.of(6.0, EURO), Money.of(12.0, EURO)), "Purple", 20);
 
-		// Saving flowers to the catalog
+		// All of those should be out of stock:
+		Flower camellia = new Flower("Camellia", new Pricing(Money.of(8.0, EURO), Money.of(16.0, EURO)), "Pink", 0);
+		Flower jasmine = new Flower("Jasmine", new Pricing(Money.of(3.0, EURO), Money.of(6.0, EURO)), "White", 0);
+		Flower peony = new Flower("Peony", new Pricing(Money.of(12.0, EURO), Money.of(24.0, EURO)), "Red", 0);
+		Flower dahlia = new Flower("Dahlia", new Pricing(Money.of(10.0, EURO), Money.of(20.0, EURO)), "Burgundy", 0);
+		Flower gladiolus = new Flower("Gladiolus", new Pricing(Money.of(6.5, EURO), Money.of(13.0, EURO)), "Orange", 0);
+
+
 		productCatalog.save(rose);
 		productCatalog.save(sunflower);
 		productCatalog.save(lily);
-		productCatalog.save(lily2);
-		productCatalog.save(lily3);
+		productCatalog.save(bluebell);
+		productCatalog.save(hibiscus);
+		productCatalog.save(lavender);
+
+		productCatalog.save(camellia);
+		productCatalog.save(jasmine);
+		productCatalog.save(peony);
+		productCatalog.save(dahlia);
+		productCatalog.save(gladiolus);
 
 
 		Map<Flower, Integer> bouquetFlowersMap1 = new HashMap<>();
@@ -78,6 +93,5 @@ public class ProductInventoryInitializer implements DataInitializer {
 		productCatalog.save(roseLilyBouquet);
 		productCatalog.save(roseLilyBouquet2);
 
-		System.out.println("-----------------------------------------");
 	}
 }
