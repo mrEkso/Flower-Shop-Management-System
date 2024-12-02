@@ -1,6 +1,8 @@
 package flowershop.services;
 
+import flowershop.calendar.Event;
 import flowershop.product.ProductService;
+import flowershop.calendar.CalendarService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,7 @@ import java.util.UUID;
 @RequestMapping("/services")
 public class ServiceController {
 
+	private final CalendarService calendarService;
 	private final EventOrderService eventOrderService;
 	private final ContractOrderService contractOrderService;
 	private final ReservationOrderService reservationOrderService;
@@ -24,13 +27,14 @@ public class ServiceController {
 	private final OrderFactory orderFactory;
 
 	public ServiceController(EventOrderService eventOrderService, ContractOrderService contractOrderService, ReservationOrderService reservationOrderService,
-							 ProductService productService, ClientService clientService, OrderFactory orderFactory) {
+							 ProductService productService, ClientService clientService, OrderFactory orderFactory, CalendarService calendarService) {
 		this.eventOrderService = eventOrderService;
 		this.contractOrderService = contractOrderService;
 		this.reservationOrderService = reservationOrderService;
 		this.productService = productService;
 		this.clientService = clientService;
 		this.orderFactory = orderFactory;
+		this.calendarService = calendarService;
 	}
 
 	@GetMapping("")
@@ -98,6 +102,7 @@ public class ServiceController {
 			contractOrder.setCustomFrequency(customFrequency);
 			contractOrder.setCustomUnit(customUnit);
 		}
+
 		contractOrderService.save(contractOrder, products);
 		return "redirect:/services";
 	}
@@ -113,6 +118,11 @@ public class ServiceController {
 		EventOrder eventOrder = orderFactory.createEventOrder(eventDate,
 			deliveryAddress, getOrCreateClient(clientName, phone), notes);
 		eventOrderService.save(eventOrder, products);
+		Event event = new Event();
+		event.setName(clientName+"'s Event");
+		event.setDate(eventDate.atStartOfDay());
+		event.setDescription("Add further notes");
+		calendarService.save(event);
 		return "redirect:/services";
 	}
 
