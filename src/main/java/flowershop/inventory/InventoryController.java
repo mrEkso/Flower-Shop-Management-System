@@ -67,7 +67,8 @@ public class InventoryController {
 
 		model.addAttribute("products", enrichedProducts);
 		model.addAttribute("createBouquetMode", false);
-		model.addAttribute("showModal", false);
+		model.addAttribute("selectedProduct", productService.findAllFlowers().getFirst());
+		model.addAttribute("showModal", true);
 		model.addAttribute("showDeletedModal", false);
 		return "inventory";
 	}
@@ -113,7 +114,8 @@ public class InventoryController {
 		//model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
 		model.addAttribute("showModal", false);
 		model.addAttribute("showDeletedModal", false);
-		model.addAttribute("showChooseModal", false);
+		model.addAttribute("selectedFlower", productService.findAllFlowers().getFirst());
+		model.addAttribute("showChooseModal", true);
 		return "inventory";
 	}
 
@@ -154,7 +156,7 @@ public class InventoryController {
 			Product product = productOpt.get();
 
 			if (product instanceof Flower selectedFlower) {
-				
+
 				if (selectedFlower.getQuantity() >= chooseQuantity) {
 					selectedFlower.setDeletedQuantity(chooseQuantity);
 					selectedFlowersForBouquet.add(selectedFlower);
@@ -177,6 +179,8 @@ public class InventoryController {
 			.collect(Collectors.toList());
 
 		model.addAttribute("createBouquetMode", true);
+		model.addAttribute("selectedFlower", productService.findAllFlowers().getFirst());
+		model.addAttribute("showChooseModal", true);
 		model.addAttribute("products", enrichedProducts);
 		model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
 		return "inventory";
@@ -233,7 +237,8 @@ public class InventoryController {
 		model.addAttribute("showDeletedModal", !deletedProducts.isEmpty());
 
 		model.addAttribute("createBouquetMode", false);
-		model.addAttribute("showModal", false);
+		model.addAttribute("selectedProduct", productService.findAllFlowers().getFirst());
+		model.addAttribute("showModal", true);
 		model.addAttribute("products", enrichedProducts);
 		return "inventory";
 	}
