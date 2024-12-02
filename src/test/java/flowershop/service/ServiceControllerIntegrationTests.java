@@ -1,22 +1,5 @@
-/*
- * Copyright 2014-2023 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package flowershop.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import flowershop.services.ContractOrder;
 import flowershop.services.ServiceController;
 import org.junit.jupiter.api.Test;
@@ -25,16 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -153,7 +130,7 @@ class ServiceControllerIntegrationTests {
 
 	@Test
 	@SuppressWarnings("unchecked")
-		void shouldUpdateContractOrderStatus() throws Exception {
+	void shouldUpdateContractOrderStatus() throws Exception {
 		Order.OrderIdentifier validContractId = ((List<ContractOrder>) Objects.requireNonNull(mvc.perform(get("/services"))
 				.andReturn()
 				.getModelAndView())
