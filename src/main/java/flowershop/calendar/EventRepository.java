@@ -10,4 +10,6 @@ public interface EventRepository extends CrudRepository<Event, Long> {
 
 	@Query("SELECT e FROM Event e WHERE e.date BETWEEN :startDate AND :endDate")
 	List<Event> findAllByDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+
+
 }
