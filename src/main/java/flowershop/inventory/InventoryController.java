@@ -160,7 +160,7 @@ public class InventoryController {
 				if (selectedFlower.getQuantity() >= chooseQuantity) {
 					selectedFlower.setDeletedQuantity(chooseQuantity);
 					selectedFlowersForBouquet.add(selectedFlower);
-					productService.removeFlowers(selectedFlower, chooseQuantity);
+					//productService.removeFlowers(selectedFlower, chooseQuantity);
 					model.addAttribute("success", "Flower added to bouquet.");
 				} else {
 					model.addAttribute("error", "Not enough stock or invalid quantity.");
@@ -191,7 +191,7 @@ public class InventoryController {
 	public String createCustomBouquet(@RequestParam String bouquetName, Model model) {
 		if (!selectedFlowersForBouquet.isEmpty() && bouquetName != null && !bouquetName.isEmpty()) {
 			Map<Flower, Integer> flowerMap = selectedFlowersForBouquet.stream()
-				.filter(Objects::nonNull) // Ensure only Flower objects are processed
+				.filter(Objects::nonNull)
 				.collect(Collectors.toMap(
 					flower -> (Flower) flower,
 					flower -> ((Flower) flower).getDeletedQuantity()
