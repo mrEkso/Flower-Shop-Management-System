@@ -19,27 +19,26 @@ import java.util.stream.Collectors;
 @Controller
 public class InventoryController {
 
-	private List<DeletedProduct> deletedProducts = new ArrayList<>();
-	private List<Flower> selectedFlowersForBouquet = new ArrayList<>();
+	private final List<DeletedProduct> deletedProducts = new ArrayList<>();
+	private final List<Flower> selectedFlowersForBouquet = new ArrayList<>();
 
 	private final ProductService productService;
-	private List<Product> products;
 
 	public InventoryController(ProductService productService) {
 		this.productService = productService;
 	}
 
-	private Optional<Product> findProductByName(String name) {
+	/*private Optional<Product> findProductByName(String name) {
 		return products.stream()
 			.filter(product -> product.getName().equalsIgnoreCase(name))
 			.findFirst();
-	}
+	}*/
 
 	@GetMapping("/inventory")
 	public String inventoryMode(@RequestParam(required = false) String search,
 								@RequestParam(required = false, defaultValue = "all") String filter,
 								Model model) {
-		this.products = productService.getAllProducts();
+		List<Product> products = productService.getAllProducts();
 		List<Product> filteredProducts = new ArrayList<>(products);
 
 		if (search != null && !search.isEmpty()) {
@@ -159,19 +158,13 @@ public class InventoryController {
 
 				if (selectedFlower.getQuantity() >= chooseQuantity) {
 					selectedFlower.setDeletedQuantity(chooseQuantity);
-					selectedFlowersForBouquet.add(selectedFlower);
+					if (!selectedFlowersForBouquet.contains(selectedFlower)) {
+						selectedFlowersForBouquet.add(selectedFlower);
+					}
 					//productService.removeFlowers(selectedFlower, chooseQuantity);
-					model.addAttribute("success", "Flower added to bouquet.");
-				} else {
-					model.addAttribute("error", "Not enough stock or invalid quantity.");
 				}
-			} else {
-				model.addAttribute("error", "Selected product is not a flower.");
 			}
-		} else {
-			model.addAttribute("error", "Flower not found.");
 		}
-
 
 
 		List<Map<String, Object>> enrichedProducts = productService.getAllProducts().stream()
@@ -190,34 +183,37 @@ public class InventoryController {
 	@PostMapping("/create-custom-bouquet")
 	public String createCustomBouquet(@RequestParam String bouquetName, Model model) {
 		if (!selectedFlowersForBouquet.isEmpty() && bouquetName != null && !bouquetName.isEmpty()) {
-			Map<Flower, Integer> flowerMap = selectedFlowersForBouquet.stream()
-				.filter(Objects::nonNull)
-				.collect(Collectors.toMap(
-					flower -> (Flower) flower,
-					flower -> ((Flower) flower).getDeletedQuantity()
-				));
+			if (selectedFlowersForBouquet.size() > 1 || selectedFlowersForBouquet.getFirst().getDeletedQuantity()> 1) {
+				Map<Flower, Integer> flowerMap = selectedFlowersForBouquet.stream()
+					.filter(Objects::nonNull)
+					.collect(Collectors.toMap(
+						flower -> (Flower) flower,
+						flower -> ((Flower) flower).getDeletedQuantity()
+					));
 
-			Money additionalPrice = Money.of(5, "EUR");
-			Pricing bouquetPricing = Bouquet.calculateTotalPricing(flowerMap, additionalPrice);
+				Money additionalPrice = Money.of(5, "EUR");
+				Pricing bouquetPricing = Bouquet.calculateTotalPricing(flowerMap, additionalPrice);
 
-			Bouquet customBouquet = new Bouquet(
-				bouquetName,
-				flowerMap,
-				additionalPrice,
-				1
-			);
-			customBouquet.setPricing(bouquetPricing);
+				Bouquet customBouquet = new Bouquet(
+					bouquetName,
+					flowerMap,
+					additionalPrice,
+					1
+				);
+				customBouquet.setPricing(bouquetPricing);
 
-			productService.addBouquet(customBouquet);
-			selectedFlowersForBouquet.clear();
+				productService.addBouquet(customBouquet);
+			}
 		}
-
+		selectedFlowersForBouquet.clear();
 		List<Map<String, Object>> enrichedProducts = productService.getAllProducts().stream()
 			.map(this::enrichProductData)
 			.collect(Collectors.toList());
 
 		model.addAttribute("createBouquetMode", false);
 		model.addAttribute("products", enrichedProducts);
+		model.addAttribute("selectedProduct", productService.findAllFlowers().getFirst());
+		model.addAttribute("showModal", true);
 		return "inventory";
 	}
 
@@ -249,11 +245,7 @@ public class InventoryController {
 	public String showDeleteModal(@RequestParam("productID") UUID productID, Model model) {
 		Optional<Product> selectedProductOpt = productService.getProductById(productID);
 
-		if (selectedProductOpt.isPresent()) {
-			model.addAttribute("selectedProduct", selectedProductOpt.get());
-		} else {
-			model.addAttribute("error", "Product not found.");
-		}
+		selectedProductOpt.ifPresent(product -> model.addAttribute("selectedProduct", product));
 
 		List<Map<String, Object>> enrichedProducts = productService.getAllProducts().stream()
 			.map(this::enrichProductData)
@@ -283,7 +275,7 @@ public class InventoryController {
 	}
 
 	@PostMapping("/delete-product")
-	public String deleteProduct(@RequestParam String productName, @RequestParam int deleteQuantity, Model model) {
+	public String deleteProduct(@RequestParam String productName, @RequestParam int deleteQuantity) {
 			List<Flower> flowers = productService.findAllFlowers();
 			List<Bouquet> bouquets = productService.findAllBouquets();
 			for (Flower flower : flowers) {
