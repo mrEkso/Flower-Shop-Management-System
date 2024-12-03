@@ -3,6 +3,8 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f9f9f9;
+//overflow-y: auto;
+//overflow-x: hidden;
 }
 
 .vertical-nav {
@@ -47,10 +49,11 @@ body {
 .inventory-container {
     margin-left: 150px;
     padding: 20px;
-    width: calc(100% - 150px);
+    width: calc(70% - 150px);
     background-color: #f0f0f0;
-
+    max-height: 100vh;
     overflow-y: auto;
+    float: left;
 }
 
 .inventory-title {
@@ -143,9 +146,8 @@ th {
 
 .modal {
     position: fixed;
-    top: calc(670px + (${productCount} * 50px));
-    right: calc(100% - 200px - 700px);
-    width: 700px;
+    left: calc(100% - 525px);
+    width: 475px;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1000;
@@ -156,9 +158,9 @@ th {
 
 .modal2 {
     position: fixed;
-    top: calc(650px + (${productCount} * 50px));
-    right: 20px;
-    width: 700px;
+    left: calc(100% - 525px);
+    top: calc(180px);
+    width: 475px;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1000;
