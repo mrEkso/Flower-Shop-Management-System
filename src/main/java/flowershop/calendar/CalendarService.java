@@ -20,7 +20,18 @@ public class CalendarService {
 	public Event save(Event event) {
 		return eventRepository.save(event);
 	}
+	public Event findById(Long id) {
+		for(Event event : eventRepository.findAll()){
+			if(event.getId().equals(id)){
+				return event;
+			}
+		}
+		return null;
+	}
+	public void update(Event event) {
 
+		eventRepository.save(event);
+	}
 	public void delete(Long id) {
 		eventRepository.deleteById(id);
 	}

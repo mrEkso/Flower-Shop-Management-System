@@ -84,6 +84,16 @@ public class CalendarController {
 		service.delete(id);
 		return "redirect:/calendar";
 	}
-
+	@GetMapping("/calendar/edit")
+	public String editEvent(Model model, @RequestParam Long id) {
+		Event event = service.findById(id);
+		model.addAttribute("event", event);
+		return "calendar/edit_event";
+	}
+	@PostMapping("/calendar/update")
+	public String updateEvent(@ModelAttribute Event event) {
+		service.update(event);
+		return "redirect:/calendar";
+	}
 
 }

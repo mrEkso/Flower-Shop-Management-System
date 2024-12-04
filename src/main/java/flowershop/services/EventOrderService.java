@@ -1,6 +1,8 @@
 package flowershop.services;
 
+import flowershop.calendar.Event;
 import flowershop.product.ProductCatalog;
+import flowershop.calendar.CalendarService;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderManagement;
@@ -52,6 +54,8 @@ public class EventOrderService {
 				}
 			}
 		});
+
+
 		return eventOrderRepository.save(order);
 	}
 

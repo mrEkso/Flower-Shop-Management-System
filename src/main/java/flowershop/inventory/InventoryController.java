@@ -276,22 +276,22 @@ public class InventoryController {
 
 	@PostMapping("/delete-product")
 	public String deleteProduct(@RequestParam String productName, @RequestParam int deleteQuantity) {
-		List<Flower> flowers = productService.findAllFlowers();
-		List<Bouquet> bouquets = productService.findAllBouquets();
-		for (Flower flower : flowers) {
-			if (flower.getName().equals(productName)) {
-				if (flower.getQuantity() >= deleteQuantity) {
-					productService.removeFlowers(flower, deleteQuantity);
-					DeletedProduct deletedProduct = new DeletedProduct(
-						flower.getName(),
-						flower.getPrice().getNumber().doubleValue(),
-						deleteQuantity,
-						flower.getPrice().getNumber().doubleValue() * deleteQuantity
-					);
-					deletedProducts.add(deletedProduct);
-					return "redirect:/inventory";
+			List<Flower> flowers = productService.findAllFlowers();
+			List<Bouquet> bouquets = productService.findAllBouquets();
+			for (Flower flower : flowers) {
+				if (flower.getName().equals(productName)) {
+					if (flower.getQuantity() >= deleteQuantity) {
+						productService.removeFlowers(flower, deleteQuantity);
+						DeletedProduct deletedProduct = new DeletedProduct(
+							flower.getName(),
+							flower.getPrice().getNumber().doubleValue(),
+							deleteQuantity,
+							flower.getPrice().getNumber().doubleValue() * deleteQuantity
+						);
+						deletedProducts.add(deletedProduct);
+						return "redirect:/inventory";
+					}
 				}
-			}
 
 		}
 		for (Bouquet bouquet : bouquets) {

@@ -29,7 +29,7 @@
                 <div class="calendar-header">
                     <div>Sun</div>
                     <div>Mon</div>
-                    <divaöslkdasdaadsdasd>Tue</divaöslkdasdaadsdasd>
+                    <div>Tue</div>
                     <div>Wed</div>
                     <div>Thu</div>
                     <div>Fri</div>
@@ -44,8 +44,15 @@
                             <div class="font-italic" th:text="${event.description}"></div>
                             <form th:action="@{/calendar/delete}" method="post" class="d-inline">
                                 <input type="hidden" name="id" th:value="${event.id}" />
+
                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+
                             </form>
+                            <form th:action="@{/calendar/edit}" method="get" class="d-inline">
+                                <input type="hidden" name="id" th:value="${event.id}" />
+                                <button type="submit" class="btn btn-primary btn-sm">Edit</button>
+                            </form>
+
                         </div>
                     </div>
                 </div>
