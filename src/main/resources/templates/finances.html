@@ -27,7 +27,7 @@
                 </form>
 
                 <form th:method="get" th:action="@{/resetDates}">
-                    <button class="btn btn-secondary" th:text="Reset"></button>
+                    <button class="btn btn-secondary" th:text="#{finances.filter.button}"></button>
                 </form>
                 </div>
                 <div class="row d-flex gap-3">
@@ -139,8 +139,8 @@
                 </div>
                 <div class="row w-100 d-flex justify-content-center mt-3">
 
-                    <button class="btn btn-info mx-2" th:text="#{finances.dailyReport}"></button>
-                    <button class="btn btn-info mx-2" th:text="#{finances.monthlyReport}"></button>
+                    <a class="btn btn-primary" th:href="@{/askForDay}" th:text="#{finances.dailyReport}"></a>
+                    <a class="btn btn-primary" th:href="@{/askForMonth}" th:text="#{finances.monthlyReport}"></a>
                 </div>
 
         </div>

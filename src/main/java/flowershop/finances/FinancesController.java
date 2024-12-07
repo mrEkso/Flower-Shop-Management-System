@@ -139,6 +139,27 @@ public class FinancesController {
 		return "finances";
 	}
 
+
+	/**
+	 * Will open the page, where the day for the report will be asked
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/askForDay")
+	public String dayReport(Model model) {
+		return "finance/askForDay";
+	}
+
+	/**
+	 * Will open the page, where the month for the report will be asked
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/askForMonth")
+	public String monthReport(Model model) {
+		return "finance/askForMonth";
+	}
+
 	@GetMapping("/filterCategories")
 	public String filterCategories(@RequestParam("filter") String category, Model model) {
 		//this.categorySet = category;
