@@ -10,21 +10,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import com.fasterxml.jackson.annotation.JsonCreator.Mode;
-
 import org.salespointframework.catalog.Product;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
-import jakarta.servlet.http.HttpServletRequest;
-
-import static java.util.stream.Collectors.toList;
-
-import java.math.BigDecimal;
 
 
 @SessionAttributes({"buyBasket", "sellBasket", "fullSellPrice", "fullBuyPrice"})
@@ -158,8 +150,7 @@ public class SalesController {
 	public String removeFromSellBasket(
 		Model model,
 		@RequestParam UUID productId, // Use UUID instead of product name
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket,
-		HttpServletRequest request
+		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
 	) {
 		basketService.removeFromBasket(sellBasket, productId);
 		model.addAttribute("fullSellPrice", calculateFullBasketPrice(sellBasket));
@@ -170,8 +161,7 @@ public class SalesController {
 	public String removeFromBuyBasket(
 		Model model,
 		@RequestParam UUID productId, // Use UUID instead of product name
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket,
-		HttpServletRequest request
+		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
 	) {
 		basketService.removeFromBasket(buyBasket, productId);
 		model.addAttribute("fullBuyPrice", calculateFullBasketPrice(buyBasket));
@@ -184,7 +174,6 @@ public class SalesController {
 	@PostMapping("buy-from-buyBasket")
 	public String buyFromBasket(
 		@ModelAttribute("buyBasket") List<BasketItem> buyBasket,
-		HttpServletRequest request,
 		Model model
 	) {
 		if (buyBasket == null || buyBasket.isEmpty()) {
@@ -204,7 +193,6 @@ public class SalesController {
 	@PostMapping("/sell-from-basket")
 	public String sellFromBasket(
 		@ModelAttribute("sellBasket") List<BasketItem> sellBasket,
-		HttpServletRequest request,
 		Model model
 	) {
 		if (sellBasket == null || sellBasket.isEmpty()) {
