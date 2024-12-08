@@ -8,6 +8,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service class for managing a basket of products.
+ *
+ * This class provides functionality to add, remove, increase, and decrease the quantity of items in a basket,
+ * as well as check and handle the basket's contents. It interacts with the {@link ProductService} to retrieve product details.
+ */
 @Service
 public class BasketService {
 	private final ProductService productService;
