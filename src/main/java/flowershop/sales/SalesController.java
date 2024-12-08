@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.salespointframework.order.Cart;
 
 import org.salespointframework.catalog.Product;
 
@@ -19,7 +20,8 @@ import org.springframework.ui.Model;
 
 
 
-@SessionAttributes({"buyBasket", "sellBasket", "fullSellPrice", "fullBuyPrice"})
+@SessionAttributes({"buyBasket", "sellBasket", "fullSellPrice", "fullBuyPrice",
+"buyCart", "sellCart"})
 @Controller
 public class SalesController {
 
@@ -43,6 +45,16 @@ public class SalesController {
 	@ModelAttribute("sellBasket")
 	public List<BasketItem> createSellBasket() {
 		return new ArrayList<>();
+	}
+
+	@ModelAttribute("buyCart")
+	Cart initializeBuyCart() {
+		return new Cart();
+	}
+
+	@ModelAttribute("sellCart")
+	Cart initializeSellCart() {
+		return new Cart();
 	}
 
 	@GetMapping("/")
@@ -265,5 +277,35 @@ public class SalesController {
 
 		return fp;
 	}
+
+	@PostMapping("addToSellcart")
+	public String addToSellCart(
+		@RequestParam("item") Product product,
+		@ModelAttribute("sellCart") Cart sellCart
+	){
+		// if(sellCart.getItem(
+		// 	product.getId().toString()).isPresent()){}
+		
+		sellCart.addOrUpdateItem(product, 1);
+
+		return "redirect:/sell";
+	}
+
+	@PostMapping("removeFromSellCart")
+	public String removeFromSellCart(
+		@RequestParam("item") Product product,
+		@ModelAttribute("sellCart") Cart sellCart
+	){
+		// if(sellCart.getItem(
+		// 	product.getId().toString()).isPresent()){}
+		
+		if(sellCart.getQuantity(product).isPositive()){
+			sellCart.addOrUpdateItem(product, -1);
+		} else {
+			sellCart.removeItem(product.getId().toString());
+		}
+		return "redirect:/sell";
+	}
+
 }
  
