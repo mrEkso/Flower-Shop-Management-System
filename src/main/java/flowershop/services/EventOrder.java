@@ -22,6 +22,15 @@ public class EventOrder extends AbstractOrder {
 	@ManyToOne
 	private Client client;
 
+	/**
+	 * Constructs an `EventOrder` with the specified user, event date, delivery address, client, and notes.
+	 *
+	 * @param user            the user account associated with the order
+	 * @param eventDate       the date of the event
+	 * @param deliveryAddress the address where the flowers will be delivered
+	 * @param client          the client associated with the order
+	 * @param notes           additional notes for the order
+	 */
 	public EventOrder(UserAccount user, LocalDate eventDate, String deliveryAddress, Client client, String notes) {
 		super(user, notes);
 		this.client = client;
@@ -29,29 +38,63 @@ public class EventOrder extends AbstractOrder {
 		this.deliveryAddress = deliveryAddress;
 	}
 
+	/**
+	 * Default constructor for `EventOrder`.
+	 * This constructor is primarily used by JPA and other frameworks.
+	 */
 	protected EventOrder() {
 	}
 
+	/**
+	 * Returns the date of the event.
+	 *
+	 * @return the event date
+	 */
 	public LocalDate getEventDate() {
 		return eventDate;
 	}
 
+	/**
+	 * Sets the date of the event.
+	 *
+	 * @param eventDate the event date to set
+	 */
 	public void setEventDate(LocalDate eventDate) {
 		this.eventDate = eventDate;
 	}
 
+	/**
+	 * Returns the delivery address.
+	 *
+	 * @return the delivery address
+	 */
 	public String getDeliveryAddress() {
 		return deliveryAddress;
 	}
 
+	/**
+	 * Sets the delivery address.
+	 *
+	 * @param deliveryAddress the delivery address to set
+	 */
 	public void setDeliveryAddress(String deliveryAddress) {
 		this.deliveryAddress = deliveryAddress;
 	}
 
+	/**
+	 * Returns the client associated with the order.
+	 *
+	 * @return the client
+	 */
 	public Client getClient() {
 		return client;
 	}
 
+	/**
+	 * Sets the client associated with the order.
+	 *
+	 * @param client the client to set
+	 */
 	public void setClient(Client client) {
 		this.client = client;
 	}
