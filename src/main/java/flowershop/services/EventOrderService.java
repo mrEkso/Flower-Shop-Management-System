@@ -13,12 +13,24 @@ import org.springframework.util.Assert;
 
 import java.util.*;
 
+/**
+ * The `EventOrderService` class provides services related to managing event orders in the flower shop system.
+ * It is annotated with `@Service` to indicate that it is a Spring service component.
+ */
 @Service
 public class EventOrderService {
 	private final EventOrderRepository eventOrderRepository;
 	private final ProductCatalog productCatalog;
 	private final OrderManagement<EventOrder> orderManagement;
 
+	/**
+	 * Constructs an `EventOrderService` with the specified repositories and order management.
+	 *
+	 * @param eventOrderRepository the repository used to manage event orders
+	 * @param productCatalog       the catalog of products available in the flower shop
+	 * @param orderManagement      the order management system
+	 * @throws IllegalArgumentException if any of the parameters are null
+	 */
 	public EventOrderService(EventOrderRepository eventOrderRepository, ProductCatalog productCatalog, OrderManagement<EventOrder> orderManagement) {
 		Assert.notNull(eventOrderRepository, "EventOrderRepository must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
@@ -28,14 +40,32 @@ public class EventOrderService {
 		this.orderManagement = orderManagement;
 	}
 
+	/**
+	 * Retrieves all event orders.
+	 *
+	 * @return a list of all event orders
+	 */
 	public List<EventOrder> findAll() {
 		return eventOrderRepository.findAll(Pageable.unpaged()).toList();
 	}
 
+	/**
+	 * Retrieves an event order by its ID.
+	 *
+	 * @param id the ID of the event order
+	 * @return an `Optional` containing the event order if found, or empty if not found
+	 */
 	public Optional<EventOrder> getById(UUID id) {
 		return eventOrderRepository.findById(Order.OrderIdentifier.of(id.toString()));
 	}
 
+	/**
+	 * Saves a new event order with the specified products.
+	 *
+	 * @param order the event order to save
+	 * @param products a map of product IDs and their quantities
+	 * @return the saved event order
+	 */
 	public EventOrder save(EventOrder order, Map<String, String> products) {
 		order.setPaymentMethod(Cash.CASH);
 		products.forEach((key, value) -> {
@@ -55,8 +85,22 @@ public class EventOrderService {
 		return eventOrderRepository.save(order);
 	}
 
+	/**
+	 * Updates an existing event order with the specified products and status.
+	 *
+	 * @param order the event order to update
+	 * @param products a map of product IDs and their quantities
+	 * @param orderStatus the new status of the order
+	 * @param cancelReason the reason for cancellation, if applicable
+	 * @return the updated event order
+	 * @throws IllegalArgumentException if the order is already canceled, not paid yet, or cannot be canceled
+	 */
 	public EventOrder update(EventOrder order, Map<String, String> products, String orderStatus, String cancelReason) {
+		if (order.getOrderStatus().equals(OrderStatus.CANCELED))
+			throw new IllegalArgumentException("Order is already canceled!");
 		if (order.getOrderStatus().equals(OrderStatus.OPEN)) {
+			if (OrderStatus.COMPLETED.name().equals(orderStatus))
+				throw new IllegalArgumentException("Order is not paid yet!");
 			if (OrderStatus.CANCELED.name().equals(orderStatus)) {
 				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
 				return eventOrderRepository.save(order);
@@ -73,14 +117,28 @@ public class EventOrderService {
 			if (OrderStatus.PAID.name().equals(orderStatus)) orderManagement.payOrder(order);
 		}
 		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
+			OrderStatus.CANCELED.name().equals(orderStatus))
+			throw new IllegalArgumentException("Cannot cancel a paid order!");
+		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
 			OrderStatus.COMPLETED.name().equals(orderStatus)) orderManagement.completeOrder(order);
 		return eventOrderRepository.save(order);
 	}
 
+	/**
+	 * Deletes an event order.
+	 *
+	 * @param order the event order to delete
+	 */
 	public void delete(EventOrder order) {
 		eventOrderRepository.delete(order);
 	}
 
+	/**
+	 * Extracts product quantities from the provided map.
+	 *
+	 * @param products a map of product IDs and their quantities
+	 * @return a map of product IDs and their quantities
+	 */
 	private Map<UUID, Integer> extractProducts(Map<String, String> products) {
 		Map<UUID, Integer> productQuantities = new HashMap<>();
 		products.forEach((key, value) -> {

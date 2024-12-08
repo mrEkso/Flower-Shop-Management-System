@@ -13,10 +13,14 @@ import org.springframework.util.Assert;
 
 import java.time.LocalDate;
 
+/**
+ * The `OrderCatalogInitializer` class initializes the order catalog with predefined data.
+ * It implements the `DataInitializer` interface and is annotated with `@Component` and `@Order` to indicate
+ * that it is a Spring component and to specify the order of initialization.
+ */
 @Component
 @Order(20)
 public class OrderCatalogInitializer implements DataInitializer {
-
 	private final EventOrderRepository eventOrderRepository;
 	private final ContractOrderRepository contractOrderRepository;
 	private final ReservationOrderRepository reservationOrderRepository;
@@ -24,6 +28,17 @@ public class OrderCatalogInitializer implements DataInitializer {
 	private final ClientRepository clientRepository;
 	private final OrderFactory orderFactory;
 
+	/**
+	 * Constructs an `OrderCatalogInitializer` with the specified repositories, product catalog, and order factory.
+	 *
+	 * @param eventOrderRepository       the repository used to manage event orders
+	 * @param contractOrderRepository    the repository used to manage contract orders
+	 * @param reservationOrderRepository the repository used to manage reservation orders
+	 * @param productCatalog             the catalog of products available in the flower shop
+	 * @param clientRepository           the repository used to manage clients
+	 * @param orderFactory               the factory used to create orders
+	 * @throws IllegalArgumentException if any of the parameters are null
+	 */
 	public OrderCatalogInitializer(EventOrderRepository eventOrderRepository, ContractOrderRepository contractOrderRepository, ReservationOrderRepository reservationOrderRepository, ProductCatalog productCatalog, ClientRepository clientRepository, OrderFactory orderFactory) {
 		Assert.notNull(eventOrderRepository, "EventOrderRepository must not be null!");
 		Assert.notNull(contractOrderRepository, "ContractOrderRepository must not be null!");
@@ -39,6 +54,10 @@ public class OrderCatalogInitializer implements DataInitializer {
 		this.orderFactory = orderFactory;
 	}
 
+	/**
+	 * Initializes the order catalog with predefined data.
+	 * If orders already exist in the repositories, the initialization is skipped.
+	 */
 	@Override
 	public void initialize() {
 		if (eventOrderRepository.findAll(Pageable.unpaged()).iterator().hasNext() &&
