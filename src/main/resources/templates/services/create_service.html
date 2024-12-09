@@ -123,6 +123,11 @@
                               placeholder="Enter any additional notes here">Test notes</textarea>
                 </div>
 
+                <!-- Error Message -->
+                <div th:if="${error}" class="alert alert-danger" role="alert">
+                    <span th:text="${error}"></span>
+                </div>
+
                 <!-- Submit and Cancel Buttons -->
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary mr-2" th:text="#{action.submit}">Submit</button>
@@ -169,6 +174,11 @@
                               placeholder="Enter any additional notes here">Test notes</textarea>
                 </div>
 
+                <!-- Error Message -->
+                <div th:if="${error}" class="alert alert-danger" role="alert">
+                    <span th:text="${error}"></span>
+                </div>
+
                 <!-- Submit and Cancel Buttons -->
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary mr-2" th:text="#{action.submit}">Submit</button>
@@ -207,6 +217,11 @@
                     <label for="reservationNotes" class="form-label" th:text="#{reservation.notes}">Notes</label>
                     <textarea class="form-control" id="reservationNotes" name="notes" rows="3"
                               placeholder="Enter any additional notes here">Test notes</textarea>
+                </div>
+
+                <!-- Error Message -->
+                <div th:if="${error}" class="alert alert-danger" role="alert">
+                    <span th:text="${error}"></span>
                 </div>
 
                 <!-- Submit and Cancel Buttons -->
