@@ -99,19 +99,22 @@
                 </div>
 
                 <!-- Products Section -->
-                <!--<div class="mb-3">
-                    <form th:action="@{/services/add-product-row}" method="post">
-                        <input type="hidden" id="product-index" name="index" th:value="${index}">
-                        <label class="form-label" th:text="#{order.selectProducts}">Select Products</label>
-                        <div id="product-container">
-                            <div th:each="i : ${#numbers.sequence(0, index - 1)}">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-outline-primary mt-2">
-                            Add Product
-                        </button>
-                    </form>
-                </div>-->
+                <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
+
+                <!-- Product Rows -->
+                <div id="product-container">
+                    <!-- Loop through existing rows -->
+                    <div th:each="row, iterStat : ${productRows}">
+                        <div th:replace="fragments/product-row :: productRow(index=${iterStat.index}, product=row)"></div>
+                    </div>
+                </div>
+
+                <!-- Add Product Button -->
+                <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
+                      method="post" class="mt-2">
+                    <input type="hidden" name="index" th:value="${productRows.size()}" />
+                    <button type="submit" class="btn btn-outline-primary">Add Product</button>
+                </form>
 
                 <!-- Notes -->
                 <div class="mb-3">

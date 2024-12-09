@@ -1,14 +1,16 @@
 <div th:fragment="productRow(index=${index}, product=product)" class="input-group mb-2">
-    <select th:name="'products[' + ${index} + ']'" class="form-select" required>
+    <!-- Product Selection -->
+    <select th:name="'products[' + ${index} + '][id]'" class="form-select" required>
         <option th:each="productOption : ${products}" th:value="${productOption.id}" th:text="${productOption.name}">
             Product Name
         </option>
     </select>
-    <input th:name="'quantities[' + ${index} + ']'" class="form-control" type="number" placeholder="Quantity" min="1"
-           required>
-    <button th:text="#{order.deleteProduct}"
-            type="button"
-            class="btn btn-danger ml-2"
+
+    <!-- Quantity Input -->
+    <input th:name="'products[' + ${index} + '][quantity]'" class="form-control" type="number" placeholder="Quantity" min="1" required>
+
+    <!-- Delete Button -->
+    <button type="button" class="btn btn-danger ml-2"
             hx-on="click: this.closest('.input-group').remove();">
         Delete
     </button>

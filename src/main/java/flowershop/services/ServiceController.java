@@ -10,8 +10,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequestMapping("/services")
@@ -69,7 +68,9 @@ public class ServiceController {
 
 	/* CREATE ENDPOINTS */
 	@GetMapping("/create")
-	public String getNewOrderPage() {
+	public String getNewOrderPage(Model model) {
+		model.addAttribute("productRows", new ArrayList<>());
+		model.addAttribute("products", productService.getAllProducts());
 		return "services/create_service";
 	}
 
@@ -78,6 +79,85 @@ public class ServiceController {
 		model.addAttribute("index", index);
 		model.addAttribute("products", productService.getAllProducts());
 		return "fragments/product-row :: productRow";
+	}
+
+	// Adding a product during creation
+	@PostMapping("/{type}/create/add-product")
+	public String addProductDuringCreation(@PathVariable String type,
+										   @RequestParam int index,
+										   Model model) {
+		model.addAttribute("index", index);
+		model.addAttribute("products", productService.getAllProducts());
+		model.addAttribute("type", type);
+		return "fragments/product-row :: productRow";
+	}
+
+	// Removing a product during creation
+	@PostMapping("/{type}/create/remove-product")
+	public String removeProductDuringCreation(@PathVariable String type,
+											  @RequestParam int index,
+											  Model model) {
+		model.addAttribute("type", type);
+		return "redirect:/services/" + type + "/create";
+	}
+
+	// Adding a product during editing
+	@PostMapping("/{type}/edit/{id}/add-product")
+	public String addProductDuringEdit(@PathVariable String type,
+									   @PathVariable UUID id,
+									   @RequestParam int index,
+									   Model model) {
+		model.addAttribute("index", index);
+		model.addAttribute("products", productService.getAllProducts());
+		model.addAttribute("type", type);
+		model.addAttribute("orderId", id);
+		return "fragments/product-row :: productRow";
+	}
+
+	// Removing a product during editing
+	@PostMapping("/{type}/edit/{id}/remove-product")
+	public String removeProductDuringEdit(@PathVariable String type,
+										  @PathVariable UUID id,
+										  @RequestParam UUID productId,
+										  Model model) {
+		switch (type) {
+			case "contracts" -> contractOrderService.removeProductFromOrder(id, productId);
+			case "events" -> eventOrderService.removeProductFromOrder(id, productId);
+			case "reservations" -> reservationOrderService.removeProductFromOrder(id, productId);
+			default -> throw new IllegalArgumentException("Invalid order type: " + type);
+		}
+		return "redirect:/services/" + type + "/edit/" + id;
+	}
+
+
+	@PostMapping("/create")
+	public String handleFormSubmission(
+		@RequestParam Map<String, String> allParams,
+		@RequestParam(name = "action", required = false) String action,
+		@RequestParam(name = "removeIndex", required = false) Integer removeIndex,
+		Model model) {
+
+		List<Map<String, String>> productRows = extractProductRows(allParams);
+
+		// Handle "Add Product" action
+		if ("add".equals(action)) {
+			productRows.add(new HashMap<>());
+		}
+
+		// Handle "Remove Product" action
+		if ("remove".equals(action) && removeIndex != null) {
+			productRows.remove((int) removeIndex);
+		}
+
+		// Re-render the form with updated rows
+		model.addAttribute("productRows", productRows);
+		model.addAttribute("products", productService.getAllProducts());
+		return "services/create";
+	}
+
+	 private List<Map<String, String>> extractProductRows(Map<String, String> allParams) {
+		List<Map<String, String>> rows = new ArrayList<>();
+		return rows;
 	}
 
 	@PostMapping("/contracts/create")
