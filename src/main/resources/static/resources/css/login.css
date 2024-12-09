@@ -1,0 +1,69 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+section {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+form.ui.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+form.ui.form .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+form.ui.form .field label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+form.ui.form input[type="text"],
+form.ui.form input[type="password"] {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+form.ui.form input[type="text"]:focus,
+form.ui.form input[type="password"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+form.ui.form button.ui.button {
+    padding: 10px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+form.ui.form button.ui.button:hover {
+    background-color: #0056b3;
+}
