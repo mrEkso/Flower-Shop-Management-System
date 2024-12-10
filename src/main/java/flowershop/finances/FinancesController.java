@@ -1,13 +1,18 @@
 package flowershop.finances;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.time.Interval;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -146,7 +151,7 @@ public class FinancesController {
 	 * @return
 	 */
 	@GetMapping("/askForDay")
-	public String dayReport(Model model) {
+	public String askDay(Model model) {
 		return "finance/askForDay";
 	}
 
@@ -156,8 +161,28 @@ public class FinancesController {
 	 * @return
 	 */
 	@GetMapping("/askForMonth")
-	public String monthReport(Model model) {
+	public String askMonth(Model model) {
 		return "finance/askForMonth";
+	}
+
+	/**
+	 * Uploads a generated day-report
+	 * @param date
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/dayReport")
+	public ResponseEntity<byte[]> dayReport(@RequestParam("day") LocalDate date, Model model) {
+		if(date.isAfter(LocalDate.now())){
+			return ResponseEntity.badRequest()
+				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
+		}
+		DailyFinancialReport report = cashRegisterService.createFinancialReportDay(date.atStartOfDay());
+		byte[] docu = report.generatePDF();
+		return ResponseEntity.ok()
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=document.pdf")
+			.contentType(MediaType.APPLICATION_PDF)
+			.body(docu);
 	}
 
 	@GetMapping("/filterCategories")

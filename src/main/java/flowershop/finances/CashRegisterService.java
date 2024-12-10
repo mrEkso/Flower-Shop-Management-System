@@ -152,6 +152,7 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 			Interval subinterval = Interval.from(start).to(end);
 			Streamable<AccountancyEntry> subset = Streamable.empty();
 			output.put(subinterval, subset.and(find(subinterval)));
+			end = end.plus(duration);
 		}while(interval.contains(end));
 		return output;
 	}
