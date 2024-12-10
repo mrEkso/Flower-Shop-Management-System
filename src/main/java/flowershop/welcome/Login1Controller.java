@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class Login {
+public class Login1Controller {
 
-	@GetMapping("/login")
+	@GetMapping("/login1")
 	public String login() {
 		System.out.println("------------------------ Login -----------------------");
-		return "login";
+		return "login1";
 	}
 
-	@PostMapping("/login")
+	@PostMapping("/login1")
 	public String loginSubmit(@RequestParam("username") String username,
 							  @RequestParam("password") String password,
 							  Model model) {
@@ -27,7 +27,7 @@ public class Login {
 			return "redirect:/inventory";
 		} else {
 			model.addAttribute("error", "Invalid username or password");
-			return "login";
+			return "login1";
 		}
 	}
 
