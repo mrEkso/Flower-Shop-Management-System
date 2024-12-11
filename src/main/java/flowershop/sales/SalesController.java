@@ -121,7 +121,7 @@ public class SalesController {
 	}
 
 	/**
-	 * Registers a {@link SimpleOrder} instance based on the {@link BasketItem}s.
+	 * Registers a {@link SimpleOrder} instance based on the {@link Cart}.
 	 */
 	@PostMapping("/sell-from-cart")
 	public String sellFromCart(
@@ -142,7 +142,7 @@ public class SalesController {
 
 	
 	/**
-	 * Registers a {@link SimpleOrder} instance based on the {@link BasketItem}s.
+	 * Registers a {@link SimpleOrder} instance based on the {@link Cart}.
 	 */
 	@PostMapping("/buy-from-cart")
 	public String buyFromCart(
@@ -173,7 +173,6 @@ public class SalesController {
 				return 0;
 			}
 		}).sum();
-		System.out.println(fp);
 
 		model.addAttribute(isSellPage?"fullSellPrice":"fullBuyPrice", fp);
 
