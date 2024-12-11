@@ -2,7 +2,10 @@ package flowershop.sales;
 
 import static org.assertj.core.api.Assertions.*;
 
+import flowershop.product.ProductService;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.salespointframework.order.Cart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ExtendedModelMap;
@@ -10,11 +13,17 @@ import org.springframework.ui.Model;
 
 import flowershop.AbstractIntegrationTests;
 
-import java.util.Set;
-
 public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
+
+	@Mock
+	private SalesService salesService;
+
 	@Autowired
-	SalesController controller;
+	@InjectMocks
+	private SalesController controller;
+
+	@Autowired
+	private ProductService productService;
 
 
 	@Test
@@ -125,6 +134,29 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 		Cart sellCart = controller.initializeSellCart();
 		assertThat(sellCart).isNotNull();
 	}
+
+	@Test
+	public void testSellFromCart_EmptyCart() {
+		Model model = new ExtendedModelMap();
+		Cart emptyCart = new Cart();  // Empty cart scenario
+
+		String viewName = controller.sellFromCart(emptyCart, model);
+
+		assertThat(viewName).isEqualTo("redirect:sell");
+		assertThat(model.asMap().get("message")).isEqualTo("Your basket is empty.");
+	}
+
+	@Test
+	public void testBuyFromCart_EmptyCart() {
+		Model model = new ExtendedModelMap();
+		Cart emptyCart = new Cart();  // Empty cart scenario
+
+		String viewName = controller.buyFromCart(emptyCart, model);
+
+		assertThat(viewName).isEqualTo("redirect:buy");
+		assertThat(model.asMap().get("message")).isEqualTo("Your basket is empty.");
+	}
+
 
 }
 
