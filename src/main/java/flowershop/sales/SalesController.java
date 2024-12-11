@@ -20,7 +20,7 @@ import org.springframework.ui.Model;
 
 
 
-@SessionAttributes({"buyBasket", "sellBasket", "fullSellPrice", "fullBuyPrice",
+@SessionAttributes({"fullSellPrice", "fullBuyPrice",
 "buyCart", "sellCart"})
 @Controller
 public class SalesController {
@@ -28,23 +28,13 @@ public class SalesController {
 	private final ProductService productService;
 	private final SalesService salesService;
 	private final WholesalerService wholesalerService;
-	private final BasketService basketService;
-
-	SalesController(ProductService productService, SalesService salesService, WholesalerService wholesalerService, BasketService basketService) {
+	// private final BasketService basketService;
+	
+	SalesController(ProductService productService, SalesService salesService, WholesalerService wholesalerService/*, BasketService basketService*/) {
 		this.productService = productService;
 		this.salesService = salesService;
 		this.wholesalerService = wholesalerService;
-		this.basketService = basketService;
-	}
-
-	@ModelAttribute("buyBasket")
-	public List<BasketItem> createBuyBasket() {
-		return new ArrayList<>();
-	}
-
-	@ModelAttribute("sellBasket")
-	public List<BasketItem> createSellBasket() {
-		return new ArrayList<>();
+		// this.basketService = basketService;
 	}
 
 	@ModelAttribute("buyCart")
@@ -65,8 +55,7 @@ public class SalesController {
 	@GetMapping("/sell")
 	public String sellCatalog(Model model,
 					   @RequestParam(required = false) String filterItem,
-					   @RequestParam(required = false) String searchInput,
-					   @ModelAttribute("sellBasket") List<BasketItem> sellBasket) {
+					   @RequestParam(required = false) String searchInput) {
 
 		List<Flower> flowers = productService.findAllFlowers();
 		List<Bouquet> bouquets = productService.findAllBouquets();
@@ -100,7 +89,6 @@ public class SalesController {
 		model.addAttribute("filterItem", filterItem);
 		model.addAttribute("searchInput", searchInput);
 		model.addAttribute("products", products);
-		model.addAttribute("sellBasket", sellBasket);
 
 		return "sales/sell";
 	}
@@ -108,8 +96,7 @@ public class SalesController {
 	@GetMapping("/buy")
 	public String buyCatalog(Model model,
 					  @RequestParam(required = false) String filterItem,
-					  @RequestParam(required = false) String searchInput,
-					  @ModelAttribute("buyBasket") List<BasketItem> buyBasket) {
+					  @RequestParam(required = false) String searchInput) {
 
 		// Shouldn't allow to work with bouquets because wholesalers sell only flowers.
 		List<Flower> flowers = wholesalerService.findAllFlowers();
@@ -129,183 +116,190 @@ public class SalesController {
 		model.addAttribute("filterItem", filterItem);
 		model.addAttribute("searchInput", searchInput);
 		model.addAttribute("flowers", flowers);
-		model.addAttribute("buyBasket", buyBasket);
 
 		return "sales/buy";
-	}
-
-	@PostMapping("/add-to-buyBasket")
-	public String addToBuyBasket(
-		Model model,
-		@RequestParam UUID productId, // Use UUID instead of product name
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
-	) {
-
-		basketService.addToBasket(buyBasket, productId);
-		model.addAttribute("fullBuyPrice", calculateFullBasketPrice(buyBasket));
-		return "redirect:/buy";
-	}
-
-	@PostMapping("/add-to-sellBasket")
-	public String addToSellBasket(
-		Model model,
-		@RequestParam UUID productId, // Use UUID instead of product name
-		@RequestParam(required = false) String redirectPage,
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
-	) {
-		basketService.addToBasket(sellBasket, productId);
-		model.addAttribute("fullSellPrice", calculateFullBasketPrice(sellBasket));
-		return "redirect:/sell";
-	}
-
-	@PostMapping("/remove-from-sellBasket")
-	public String removeFromSellBasket(
-		Model model,
-		@RequestParam UUID productId, // Use UUID instead of product name
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
-	) {
-		basketService.removeFromBasket(sellBasket, productId);
-		model.addAttribute("fullSellPrice", calculateFullBasketPrice(sellBasket));
-		return "redirect:/sell";
-	}
-
-	@PostMapping("/remove-from-buyBasket")
-	public String removeFromBuyBasket(
-		Model model,
-		@RequestParam UUID productId, // Use UUID instead of product name
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
-	) {
-		basketService.removeFromBasket(buyBasket, productId);
-		model.addAttribute("fullBuyPrice", calculateFullBasketPrice(buyBasket));
-		return "redirect:/buy";
-	}
-
-	/**
-	 * Registers a {@link WholesalerOrder} instance based on the {@link BasketItem}s.
-	 */
-	@PostMapping("buy-from-buyBasket")
-	public String buyFromBasket(
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket,
-		Model model
-	) {
-		if (buyBasket == null || buyBasket.isEmpty()) {
-			model.addAttribute("message", "Your buyBasket is empty.");
-			return "redirect:/buy";
-		}
-
-		salesService.buyProductsFromBasket(buyBasket, "Card");
-
-		model.addAttribute("message", "Your order has been successfully placed.");
-		return "redirect:/buy";
 	}
 
 	/**
 	 * Registers a {@link SimpleOrder} instance based on the {@link BasketItem}s.
 	 */
-	@PostMapping("/sell-from-basket")
-	public String sellFromBasket(
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket,
-		Model model
+	@PostMapping("/sell-from-cart")
+	public String sellFromCart(
+		@ModelAttribute("sellCart") Cart sellCart, Model model
 	) {
-		if (sellBasket == null || sellBasket.isEmpty()) {
+
+		if (sellCart == null || sellCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:sell";
 		}
-		salesService.sellProductsFromBasket(sellBasket, "Cash");
+		salesService.sellProductsFromBasket(sellCart, "Cash");
+		
+		calculateFullCartPrice(model, sellCart, true);
 
 		model.addAttribute("message", "Your order has been successfully placed.");
 		return "redirect:sell";
 	}
 
-	@PostMapping("/increase-from-sellBasket")
-	public String increaseFromSellBasket(
-		Model model,
-		@RequestParam UUID productId,
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
+	
+	/**
+	 * Registers a {@link SimpleOrder} instance based on the {@link BasketItem}s.
+	 */
+	@PostMapping("/buy-from-cart")
+	public String buyFromCart(
+		@ModelAttribute("buyCart") Cart buyCart,
+		Model model
 	) {
-		basketService.increaseQuantity(sellBasket, productId);
-		model.addAttribute("fullSellPrice", calculateFullBasketPrice(sellBasket));
-		return "redirect:/sell";
+		if (buyCart == null || buyCart.isEmpty()) {
+			model.addAttribute("message", "Your basket is empty.");
+			return "redirect:buy";
+		}
+		salesService.buyProductsFromBasket(buyCart, "Cash");
+		
+		calculateFullCartPrice(model, buyCart, false);
+
+		model.addAttribute("message", "Your order has been successfully placed.");
+		return "redirect:buy";
 	}
 
-	@PostMapping("/decrease-from-sellBasket")
-	public String decreaseFromSellBasket(
-		Model model,
-		@RequestParam UUID productId,
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
-	) {
-		basketService.decreaseQuantity(sellBasket, productId);
-		model.addAttribute("fullSellPrice", calculateFullBasketPrice(sellBasket));
-		return "redirect:/sell";
-	}
+	public double calculateFullCartPrice(Model model, Cart cart, Boolean isSellPage) {
 
-	@PostMapping("/increase-from-buyBasket")
-	public String increaseFromBuyBasket(
-		Model model,
-		@RequestParam UUID productId,
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
-	) {
-		basketService.increaseQuantity(buyBasket, productId);
-		model.addAttribute("fullBuyPrice", calculateFullBasketPrice(buyBasket));
-		return "redirect:/buy";
-	}
-
-	@PostMapping("/decrease-from-buyBasket")
-	public String decreaseFromBuyBasket(
-		Model model,
-		@RequestParam UUID productId,
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
-	) {
-		basketService.decreaseQuantity(buyBasket, productId);
-		model.addAttribute("fullBuyPrice", calculateFullBasketPrice(buyBasket));
-		return "redirect:/buy";
-	}
-
-	public double calculateFullBasketPrice(List<BasketItem> basket) {
-
-		double fp = basket.stream()
+		double fp = cart.get()
 		.mapToDouble(bi -> {
 			if (bi.getProduct() instanceof Flower flower) {
-				return flower.getPricing().getSellPrice().getNumber().doubleValue() * 1.0 * bi.getQuantityAsInteger() * 1.0;
+				return flower.getPricing().getSellPrice().getNumber().doubleValue() * 1.0 * bi.getQuantity().getAmount().doubleValue() * 1.0;
 			} else if (bi.getProduct() instanceof Bouquet bouquet) {
-				return bouquet.getPrice().getNumber().doubleValue() * 1.0 * bi.getQuantityAsInteger() * 1.0;
+				return bouquet.getPrice().getNumber().doubleValue() * 1.0 * bi.getQuantity().getAmount().doubleValue() * 1.0;
 			} else {
 				return 0;
 			}
 		}).sum();
 		System.out.println(fp);
 
+		model.addAttribute(isSellPage?"fullSellPrice":"fullBuyPrice", fp);
+
 		return fp;
 	}
 
-	@PostMapping("addToSellcart")
+	@PostMapping("add-to-sell-cart")
 	public String addToSellCart(
-		@RequestParam("item") Product product,
+		Model model,
+		@RequestParam UUID productId,
 		@ModelAttribute("sellCart") Cart sellCart
 	){
 		// if(sellCart.getItem(
 		// 	product.getId().toString()).isPresent()){}
-		
+		Product product = productService.getProductById(productId).get();
 		sellCart.addOrUpdateItem(product, 1);
 
+		System.out.println("--------------ATSC--------ADD-----");
+		System.out.println(sellCart.size());
+		
+		calculateFullCartPrice(model, sellCart, true);
+
 		return "redirect:/sell";
 	}
 
-	@PostMapping("removeFromSellCart")
+	@PostMapping("remove-from-sell-cart")
 	public String removeFromSellCart(
-		@RequestParam("item") Product product,
+		Model model,
+		@RequestParam UUID productId,
 		@ModelAttribute("sellCart") Cart sellCart
 	){
 		// if(sellCart.getItem(
 		// 	product.getId().toString()).isPresent()){}
 		
-		if(sellCart.getQuantity(product).isPositive()){
-			sellCart.addOrUpdateItem(product, -1);
-		} else {
-			sellCart.removeItem(product.getId().toString());
-		}
+		Product product = productService.getProductById(productId).get();
+
+		sellCart.addOrUpdateItem(product, -1.0 * sellCart.getQuantity(product).getAmount().doubleValue());
+		
+		System.out.println("--------------ATSC-------REMOVE------");
+		System.out.println(sellCart.size());
+		
+				calculateFullCartPrice(model, sellCart, true);;
+
 		return "redirect:/sell";
 	}
 
+	@PostMapping("decrease-from-sell-cart")
+	public String decreaseFromSellCart(
+		Model model,
+		@RequestParam UUID productId,
+		@ModelAttribute("sellCart") Cart sellCart
+	){
+		// if(sellCart.getItem(
+		// 	product.getId().toString()).isPresent()){}
+		
+		Product product = productService.getProductById(productId).get();
+
+		sellCart.addOrUpdateItem(product, -1);
+		
+		System.out.println("--------------ATSC------DECRE-------");
+		System.out.println(sellCart.size());
+		
+				calculateFullCartPrice(model, sellCart, true);;
+
+		return "redirect:/sell";
+	}
+
+	@PostMapping("add-to-buy-cart")
+	public String addToBuyCart(
+		Model model,
+		@RequestParam UUID productId,
+		@ModelAttribute("buyCart") Cart buyCart
+	){
+		// if(sellCart.getItem(
+		// 	product.getId().toString()).isPresent()){}
+		Product product = productService.getProductById(productId).get();
+		buyCart.addOrUpdateItem(product, 1);
+
+		System.out.println("--------------ATBC--------ADD-----");
+		System.out.println(buyCart.size());
+		
+			calculateFullCartPrice(model, buyCart, false);;
+
+		return "redirect:/buy";
+	}
+
+	@PostMapping("remove-from-buy-cart")
+	public String removeFromBuyCart(
+		Model model,
+		@RequestParam UUID productId,
+		@ModelAttribute("buyCart") Cart buyCart
+	){
+		// if(sellCart.getItem(
+		// 	product.getId().toString()).isPresent()){}
+		
+		Product product = productService.getProductById(productId).get();
+
+		buyCart.addOrUpdateItem(product, -1.0 * buyCart.getQuantity(product).getAmount().doubleValue());
+		
+		System.out.println("--------------ATSC-------REMOVE------");
+		System.out.println(buyCart.size());
+		
+				calculateFullCartPrice(model, buyCart, false);;
+
+		return "redirect:/buy";
+	}
+
+	@PostMapping("decrease-from-buy-cart")
+	public String decreaseFromBuyCart(
+		Model model,
+		@RequestParam UUID productId,
+		@ModelAttribute("buyCart") Cart buyCart
+	){
+		// if(sellCart.getItem(
+		// 	product.getId().toString()).isPresent()){}
+		
+		Product product = productService.getProductById(productId).get();
+
+		buyCart.addOrUpdateItem(product, -1);
+		
+		System.out.println("--------------ATSC------DECRE-------");
+		System.out.println(buyCart.size());
+
+				calculateFullCartPrice(model, buyCart, false);;
+
+		return "redirect:/buy";
+	}
 }
  
