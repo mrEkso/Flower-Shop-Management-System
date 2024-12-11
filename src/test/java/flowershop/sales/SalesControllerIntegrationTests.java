@@ -17,12 +17,12 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 
 		Model model = new ExtendedModelMap();
 
-		String sellView = controller.sellCatalog(model, null, null, null);
+		String sellView = controller.sellCatalog(model, null, null);
 		assertThat(sellView).isEqualTo("sales/sell");
 		Iterable<Object> sellObject = (Iterable<Object>) model.asMap().get("products");
 		assertThat(sellObject).hasSize(8);
 
-        String buyView = controller.buyCatalog(model, null, null, null);
+        String buyView = controller.buyCatalog(model, null, null);
 		assertThat(buyView).isEqualTo("sales/buy");
 		Iterable<Object> buyObject = (Iterable<Object>) model.asMap().get("flowers");
 		assertThat(buyObject).hasSize(11);
