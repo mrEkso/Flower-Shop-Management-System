@@ -16,6 +16,7 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -73,7 +74,10 @@ class SalesServiceTests {
 	void buyProductsFromBasket_shouldBuyProductsSuccessfully() {
 		Cart cart = new Cart();
 		Flower flower = new Flower("Lily", new Pricing(Money.of(20, "EUR"), Money.of(40, "EUR")), "White", 10);
+		Flower flower2 = new Flower("Rose", new Pricing(Money.of(10, "EUR"), Money.of(20, "EUR")), "Red", 15);
+
 		cart.addOrUpdateItem(flower, 5);
+		cart.addOrUpdateItem(flower2, 5);
 
 		WholesalerOrder wholesalerOrder = mock(WholesalerOrder.class);
 		when(orderFactory.createWholesalerOrder()).thenReturn(wholesalerOrder);
@@ -82,6 +86,27 @@ class SalesServiceTests {
 
 		assertTrue(cart.isEmpty());
 	}
+
+	@Test
+	void buyBouquetFromBasket_ShouldThrowException() {
+		// Arrange
+		Cart cart = new Cart();
+		Flower flower1 = new Flower("Lily", new Pricing(Money.of(20, "EUR"), Money.of(40, "EUR")), "White", 10);
+		Flower flower2 = new Flower("Rose", new Pricing(Money.of(10, "EUR"), Money.of(20, "EUR")), "Red", 15);
+
+		Map<Flower, Integer> bouquetFlowers = Map.of(
+			flower1, 3,
+			flower2, 2
+		);
+		Money additionalPrice = Money.of(0.5, "EUR");
+		int quantity = 10;
+
+		Bouquet bouquet = new Bouquet("Spring Bouquet", bouquetFlowers, additionalPrice, quantity);
+		cart.addOrUpdateItem(bouquet, 2);
+
+		assertThrows(IllegalArgumentException.class, () -> salesService.buyProductsFromBasket(cart, "Card"));
+	}
+
 
 	@Test
 	void buyProductsFromBasket_shouldThrowExceptionForEmptyBasket() {
@@ -97,8 +122,11 @@ class SalesServiceTests {
 	void buyProductsFromBasket_shouldThrowExceptionForBouquets() {
 		Cart cart = new Cart();
 		Bouquet bouquet = mock(Bouquet.class);
-		cart.addOrUpdateItem(bouquet, 2);
 
+		assertThrows(
+			IllegalArgumentException.class,
+			() -> cart.addOrUpdateItem(bouquet, 2)
+		);
 		assertThrows(
 			IllegalArgumentException.class,
 			() -> salesService.buyProductsFromBasket(cart, "Card")
