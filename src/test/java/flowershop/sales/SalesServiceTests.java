@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -133,4 +134,87 @@ class SalesServiceTests {
 		);
 
 	}
+	@Test
+	void calculateFullCartPrice_ShouldReturnZero_ForEmptyCart() {
+		Cart cart = new Cart();
+
+		double result = salesService.calculateFullCartPrice(null, cart, true);
+
+		assertEquals(0.0, result);
+	}
+	@Test
+	void calculateFullCartPrice_ShouldCalculateCorrectly_ForFlowersOnSellPage() {
+		Cart cart = new Cart();
+
+		Flower flower = new Flower("Rose", new Pricing(Money.of(10, "EUR"), Money.of(20, "EUR")), "Red", 10);
+		cart.addOrUpdateItem(flower, Quantity.of(5));
+
+		double result = salesService.calculateFullCartPrice(null, cart, true);
+
+		assertEquals(100.0, result); // 20 (sell price) * 5 (quantity)
+	}
+
+	@Test
+	void calculateFullCartPrice_ShouldCalculateCorrectly_ForFlowersOnBuyPage() {
+		Cart cart = new Cart();
+
+		Flower flower = new Flower("Lily", new Pricing(Money.of(15, "EUR"), Money.of(30, "EUR")), "White", 20);
+		cart.addOrUpdateItem(flower, Quantity.of(2));
+
+		double result = salesService.calculateFullCartPrice(null, cart, false);
+
+		assertEquals(30.0, result); // 15 (buy price) * 2 (quantity)
+	}
+
+	@Test
+	void calculateFullCartPrice_ShouldCalculateCorrectly_ForBouquetsOnSellPage() {
+		Cart cart = new Cart();
+
+		Flower flower1 = new Flower("Tulip", new Pricing(Money.of(5, "EUR"), Money.of(10, "EUR")), "Yellow", 50);
+		Flower flower2 = new Flower("Daisy", new Pricing(Money.of(4, "EUR"), Money.of(8, "EUR")), "White", 30);
+		Map<Flower, Integer> flowers = Map.of(flower1, 3, flower2, 2);
+		Bouquet bouquet = new Bouquet("Sunny Bouquet", flowers, Money.of(2.5, "EUR"), 10);
+
+		cart.addOrUpdateItem(bouquet, Quantity.of(3));
+
+		double result = salesService.calculateFullCartPrice(null, cart, true);
+
+		assertEquals(145.5, result);
+	}
+
+	@Test
+	void calculateFullCartPrice_ShouldIgnoreBouquetsOnBuyPage() {
+		Cart cart = new Cart();
+
+		Flower flower1 = new Flower("Lily", new Pricing(Money.of(5, "EUR"), Money.of(10, "EUR")), "White", 20);
+		Flower flower2 = new Flower("Rose", new Pricing(Money.of(4, "EUR"), Money.of(8, "EUR")), "Red", 15);
+		Map<Flower, Integer> bouquetFlowers = Map.of(flower1, 2, flower2, 3);
+		Bouquet bouquet = new Bouquet("Romantic Bouquet", bouquetFlowers, Money.of(6.5, "EUR"), 10);
+
+		cart.addOrUpdateItem(bouquet, Quantity.of(2));
+
+		double result = salesService.calculateFullCartPrice(null, cart, false);
+
+		assertEquals(0.0, result); // Bouquets are ignored on the buy page
+	}
+
+	@Test
+	void calculateFullCartPrice_ShouldCalculateCorrectly_ForMixedCartOnSellPage() {
+		Cart cart = new Cart();
+
+		Flower flower = new Flower("Rose", new Pricing(Money.of(10, "EUR"), Money.of(20, "EUR")), "Red", 15);
+		cart.addOrUpdateItem(flower, Quantity.of(4));
+
+		Flower flower1 = new Flower("Tulip", new Pricing(Money.of(5, "EUR"), Money.of(10, "EUR")), "Yellow", 50);
+		Flower flower2 = new Flower("Daisy", new Pricing(Money.of(4, "EUR"), Money.of(8, "EUR")), "White", 30);
+		Map<Flower, Integer> bouquetFlowers = Map.of(flower1, 3, flower2, 2);
+		Bouquet bouquet = new Bouquet("Spring Bouquet", bouquetFlowers, Money.of(3.0, "EUR"), 10);
+		cart.addOrUpdateItem(bouquet, Quantity.of(2));
+
+		double result = salesService.calculateFullCartPrice(null, cart, true);
+
+		assertEquals(178, result);
+	}
+
+
 }
