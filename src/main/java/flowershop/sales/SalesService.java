@@ -5,6 +5,8 @@ import flowershop.product.Flower;
 import flowershop.product.ProductService;
 import flowershop.services.OrderFactory;
 import org.salespointframework.catalog.Product;
+import org.salespointframework.order.Cart;
+import org.salespointframework.order.CartItem;
 import org.salespointframework.order.OrderEvents;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -28,47 +30,47 @@ public class SalesService {
 		this.eventPublisher = eventPublisher;
 	}
 
-	public void sellProductsFromBasket(List<BasketItem> basket, String paymentMethod) throws IllegalArgumentException {
-		if (basket == null || basket.isEmpty()) {
+	public void sellProductsFromBasket(Cart cart, String paymentMethod) throws IllegalArgumentException {
+		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
 		}
 
 		SimpleOrder simpleOrder = orderFactory.createSimpleOrder();
-		for (BasketItem basketItem : basket) {
-			Product product = basketItem.getProduct();
+		for (CartItem cartItem : cart) {
+			Product product = cartItem.getProduct();
 
 			if (product instanceof Flower) {
-				productService.removeFlowers((Flower) product, basketItem.getQuantityAsInteger());
+				productService.removeFlowers((Flower) product, (int)cartItem.getQuantity().getAmount().doubleValue());
 			} else if (product instanceof Bouquet) {
 				//productService.removeBouquet((Bouquet) product, basketItem.getQuantity());
-				productService.removeBouquet((Bouquet) product, basketItem.getQuantityAsInteger());
+				productService.removeBouquet((Bouquet) product, (int)cartItem.getQuantity().getAmount().doubleValue());
 			} else {
 				throw new IllegalArgumentException("Unsupported product type");
 			}
 
-			simpleOrder.addOrderLine(product, basketItem.getQuantity());
+			simpleOrder.addOrderLine(product, cartItem.getQuantity());
 		}
 		simpleOrder.setPaymentMethod(paymentMethod);
 		simpleOrderService.create(simpleOrder);
-		basket.clear();
+		cart.clear();
 
 		var event = OrderEvents.OrderPaid.of(simpleOrder);
 		eventPublisher.publishEvent(event); // Needed for Finances
 	}
 
 
-	public void buyProductsFromBasket(List<BasketItem> basket, String paymentMethod) throws IllegalArgumentException {
-		if (basket == null || basket.isEmpty()) {
+	public void buyProductsFromBasket(Cart cart, String paymentMethod) throws IllegalArgumentException {
+		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
 		}
 
 		WholesalerOrder wholesalerOrder = orderFactory.createWholesalerOrder();
-		for (BasketItem basketItem : basket) {
-			Product product = basketItem.getProduct();
+		for (CartItem cartItem : cart) {
+			Product product = cartItem.getProduct();
 
 			if (product instanceof Flower) {
-				productService.addFlowers((Flower) product, basketItem.getQuantityAsInteger());
-				wholesalerOrder.addOrderLine(product, basketItem.getQuantity());
+				productService.addFlowers((Flower) product, (int)cartItem.getQuantity().getAmount().doubleValue());
+				wholesalerOrder.addOrderLine(product, cartItem.getQuantity());
 			} else if (product instanceof Bouquet) {
 				throw new IllegalArgumentException("Unsupported product type: Bouquet cannot be bought from Wholesaler.");
 			} else {
@@ -78,7 +80,7 @@ public class SalesService {
 		}
 		wholesalerOrder.setPaymentMethod(paymentMethod);
 		wholesalerOrderService.create(wholesalerOrder);
-		basket.clear();
+		cart.clear();
 
 		var event = OrderEvents.OrderPaid.of(wholesalerOrder);
 		eventPublisher.publishEvent(event); // Needed for Finances

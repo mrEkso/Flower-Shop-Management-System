@@ -8,7 +8,8 @@ import flowershop.services.OrderFactory;
 import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import org.salespointframework.order.Cart;
+import org.salespointframework.order.CartItem;
 import org.salespointframework.order.OrderEvents;
 import org.salespointframework.quantity.Quantity;
 import org.springframework.context.ApplicationEventPublisher;
@@ -40,70 +41,67 @@ class SalesServiceTests {
 
 	@Test
 	void sellProductsFromBasket_shouldSellProductsSuccessfully() {
-		List<BasketItem> basket = new ArrayList<>();
+		Cart cart = new Cart();
 		Flower flower = new Flower("Rose", new Pricing(Money.of(20, "EUR"), Money.of(40, "EUR")), "Red", 10);
 
-		BasketItem item = new BasketItem(flower, 5);
-		basket.add(item);
+		cart.addOrUpdateItem(flower, 5);
 
 		SimpleOrder simpleOrder = mock(SimpleOrder.class);
 		when(orderFactory.createSimpleOrder()).thenReturn(simpleOrder);
 
-		salesService.sellProductsFromBasket(basket, "Cash");
+		salesService.sellProductsFromBasket(cart, "Cash");
 
 		verify(productService, times(1)).removeFlowers(flower, 5);
 		verify(simpleOrder, times(1)).addOrderLine(flower, Quantity.of(5));
 		verify(simpleOrderService, times(1)).create(simpleOrder);
-		assertTrue(basket.isEmpty());
+		assertTrue(cart.isEmpty());
 		verify(eventPublisher, times(1)).publishEvent(any(OrderEvents.OrderPaid.class));
 	}
 
 	@Test
 	void sellProductsFromBasket_shouldThrowExceptionForEmptyBasket() {
-		List<BasketItem> basket = new ArrayList<>();
+		Cart cart = new Cart();
 
 		assertThrows(
 			IllegalArgumentException.class,
-			() -> salesService.sellProductsFromBasket(basket, "CASH")
+			() -> salesService.sellProductsFromBasket(cart, "CASH")
 		);
 
 	}
 
 	@Test
 	void buyProductsFromBasket_shouldBuyProductsSuccessfully() {
-		List<BasketItem> basket = new ArrayList<>();
+		Cart cart = new Cart();
 		Flower flower = new Flower("Lily", new Pricing(Money.of(20, "EUR"), Money.of(40, "EUR")), "White", 10);
-		BasketItem item = new BasketItem(flower, 8);
-		basket.add(item);
+		cart.addOrUpdateItem(flower, 5);
 
 		WholesalerOrder wholesalerOrder = mock(WholesalerOrder.class);
 		when(orderFactory.createWholesalerOrder()).thenReturn(wholesalerOrder);
 
-		salesService.buyProductsFromBasket(basket, "Card");
+		salesService.buyProductsFromBasket(cart, "Card");
 
-		assertTrue(basket.isEmpty());
+		assertTrue(cart.isEmpty());
 	}
 
 	@Test
 	void buyProductsFromBasket_shouldThrowExceptionForEmptyBasket() {
-		List<BasketItem> basket = new ArrayList<>();
+		Cart cart = new Cart();
 
 		assertThrows(
 			IllegalArgumentException.class,
-			() -> salesService.buyProductsFromBasket(basket, "Card")
+			() -> salesService.buyProductsFromBasket(cart, "Card")
 		);
 	}
 
 	@Test
 	void buyProductsFromBasket_shouldThrowExceptionForBouquets() {
-		List<BasketItem> basket = new ArrayList<>();
+		Cart cart = new Cart();
 		Bouquet bouquet = mock(Bouquet.class);
-		BasketItem item = new BasketItem(bouquet, 2);
-		basket.add(item);
+		cart.addOrUpdateItem(bouquet, 2);
 
 		assertThrows(
 			IllegalArgumentException.class,
-			() -> salesService.buyProductsFromBasket(basket, "Card")
+			() -> salesService.buyProductsFromBasket(cart, "Card")
 		);
 
 	}
