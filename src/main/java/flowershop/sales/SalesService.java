@@ -10,6 +10,7 @@ import org.salespointframework.order.CartItem;
 import org.salespointframework.order.OrderEvents;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +43,6 @@ public class SalesService {
 			if (product instanceof Flower) {
 				productService.removeFlowers((Flower) product, (int)cartItem.getQuantity().getAmount().doubleValue());
 			} else if (product instanceof Bouquet) {
-				//productService.removeBouquet((Bouquet) product, basketItem.getQuantity());
 				productService.removeBouquet((Bouquet) product, (int)cartItem.getQuantity().getAmount().doubleValue());
 			} else {
 				throw new IllegalArgumentException("Unsupported product type");
@@ -84,6 +84,28 @@ public class SalesService {
 
 		var event = OrderEvents.OrderPaid.of(wholesalerOrder);
 		eventPublisher.publishEvent(event); // Needed for Finances
+	}
+
+	public double calculateFullCartPrice(Model model, Cart cart, Boolean isSellPage) {
+		double fp = cart.get()
+			.mapToDouble(bi -> {
+				if (bi.getProduct() instanceof Flower flower) {
+					double price = isSellPage
+						? flower.getPricing().getSellPrice().getNumber().doubleValue()
+						: flower.getPricing().getBuyPrice().getNumber().doubleValue();
+					return price * bi.getQuantity().getAmount().doubleValue();
+				} else if (bi.getProduct() instanceof Bouquet bouquet) {
+					if (isSellPage) {
+						double price = bouquet.getPrice().getNumber().doubleValue();
+						return price * bi.getQuantity().getAmount().doubleValue();
+					} else {
+						return 0; // Bouquets are not available for buy page
+					}
+				} else {
+					return 0;
+				}
+			}).sum();
+		return fp;
 	}
 
 }

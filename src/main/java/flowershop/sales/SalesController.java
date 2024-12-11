@@ -19,22 +19,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 
-
 @SessionAttributes({"fullSellPrice", "fullBuyPrice",
-"buyCart", "sellCart"})
+	"buyCart", "sellCart"})
 @Controller
 public class SalesController {
 
 	private final ProductService productService;
 	private final SalesService salesService;
-	private final WholesalerService wholesalerService;
-	// private final BasketService basketService;
-	
-	SalesController(ProductService productService, SalesService salesService, WholesalerService wholesalerService/*, BasketService basketService*/) {
+
+	SalesController(ProductService productService, SalesService salesService) {
 		this.productService = productService;
 		this.salesService = salesService;
-		this.wholesalerService = wholesalerService;
-		// this.basketService = basketService;
 	}
 
 	@ModelAttribute("buyCart")
@@ -54,8 +49,8 @@ public class SalesController {
 
 	@GetMapping("/sell")
 	public String sellCatalog(Model model,
-					   @RequestParam(required = false) String filterItem,
-					   @RequestParam(required = false) String searchInput) {
+							  @RequestParam(required = false) String filterItem,
+							  @RequestParam(required = false) String searchInput) {
 
 		List<Flower> flowers = productService.findAllFlowers();
 		List<Bouquet> bouquets = productService.findAllBouquets();
@@ -95,22 +90,22 @@ public class SalesController {
 
 	@GetMapping("/buy")
 	public String buyCatalog(Model model,
-					  @RequestParam(required = false) String filterItem,
-					  @RequestParam(required = false) String searchInput) {
+							 @RequestParam(required = false) String filterItem,
+							 @RequestParam(required = false) String searchInput) {
 
 		// Shouldn't allow to work with bouquets because wholesalers sell only flowers.
-		List<Flower> flowers = wholesalerService.findAllFlowers();
+		List<Flower> flowers = productService.findAllFlowers();
 
 		// Only by color? Seems reasonable but who knows.
 		if (filterItem != null && !filterItem.isEmpty()) {
-			flowers = wholesalerService.findFlowersByColor(filterItem);
+			flowers = productService.findFlowersByColor(filterItem);
 		}
 
 		if (searchInput != null && !searchInput.isEmpty()) {
-			flowers = wholesalerService.findFlowersByName(searchInput);
+			flowers = productService.findFlowersByName(searchInput);
 		}
 
-		Set<String> colors = wholesalerService.findAllFlowerColors();
+		Set<String> colors = productService.getAllFlowerColors();
 
 		model.addAttribute("typeList", colors);
 		model.addAttribute("filterItem", filterItem);
@@ -133,14 +128,15 @@ public class SalesController {
 			return "redirect:sell";
 		}
 		salesService.sellProductsFromBasket(sellCart, "Cash");
-		
-		calculateFullCartPrice(model, sellCart, true);
+
+		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+		model.addAttribute("fullSellPrice", fp);
 
 		model.addAttribute("message", "Your order has been successfully placed.");
 		return "redirect:sell";
 	}
 
-	
+
 	/**
 	 * Registers a {@link SimpleOrder} instance based on the {@link Cart}.
 	 */
@@ -154,46 +150,26 @@ public class SalesController {
 			return "redirect:buy";
 		}
 		salesService.buyProductsFromBasket(buyCart, "Cash");
-		
-		calculateFullCartPrice(model, buyCart, false);
+
+		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
+		model.addAttribute("fullBuyPrice", fp);
 
 		model.addAttribute("message", "Your order has been successfully placed.");
 		return "redirect:buy";
 	}
 
-	public double calculateFullCartPrice(Model model, Cart cart, Boolean isSellPage) {
-
-		double fp = cart.get()
-		.mapToDouble(bi -> {
-			if (bi.getProduct() instanceof Flower flower) {
-				return flower.getPricing().getSellPrice().getNumber().doubleValue() * 1.0 * bi.getQuantity().getAmount().doubleValue() * 1.0;
-			} else if (bi.getProduct() instanceof Bouquet bouquet) {
-				return bouquet.getPrice().getNumber().doubleValue() * 1.0 * bi.getQuantity().getAmount().doubleValue() * 1.0;
-			} else {
-				return 0;
-			}
-		}).sum();
-
-		model.addAttribute(isSellPage?"fullSellPrice":"fullBuyPrice", fp);
-
-		return fp;
-	}
 
 	@PostMapping("add-to-sell-cart")
 	public String addToSellCart(
 		Model model,
 		@RequestParam UUID productId,
 		@ModelAttribute("sellCart") Cart sellCart
-	){
-		// if(sellCart.getItem(
-		// 	product.getId().toString()).isPresent()){}
+	) {
 		Product product = productService.getProductById(productId).get();
 		sellCart.addOrUpdateItem(product, 1);
 
-		System.out.println("--------------ATSC--------ADD-----");
-		System.out.println(sellCart.size());
-		
-		calculateFullCartPrice(model, sellCart, true);
+		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+		model.addAttribute("fullSellPrice", fp);
 
 		return "redirect:/sell";
 	}
@@ -203,40 +179,31 @@ public class SalesController {
 		Model model,
 		@RequestParam UUID productId,
 		@ModelAttribute("sellCart") Cart sellCart
-	){
-		// if(sellCart.getItem(
-		// 	product.getId().toString()).isPresent()){}
-		
+	) {
 		Product product = productService.getProductById(productId).get();
 
 		sellCart.addOrUpdateItem(product, -1.0 * sellCart.getQuantity(product).getAmount().doubleValue());
-		
-		System.out.println("--------------ATSC-------REMOVE------");
-		System.out.println(sellCart.size());
-		
-				calculateFullCartPrice(model, sellCart, true);;
+
+		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+		model.addAttribute("fullSellPrice", fp);
 
 		return "redirect:/sell";
 	}
+
+	
 
 	@PostMapping("decrease-from-sell-cart")
 	public String decreaseFromSellCart(
 		Model model,
 		@RequestParam UUID productId,
 		@ModelAttribute("sellCart") Cart sellCart
-	){
-		// if(sellCart.getItem(
-		// 	product.getId().toString()).isPresent()){}
-		
+	) {
 		Product product = productService.getProductById(productId).get();
 
 		sellCart.addOrUpdateItem(product, -1);
-		
-		System.out.println("--------------ATSC------DECRE-------");
-		System.out.println(sellCart.size());
-		
-				calculateFullCartPrice(model, sellCart, true);;
 
+		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+		model.addAttribute("fullSellPrice", fp);
 		return "redirect:/sell";
 	}
 
@@ -245,16 +212,12 @@ public class SalesController {
 		Model model,
 		@RequestParam UUID productId,
 		@ModelAttribute("buyCart") Cart buyCart
-	){
-		// if(sellCart.getItem(
-		// 	product.getId().toString()).isPresent()){}
+	) {
 		Product product = productService.getProductById(productId).get();
 		buyCart.addOrUpdateItem(product, 1);
 
-		System.out.println("--------------ATBC--------ADD-----");
-		System.out.println(buyCart.size());
-		
-			calculateFullCartPrice(model, buyCart, false);;
+		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
+		model.addAttribute("fullBuyPrice", fp);
 
 		return "redirect:/buy";
 	}
@@ -264,19 +227,13 @@ public class SalesController {
 		Model model,
 		@RequestParam UUID productId,
 		@ModelAttribute("buyCart") Cart buyCart
-	){
-		// if(sellCart.getItem(
-		// 	product.getId().toString()).isPresent()){}
-		
+	) {
 		Product product = productService.getProductById(productId).get();
 
 		buyCart.addOrUpdateItem(product, -1.0 * buyCart.getQuantity(product).getAmount().doubleValue());
-		
-		System.out.println("--------------ATSC-------REMOVE------");
-		System.out.println(buyCart.size());
-		
-				calculateFullCartPrice(model, buyCart, false);;
 
+		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
+		model.addAttribute("fullBuyPrice", fp);
 		return "redirect:/buy";
 	}
 
@@ -285,19 +242,13 @@ public class SalesController {
 		Model model,
 		@RequestParam UUID productId,
 		@ModelAttribute("buyCart") Cart buyCart
-	){
-		// if(sellCart.getItem(
-		// 	product.getId().toString()).isPresent()){}
-		
+	) {
 		Product product = productService.getProductById(productId).get();
 
 		buyCart.addOrUpdateItem(product, -1);
-		
-		System.out.println("--------------ATSC------DECRE-------");
-		System.out.println(buyCart.size());
 
-				calculateFullCartPrice(model, buyCart, false);;
-
+		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
+		model.addAttribute("fullBuyPrice", fp);
 		return "redirect:/buy";
 	}
 }
