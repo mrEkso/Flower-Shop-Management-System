@@ -1,10 +1,22 @@
 package flowershop.finances;
 
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.time.Interval;
 import org.springframework.data.util.Streamable;
+import org.vandeseer.easytable.settings.HorizontalAlignment;
+import org.vandeseer.easytable.settings.VerticalAlignment;
+import org.vandeseer.easytable.structure.Row;
+import org.vandeseer.easytable.structure.cell.TextCell;
 
 import javax.money.MonetaryAmount;
+import java.awt.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class DailyFinancialReport extends FinancialReport{
 
@@ -12,8 +24,9 @@ public class DailyFinancialReport extends FinancialReport{
 
 	public DailyFinancialReport(Interval day,
 								MonetaryAmount balanceEndOfTheDay,
-								CashRegisterService cashRegister) {
-		super(day, balanceEndOfTheDay, cashRegister);
+								CashRegisterService cashRegister,
+								LocalDateTime firstEverTransaction) {
+		super(day, balanceEndOfTheDay, cashRegister,firstEverTransaction);
 		Streamable<AccountancyEntry> set = cashRegister.find(day);
 		this.orders = set;
 		this.income = cashRegister.getRevenue(set);
@@ -27,5 +40,104 @@ public class DailyFinancialReport extends FinancialReport{
 		return this.orders;
 	}
 
+	@Override
+	public boolean isBeforeBeginning() {
+		return orders.isEmpty() && this.startDate.isAfter(interval.getEnd());
+	}
 
+	public List<Row> getNeededRows(PDFont font)
+	{
+		List<Row> neededRows = new ArrayList<>();
+		// adding date
+		LocalDateTime day = interval.getStart();
+		String month = (day.getMonth().getValue()<10) ? "0"+day.getMonth().getValue() : String.valueOf(day.getMonth().getValue());
+		Row date = Row.builder()
+			.add(TextCell.builder().text(
+				(new StringBuilder().append(FinancialReport.getWeekdayNameDE(day.getDayOfWeek().getValue()))
+					.append(", ").append(day.getDayOfMonth()).append(".").append(month).append(day.getYear())).toString()
+			).backgroundColor(Color.WHITE).fontSize(16).horizontalAlignment(HorizontalAlignment.CENTER).font(font).build()).build();
+		neededRows.add(date);
+
+		// balance in the morning of the day
+		Row kontostandMorning = Row.builder()
+			.add(TextCell.builder()
+				.text("Kontostand am Anfang des Tages:").font(font).fontSize(20).colSpan(4)
+				.borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+			.build())
+			.add(TextCell.builder()
+				.text(getBalance().subtract(getProfit()).toString()).font(font).fontSize(20)
+				.colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
+			.build())
+		.build();
+		neededRows.add(kontostandMorning);
+
+		// Header
+		Row header = Row.builder()
+			.add(TextCell.builder()
+				.text("Zeitpunkt").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+				.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+			.build())
+			.add(TextCell.builder()
+				.text("Typ").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+				.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+			.build())
+			.add(TextCell.builder()
+				.text("Produkte").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+				.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+			.build())
+			.add(TextCell.builder()
+				.text("Anzahl").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+				.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+			.build())
+			.add(TextCell.builder()
+				.text("Anzahl").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+				.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+			.build())
+		.build();
+		neededRows.add(header);
+
+		// actual transactions
+		for (AccountancyEntry entry : orders) {
+			AccountancyEntryWrapper realEntry = (AccountancyEntryWrapper) entry;
+			int numRows = realEntry.getItems().size();
+			int currentRow = 0;
+			List<String> itemList = realEntry.getItems().keySet().stream().toList();
+			while (currentRow < numRows) {
+				Row.RowBuilder eintrag = Row.builder();
+				if (currentRow == 0) {
+					eintrag.add(TextCell.builder()
+						.text(realEntry.getTimestamp().toString()).rowSpan(numRows).verticalAlignment(VerticalAlignment.TOP)
+						.font(font).fontSize(12).horizontalAlignment(HorizontalAlignment.LEFT)
+						.build())
+					.add(TextCell.builder()
+						.text(realEntry.getCategory()).rowSpan(numRows).verticalAlignment(VerticalAlignment.TOP)
+						.font(font).fontSize(12).horizontalAlignment(HorizontalAlignment.LEFT)
+						.build());
+				}
+				String productName = itemList.get(currentRow);
+				eintrag.add(TextCell.builder()
+					.text(productName).verticalAlignment(VerticalAlignment.TOP)
+					.font(font).fontSize(12).horizontalAlignment(HorizontalAlignment.LEFT)
+					.build());
+				eintrag.add(TextCell.builder()
+					.text(String.valueOf(realEntry.getItems().get(productName))).verticalAlignment(VerticalAlignment.TOP)
+					.font(font).fontSize(12).horizontalAlignment(HorizontalAlignment.LEFT)
+					.build());
+				if(currentRow == 0)
+				{
+					eintrag.add(
+						TextCell.builder()
+							.text(realEntry.getValue().toString()).rowSpan(numRows).verticalAlignment(VerticalAlignment.BOTTOM)
+							.font(font).fontSize(12).horizontalAlignment(HorizontalAlignment.LEFT)
+							.build()
+					);
+				}
+				neededRows.add(eintrag.build());
+				currentRow++;
+			}
+		}
+
+		// day difference
+
+	}
 }

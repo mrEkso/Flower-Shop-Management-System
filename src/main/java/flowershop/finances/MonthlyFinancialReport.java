@@ -7,6 +7,7 @@ import org.springframework.data.util.Streamable;
 
 import javax.money.MonetaryAmount;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,8 +19,9 @@ public class MonthlyFinancialReport extends FinancialReport{
 
 	public MonthlyFinancialReport(Interval month,
 								  MonetaryAmount balanceEndOfTheMonth,
-								  CashRegisterService cashRegister){
-		super(month, balanceEndOfTheMonth, cashRegister);
+								  CashRegisterService cashRegister,
+								  LocalDateTime firstEverTransaction){
+		super(month, balanceEndOfTheMonth, cashRegister,firstEverTransaction);
 		this.profit = Money.of(0,balanceEndOfTheMonth.getCurrency());
 		this.expenditure = Money.of(0,balanceEndOfTheMonth.getCurrency());
 
@@ -28,13 +30,23 @@ public class MonthlyFinancialReport extends FinancialReport{
 		sortedBackwards.sort(new IntervalComparator());
 		MonetaryAmount moneyAfterEachDay = balanceEndOfTheMonth;
 		for(Interval day : sortedBackwards) {
-			DailyFinancialReport currentDay = new DailyFinancialReport(day,moneyAfterEachDay,cashRegister);
+			DailyFinancialReport currentDay = new DailyFinancialReport(day,moneyAfterEachDay,cashRegister, firstEverTransaction);
 			this.dailyFinancialReports.add(currentDay);
 			moneyAfterEachDay.subtract(cashRegister.getProfit(currentDay.getOrders()));
 			this.profit = this.profit.add(currentDay.getProfit());
 			this.expenditure = this.expenditure.add(currentDay.getExpenditure());
 		}
 		countProfit();
+	}
+
+	@Override
+	public boolean isBeforeBeginning() {
+		for (DailyFinancialReport dailyFinancialReport : dailyFinancialReports) {
+			if (!dailyFinancialReport.isBeforeBeginning()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private class IntervalComparator implements Comparator<Interval> {

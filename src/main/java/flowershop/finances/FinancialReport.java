@@ -12,39 +12,43 @@ import javax.money.MonetaryAmount;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public abstract class FinancialReport {
 	protected MonetaryAmount income;
 	protected MonetaryAmount expenditure;
 	protected MonetaryAmount profit; //difference
 	protected MonetaryAmount balance;
+	protected LocalDateTime startDate;
+	protected Interval interval;
+
 
 
 	public FinancialReport(Interval period,
 						   MonetaryAmount balanceEndOfThePeriod,
-						   CashRegisterService cashRegister) {
+						   CashRegisterService cashRegister,
+						   LocalDateTime firstEverTransaction) {
 		this.balance = balanceEndOfThePeriod;
+		this.interval = period;
+		this.startDate = firstEverTransaction;
 		//this.orders = orders;
 		//count the fields based on orders
 	}
+	public abstract boolean isBeforeBeginning();
 	protected void countProfit() {
 		this.profit = this.income.add(this.expenditure);
 	}
 	public byte[] generatePDF(){
 		try (PDDocument document = new PDDocument()) {
-			// Create an A4 page
 			PDPage page = new PDPage(PDRectangle.A4);
 			document.addPage(page);
-
-			// Start a content stream to write to the page
 			try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
 				PDType0Font customFont = PDType0Font.load(document, new File("src/main/resources/fonts/josefin-sans.semibold.ttf"));
 				contentStream.setFont(customFont, 12);
-
-				// Write text to the page
 				contentStream.beginText();
 				contentStream.setLeading(14.5f);
-				contentStream.newLineAtOffset(50, 750);
+				contentStream.newLineAtOffset(50, 750); //50,750
 				contentStream.showText("Sample Table on A4 Document");
 				contentStream.newLine();
 				contentStream.showText("ID    Name          Age");
@@ -56,15 +60,13 @@ public abstract class FinancialReport {
 				contentStream.showText("2     Jane Smith    32");
 				contentStream.endText();
 			}
-
-			// Write the document to a ByteArrayOutputStream
 			try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 				document.save(outputStream);
 				return outputStream.toByteArray();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null; // Handle the error appropriately in real scenarios
+			return null;
 		}
 	}
 
@@ -82,5 +84,27 @@ public abstract class FinancialReport {
 
 	public MonetaryAmount getProfit() {
 		return profit;
+	}
+	public static String getWeekdayNameDE(int day)
+	{
+		switch (day)
+		{
+			case 1:
+				return "Montag";
+			case 2:
+				return "Dienstag";
+			case 3:
+				return "Mittwoch";
+			case 4:
+				return "Donnerstag";
+			case 5:
+				return "Freitag";
+			case 6:
+				return "Samstag";
+			case 7:
+				return "Sonntag";
+			default:
+				return "";
+		}
 	}
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.*;
 
 @Controller
@@ -128,7 +129,7 @@ public class FinancesController {
 			}
 		});
 		this.filteredOrdersList = tempList;
-		limitListSize(size);
+		//limitListSize(size);
 	}
 
 	@GetMapping("/finances")
@@ -178,9 +179,42 @@ public class FinancesController {
 				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
 		}
 		DailyFinancialReport report = cashRegisterService.createFinancialReportDay(date.atStartOfDay());
+		if(report == null)
+		{
+			return ResponseEntity.badRequest()
+				.body("No Transactions saved in the system.".getBytes(StandardCharsets.UTF_8));
+
+		}
+		if(report.isBeforeBeginning())
+		{
+			return ResponseEntity.badRequest()
+				.body("The given date is before the accounting process started. No Data.".getBytes(StandardCharsets.UTF_8));
+		}
 		byte[] docu = report.generatePDF();
 		return ResponseEntity.ok()
 			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=document.pdf")
+			.contentType(MediaType.APPLICATION_PDF)
+			.body(docu);
+	}
+	@GetMapping("/monthReport")
+	public ResponseEntity<byte[]> monthReport(@RequestParam("month") String year_month, Model model) {
+		YearMonth monthParsed = YearMonth.parse(year_month);
+		LocalDate firstOfMonth = monthParsed.atDay(1);
+		MonthlyFinancialReport report = cashRegisterService.createFinancialReportMonth(firstOfMonth.atStartOfDay());
+		if(report == null)
+		{
+			return ResponseEntity.badRequest()
+				.body("No Transactions saved in the system.".getBytes(StandardCharsets.UTF_8));
+
+		}
+		if(report.isBeforeBeginning())
+		{
+			return ResponseEntity.badRequest()
+				.body("The given month is before the accounting process started. No Data.".getBytes(StandardCharsets.UTF_8));
+		}
+		byte[] docu = report.generatePDF();
+		return ResponseEntity.ok()
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report.pdf")
 			.contentType(MediaType.APPLICATION_PDF)
 			.body(docu);
 	}

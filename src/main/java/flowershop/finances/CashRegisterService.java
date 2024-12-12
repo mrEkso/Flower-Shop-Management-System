@@ -181,7 +181,15 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		MonetaryAmount moneyDifference = salesVolume(endToNow,endToNowDuration).get(endToNow);
 		CashRegister cashRegister = getCashRegister();
 		MonetaryAmount moneyThen = cashRegister.getBalance().subtract(moneyDifference);
-		return new DailyFinancialReport(interval,moneyThen,this);
+		List<AccountancyEntry> allEntries = getCashRegister().getAccountancyEntries().stream().toList();
+		if(allEntries.isEmpty()){
+			return null;
+		}
+		return new DailyFinancialReport(
+			interval,
+			moneyThen,
+			this,
+			((AccountancyEntryWrapper)allEntries.get(0)).getTimestamp());
 	}
 
 	public MonthlyFinancialReport createFinancialReportMonth(LocalDateTime day){
@@ -193,7 +201,15 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		MonetaryAmount moneyDifference = salesVolume(endToNow,endToNowDuration).get(endToNow);
 		CashRegister cashRegister = getCashRegister();
 		MonetaryAmount moneyThen = cashRegister.getBalance().subtract(moneyDifference);
-		return new MonthlyFinancialReport(interval,moneyThen,this);
+		List<AccountancyEntry> allEntries = getCashRegister().getAccountancyEntries().stream().toList();
+		if(allEntries.isEmpty()){
+			return null;
+		}
+		return new MonthlyFinancialReport(
+			interval,
+			moneyThen,
+			this,
+			((AccountancyEntryWrapper)allEntries.get(0)).getTimestamp());
 	}
 	public MonetaryAmount getProfit(Streamable<AccountancyEntry> set){
 		Money output = Money.of(0,getCashRegister().getBalance().getCurrency());
