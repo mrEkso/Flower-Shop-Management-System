@@ -166,10 +166,15 @@ public class SalesController {
 		@ModelAttribute("sellCart") Cart sellCart
 	) {
 		Product product = productService.getProductById(productId).get();
-		sellCart.addOrUpdateItem(product, 1);
 
-		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
-		model.addAttribute("fullSellPrice", fp);
+		if(sellCart.getQuantity(product).getAmount().intValue() <
+			(product instanceof Flower ? ((Flower)product).getQuantity().intValue() : 
+				((Bouquet)product).getQuantity())){
+			sellCart.addOrUpdateItem(product, 1);
+
+			double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+			model.addAttribute("fullSellPrice", fp);
+		}
 
 		return "redirect:/sell";
 	}
