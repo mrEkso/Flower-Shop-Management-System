@@ -120,6 +120,13 @@
                               placeholder="Enter any additional notes here">Test notes</textarea>
                 </div>
 
+                <!-- Service price -->
+                <div class="mb-3">
+                    <label for="servicePrice" class="form-label" th:text="#{contract.servicePrice}">Service
+                        price</label>
+                    <input class="form-control" id="servicePrice" name="servicePrice" placeholder="0" th:default="0">
+                </div>
+
                 <!-- Error Message -->
                 <div th:if="${error}" class="alert alert-danger" role="alert">
                     <span th:text="${error}"></span>
@@ -169,6 +176,13 @@
                     <label for="eventNotes" class="form-label" th:text="#{event.notes}">Notes</label>
                     <textarea class="form-control" id="eventNotes" name="notes" rows="3"
                               placeholder="Enter any additional notes here">Test notes</textarea>
+                </div>
+
+                <!-- Delivery price -->
+                <div class="mb-3">
+                    <label for="deliveryPrice" class="form-label" th:text="#{event.deliveryPrice}">Delivery
+                        price</label>
+                    <input class="form-control" id="deliveryPrice" name="deliveryPrice" placeholder="0" th:default="0">
                 </div>
 
                 <!-- Error Message -->

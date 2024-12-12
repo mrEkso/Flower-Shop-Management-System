@@ -169,18 +169,18 @@
                 </div>
             </div>
 
-            <!-- Cancel Reason (Optional) -->
-            <div class="mb-3" th:if="${contractOrder.orderStatus.name() == 'CANCELED'}">
-                <label for="cancelReason" class="form-label" th:text="#{order.cancelReason}">Cancel Reason</label>
-                <input type="text" class="form-control" th:value="${contractOrder.cancelReason}" id="cancelReason"
-                       name="cancelReason">
-            </div>
-
             <!-- Notes -->
             <div class="mb-3">
                 <label for="notes" class="form-label" th:text="#{contract.notes}">Notes</label>
                 <textarea class="form-control" th:value="${contractOrder.notes}" id="notes" name="notes" rows="3"
                           placeholder="Enter any additional notes here"></textarea>
+            </div>
+
+            <!-- Service price -->
+            <div class="mb-3">
+                <label for="servicePrice" class="form-label" th:text="#{contract.servicePrice}">Service price</label>
+                <input class="form-control" th:value="${contractOrder.getChargeLines().getTotal().getNumber()}"
+                       id="servicePrice" name="servicePrice" placeholder="0">
             </div>
 
             <!-- Error Message -->

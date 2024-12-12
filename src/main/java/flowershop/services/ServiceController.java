@@ -1,8 +1,9 @@
 package flowershop.services;
 
 import flowershop.calendar.CalendarService;
-import flowershop.calendar.Event;
 import flowershop.product.ProductService;
+import javassist.NotFoundException;
+import org.javamoney.moneta.Money;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,6 +31,7 @@ public class ServiceController {
 	private final ProductService productService;
 	private final ClientService clientService;
 	private final OrderFactory orderFactory;
+	private final MonthlyBillingService monthlyBillingService;
 
 	/**
 	 * Constructs a `ServiceController` with the specified services and order factory.
@@ -40,9 +42,10 @@ public class ServiceController {
 	 * @param productService          the service for managing products
 	 * @param clientService           the service for managing clients
 	 * @param orderFactory            the factory for creating orders
+	 * @param monthlyBillingService   the service for managing monthly billing
 	 */
 	public ServiceController(EventOrderService eventOrderService, ContractOrderService contractOrderService, ReservationOrderService reservationOrderService,
-							 ProductService productService, ClientService clientService, OrderFactory orderFactory, CalendarService calendarService) {
+							 ProductService productService, ClientService clientService, OrderFactory orderFactory, CalendarService calendarService, MonthlyBillingService monthlyBillingService) {
 		this.eventOrderService = eventOrderService;
 		this.contractOrderService = contractOrderService;
 		this.reservationOrderService = reservationOrderService;
@@ -50,6 +53,7 @@ public class ServiceController {
 		this.clientService = clientService;
 		this.orderFactory = orderFactory;
 		this.calendarService = calendarService;
+		this.monthlyBillingService = monthlyBillingService;
 	}
 
 	/**
@@ -73,6 +77,7 @@ public class ServiceController {
 	 * @param id   the ID of the order
 	 * @return a `ResponseEntity` containing the order if found, or an appropriate HTTP status
 	 */
+	// #TODO: Refactor this method to return a view instead of a ResponseEntity
 	@GetMapping("/{type}/{id}")
 	public ResponseEntity<?> getOrderById(@PathVariable String type, @PathVariable UUID id) {
 		switch (type) {
@@ -104,6 +109,7 @@ public class ServiceController {
 	 */
 	@GetMapping("/create")
 	public String getNewOrderPage() {
+		monthlyBillingService.addMonthlyCharges(); // #TODO: Remove this line
 		return "services/create_service";
 	}
 
@@ -150,11 +156,12 @@ public class ServiceController {
 									  @RequestParam("phone") String phone,
 									  @RequestParam Map<String, String> products,
 									  @RequestParam("notes") String notes,
+									  @RequestParam("servicePrice") int servicePrice,
 									  RedirectAttributes redirectAttribute) {
 		try {
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
-			ContractOrder contractOrder = orderFactory.createContractOrder(contractType,
+			ContractOrder contractOrder = orderFactory.createContractOrder(contractType, frequency,
 				startDate, endDate, address, getOrCreateClient(clientName, phone), notes);
 			if ("recurring".equals(frequency)) {
 				contractOrder.setFrequency(frequency);
@@ -162,6 +169,7 @@ public class ServiceController {
 				contractOrder.setCustomFrequency(customFrequency);
 				contractOrder.setCustomUnit(customUnit);
 			}
+			contractOrder.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
 			contractOrderService.save(contractOrder, products);
 			return "redirect:/services";
 		} catch (Exception e) {
@@ -189,12 +197,14 @@ public class ServiceController {
 								   @RequestParam("deliveryAddress") String deliveryAddress,
 								   @RequestParam Map<String, String> products,
 								   @RequestParam("notes") String notes,
+								   @RequestParam("deliveryPrice") int deliveryPrice,
 								   RedirectAttributes redirectAttribute) {
 		try {
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
 			EventOrder eventOrder = orderFactory.createEventOrder(eventDate,
 				deliveryAddress, getOrCreateClient(clientName, phone), notes);
+			eventOrder.addChargeLine(Money.of(deliveryPrice, "EUR"), "Delivery Price");
 			eventOrderService.save(eventOrder, products);
 			return "redirect:/services";
 		} catch (Exception e) {
@@ -243,8 +253,11 @@ public class ServiceController {
 	 */
 	@GetMapping("/contracts/edit/{id}")
 	public String getContractOrderEditPage(@PathVariable UUID id,
-										   Model model) {
+										   Model model) throws NotFoundException {
 		model.addAttribute("contractOrder", contractOrderService.getById(id).get());
+		if (contractOrderService.getById(id).isEmpty()) {
+			throw new NotFoundException("Contract order not found");
+		}
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/edit/contractOrderEditForm";
 	}
@@ -267,6 +280,7 @@ public class ServiceController {
 	 * @param orderStatus        the status of the order
 	 * @param cancelReason       the reason for cancellation, if applicable
 	 * @param notes              additional notes for the order
+	 * @param servicePrice       the service price for the contract
 	 * @param redirectAttributes the redirect attributes to add flash attributes to
 	 * @return the redirect URL
 	 */
@@ -286,10 +300,11 @@ public class ServiceController {
 									@RequestParam("orderStatus") String orderStatus,
 									@RequestParam(value = "cancelReason", required = false) String cancelReason,
 									@RequestParam("notes") String notes,
+									@RequestParam("servicePrice") int servicePrice,
 									RedirectAttributes redirectAttributes) {
 		try {
 			ContractOrder contractOrder = contractOrderService.getById(id)
-				.orElseThrow(() -> new IllegalArgumentException("Contract order not found"));
+				.orElseThrow(() -> new NotFoundException("Contract order not found"));
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
 			contractOrder.setClient(getOrCreateClient(clientName, phone));
@@ -299,6 +314,7 @@ public class ServiceController {
 			contractOrder.setAddress(address);
 			contractOrder.setNotes(notes);
 			contractOrder.setPaymentMethod(paymentMethod);
+			contractOrder.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
 			if ("recurring".equals(frequency)) {
 				contractOrder.setFrequency(frequency);
 			} else if ("custom".equals(frequency)) {
@@ -341,6 +357,7 @@ public class ServiceController {
 	 * @param orderStatus        the status of the order
 	 * @param cancelReason       the reason for cancellation, if applicable
 	 * @param notes              additional notes for the order
+	 * @param deliveryPrice      the delivery price for the event
 	 * @param redirectAttributes the redirect attributes to add flash attributes to
 	 * @return the redirect URL
 	 */
@@ -355,10 +372,11 @@ public class ServiceController {
 								 @RequestParam("orderStatus") String orderStatus,
 								 @RequestParam(value = "cancelReason", required = false) String cancelReason,
 								 @RequestParam("notes") String notes,
+								 @RequestParam("deliveryPrice") int deliveryPrice,
 								 RedirectAttributes redirectAttributes) {
 		try {
 			EventOrder eventOrder = eventOrderService.getById(id)
-				.orElseThrow(() -> new IllegalArgumentException("Event order not found"));
+				.orElseThrow(() -> new NotFoundException("Event order not found"));
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
 			eventOrder.setClient(getOrCreateClient(clientName, phone));
@@ -366,6 +384,7 @@ public class ServiceController {
 			eventOrder.setDeliveryAddress(deliveryAddress);
 			eventOrder.setNotes(notes);
 			eventOrder.setPaymentMethod(paymentMethod);
+			eventOrder.addChargeLine(Money.of(deliveryPrice, "EUR"), "Delivery Price");
 			eventOrderService.update(eventOrder, products, orderStatus, cancelReason);
 			return "redirect:/services";
 		} catch (Exception e) {
@@ -419,7 +438,7 @@ public class ServiceController {
 									   RedirectAttributes redirectAttributes) {
 		try {
 			ReservationOrder reservationOrder = reservationOrderService.getById(id)
-				.orElseThrow(() -> new IllegalArgumentException("Reservation order not found"));
+				.orElseThrow(() -> new NotFoundException("Reservation order not found"));
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
 			reservationOrder.setClient(getOrCreateClient(clientName, phone));

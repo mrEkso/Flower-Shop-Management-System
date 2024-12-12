@@ -129,18 +129,18 @@
                 </div>
             </div>
 
-            <!-- Cancel Reason (Optional) -->
-            <div class="mb-3" th:if="${eventOrder.orderStatus.name() == 'CANCELED'}">
-                <label for="cancelReason" class="form-label" th:text="#{order.cancelReason}">Cancel Reason</label>
-                <input type="text" class="form-control" th:value="${eventOrder.cancelReason}" id="cancelReason"
-                       name="cancelReason">
-            </div>
-
             <!-- Notes -->
             <div class="mb-3">
                 <label for="notes" class="form-label" th:text="#{event.notes}">Notes</label>
                 <textarea class="form-control" th:value="${eventOrder.notes}" id="notes" name="notes" rows="3"
                           placeholder="Enter any additional notes here"></textarea>
+            </div>
+
+            <!-- Delivery price -->
+            <div class="mb-3">
+                <label for="deliveryPrice" class="form-label" th:text="#{event.deliveryPrice}">Delivery price</label>
+                <input class="form-control" th:value="${eventOrder.getChargeLines().getTotal().getNumber()}"
+                       id="deliveryPrice" name="deliveryPrice" placeholder="0">
             </div>
 
             <!-- Error Message -->

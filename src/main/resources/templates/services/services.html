@@ -5,7 +5,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title th:text="#{services.title}">Services</title>
-    <link th:href="@{/resources/css/navbar.css}" rel="stylesheet" />
+    <link th:href="@{/resources/css/navbar.css}" rel="stylesheet"/>
 
 </head>
 <body>
@@ -14,180 +14,202 @@
     <div class="row">
         <div class="col" th:replace="~{navbar}"></div>
         <div class="col">
-        <div class="text-center mb-4">
-            <h1 th:text="#{services.title}">Services</h1>
-        </div>
+            <div class="text-center mb-4">
+                <h1 th:text="#{services.title}">Services</h1>
+            </div>
 
-        <!-- Navigation Tabs with Button -->
-        <div class="d-flex flex-row align-items-center">
-            <a class="btn btn-primary ml-auto" th:text="#{services.create}" th:href="@{/services/create}">
-                Create service
-            </a>
-            
-            <ul class="col nav nav-tabs flex-grow-1" id="serviceTabs" role="tablist">
-                <li class="col nav-item">
-                    <a class="nav-link active" id="contracts-tab" data-toggle="tab" href="#contracts" role="tab"
-                       aria-controls="contracts" aria-selected="true" th:text="#{services.contracts}">Contracts</a>
-                </li>
-                <li class="col nav-item">
-                    <a class="nav-link" id="events-tab" data-toggle="tab" href="#events" role="tab"
-                       aria-controls="events" aria-selected="false" th:text="#{services.events}">Events</a>
-                </li>
-                <li class="col nav-item">
-                    <a class="nav-link" id="reservations-tab" data-toggle="tab" href="#reservations" role="tab"
-                       aria-controls="reservations" aria-selected="false"
-                       th:text="#{services.reservations}">Reservations</a>
-                </li>
-            </ul>
+            <!-- Navigation Tabs with Button -->
+            <div class="d-flex flex-row align-items-center">
+                <a class="btn btn-primary ml-auto" th:text="#{services.create}" th:href="@{/services/create}">
+                    Create service
+                </a>
 
-        </div>
+                <ul class="col nav nav-tabs flex-grow-1" id="serviceTabs" role="tablist">
+                    <li class="col nav-item">
+                        <a class="nav-link active" id="contracts-tab" data-toggle="tab" href="#contracts" role="tab"
+                           aria-controls="contracts" aria-selected="true" th:text="#{services.contracts}">Contracts</a>
+                    </li>
+                    <li class="col nav-item">
+                        <a class="nav-link" id="events-tab" data-toggle="tab" href="#events" role="tab"
+                           aria-controls="events" aria-selected="false" th:text="#{services.events}">Events</a>
+                    </li>
+                    <li class="col nav-item">
+                        <a class="nav-link" id="reservations-tab" data-toggle="tab" href="#reservations" role="tab"
+                           aria-controls="reservations" aria-selected="false"
+                           th:text="#{services.reservations}">Reservations</a>
+                    </li>
+                </ul>
 
-        <!-- Tab Content -->
-        <div class="tab-content" id="serviceTabsContent">
-            <!-- Contracts Tab -->
-            <div class="tab-pane fade show active" id="contracts" role="tabpanel" aria-labelledby="contracts-tab">
-                <div class="row mt-3">
-                    <div class="col-md-4 mb-4" th:each="contract : ${contracts}">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h5 class="card-title"><span th:text="#{client.name}">Client Name</span>: <span
-                                        th:text="${contract.client.name}">Not found</span></h5>
-                                <p class="card-text"><span th:text="#{contract.frequency}">Frequency</span>: <span
-                                        th:text="${contract.contractType}">Not found</span></p>
-                                <p class="card-text"><span th:text="#{contract.startDate}">Start Date</span>: <span
-                                        th:text="${contract.startDate}">Not found</span></p>
-                                <p class="card-text"><span th:text="#{contract.endDate}">End Date</span>: <span
-                                        th:text="${contract.endDate}">Not found</span></p>
-                                <p class="card-text"><span th:text="#{contract.orderStatus}">Order Status</span>:
-                                    <span th:switch="${contract.orderStatus.name()}">
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="serviceTabsContent">
+                <!-- Contracts Tab -->
+                <div class="tab-pane fade show active" id="contracts" role="tabpanel" aria-labelledby="contracts-tab">
+                    <div class="row mt-3">
+                        <div class="col-md-4 mb-4" th:each="contract : ${contracts}">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title"><span th:text="#{client.name}">Client Name</span>: <span
+                                            th:text="${contract.client.name}">Not found</span></h5>
+                                    <p class="card-text"><span th:text="#{contract.frequency}">Frequency</span>: <span
+                                            th:text="${contract.contractType}">Not found</span></p>
+                                    <p class="card-text"><span th:text="#{contract.startDate}">Start Date</span>: <span
+                                            th:text="${contract.startDate}">Not found</span></p>
+                                    <p class="card-text"><span th:text="#{contract.endDate}">End Date</span>: <span
+                                            th:text="${contract.endDate}">Not found</span></p>
+                                    <p class="card-text"><span th:text="#{contract.orderStatus}">Order Status</span>:
+                                        <span th:switch="${contract.orderStatus.name()}">
                                         <span th:case="OPEN" th:text="#{order.status.open}">Open</span>
                                         <span th:case="PAID" th:text="#{order.status.paid}">Paid</span>
                                         <span th:case="COMPLETED" th:text="#{order.status.completed}">Completed</span>
                                         <span th:case="CANCELED" th:text="#{order.status.canceled}">Canceled</span>
                                         <span th:case="*">Not found</span>
                                     </span></p>
-                                <p class="card-text"><span th:text="#{order.paymentMethod}">Payment Method</span>:
-                                    <span th:if="${contract.paymentMethod.toString().contains('Cash')}"
-                                          th:text="#{order.payment.cash}">Cash</span>
-                                    <span th:if="${contract.paymentMethod.toString().contains('Card')}"
-                                          th:text="#{order.payment.card}">Card</span>
-                                    <span th:if="${!contract.paymentMethod.toString().contains('Cash') and !contract.paymentMethod.toString().contains('Card')}">Not found</span>
-                                </p>
-                                <h6 th:text="#{order.products}">Products</h6>
-                                <ul>
-                                    <li th:each="orderLine : ${contract.orderLines}">
-                                        <span th:text="${orderLine.productName}">Product Name</span>:
-                                        <span th:text="${orderLine.quantity}">Quantity</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between">
-                                <a th:href="@{/services/contracts/edit/{id}(id=${contract.id})}" class="btn btn-secondary"
-                                   th:text="#{action.edit}">Edit</a>
+                                    <p class="card-text"><span th:text="#{order.paymentMethod}">Payment Method</span>:
+                                        <span th:if="${contract.paymentMethod.toString().contains('Cash')}"
+                                              th:text="#{order.payment.cash}">Cash</span>
+                                        <span th:if="${contract.paymentMethod.toString().contains('Card')}"
+                                              th:text="#{order.payment.card}">Card</span>
+                                        <span th:if="${!contract.paymentMethod.toString().contains('Cash') and !contract.paymentMethod.toString().contains('Card')}">Not found</span>
+                                    </p>
+                                    <p class="card-text"><span th:text="#{contract.servicePrice}">Service price</span>:
+                                        <span th:text="${contract.getChargeLines().getTotal().getNumber()}">Not found</span>
+                                    </p>
+                                    <h6 th:text="#{order.products}">Products</h6>
+                                    <ul>
+                                        <li th:each="orderLine : ${contract.orderLines}">
+                                            <span th:text="${orderLine.productName}">Not found</span>,
+                                            <span th:text="${orderLine.quantity}">Not found</span>,
+                                            <span th:text="${orderLine.price}">Not found</span>
+                                        </li>
+                                    </ul>
+                                    <br>
+                                    <span class="font-weight-bold" th:text="#{order.totalPrice}">Total price</span>:
+                                    <span th:text="${contract.getTotal()}">Not found</span>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between">
+                                    <a th:href="@{/services/contracts/edit/{id}(id=${contract.id})}"
+                                       class="btn btn-secondary"
+                                       th:text="#{action.edit}">Edit</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Events Tab -->
-            <div class="tab-pane fade" id="events" role="tabpanel" aria-labelledby="events-tab">
-                <div class="row mt-3">
-                    <div class="col-md-4 mb-4" th:each="event : ${events}">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h5 class="card-title"><span th:text="#{client.name}">Client Name</span>: <span
-                                        th:text="${event.client.name}">Not found</span></h5>
-                                <p class="card-text"><span th:text="#{event.eventDate}">Event Date</span>: <span
-                                        th:text="${event.eventDate}">Not found</span></p>
-                                <p class="card-text"><span th:text="#{event.deliveryAddress}">Delivery Address</span>: <span
-                                        th:text="${event.deliveryAddress}">Not found</span></p>
-                                <p class="card-text"><span th:text="#{event.orderStatus}">Status</span>:
-                                    <span th:switch="${event.orderStatus.name()}">
+                <!-- Events Tab -->
+                <div class="tab-pane fade" id="events" role="tabpanel" aria-labelledby="events-tab">
+                    <div class="row mt-3">
+                        <div class="col-md-4 mb-4" th:each="event : ${events}">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title"><span th:text="#{client.name}">Client Name</span>: <span
+                                            th:text="${event.client.name}">Not found</span></h5>
+                                    <p class="card-text"><span th:text="#{event.eventDate}">Event Date</span>: <span
+                                            th:text="${event.eventDate}">Not found</span></p>
+                                    <p class="card-text"><span
+                                            th:text="#{event.deliveryAddress}">Delivery Address</span>: <span
+                                            th:text="${event.deliveryAddress}">Not found</span></p>
+                                    <p class="card-text"><span th:text="#{event.orderStatus}">Status</span>:
+                                        <span th:switch="${event.orderStatus.name()}">
                                         <span th:case="OPEN" th:text="#{order.status.open}">Open</span>
                                         <span th:case="PAID" th:text="#{order.status.paid}">Paid</span>
                                         <span th:case="COMPLETED" th:text="#{order.status.completed}">Completed</span>
                                         <span th:case="CANCELED" th:text="#{order.status.canceled}">Canceled</span>
                                         <span th:case="*">Not found</span>
                                     </span>
-                                </p>
-                                <p class="card-text"><span th:text="#{order.paymentMethod}">Payment Method</span>:
-                                    <span th:if="${event.paymentMethod.toString().contains('Cash')}"
-                                          th:text="#{order.payment.cash}">Cash</span>
-                                    <span th:if="${event.paymentMethod.toString().contains('Card')}"
-                                          th:text="#{order.payment.card}">Card</span>
-                                    <span th:if="${!event.paymentMethod.toString().contains('Cash') and !event.paymentMethod.toString().contains('Card')}">Not found</span>
-                                </p>
-                                <h6 th:text="#{order.products}">Products</h6>
-                                <ul>
-                                    <li th:each="orderLine : ${event.orderLines}">
-                                        <span th:text="${orderLine.productName}">Product Name</span>:
-                                        <span th:text="${orderLine.quantity}">Quantity</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between"><a
-                                    th:href="@{/services/events/edit/{id}(id=${event.id})}" class="btn btn-secondary"
-                                    th:text="#{action.edit}">Edit</a>
+                                    </p>
+                                    <p class="card-text"><span th:text="#{order.paymentMethod}">Payment Method</span>:
+                                        <span th:if="${event.paymentMethod.toString().contains('Cash')}"
+                                              th:text="#{order.payment.cash}">Cash</span>
+                                        <span th:if="${event.paymentMethod.toString().contains('Card')}"
+                                              th:text="#{order.payment.card}">Card</span>
+                                        <span th:if="${!event.paymentMethod.toString().contains('Cash') and !event.paymentMethod.toString().contains('Card')}">Not found</span>
+                                    </p>
+                                    <p class="card-text"><span th:text="#{event.deliveryPrice}">Delivery price</span>:
+                                        <span th:text="${event.getChargeLines().getTotal().getNumber()}">Not found</span>
+                                    </p>
+                                    <h6 th:text="#{order.products}">Products</h6>
+                                    <ul>
+                                        <li th:each="orderLine : ${event.orderLines}">
+                                            <span th:text="${orderLine.productName}">Not found</span>,
+                                            <span th:text="${orderLine.quantity}">Not found</span>,
+                                            <span th:text="${orderLine.price}">Not found</span>
+                                        </li>
+                                    </ul>
+                                    <br>
+                                    <span class="font-weight-bold" th:text="#{order.totalPrice}">Total price</span>:
+                                    <span th:text="${event.getTotal()}">Not found</span>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between"><a
+                                        th:href="@{/services/events/edit/{id}(id=${event.id})}"
+                                        class="btn btn-secondary"
+                                        th:text="#{action.edit}">Edit</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Reservations Tab -->
-            <div class="tab-pane fade" id="reservations" role="tabpanel" aria-labelledby="reservations-tab">
-                <div class="row mt-3">
-                    <div class="col-md-4 mb-4" th:each="reservation : ${reservations}">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h5 class="card-title"><span th:text="#{client.name}">Client Name</span>: <span
-                                        th:text="${reservation.client.name}">Not found</span></h5>
-                                <p class="card-text"><span th:text="#{reservation.time}">Reservation Time</span>: <span
-                                        th:text="${reservation.reservationDateTime}">Not found</span></p>
-                                <p class="card-text"><span th:text="#{reservation.orderStatus}">Order Status</span>:
-                                    <span th:switch="${reservation.orderStatus.name()}">
+                <!-- Reservations Tab -->
+                <div class="tab-pane fade" id="reservations" role="tabpanel" aria-labelledby="reservations-tab">
+                    <div class="row mt-3">
+                        <div class="col-md-4 mb-4" th:each="reservation : ${reservations}">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title"><span th:text="#{client.name}">Client Name</span>: <span
+                                            th:text="${reservation.client.name}">Not found</span></h5>
+                                    <p class="card-text"><span th:text="#{reservation.time}">Reservation Time</span>:
+                                        <span
+                                                th:text="${reservation.reservationDateTime}">Not found</span></p>
+                                    <p class="card-text"><span th:text="#{reservation.orderStatus}">Order Status</span>:
+                                        <span th:switch="${reservation.orderStatus.name()}">
                                         <span th:case="OPEN" th:text="#{order.status.open}">Open</span>
                                         <span th:case="PAID" th:text="#{order.status.paid}">Paid</span>
                                         <span th:case="COMPLETED" th:text="#{order.status.completed}">Completed</span>
                                         <span th:case="CANCELED" th:text="#{order.status.canceled}">Canceled</span>
                                         <span th:case="*">Not found</span>
                                     </span>
-                                </p>
-                                <p class="card-text">
-                                    <span th:text="#{reservation.reservationStatus}">Reservation Status</span>:
-                                    <span th:switch="${reservation.reservationStatus.name()}">
+                                    </p>
+                                    <p class="card-text">
+                                        <span th:text="#{reservation.reservationStatus}">Reservation Status</span>:
+                                        <span th:switch="${reservation.reservationStatus.name()}">
                                         <span th:case="IN_PROCESS" th:text="#{order.status.inProcess}">In Process</span>
-                                        <span th:case="PAID"
+                                        <span th:case="READY_FOR_PICKUP"
                                               th:text="#{order.status.readyForPickup}">Ready For Pick-up</span>
-                                        <span th:case="COMPLETED" th:text="#{order.status.pickedUp}">Picked Up</span>
+                                        <span th:case="PICKED_UP" th:text="#{order.status.pickedUp}">Picked Up</span>
                                     <span th:case="*">Not found</span>
                                     </span>
-                                </p>
-                                <p class="card-text"><span th:text="#{order.paymentMethod}">Payment Method</span>:
-                                    <span th:if="${reservation.paymentMethod.toString().contains('Cash')}"
-                                          th:text="#{order.payment.cash}">Cash</span>
-                                    <span th:if="${reservation.paymentMethod.toString().contains('Card')}"
-                                          th:text="#{order.payment.card}">Card</span>
-                                    <span th:if="${!reservation.paymentMethod.toString().contains('Cash') and !reservation.paymentMethod.toString().contains('Card')}">Not found</span>
-                                </p>
-                                <h6 th:text="#{order.products}">Products</h6>
-                                <ul>
-                                    <li th:each="orderLine : ${reservation.orderLines}">
-                                        <span th:text="${orderLine.productName}">Product Name</span>:
-                                        <span th:text="${orderLine.quantity}">Quantity</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between">
-                                <a th:href="@{/services/reservations/edit/{id}(id=${reservation.id})}"
-                                   class="btn btn-secondary" th:text="#{action.edit}">Edit</a>
+                                    </p>
+                                    <p class="card-text"><span th:text="#{order.paymentMethod}">Payment Method</span>:
+                                        <span th:if="${reservation.paymentMethod.toString().contains('Cash')}"
+                                              th:text="#{order.payment.cash}">Cash</span>
+                                        <span th:if="${reservation.paymentMethod.toString().contains('Card')}"
+                                              th:text="#{order.payment.card}">Card</span>
+                                        <span th:if="${!reservation.paymentMethod.toString().contains('Cash') and !reservation.paymentMethod.toString().contains('Card')}">Not found</span>
+                                    </p>
+                                    <h6 th:text="#{order.products}">Products</h6>
+                                    <ul>
+                                        <li th:each="orderLine : ${reservation.orderLines}">
+                                            <span th:text="${orderLine.productName}">Not found</span>,
+                                            <span th:text="${orderLine.quantity}">Not found</span>,
+                                            <span th:text="${orderLine.price}">Not found</span>
+                                        </li>
+                                    </ul>
+                                    <br>
+                                    <span class="font-weight-bold" th:text="#{order.totalPrice}">Total price</span>:
+                                    <span th:text="${reservation.getTotal()}">Not found</span>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between">
+                                    <a th:href="@{/services/reservations/edit/{id}(id=${reservation.id})}"
+                                       class="btn btn-secondary" th:text="#{action.edit}">Edit</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
         </div>
     </div>
 </div>

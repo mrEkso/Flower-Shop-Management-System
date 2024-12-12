@@ -2,6 +2,7 @@ package flowershop.services;
 
 import flowershop.product.ProductCatalog;
 import flowershop.sales.CardPayment;
+import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.core.DataInitializer;
 import org.salespointframework.payment.Cash;
@@ -80,11 +81,12 @@ public class OrderCatalogInitializer implements DataInitializer {
 		// Create and save orders using OrderFactory
 		// ContractOrders
 		ContractOrder contractOrder = orderFactory.createContractOrder(
-			"once a week", "weekly", LocalDate.now(), LocalDate.of(2026, 1, 1),
-			client1);
+			"one-time", "weekly", LocalDate.of(2024, 11, 12), LocalDate.of(2026, 1, 1),
+			"Nöthnitzer Str. 46, 01187 Dresden", client1, "Weekly flower delivery + flower arrangement + watering");
+		contractOrder.setPaymentMethod(Cash.CASH);
 		contractOrder.addOrderLine(rose, Quantity.of(8));
 		contractOrder.addOrderLine(roseLilyBouquet, Quantity.of(2));
-		contractOrder.setPaymentMethod(Cash.CASH);
+		contractOrder.addChargeLine(Money.of(40, "EUR"), "Service Price");
 		contractOrderRepository.save(contractOrder);
 
 		// EventOrders
@@ -92,12 +94,14 @@ public class OrderCatalogInitializer implements DataInitializer {
 			LocalDate.now(), "Nöthnitzer Str. 46, 01187 Dresden", client1);
 		eventOrder1.addOrderLine(rose, Quantity.of(2));
 		eventOrder1.setPaymentMethod(Cash.CASH);
+		eventOrder1.addChargeLine(Money.of(20, "EUR"), "Delivery Price");
 		eventOrderRepository.save(eventOrder1);
 
 		EventOrder eventOrder2 = orderFactory.createEventOrder(
 			LocalDate.now(), "Nöthnitzer Str. 46, 01187 Dresden", client2);
 		eventOrder2.addOrderLine(roseLilyBouquet, Quantity.of(1));
 		eventOrder2.setPaymentMethod(Cash.CASH);
+		eventOrder2.addChargeLine(Money.of(20, "EUR"), "Delivery Price");
 		eventOrderRepository.save(eventOrder2);
 
 		// ReservationOrders

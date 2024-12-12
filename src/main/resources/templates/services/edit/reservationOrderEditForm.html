@@ -123,13 +123,6 @@
                 </div>
             </div>
 
-            <!-- Cancel Reason (Optional) -->
-            <div class="mb-3" th:if="${reservationOrder.orderStatus.name() == 'CANCELED'}">
-                <label for="cancelReason" class="form-label" th:text="#{order.cancelReason}">Cancel Reason</label>
-                <input type="text" class="form-control" th:value="${reservationOrder.cancelReason}" id="cancelReason"
-                       name="cancelReason">
-            </div>
-
             <!-- Reservation Status -->
             <div class="mb-3">
                 <label class="form-label" th:text="#{reservationOrder.reservationStatus}">Reservation Status</label>
