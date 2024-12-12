@@ -113,6 +113,13 @@
                     </form>
                 </div>-->
 
+                <!-- Add Product Button -->
+                <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
+                      method="post" class="mt-2">
+                    <input type="hidden" name="index" th:value="${productRows.size()}" />
+                    <button type="submit" class="btn btn-outline-primary">Add Product</button>
+                </form>
+
                 <!-- Notes -->
                 <div class="mb-3">
                     <label for="contractNotes" class="form-label" th:text="#{contract.notes}">Notes</label>
