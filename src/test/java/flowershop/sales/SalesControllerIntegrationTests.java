@@ -31,8 +31,8 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	@Autowired
 	private ProductService productService;    
 	
-	@Autowired
-    ProductService productService; 
+	// @Autowired
+    // ProductService productService; 
 
 	
 
