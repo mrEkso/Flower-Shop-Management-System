@@ -62,10 +62,10 @@ public class FinancesController {
 		}
 		this.filteredByDates = filteredList;
 		if(!this.filteredByCategory.isEmpty()) {
-			setFilteredOrdersList(intersection(filteredList,this.filteredByCategory).stream().toList(),20);
+			setFilteredOrdersList(intersection(filteredList,this.filteredByCategory).stream().toList(),100);
 		}
 		else {
-			setFilteredOrdersList(filteredList.stream().toList(), 20);
+			setFilteredOrdersList(filteredList.stream().toList(), 100);
 		}
 		this.isFilteredByDates=true;
 		prepareFinancesModel(model,filteredAndCutOrdersList);
@@ -80,7 +80,7 @@ public class FinancesController {
 		this.date2=LocalDate.now();
 		getTransactionPage(model);
 		if(this.isFilteredByCategory) {
-			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByCategory).stream().toList(),20);
+			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByCategory).stream().toList(),100);
 		}
 		prepareFinancesModel(model,filteredAndCutOrdersList);
 		return "finances";
@@ -93,7 +93,7 @@ public class FinancesController {
 		this.category="all";
 		getTransactionPage(model);
 		if(this.isFilteredByDates) {
-			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByDates).stream().toList(),20);
+			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByDates).stream().toList(),100);
 		}
 		/*
 		else{
@@ -129,7 +129,7 @@ public class FinancesController {
 			}
 		});
 		this.filteredOrdersList = tempList;
-		//limitListSize(size);
+		limitListSize(size);
 	}
 
 	@GetMapping("/finances")
@@ -139,7 +139,7 @@ public class FinancesController {
 			this.filteredOrdersList.add((AccountancyEntryWrapper) i);
 		}
 
-		setFilteredOrdersList(filteredOrdersList, 20);
+		setFilteredOrdersList(filteredOrdersList, 100);
 		model.addAttribute("transactions", filteredAndCutOrdersList);
 		model.addAttribute("currentBalance", cashRegisterService.getBalance());
 		return "finances";
@@ -192,7 +192,7 @@ public class FinancesController {
 		}
 		byte[] docu = report.generatePDF();
 		return ResponseEntity.ok()
-			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=document.pdf")
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report_day.pdf")
 			.contentType(MediaType.APPLICATION_PDF)
 			.body(docu);
 	}
@@ -200,6 +200,10 @@ public class FinancesController {
 	public ResponseEntity<byte[]> monthReport(@RequestParam("month") String year_month, Model model) {
 		YearMonth monthParsed = YearMonth.parse(year_month);
 		LocalDate firstOfMonth = monthParsed.atDay(1);
+		if (firstOfMonth.isAfter(LocalDate.now())) {
+			return ResponseEntity.badRequest()
+				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
+		}
 		MonthlyFinancialReport report = cashRegisterService.createFinancialReportMonth(firstOfMonth.atStartOfDay());
 		if(report == null)
 		{
@@ -214,7 +218,7 @@ public class FinancesController {
 		}
 		byte[] docu = report.generatePDF();
 		return ResponseEntity.ok()
-			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report.pdf")
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report_month.pdf")
 			.contentType(MediaType.APPLICATION_PDF)
 			.body(docu);
 	}
@@ -247,10 +251,10 @@ public class FinancesController {
 				this.filteredByCategory.add((AccountancyEntryWrapper) i);
 			}
 			if (!this.filteredByDates.isEmpty()) {
-				setFilteredOrdersList(this.intersection(this.filteredByCategory,this.filteredByDates).stream().toList(), 20);
+				setFilteredOrdersList(this.intersection(this.filteredByCategory,this.filteredByDates).stream().toList(), 100);
 			}
 			else{
-				setFilteredOrdersList(this.filteredByCategory.stream().toList(),20);
+				setFilteredOrdersList(this.filteredByCategory.stream().toList(),100);
 			}
 		}
 		prepareFinancesModel(model,filteredAndCutOrdersList);
@@ -259,8 +263,8 @@ public class FinancesController {
 	}
 
 	private void limitListSize(int size){
-		if(this.filteredOrdersList.size() > 20){
-			this.filteredAndCutOrdersList = this.filteredOrdersList.subList(0, 20);
+		if(this.filteredOrdersList.size() > size){
+			this.filteredAndCutOrdersList = this.filteredOrdersList.subList(0, size);
 		}
 		else{
 			this.filteredAndCutOrdersList = this.filteredOrdersList;

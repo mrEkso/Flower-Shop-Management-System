@@ -1,7 +1,6 @@
 package flowershop.finances;
 
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.time.Interval;
 import org.springframework.data.util.Streamable;
@@ -13,14 +12,12 @@ import org.vandeseer.easytable.structure.cell.TextCell;
 import javax.money.MonetaryAmount;
 import java.awt.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatterBuilder;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 public class DailyFinancialReport extends FinancialReport{
 
-	private Streamable<AccountancyEntry> orders;
+	private List<AccountancyEntry> orders;
 
 	public DailyFinancialReport(Interval day,
 								MonetaryAmount balanceEndOfTheDay,
@@ -28,7 +25,20 @@ public class DailyFinancialReport extends FinancialReport{
 								LocalDateTime firstEverTransaction) {
 		super(day, balanceEndOfTheDay, cashRegister,firstEverTransaction);
 		Streamable<AccountancyEntry> set = cashRegister.find(day);
-		this.orders = set;
+		this.orders = new ArrayList<>(set.stream().toList());
+		Collections.sort(orders, new Comparator<AccountancyEntry>() {
+			@Override
+			public int compare(AccountancyEntry first, AccountancyEntry second) {
+				LocalDateTime ldt1 = ((AccountancyEntryWrapper)first).getTimestamp();
+				LocalDateTime ldt2 = ((AccountancyEntryWrapper)second).getTimestamp();
+				if (ldt1 != null && ldt2 != null) {
+					return ldt1.compareTo(ldt2);
+				}
+				else{
+					throw new IllegalStateException("Some entries dont have date assigned");
+				}
+			}
+		});
 		this.income = cashRegister.getRevenue(set);
 		this.expenditure = cashRegister.getExpences(set);
 
@@ -37,7 +47,7 @@ public class DailyFinancialReport extends FinancialReport{
 	}
 
 	public Streamable<AccountancyEntry> getOrders() {
-		return this.orders;
+		return Streamable.of(this.orders);
 	}
 
 	@Override
@@ -45,31 +55,53 @@ public class DailyFinancialReport extends FinancialReport{
 		return orders.isEmpty() && this.startDate.isAfter(interval.getEnd());
 	}
 
-	public List<Row> getNeededRows(PDFont font)
+	/**
+	 * Will return either 12.2024 or 13.12.2024 depending on is it month or day report
+	 *
+	 * @return
+	 */
+	@Override
+	protected String intervalToString() {
+		LocalDateTime day = interval.getStart();
+		String month = (day.getMonth().getValue()<10) ? "0"+day.getMonth().getValue() : String.valueOf(day.getMonth().getValue());
+		String dateRepr = new StringBuilder().append(day.getDayOfMonth()).append(".").append(month).append(".").append(day.getYear()).toString();
+		return dateRepr;
+	}
+
+	/**
+	 * Will return a list of the rows of the table that represents the day
+	 * @param font
+	 * @return
+	 */
+	@Override
+	protected List<Row> getNeededRows(PDFont font)
 	{
 		List<Row> neededRows = new ArrayList<>();
 		// adding date
 		LocalDateTime day = interval.getStart();
 		String month = (day.getMonth().getValue()<10) ? "0"+day.getMonth().getValue() : String.valueOf(day.getMonth().getValue());
+		String dateRepr = new StringBuilder().append(day.getDayOfMonth()).append(".").append(month).append(".").append(day.getYear()).toString();
 		Row date = Row.builder()
 			.add(TextCell.builder().text(
 				(new StringBuilder().append(FinancialReport.getWeekdayNameDE(day.getDayOfWeek().getValue()))
-					.append(", ").append(day.getDayOfMonth()).append(".").append(month).append(day.getYear())).toString()
-			).backgroundColor(Color.WHITE).fontSize(16).horizontalAlignment(HorizontalAlignment.CENTER).font(font).build()).build();
+					.append(", ").append(dateRepr)).toString()).backgroundColor(Color.WHITE).fontSize(16).horizontalAlignment(HorizontalAlignment.CENTER).colSpan(5).font(font).build()).build();
 		neededRows.add(date);
 
+
+		neededRows.add(emptyRow());
 		// balance in the morning of the day
 		Row kontostandMorning = Row.builder()
 			.add(TextCell.builder()
-				.text("Kontostand am Anfang des Tages:").font(font).fontSize(20).colSpan(4)
+				.text("Kontostand am Anfang des Tages:").font(font).fontSize(20).colSpan(3)
 				.borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
 			.build())
 			.add(TextCell.builder()
 				.text(getBalance().subtract(getProfit()).toString()).font(font).fontSize(20)
-				.colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
+				.colSpan(2).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
 			.build())
-		.build();
+			.padding(10).borderWidth(1).build();
 		neededRows.add(kontostandMorning);
+		neededRows.add(emptyRow());
 
 		// Header
 		Row header = Row.builder()
@@ -90,7 +122,7 @@ public class DailyFinancialReport extends FinancialReport{
 				.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
 			.build())
 			.add(TextCell.builder()
-				.text("Anzahl").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+				.text("Summe").verticalAlignment(VerticalAlignment.MIDDLE).font(font).borderWidth(1)
 				.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
 			.build())
 		.build();
@@ -107,28 +139,28 @@ public class DailyFinancialReport extends FinancialReport{
 				if (currentRow == 0) {
 					eintrag.add(TextCell.builder()
 						.text(realEntry.getTimestamp().toString()).rowSpan(numRows).verticalAlignment(VerticalAlignment.TOP)
-						.font(font).fontSize(12).horizontalAlignment(HorizontalAlignment.LEFT)
+						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
 						.build())
 					.add(TextCell.builder()
 						.text(realEntry.getCategory()).rowSpan(numRows).verticalAlignment(VerticalAlignment.TOP)
-						.font(font).fontSize(12).horizontalAlignment(HorizontalAlignment.LEFT)
+						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
 						.build());
 				}
 				String productName = itemList.get(currentRow);
 				eintrag.add(TextCell.builder()
 					.text(productName).verticalAlignment(VerticalAlignment.TOP)
-					.font(font).fontSize(12).horizontalAlignment(HorizontalAlignment.LEFT)
+					.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
 					.build());
 				eintrag.add(TextCell.builder()
 					.text(String.valueOf(realEntry.getItems().get(productName))).verticalAlignment(VerticalAlignment.TOP)
-					.font(font).fontSize(12).horizontalAlignment(HorizontalAlignment.LEFT)
+					.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.CENTER)
 					.build());
 				if(currentRow == 0)
 				{
 					eintrag.add(
 						TextCell.builder()
-							.text(realEntry.getValue().toString()).rowSpan(numRows).verticalAlignment(VerticalAlignment.BOTTOM)
-							.font(font).fontSize(12).horizontalAlignment(HorizontalAlignment.LEFT)
+							.text(realEntry.getValue().toString()).rowSpan(numRows).verticalAlignment(VerticalAlignment.MIDDLE)
+							.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
 							.build()
 					);
 				}
@@ -137,7 +169,35 @@ public class DailyFinancialReport extends FinancialReport{
 			}
 		}
 
+		neededRows.add(emptyRow());
 		// day difference
+		MonetaryAmount profit = getProfit();
+		String profitRepr = profit.toString();
+		Row difference = Row.builder()
+			.add(TextCell.builder()
+				.text("Tagesdifferenz:").font(font).fontSize(20).colSpan(3)
+				.borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+				.build())
+			.add(TextCell.builder()
+				.text(profitRepr).font(font).fontSize(20)
+				.colSpan(2).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
+				.build())
+			.padding(10).borderWidth(1).build();
+		neededRows.add(difference);
 
+		//balance in the evening
+		Row evening = Row.builder()
+			.add(TextCell.builder()
+				.text(new StringBuilder().append("Kontostand am Ende des Tages (").append(dateRepr).append(")").toString())
+				.font(font).fontSize(16).colSpan(3).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+				.build())
+			.add(TextCell.builder()
+				.text(getBalance().toString()).font(font).fontSize(20)
+				.colSpan(2).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
+				.build())
+			.padding(10).borderWidth(1).build();
+		neededRows.add(evening);
+
+		return neededRows;
 	}
 }

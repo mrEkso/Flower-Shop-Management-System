@@ -153,7 +153,8 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 			Streamable<AccountancyEntry> subset = Streamable.empty();
 			output.put(subinterval, subset.and(find(subinterval)));
 			end = end.plus(duration);
-		}while(interval.contains(end));
+			start = start.plus(duration);
+		}while(interval.contains(start));
 		return output;
 	}
 
@@ -195,7 +196,11 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 	public MonthlyFinancialReport createFinancialReportMonth(LocalDateTime day){
 		LocalDateTime start = LocalDateTime.of(day.getYear(), day.getMonth(), 1, 0, 0);
 		LocalDateTime end = start.plusMonths(1);
+		if (end.isAfter(LocalDateTime.now())) {
+			end = LocalDateTime.now();
+		}
 		Interval interval = Interval.from(start).to(end);
+
 		Interval endToNow = Interval.from(end).to(LocalDateTime.now().plusDays(1));
 		TemporalAmount endToNowDuration = endToNow.toDuration();
 		MonetaryAmount moneyDifference = salesVolume(endToNow,endToNowDuration).get(endToNow);
@@ -222,7 +227,7 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		Money output = Money.of(0,getCashRegister().getBalance().getCurrency());
 		for(AccountancyEntry entry : set){
 			if(entry.isRevenue()) {
-				output.add(entry.getValue());
+				output = output.add(entry.getValue());
 			}
 		}
 		return output;
@@ -231,7 +236,7 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		Money output = Money.of(0,getCashRegister().getBalance().getCurrency());
 		for(AccountancyEntry entry : set){
 			if(entry.isExpense()) {
-				output.add(entry.getValue());
+				output = output.add(entry.getValue());
 			}
 		}
 		return output;

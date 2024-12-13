@@ -4,9 +4,15 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.salespointframework.time.Interval;
+import org.vandeseer.easytable.TableDrawer;
+import org.vandeseer.easytable.settings.HorizontalAlignment;
+import org.vandeseer.easytable.structure.Row;
+import org.vandeseer.easytable.structure.Table;
+import org.vandeseer.easytable.structure.cell.TextCell;
 
 import javax.money.MonetaryAmount;
 import java.io.ByteArrayOutputStream;
@@ -14,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public abstract class FinancialReport {
 	protected MonetaryAmount income;
@@ -40,26 +47,15 @@ public abstract class FinancialReport {
 		this.profit = this.income.add(this.expenditure);
 	}
 	public byte[] generatePDF(){
-		try (PDDocument document = new PDDocument()) {
-			PDPage page = new PDPage(PDRectangle.A4);
-			document.addPage(page);
-			try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-				PDType0Font customFont = PDType0Font.load(document, new File("src/main/resources/fonts/josefin-sans.semibold.ttf"));
-				contentStream.setFont(customFont, 12);
-				contentStream.beginText();
-				contentStream.setLeading(14.5f);
-				contentStream.newLineAtOffset(50, 750); //50,750
-				contentStream.showText("Sample Table on A4 Document");
-				contentStream.newLine();
-				contentStream.showText("ID    Name          Age");
-				contentStream.newLine();
-				contentStream.showText("-----------------------");
-				contentStream.newLine();
-				contentStream.showText("1     John Doe      28");
-				contentStream.newLine();
-				contentStream.showText("2     Jane Smith    32");
-				contentStream.endText();
-			}
+		try (PDDocument document = new PDDocument()){
+			PDType0Font customFont = PDType0Font.load(document, new File("src/main/resources/fonts/josefin-sans.semibold.ttf"));
+			TableDrawer.builder()
+				.startX(50)
+				.endY(50)
+				.startY(780)
+				.table(buildTheTable(customFont))
+				.build()
+				.draw(() -> document, () -> new PDPage(PDRectangle.A4), 50);
 			try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 				document.save(outputStream);
 				return outputStream.toByteArray();
@@ -69,6 +65,75 @@ public abstract class FinancialReport {
 			return null;
 		}
 	}
+
+	protected Table buildTheTable(PDType0Font font) {
+		// Add the header and "Finanzuebersicht fuer ... here
+		List<Row> rows = getNeededRows(font);
+		Table.TableBuilder builder = Table.builder()
+			.addColumnsOfWidth(110,115,100,105,55);
+		Row shapka1 = Row.builder()
+			.add(TextCell.builder()
+				.text(" ").fontSize(16).colSpan(2)
+			.build())
+			.add(TextCell.builder()
+				.text("Floris Blumenladen Dresden").fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+			.build())
+		.build();
+		builder.addRow(shapka1);
+		Row adress = Row.builder()
+			.add(TextCell.builder()
+				.text(" ").fontSize(16).colSpan(2)
+				.build())
+			.add(TextCell.builder()
+				.text("Wiener Platz 4, 01069 Dresden").fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.build();
+		builder.addRow(adress);
+		LocalDateTime day = LocalDateTime.now();
+		String month = (day.getMonth().getValue()<10) ? "0"+day.getMonth().getValue() : String.valueOf(day.getMonth().getValue());
+		String dateRepr = new StringBuilder().append(day.getDayOfMonth()).append(".").append(month).append(".").append(day.getYear()).toString();
+
+		Row datum = Row.builder()
+			.add(TextCell.builder()
+				.text(" ").fontSize(16).colSpan(2)
+				.build())
+			.add(TextCell.builder()
+				.text("Am "+dateRepr).fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.build();
+		builder.addRow(datum);
+		builder.addRow(emptyRow());
+		//builder.addRow(emptyRow());
+		Row title = Row.builder()
+			.add(TextCell.builder()
+				.text("Finanzübersicht für "+intervalToString()).font(font).fontSize(24).colSpan(5).horizontalAlignment(HorizontalAlignment.CENTER)
+			.build())
+		.build();
+		builder.addRow(title);
+		builder.addRow(emptyRow());
+		for (Row row : rows) {
+			builder.addRow(row);
+		}
+		return builder.build();
+	}
+
+	protected Row emptyRow() {
+		return Row.builder().add(TextCell.builder().text("  ").colSpan(5).fontSize(10).build())
+			.build();
+	}
+
+	/**
+	 * Will return either 12.2024 or 13.12.2024 depending on is it month or day report
+	 * @return
+	 */
+	protected abstract String intervalToString();
+
+	/**
+	 * Will return a list of the rows of the table that represents the period
+	 * @param font
+	 * @return
+	 */
+	protected abstract List<Row> getNeededRows(PDFont font);
 
 	public MonetaryAmount getBalance() {
 		return balance;
