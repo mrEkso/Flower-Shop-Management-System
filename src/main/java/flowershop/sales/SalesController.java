@@ -56,17 +56,17 @@ public class SalesController {
 		List<Bouquet> bouquets = productService.findAllBouquets();
 
 		//List<Product> products = productService.getAllProducts(); // -------------- Please use me <3
-
-		// Filter by color
-		if (filterItem != null && !filterItem.isEmpty()) {
-			flowers = productService.findFlowersByColor(filterItem);
-			bouquets = new ArrayList<>();
-		}
-
+		
 		// Search by name
 		if (searchInput != null && !searchInput.isEmpty()) {
 			flowers = productService.findFlowersByName(searchInput);
 			bouquets = productService.findBouquetsByName(searchInput);
+		}
+
+		// Filter by color
+		if (filterItem != null && !filterItem.isEmpty()) {
+			flowers = productService.findFlowersByColor(filterItem, flowers);
+			bouquets = new ArrayList<>();
 		}
 
 		// Filter products with quantity > 0
@@ -95,14 +95,14 @@ public class SalesController {
 
 		// Shouldn't allow to work with bouquets because wholesalers sell only flowers.
 		List<Flower> flowers = productService.findAllFlowers();
+		
+		if (searchInput != null && !searchInput.isEmpty()) {
+			flowers = productService.findFlowersByName(searchInput);
+		}
 
 		// Only by color? Seems reasonable but who knows.
 		if (filterItem != null && !filterItem.isEmpty()) {
-			flowers = productService.findFlowersByColor(filterItem);
-		}
-
-		if (searchInput != null && !searchInput.isEmpty()) {
-			flowers = productService.findFlowersByName(searchInput);
+			flowers = productService.findFlowersByColor(filterItem, flowers);
 		}
 
 		Set<String> colors = productService.getAllFlowerColors();
@@ -113,7 +113,7 @@ public class SalesController {
 		model.addAttribute("flowers", flowers);
 
 		return "sales/buy";
-	}
+	} 
 
 	/**
 	 * Registers a {@link SimpleOrder} instance based on the {@link Cart}.
