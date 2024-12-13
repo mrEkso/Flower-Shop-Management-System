@@ -2,8 +2,13 @@ package flowershop.sales;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.UUID;
+
+import java.util.UUID;
+
 import flowershop.product.ProductService;
 import org.junit.jupiter.api.Test;
+import org.salespointframework.catalog.Product;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.salespointframework.order.Cart;
@@ -12,6 +17,7 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import flowershop.AbstractIntegrationTests;
+import flowershop.product.ProductService;
 
 public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 
@@ -23,8 +29,12 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	private SalesController controller;
 
 	@Autowired
-	private ProductService productService;
+	private ProductService productService;    
+	
+	// @Autowired
+    // ProductService productService; 
 
+	
 
 	@Test
 	public void testSellCatalog_DefaultView() {
@@ -133,6 +143,116 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	public void testInitializeSellCart() {
 		Cart sellCart = controller.initializeSellCart();
 		assertThat(sellCart).isNotNull();
+	}
+
+	// Test decreasing quantity from "buy" cart
+	@Test
+	public void testDecreaseFromBuyCart() {
+		Model model = new ExtendedModelMap();
+		Cart buyCart = controller.initializeBuyCart();
+		
+		Product product = productService.findAllFlowers().iterator().next();
+		buyCart.addOrUpdateItem(product, 3);
+
+		String buyView = controller.decreaseFromBuyCart(model, UUID.fromString(product.getId().toString()), buyCart);
+				assertThat(buyView).isEqualTo("redirect:/buy");
+
+		assertThat(buyCart.getQuantity(product).getAmount().intValue()).isEqualTo(2);
+		
+		double fullPrice = (double) model.asMap().get("fullBuyPrice");
+		assertThat(fullPrice).isGreaterThan(0);
+	}
+
+	// Test decreasing quantity from "sell" cart
+	@Test
+	public void testDecreaseFromSellCart() {
+		Model model = new ExtendedModelMap();
+		Cart sellCart = controller.initializeSellCart();
+		
+		Product product = productService.findAllFlowers().iterator().next();
+		sellCart.addOrUpdateItem(product, 3);
+
+		String sellView = controller.decreaseFromSellCart(model, UUID.fromString(product.getId().toString()), sellCart);
+				assertThat(sellView).isEqualTo("redirect:/sell");
+
+		assertThat(sellCart.getQuantity(product).getAmount().intValue()).isEqualTo(2);
+		
+		double fullPrice = (double) model.asMap().get("fullSellPrice");
+		assertThat(fullPrice).isGreaterThan(0);
+	}
+
+	// Test removing product from "buy" cart
+	@Test
+	public void testRemoveFromBuyCart() {
+		Model model = new ExtendedModelMap();
+		Cart buyCart = controller.initializeBuyCart();
+
+		Product product = productService.findAllFlowers().iterator().next();
+		buyCart.addOrUpdateItem(product, 3);
+
+		assertThat(buyCart.getQuantity(product).getAmount().intValue()).isEqualTo(3);
+
+		String buyView = controller.removeFromBuyCart(model, UUID.fromString(product.getId().toString()), buyCart);
+		assertThat(buyView).isEqualTo("redirect:/buy");
+
+		assertThat(buyCart.getQuantity(product).getAmount().intValue()).isEqualTo(0);
+
+		double fullPrice = (double) model.asMap().get("fullBuyPrice");
+		assertThat(fullPrice).isEqualTo(0);
+	}
+
+	// Test removing product from "sell" cart
+	@Test
+	public void testRemoveFromSellCart() {
+		Model model = new ExtendedModelMap();
+		Cart sellCart = controller.initializeSellCart();
+
+		Product product = productService.findAllFlowers().iterator().next();
+		sellCart.addOrUpdateItem(product, 2);
+
+		assertThat(sellCart.getQuantity(product).getAmount().intValue()).isEqualTo(2);
+
+		String sellView = controller.removeFromSellCart(model, UUID.fromString(product.getId().toString()), sellCart);
+		assertThat(sellView).isEqualTo("redirect:/sell");
+
+		assertThat(sellCart.getQuantity(product).getAmount().intValue()).isEqualTo(0);
+
+		double fullPrice = (double) model.asMap().get("fullSellPrice");
+		assertThat(fullPrice).isEqualTo(0);
+	}
+
+	// Test adding product to "sell" cart
+	@Test
+	public void testAddToSellCart() {
+		Model model = new ExtendedModelMap();
+		Cart sellCart = controller.initializeSellCart();
+
+		Product product = productService.findAllFlowers().iterator().next();
+
+		String sellView = controller.addToSellCart(model, UUID.fromString(product.getId().toString()), sellCart);
+		assertThat(sellView).isEqualTo("redirect:/sell");
+
+		assertThat(sellCart.getQuantity(product).getAmount().intValue()).isEqualTo(1);
+
+		double fullPrice = (double) model.asMap().get("fullSellPrice");
+		assertThat(fullPrice).isGreaterThan(0);
+	}
+
+	// Test adding product to "buy" cart
+	@Test
+	public void testAddToBuyCart() {
+		Model model = new ExtendedModelMap();
+		Cart buyCart = controller.initializeBuyCart();
+
+		Product product = productService.findAllFlowers().iterator().next();
+
+		String buyView = controller.addToBuyCart(model, UUID.fromString(product.getId().toString()), buyCart);
+		assertThat(buyView).isEqualTo("redirect:/buy");
+
+		assertThat(buyCart.getQuantity(product).getAmount().intValue()).isEqualTo(1);
+
+		double fullPrice = (double) model.asMap().get("fullBuyPrice");
+		assertThat(fullPrice).isGreaterThan(0);
 	}
 
 	@Test
