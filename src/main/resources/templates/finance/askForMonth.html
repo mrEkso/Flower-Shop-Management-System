@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="#{finances.askForMonth.title}">Choose the Day</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://unpkg.com/htmx.org@1.7.0"></script>
+</head>
+<body>
+<div class="container p-4">
+
+    <div class="text-center mb-4">
+        <h1 th:text="#{finances.askForMonth.title}"></h1>
+    </div>
+
+
+    <div class="row justify-content-center">
+
+        <form class="d-flex flex-column" action="/monthReport" method="get">
+            <input type="month" name="month" class="form-control mb-2" required>
+
+            <button type="submit" class="btn btn-primary mt-2">Create Report</button>
+        </form>
+
+    </div>
+</div>
+</body>
+</html>
