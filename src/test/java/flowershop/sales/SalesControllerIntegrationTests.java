@@ -13,12 +13,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.salespointframework.order.Cart;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import flowershop.AbstractIntegrationTests;
 import flowershop.product.ProductService;
 
+@WithMockUser(username = "boss", roles = {"BOSS", "USER"})
 public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 
 	@Mock
