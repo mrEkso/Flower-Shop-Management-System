@@ -179,6 +179,8 @@ NOTE: Name the used external frameworks, in which packages you used them, and wh
 |Spring Security |Security |Bietet Authentifizierung, Autorisierung und Schutz vor gängigen Sicherheitslücken.
 |salespointframework |Backend | Zur Entwicklung von Point-of-Sales-Anwendungen (PoS) mit Spring Framework und Spring Boot. Es besteht aus einer Vielzahl von Geschäftsmodulen, die es dem Nutzer ermöglichen, darauf aufbauend anspruchsvolle Webanwendungen zu implementieren.
 |Bootstrap | UI | Stellt Seiten-Layout-Tools und vordefinierte HTML-Elemente zu Verfügung.
+|Apache PDFBox | Backend | Ermöglicht die Erstellung von PDF Dokumenten
+|easytable | Backend | Vereinfacht die Erstellung von Tabellen in ApachePDFBox (https://github.com/vandeseer/easytable)
 |===
 
 NOTE: If you use JavaScript frameworks like Bootstrap, HTMX, etc. you have to add them to the list. The category is
