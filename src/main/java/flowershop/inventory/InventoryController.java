@@ -20,20 +20,14 @@ import java.util.stream.Collectors;
 @Controller
 public class InventoryController {
 
-	private final List<DeletedProduct> deletedProducts = new ArrayList<>();
-	private final List<Flower> selectedFlowersForBouquet = new ArrayList<>();
+	final List<DeletedProduct> deletedProducts = new ArrayList<>();
+	final List<Flower> selectedFlowersForBouquet = new ArrayList<>();
 
-	private final ProductService productService;
+	public final ProductService productService;
 
 	public InventoryController(ProductService productService) {
 		this.productService = productService;
 	}
-
-	/*private Optional<Product> findProductByName(String name) {
-		return products.stream()
-			.filter(product -> product.getName().equalsIgnoreCase(name))
-			.findFirst();
-	}*/
 
 	@GetMapping("/inventory")
 	@PreAuthorize("hasRole('BOSS')")
