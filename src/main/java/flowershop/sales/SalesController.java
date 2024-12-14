@@ -15,6 +15,7 @@ import org.salespointframework.catalog.Product;
 
 import java.util.*;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
@@ -44,10 +45,11 @@ public class SalesController {
 
 	@GetMapping("/")
 	public String index() {
-		return "redirect:/sell";
+		return "redirect:/calendar";
 	}
 
 	@GetMapping("/sell")
+	@PreAuthorize("hasRole('BOSS')")
 	public String sellCatalog(Model model,
 							  @RequestParam(required = false) String filterItem,
 							  @RequestParam(required = false) String searchInput) {
@@ -89,6 +91,7 @@ public class SalesController {
 	}
 
 	@GetMapping("/buy")
+	@PreAuthorize("hasRole('BOSS')")
 	public String buyCatalog(Model model,
 							 @RequestParam(required = false) String filterItem,
 							 @RequestParam(required = false) String searchInput) {
