@@ -2,6 +2,7 @@ package flowershop.product;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 
 @Entity
@@ -25,7 +26,7 @@ public class Flower extends Product {
 	public Flower() {
 	}
 
-	public Pricing getPricing() {
+    public Pricing getPricing() {
 		return pricing;
 	}
 
