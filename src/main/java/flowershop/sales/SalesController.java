@@ -45,7 +45,7 @@ public class SalesController {
 
 	@GetMapping("/")
 	public String index() {
-		return "redirect:/sell";
+		return "redirect:/calendar";
 	}
 
 	@GetMapping("/sell")
