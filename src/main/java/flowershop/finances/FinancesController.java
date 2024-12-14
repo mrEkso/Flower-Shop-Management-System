@@ -206,6 +206,17 @@ public class FinancesController {
 	@GetMapping("/monthReport")
 	@PreAuthorize("hasRole('BOSS')")
 	public ResponseEntity<byte[]> monthReport(@RequestParam("month") String year_month, Model model) {
+		String[] date = year_month.split("-");
+		if(date.length != 2) {
+			return ResponseEntity.badRequest()
+				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM".getBytes(StandardCharsets.UTF_8));
+		}
+		if(date[0].length() != 4 ||
+			!date[1].matches("0[1-9]|1[1-2]") || !date[0].matches("19[0-9][0-9]|2[0-9][0-9][0-9]"))
+		{
+			return ResponseEntity.badRequest()
+				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM".getBytes(StandardCharsets.UTF_8));
+		}
 		YearMonth monthParsed = YearMonth.parse(year_month);
 		LocalDate firstOfMonth = monthParsed.atDay(1);
 		if (firstOfMonth.isAfter(LocalDate.now())) {
