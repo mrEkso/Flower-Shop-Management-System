@@ -6,6 +6,7 @@ import org.salespointframework.time.Interval;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,9 +39,8 @@ public class FinancesController {
 		this.cashRegisterService = cashRegisterService;
 	}
 
-
-
 	@GetMapping("/filterDates")
+	@PreAuthorize("hasRole('BOSS')")
 	public String filterDates(@RequestParam("date1") LocalDate date1, @RequestParam("date2") LocalDate date2, Model model) {
 		if(date1.isAfter(date2)) {
 			return "finances";
@@ -73,6 +73,7 @@ public class FinancesController {
 	}
 
 	@GetMapping("/resetDates")
+	@PreAuthorize("hasRole('BOSS')")
 	public String resetDates(Model model) {
 		this.filteredByDates = new HashSet<>();
 		this.isFilteredByDates = false;
@@ -87,6 +88,7 @@ public class FinancesController {
 	}
 
 	@GetMapping("/resetCategory")
+	@PreAuthorize("hasRole('BOSS')")
 	public String resetCategory(Model model) {
 		this.filteredByCategory = new HashSet<>();
 		this.isFilteredByCategory = false;
@@ -133,6 +135,7 @@ public class FinancesController {
 	}
 
 	@GetMapping("/finances")
+	@PreAuthorize("hasRole('BOSS')")
 	public String getTransactionPage(Model model) {
 		this.filteredOrdersList = new LinkedList<>();
 		for (AccountancyEntry i : this.cashRegisterService.findAll().toList()) {
@@ -152,6 +155,7 @@ public class FinancesController {
 	 * @return
 	 */
 	@GetMapping("/askForDay")
+	@PreAuthorize("hasRole('BOSS')")
 	public String askDay(Model model) {
 		return "finance/askForDay";
 	}
@@ -162,6 +166,7 @@ public class FinancesController {
 	 * @return
 	 */
 	@GetMapping("/askForMonth")
+	@PreAuthorize("hasRole('BOSS')")
 	public String askMonth(Model model) {
 		return "finance/askForMonth";
 	}
@@ -173,6 +178,7 @@ public class FinancesController {
 	 * @return
 	 */
 	@GetMapping("/dayReport")
+	@PreAuthorize("hasRole('BOSS')")
 	public ResponseEntity<byte[]> dayReport(@RequestParam("day") LocalDate date, Model model) {
 		if(date.isAfter(LocalDate.now())){
 			return ResponseEntity.badRequest()
@@ -196,8 +202,21 @@ public class FinancesController {
 			.contentType(MediaType.APPLICATION_PDF)
 			.body(docu);
 	}
+	
 	@GetMapping("/monthReport")
+	@PreAuthorize("hasRole('BOSS')")
 	public ResponseEntity<byte[]> monthReport(@RequestParam("month") String year_month, Model model) {
+		String[] date = year_month.split("-");
+		if(date.length != 2) {
+			return ResponseEntity.badRequest()
+				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM".getBytes(StandardCharsets.UTF_8));
+		}
+		if(date[0].length() != 4 ||
+			!date[1].matches("0[1-9]|1[1-2]") || !date[0].matches("19[0-9][0-9]|2[0-9][0-9][0-9]"))
+		{
+			return ResponseEntity.badRequest()
+				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM".getBytes(StandardCharsets.UTF_8));
+		}
 		YearMonth monthParsed = YearMonth.parse(year_month);
 		LocalDate firstOfMonth = monthParsed.atDay(1);
 		if (firstOfMonth.isAfter(LocalDate.now())) {
@@ -224,6 +243,7 @@ public class FinancesController {
 	}
 
 	@GetMapping("/filterCategories")
+	@PreAuthorize("hasRole('BOSS')")
 	public String filterCategories(@RequestParam("filter") String category, Model model) {
 		//this.categorySet = category;
 		if(category.equals("all")){

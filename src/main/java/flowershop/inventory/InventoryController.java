@@ -6,6 +6,7 @@ import flowershop.product.Pricing;
 import flowershop.product.ProductService;
 import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ public class InventoryController {
 	}
 
 	@GetMapping("/inventory")
+	@PreAuthorize("hasRole('BOSS')")
 	public String inventoryMode(@RequestParam(required = false) String search,
 								@RequestParam(required = false, defaultValue = "all") String filter,
 								Model model) {
@@ -95,6 +97,7 @@ public class InventoryController {
 	}
 
 	@GetMapping("/inventory/create-bouquet")
+	@PreAuthorize("hasRole('BOSS')")
 	public String createBouquetMode(Model model) {
 		List<Map<String, Object>> flowersOnly = productService.getAllProducts().stream()
 			.filter(product -> product instanceof Flower) // Filter only Flower products
@@ -112,8 +115,8 @@ public class InventoryController {
 		return "inventory";
 	}
 
-
 	@GetMapping("/inventory/choose-flower")
+	@PreAuthorize("hasRole('BOSS')")
 	public String showChooseModal(@RequestParam UUID flowerID, Model model) {
 		Optional<Product> selectedFlowerOpt = productService.getProductById(flowerID);
 
@@ -212,6 +215,7 @@ public class InventoryController {
 	}
 
 	@GetMapping("/inventory/deleted-products")
+	@PreAuthorize("hasRole('BOSS')")
 	public String showDeletedProducts(Model model) {
 		double totalLossSum = 0.0;
 		for (DeletedProduct deletedProduct : deletedProducts) {
@@ -233,9 +237,8 @@ public class InventoryController {
 		return "inventory";
 	}
 
-
-
 	@GetMapping("/inventory/delete")
+	@PreAuthorize("hasRole('BOSS')")
 	public String showDeleteModal(@RequestParam("productID") UUID productID, Model model) {
 		Optional<Product> selectedProductOpt = productService.getProductById(productID);
 
