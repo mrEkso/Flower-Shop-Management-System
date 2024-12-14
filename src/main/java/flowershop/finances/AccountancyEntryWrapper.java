@@ -55,9 +55,6 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 
 	public AccountancyEntryWrapper(Order order) {
 		super(order.getTotal());
-		if(order == null){
-			throw new IllegalArgumentException("Order is null, couldn't create an AccountancyEntryWrapper");
-		}
 		this.timestamp = LocalDateTime.now();
 		if(order instanceof WholesalerOrder){
 			this.category = Category.Einkauf;
