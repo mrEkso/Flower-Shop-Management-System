@@ -1,6 +1,6 @@
 package inventory;
 
-import AbstractIntegrationTests;
+import inventory.AbstractIntegrationTests;
 import flowershop.inventory.DeletedProduct;
 import flowershop.inventory.InventoryController;
 import flowershop.product.ProductService;
