@@ -121,20 +121,24 @@ public class InventoryController {
 			.map(this::enrichProductData)
 			.collect(Collectors.toList());
 
-		selectedFlowerOpt.ifPresent(product -> {
+		if (selectedFlowerOpt.isPresent()) {
+			Product product = selectedFlowerOpt.get();
 			if (product instanceof Flower) {
 				model.addAttribute("selectedFlower", (Flower) product);
 				model.addAttribute("showChooseModal", true);
 			} else {
 				model.addAttribute("error", "Selected product is not a flower.");
 			}
-		});
+		} else {
+			model.addAttribute("error", "Product not found.");
+		}
 
 		model.addAttribute("createBouquetMode", true);
 		model.addAttribute("products", enrichedProducts);
 
 		return "inventory";
 	}
+
 
 
 
