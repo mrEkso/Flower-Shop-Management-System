@@ -123,14 +123,15 @@ public class SalesController {
 	 */
 	@PostMapping("/sell-from-cart")
 	public String sellFromCart(
-		@ModelAttribute("sellCart") Cart sellCart, Model model
+		@ModelAttribute("sellCart") Cart sellCart, Model model,
+		@RequestParam(required = false) String paymentMethod
 	) {
-
+		
 		if (sellCart == null || sellCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:sell";
 		}
-		salesService.sellProductsFromBasket(sellCart, "Cash");
+		salesService.sellProductsFromBasket(sellCart, paymentMethod);
 
 		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
 		model.addAttribute("fullSellPrice", fp);
@@ -146,13 +147,14 @@ public class SalesController {
 	@PostMapping("/buy-from-cart")
 	public String buyFromCart(
 		@ModelAttribute("buyCart") Cart buyCart,
-		Model model
+		Model model,
+		@RequestParam(required = false) String paymentMethod
 	) {
 		if (buyCart == null || buyCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:buy";
 		}
-		salesService.buyProductsFromBasket(buyCart, "Cash");
+		salesService.buyProductsFromBasket(buyCart, paymentMethod);
 
 		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
 		model.addAttribute("fullBuyPrice", fp);
