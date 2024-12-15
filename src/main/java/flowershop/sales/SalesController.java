@@ -43,11 +43,25 @@ public class SalesController {
 		return new Cart();
 	}
 
+	/**
+	 * Redirects to the selling catalog, i.e. it is defined as the default page.
+	 *
+	 * @return the redirect URL to the selling catalog
+	 */
 	@GetMapping("/")
 	public String index() {
 		return "redirect:/calendar";
 	}
 
+	/**
+	 * Displays the sell catalog with optional filters and search.
+	 * Shows only those products that are in stock, which makes it different from buy catalog.
+	 *
+	 * @param model       the model to hold attributes for the view
+	 * @param filterItem  the filter for product color (optional)
+	 * @param searchInput the search input for product name (optional)
+	 * @return the view name for the selling catalog
+	 */
 	@GetMapping("/sell")
 	@PreAuthorize("hasRole('BOSS')")
 	public String sellCatalog(Model model,
@@ -90,6 +104,14 @@ public class SalesController {
 		return "sales/sell";
 	}
 
+	/**
+	 * Displays the buy catalog with optional filters and search.
+	 *
+	 * @param model       the model to hold attributes for the view
+	 * @param filterItem  the filter for product color (optional)
+	 * @param searchInput the search input for product name (optional)
+	 * @return the view name for the buying catalog
+	 */
 	@GetMapping("/buy")
 	@PreAuthorize("hasRole('BOSS')")
 	public String buyCatalog(Model model,
@@ -119,7 +141,11 @@ public class SalesController {
 	} 
 
 	/**
-	 * Registers a {@link SimpleOrder} instance based on the {@link Cart}.
+	 * Processes the sale of products from the sell cart.
+	 *
+	 * @param sellCart the cart containing products to sell
+	 * @param model    the model to hold attributes for the view
+	 * @return the redirect URL to the selling catalog
 	 */
 	@PostMapping("/sell-from-cart")
 	public String sellFromCart(
@@ -142,7 +168,11 @@ public class SalesController {
 
 
 	/**
-	 * Registers a {@link SimpleOrder} instance based on the {@link Cart}.
+	 * Processes the purchase of products from the buy cart.
+	 *
+	 * @param buyCart the cart containing products to buy
+	 * @param model   the model to hold attributes for the view
+	 * @return the redirect URL to the buying catalog
 	 */
 	@PostMapping("/buy-from-cart")
 	public String buyFromCart(
@@ -163,7 +193,14 @@ public class SalesController {
 		return "redirect:buy";
 	}
 
-
+	/**
+	 * Adds a product to the sell cart.
+	 *
+	 * @param model     the model to hold attributes for the view
+	 * @param productId the ID of the product to add
+	 * @param sellCart  the cart to which the product is added
+	 * @return the redirect URL to the selling catalog
+	 */
 	@PostMapping("add-to-sell-cart")
 	public String addToSellCart(
 		Model model,
@@ -184,6 +221,14 @@ public class SalesController {
 		return "redirect:/sell";
 	}
 
+	/**
+	 * Removes a product entirely from the sell cart.
+	 *
+	 * @param model     the model to hold attributes for the view
+	 * @param productId the ID of the product to remove
+	 * @param sellCart  the cart from which the product is removed
+	 * @return the redirect URL to the selling catalog
+	 */
 	@PostMapping("remove-from-sell-cart")
 	public String removeFromSellCart(
 		Model model,
@@ -200,8 +245,15 @@ public class SalesController {
 		return "redirect:/sell";
 	}
 
-	
 
+	/**
+	 * Decreases a product quantity by one in the sell cart.
+	 *
+	 * @param model     the model to hold attributes for the view
+	 * @param productId the ID of the product to remove
+	 * @param sellCart  the cart for which the product quantity is changed
+	 * @return the redirect URL to the selling catalog
+	 */
 	@PostMapping("decrease-from-sell-cart")
 	public String decreaseFromSellCart(
 		Model model,
@@ -217,6 +269,14 @@ public class SalesController {
 		return "redirect:/sell";
 	}
 
+	/**
+	 * Adds a product to the buy cart.
+	 *
+	 * @param model     the model to hold attributes for the view
+	 * @param productId the ID of the product to add
+	 * @param buyCart   the cart to which the product is added
+	 * @return the redirect URL to the selling catalog
+	 */
 	@PostMapping("add-to-buy-cart")
 	public String addToBuyCart(
 		Model model,
@@ -232,6 +292,14 @@ public class SalesController {
 		return "redirect:/buy";
 	}
 
+	/**
+	 * Removes a product entirely from the buy cart.
+	 *
+	 * @param model     the model to hold attributes for the view
+	 * @param productId the ID of the product to remove
+	 * @param buyCart   the cart from which the product is removed
+	 * @return the redirect URL to the buy catalog
+	 */
 	@PostMapping("remove-from-buy-cart")
 	public String removeFromBuyCart(
 		Model model,
@@ -247,6 +315,14 @@ public class SalesController {
 		return "redirect:/buy";
 	}
 
+	/**
+	 * Decreases a product quantity by one in the buy cart.
+	 *
+	 * @param model     the model to hold attributes for the view
+	 * @param productId the ID of the product to remove
+	 * @param buyCart   the cart for which the product quantity is changed
+	 * @return the redirect URL to the selling catalog
+	 */
 	@PostMapping("decrease-from-buy-cart")
 	public String decreaseFromBuyCart(
 		Model model,

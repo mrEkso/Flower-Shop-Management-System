@@ -31,6 +31,13 @@ public class SalesService {
 		this.eventPublisher = eventPublisher;
 	}
 
+	/**
+	 * Processes the sale of products from a cart and creates a corresponding order.
+	 *
+	 * @param cart          the cart containing products to sell
+	 * @param paymentMethod the payment method for the sale
+	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
+	 */
 	public void sellProductsFromBasket(Cart cart, String paymentMethod) throws IllegalArgumentException {
 		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
@@ -41,9 +48,9 @@ public class SalesService {
 			Product product = cartItem.getProduct();
 
 			if (product instanceof Flower) {
-				productService.removeFlowers((Flower) product, (int)cartItem.getQuantity().getAmount().doubleValue());
+				productService.removeFlowers((Flower) product, (int) cartItem.getQuantity().getAmount().doubleValue());
 			} else if (product instanceof Bouquet) {
-				productService.removeBouquet((Bouquet) product, (int)cartItem.getQuantity().getAmount().doubleValue());
+				productService.removeBouquet((Bouquet) product, (int) cartItem.getQuantity().getAmount().doubleValue());
 			} else {
 				throw new IllegalArgumentException("Unsupported product type");
 			}
@@ -58,7 +65,13 @@ public class SalesService {
 		eventPublisher.publishEvent(event); // Needed for Finances
 	}
 
-
+	/**
+	 * Processes the purchase of products from a cart and creates a corresponding wholesaler order.
+	 *
+	 * @param cart          the cart containing products to buy
+	 * @param paymentMethod the payment method for the purchase
+	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
+	 */
 	public void buyProductsFromBasket(Cart cart, String paymentMethod) throws IllegalArgumentException {
 		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
@@ -69,7 +82,7 @@ public class SalesService {
 			Product product = cartItem.getProduct();
 
 			if (product instanceof Flower) {
-				productService.addFlowers((Flower) product, (int)cartItem.getQuantity().getAmount().doubleValue());
+				productService.addFlowers((Flower) product, (int) cartItem.getQuantity().getAmount().doubleValue());
 				wholesalerOrder.addOrderLine(product, cartItem.getQuantity());
 			} else if (product instanceof Bouquet) {
 				throw new IllegalArgumentException("Unsupported product type: Bouquet cannot be bought from Wholesaler.");
@@ -86,6 +99,14 @@ public class SalesService {
 		eventPublisher.publishEvent(event); // Needed for Finances
 	}
 
+	/**
+	 * Calculates the total price of the items in a cart, based on whether the cart is for selling or buying.
+	 *
+	 * @param model      the model to hold attributes for the view
+	 * @param cart       the cart containing products
+	 * @param isSellPage whether the calculation is for the selling page (true) or buying page (false)
+	 * @return the total price of the items in the cart
+	 */
 	public double calculateFullCartPrice(Model model, Cart cart, Boolean isSellPage) {
 		double fp = cart.get()
 			.mapToDouble(bi -> {
