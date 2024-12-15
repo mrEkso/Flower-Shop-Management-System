@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 @Controller
 public class InventoryController {
 
-	private final List<DeletedProduct> deletedProducts = new ArrayList<>();
-	private final List<Flower> selectedFlowersForBouquet = new ArrayList<>();
+	public final List<DeletedProduct> deletedProducts = new ArrayList<>();
+	public final List<Flower> selectedFlowersForBouquet = new ArrayList<>();
 
 	private final ProductService productService;
 	private final DeletedProductService deletedProductService;
@@ -156,4 +156,5 @@ public class InventoryController {
 		model.addAttribute("showDeletedModal", !deletedProducts.isEmpty());
 		return "inventory";
 	}
+
 }
