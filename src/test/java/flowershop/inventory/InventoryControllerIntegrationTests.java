@@ -89,25 +89,15 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
     String viewName = inventoryController.deleteProduct(productName, quantity);
 
     assertThat(viewName).isEqualTo("redirect:/inventory");
-	// TODO: AAA
-    // assertThat(inventoryController.deletedProducts).anyMatch(deletedProduct -> deletedProduct.getName().equals(productName));
   }
 
   @Test
   public void testShowDeletedProducts() {
     Model model = new ExtendedModelMap();
 
-	// TODO: AAA
-    // inventoryController.deletedProducts.add(new DeletedProduct("Rose", 2.5, 5, 12.5));
-
     String viewName = inventoryController.showDeletedProducts(model);
 
     assertThat(viewName).isEqualTo("inventory");
-	
-	// TODO: AAA
-    // assertThat(model.asMap().get("deletedProducts")).isNotNull();
-	// TODO: AAA
-    // assertThat(model.asMap().get("totalLossSum")).isEqualTo(12.5);
   }
 
   @Test
@@ -124,8 +114,6 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
     String viewName = inventoryController.createCustomBouquet(bouquetName, model);
 
     assertThat(viewName).isEqualTo("inventory");
-	// TODO: AAA
-    // assertThat(inventoryController.selectedFlowersForBouquet).isEmpty();
   }
 
   @Test
@@ -137,8 +125,6 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
     String viewName = inventoryController.addFlowerToBouquet(invalidFlowerId, 5, model);
 
     assertThat(viewName).isEqualTo("inventory");
-	// TODO: AAA
-    // assertThat(inventoryController.selectedFlowersForBouquet).isEmpty();
   }
 
   @Test
@@ -149,8 +135,6 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
     String viewName = inventoryController.deleteProduct(productName, excessiveQuantity);
 
     assertThat(viewName).isEqualTo("redirect:/inventory");
-	// TODO: AAA
-    // assertThat(inventoryController.deletedProducts).isEmpty();
   }
 
   @Test
@@ -174,8 +158,6 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
     String viewName = inventoryController.createCustomBouquet(bouquetName, model);
 
     assertThat(viewName).isEqualTo("inventory");
-	// TODO: AAA
-    // assertThat(inventoryController.selectedFlowersForBouquet).isEmpty();
   }
 
   @Test
@@ -200,8 +182,6 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
     String viewName = inventoryController.addFlowerToBouquet(flowerId, 10, model);
 
     assertThat(viewName).isEqualTo("inventory");
-	// TODO: AAAA
-    // assertThat(inventoryController.selectedFlowersForBouquet).doesNotContain(testFlower);
   }
 
   @Test
@@ -214,9 +194,6 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
     String viewName = inventoryController.deleteProduct(productName, 5);
 
     assertThat(viewName).isEqualTo("redirect:/inventory");
-	// TODO: AAA
-    // assertThat(inventoryController.deletedProducts)
-    //   .anyMatch(deletedProduct -> deletedProduct.getName().equals("Rose") && deletedProduct.getQuantity() == 5);
   }
 
   @Test
@@ -224,8 +201,6 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
     String viewName = inventoryController.deleteProduct("NonExistent", 1);
 
     assertThat(viewName).isEqualTo("redirect:/inventory");
-	// TODO: AAA
-    // assertThat(inventoryController.deletedProducts).isEmpty();
   }
 
 }
