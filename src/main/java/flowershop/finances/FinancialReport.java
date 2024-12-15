@@ -22,6 +22,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Is used to generate financial PDF-reports
+ */
 public abstract class FinancialReport {
 	protected MonetaryAmount income;
 	protected MonetaryAmount expenditure;
@@ -41,6 +44,10 @@ public abstract class FinancialReport {
 		//count the fields based on orders
 	}
 
+	/**
+	 *
+	 * @return the ready-made file of the report
+	 */
 	public byte[] generatePDF() {
 		try (PDDocument document = new PDDocument()) {
 			PDType0Font customFont = PDType0Font.load(document, new File("src/main/resources/fonts/josefin-sans.semibold.ttf"));
@@ -79,6 +86,11 @@ public abstract class FinancialReport {
 		return profit;
 	}
 
+	/**
+	 *
+	 * @param day number of the weekday (1-7)
+	 * @return german name of the weekday
+	 */
 	public static String getWeekdayNameDE(int day) {
 		switch (day) {
 			case 1:
@@ -100,10 +112,18 @@ public abstract class FinancialReport {
 		}
 	}
 
+	/**
+	 * Calculates the profit variable
+	 */
 	protected void countProfit() {
 		this.profit = this.income.add(this.expenditure);
 	}
 
+	/**
+	 *
+	 * @param font to be used in the document
+	 * @return ready Table for being wrapped into the document
+	 */
 	protected Table buildTheTable(PDType0Font font) {
 		// Add the header and "Finanzuebersicht fuer ... here
 		List<Row> rows = getNeededRows(font);
@@ -155,6 +175,10 @@ public abstract class FinancialReport {
 		return builder.build();
 	}
 
+	/**
+	 *
+	 * @return the instance of an empty row (just to add distance between rows)
+	 */
 	protected Row emptyRow() {
 		return Row.builder().add(TextCell.builder().text("  ").colSpan(5).fontSize(10).build())
 			.build();

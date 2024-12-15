@@ -17,6 +17,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 
+/**
+ * Is used to create financial PDF-reports for a given month
+ */
 public class MonthlyFinancialReport extends FinancialReport {
 
 	private LinkedList<DailyFinancialReport> dailyFinancialReports = new LinkedList<>();
@@ -44,6 +47,10 @@ public class MonthlyFinancialReport extends FinancialReport {
 		countProfit();
 	}
 
+	/**
+	 *
+	 * @return true if there is no data registered during the whole month because the orders started to appear after this month
+	 */
 	@Override
 	public boolean isBeforeBeginning() {
 		for (DailyFinancialReport dailyFinancialReport : dailyFinancialReports) {
@@ -55,9 +62,8 @@ public class MonthlyFinancialReport extends FinancialReport {
 	}
 
 	/**
-	 * Will return either 12.2024 or 13.12.2024 depending on is it month or day report
 	 *
-	 * @return
+	 * @return for example "12.2024" for December of 2024
 	 */
 	@Override
 	protected String intervalToString() {
@@ -68,10 +74,9 @@ public class MonthlyFinancialReport extends FinancialReport {
 	}
 
 	/**
-	 * Will return a list of the rows of the table that represents the period
 	 *
 	 * @param font
-	 * @return
+	 * @return a list of the rows of the table that represents the period (rows for all days that have some orders from that time)
 	 */
 	@Override
 	protected List<Row> getNeededRows(PDFont font) {
@@ -103,6 +108,9 @@ public class MonthlyFinancialReport extends FinancialReport {
 		return neededRows;
 	}
 
+	/**
+	 * Is used to sort Intervals backwards
+	 */
 	private static class IntervalComparator implements Comparator<Interval> {
 		//Reverses backwards [31.12, 30.12...]
 		@Override

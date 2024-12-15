@@ -8,6 +8,9 @@ import org.springframework.data.util.Streamable;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Is used to store all AccountancyEntries in the database, as well as balance
+ */
 @Entity
 public class CashRegister {
 

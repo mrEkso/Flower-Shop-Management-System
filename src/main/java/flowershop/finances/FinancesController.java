@@ -39,6 +39,14 @@ public class FinancesController {
 		this.cashRegisterService = cashRegisterService;
 	}
 
+	/**
+	 * Will filter the entries shown to only those, which were registered inside of that interval
+	 *
+	 * @param date1 start date
+	 * @param date2 end date
+	 * @param model
+	 * @return "finances"
+	 */
 	@GetMapping("/filterDates")
 	@PreAuthorize("hasRole('BOSS')")
 	public String filterDates(@RequestParam("date1") LocalDate date1, @RequestParam("date2") LocalDate date2, Model model) {
@@ -72,6 +80,12 @@ public class FinancesController {
 		return "finances";
 	}
 
+
+	/**
+	 * Drops the date filter and adds all the other entries back to the table
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/resetDates")
 	@PreAuthorize("hasRole('BOSS')")
 	public String resetDates(Model model) {
@@ -87,6 +101,11 @@ public class FinancesController {
 		return "finances";
 	}
 
+	/**
+	 * Drops the category filter and returns all entries back to the table
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/resetCategory")
 	@PreAuthorize("hasRole('BOSS')")
 	public String resetCategory(Model model) {
@@ -107,6 +126,11 @@ public class FinancesController {
 		return "finances";
 	}
 
+	/**
+	 * Connects needed data to HTML
+	 * @param model
+	 * @param transactions
+	 */
 	private void prepareFinancesModel(Model model, List<AccountancyEntryWrapper> transactions) {
 		model.addAttribute("transactions", transactions);
 		model.addAttribute("currentBalance", cashRegisterService.getBalance());
@@ -115,6 +139,11 @@ public class FinancesController {
 		model.addAttribute("category", category);
 	}
 
+	/**
+	 * Will sort this list and show a cut version of it in the table
+	 * @param filteredOrdersList name speaks for itself
+	 * @param size max number of entries which are shown in the table at a time
+	 */
 	private void setFilteredOrdersList(List<AccountancyEntryWrapper> filteredOrdersList, int size) {
 		List<AccountancyEntryWrapper> tempList = new ArrayList<>(filteredOrdersList);
 		Collections.sort(tempList, new Comparator<AccountancyEntry>() {
@@ -134,6 +163,11 @@ public class FinancesController {
 		limitListSize(size);
 	}
 
+	/**
+	 *
+	 * @param model
+	 * @return The main finances page
+	 */
 	@GetMapping("/finances")
 	@PreAuthorize("hasRole('BOSS')")
 	public String getTransactionPage(Model model) {
@@ -175,7 +209,7 @@ public class FinancesController {
 	 * Uploads a generated day-report
 	 * @param date
 	 * @param model
-	 * @return
+	 * @return PDF-File
 	 */
 	@GetMapping("/dayReport")
 	@PreAuthorize("hasRole('BOSS')")
@@ -202,7 +236,13 @@ public class FinancesController {
 			.contentType(MediaType.APPLICATION_PDF)
 			.body(docu);
 	}
-	
+
+	/**
+	 * Uploads a generated month-report
+	 * @param year_month String of the form YYYY-MM.
+	 * @param model
+	 * @return PDF-File
+	 */
 	@GetMapping("/monthReport")
 	@PreAuthorize("hasRole('BOSS')")
 	public ResponseEntity<byte[]> monthReport(@RequestParam("month") String year_month, Model model) {
@@ -242,6 +282,12 @@ public class FinancesController {
 			.body(docu);
 	}
 
+	/**
+	 *
+	 * @param category chosen category
+	 * @param model
+	 * @return The page, where only chosen category of orders is shown
+	 */
 	@GetMapping("/filterCategories")
 	@PreAuthorize("hasRole('BOSS')")
 	public String filterCategories(@RequestParam("filter") String category, Model model) {
@@ -282,6 +328,10 @@ public class FinancesController {
 		return "finances";
 	}
 
+	/**
+	 *
+	 * @param size maximal number of entries to be shown in the table
+	 */
 	private void limitListSize(int size){
 		if(this.filteredOrdersList.size() > size){
 			this.filteredAndCutOrdersList = this.filteredOrdersList.subList(0, size);
@@ -290,6 +340,13 @@ public class FinancesController {
 			this.filteredAndCutOrdersList = this.filteredOrdersList;
 		}
 	}
+
+	/**
+	 *
+	 * @param set1
+	 * @param set2
+	 * @return the intersection of these two sets (in mathematical terms)
+	 */
 	private Set<AccountancyEntryWrapper> intersection(Set<AccountancyEntryWrapper> set1, Set<AccountancyEntryWrapper> set2) {
 		Set<AccountancyEntryWrapper> intersection = new HashSet<>(set1);
 		intersection.retainAll(set2);
