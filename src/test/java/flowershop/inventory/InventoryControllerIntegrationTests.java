@@ -35,7 +35,7 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
 
 		@SuppressWarnings("unchecked")
 		Iterable<Object> products = (Iterable<Object>) model.asMap().get("products");
-		assertThat(products).hasSize(7);
+		assertThat(products).hasSize(13);
 	}
 	@Test
 	public void testSearchFunctionality() {
