@@ -40,7 +40,8 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 							   CashRegisterRepository cashRegisterRepository) {
 		this.orderManagement = orderManagement;
 		this.cashRegisterRepository = cashRegisterRepository;
-		Streamable<AbstractOrder> previousOrders = orderManagement.findBy(OrderStatus.PAID);
+		Streamable<AbstractOrder> previousOrders = Optional.ofNullable(orderManagement.findBy(OrderStatus.PAID))
+			.orElse(Streamable.empty());
 		for (Order order : previousOrders) {
 			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order);
 			this.add(convertedOrder);
@@ -68,7 +69,7 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		CashRegister cashRegister = getCashRegister();
 		Set<AccountancyEntry> existing = cashRegister.getAccountancyEntries();
 		existing.add(entry);
-		cashRegister.setAccountancyEntries(existing); // removed the cast to Acc..Wrapper
+		cashRegister.setAccountancyEntries(existing);
 		cashRegister.setBalance((Money) entry.getValue().add(cashRegister.getBalance()));
 		cashRegisterRepository.save(cashRegister);
 		return entry;
@@ -244,7 +245,7 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 	}
 
 	public CashRegister getCashRegister() {
-		List<CashRegister> test = cashRegisterRepository.findAll();
+		//List<CashRegister> test = cashRegisterRepository.findAll();
 		/*
 		if(test.isEmpty()){
 			throw new IllegalStateException("CashRegister instance not found");
@@ -254,6 +255,7 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 			this.cashRegister = cashRegisterRepository.findFirstByOrderById().get();
 		}
 		 */
+		Optional<CashRegister> cashRegister = cashRegisterRepository.findFirstByOrderById();
 		return cashRegisterRepository.findFirstByOrderById()
 			.orElseThrow(() -> new IllegalStateException("CashRegister instance not found"));
 	}
