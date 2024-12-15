@@ -21,6 +21,7 @@ public class CashRegisterInitializer implements DataInitializer {
 		Assert.notNull(cashRegisterRepository, "CashRegisterRepository must not be null!");
 		this.cashRegisterRepository = cashRegisterRepository;
 	}
+
 	@Override
 	public void initialize() {
 		if (cashRegisterRepository.findAll().iterator().hasNext()) {
