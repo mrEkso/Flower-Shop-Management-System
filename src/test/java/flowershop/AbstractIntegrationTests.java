@@ -1,4 +1,4 @@
-package inventory;
+package flowershop;
 
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;

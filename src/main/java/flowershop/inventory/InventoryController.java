@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class InventoryController {
 
 	public final List<DeletedProduct> deletedProducts = new ArrayList<>();
-	final List<Flower> selectedFlowersForBouquet = new ArrayList<>();
+	public final List<Flower> selectedFlowersForBouquet = new ArrayList<>();
 
 	public final ProductService productService;
 
