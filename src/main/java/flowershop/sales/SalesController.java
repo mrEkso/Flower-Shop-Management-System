@@ -15,6 +15,7 @@ import org.salespointframework.catalog.Product;
 
 import java.util.*;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
@@ -49,7 +50,7 @@ public class SalesController {
 	 */
 	@GetMapping("/")
 	public String index() {
-		return "redirect:/sell";
+		return "redirect:/calendar";
 	}
 
 	/**
@@ -62,6 +63,7 @@ public class SalesController {
 	 * @return the view name for the selling catalog
 	 */
 	@GetMapping("/sell")
+	@PreAuthorize("hasRole('BOSS')")
 	public String sellCatalog(Model model,
 							  @RequestParam(required = false) String filterItem,
 							  @RequestParam(required = false) String searchInput) {
@@ -70,17 +72,17 @@ public class SalesController {
 		List<Bouquet> bouquets = productService.findAllBouquets();
 
 		//List<Product> products = productService.getAllProducts(); // -------------- Please use me <3
-
-		// Filter by color
-		if (filterItem != null && !filterItem.isEmpty()) {
-			flowers = productService.findFlowersByColor(filterItem);
-			bouquets = new ArrayList<>();
-		}
-
+		
 		// Search by name
 		if (searchInput != null && !searchInput.isEmpty()) {
 			flowers = productService.findFlowersByName(searchInput);
 			bouquets = productService.findBouquetsByName(searchInput);
+		}
+
+		// Filter by color
+		if (filterItem != null && !filterItem.isEmpty()) {
+			flowers = productService.findFlowersByColor(filterItem, flowers);
+			bouquets = new ArrayList<>();
 		}
 
 		// Filter products with quantity > 0
@@ -111,20 +113,21 @@ public class SalesController {
 	 * @return the view name for the buying catalog
 	 */
 	@GetMapping("/buy")
+	@PreAuthorize("hasRole('BOSS')")
 	public String buyCatalog(Model model,
 							 @RequestParam(required = false) String filterItem,
 							 @RequestParam(required = false) String searchInput) {
 
 		// Shouldn't allow to work with bouquets because wholesalers sell only flowers.
 		List<Flower> flowers = productService.findAllFlowers();
+		
+		if (searchInput != null && !searchInput.isEmpty()) {
+			flowers = productService.findFlowersByName(searchInput);
+		}
 
 		// Only by color? Seems reasonable but who knows.
 		if (filterItem != null && !filterItem.isEmpty()) {
-			flowers = productService.findFlowersByColor(filterItem);
-		}
-
-		if (searchInput != null && !searchInput.isEmpty()) {
-			flowers = productService.findFlowersByName(searchInput);
+			flowers = productService.findFlowersByColor(filterItem, flowers);
 		}
 
 		Set<String> colors = productService.getAllFlowerColors();
@@ -135,7 +138,7 @@ public class SalesController {
 		model.addAttribute("flowers", flowers);
 
 		return "sales/buy";
-	}
+	} 
 
 	/**
 	 * Processes the sale of products from the sell cart.
@@ -146,14 +149,15 @@ public class SalesController {
 	 */
 	@PostMapping("/sell-from-cart")
 	public String sellFromCart(
-		@ModelAttribute("sellCart") Cart sellCart, Model model
+		@ModelAttribute("sellCart") Cart sellCart, Model model,
+		@RequestParam(required = false) String paymentMethod
 	) {
-
+		
 		if (sellCart == null || sellCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:sell";
 		}
-		salesService.sellProductsFromBasket(sellCart, "Cash");
+		salesService.sellProductsFromBasket(sellCart, paymentMethod);
 
 		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
 		model.addAttribute("fullSellPrice", fp);
@@ -173,13 +177,14 @@ public class SalesController {
 	@PostMapping("/buy-from-cart")
 	public String buyFromCart(
 		@ModelAttribute("buyCart") Cart buyCart,
-		Model model
+		Model model,
+		@RequestParam(required = false) String paymentMethod
 	) {
 		if (buyCart == null || buyCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:buy";
 		}
-		salesService.buyProductsFromBasket(buyCart, "Cash");
+		salesService.buyProductsFromBasket(buyCart, paymentMethod);
 
 		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
 		model.addAttribute("fullBuyPrice", fp);
@@ -203,10 +208,15 @@ public class SalesController {
 		@ModelAttribute("sellCart") Cart sellCart
 	) {
 		Product product = productService.getProductById(productId).get();
-		sellCart.addOrUpdateItem(product, 1);
 
-		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
-		model.addAttribute("fullSellPrice", fp);
+		if(sellCart.getQuantity(product).getAmount().intValue() <
+			(product instanceof Flower ? ((Flower)product).getQuantity().intValue() : 
+				((Bouquet)product).getQuantity())){
+			sellCart.addOrUpdateItem(product, 1);
+
+			double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+			model.addAttribute("fullSellPrice", fp);
+		}
 
 		return "redirect:/sell";
 	}
