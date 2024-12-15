@@ -1,6 +1,6 @@
 package flowershop.finances;
 
-public enum Category{
+public enum Category {
 	Einfacher_Verkauf,
 	Reservierter_Verkauf,
 	Veranstaltung_Verkauf,

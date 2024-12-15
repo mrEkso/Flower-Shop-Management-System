@@ -13,6 +13,9 @@ public class CalendarService {
 
 	@Autowired
 	private EventRepository eventRepository;
+	public CalendarService(EventRepository eventRepository) {
+		this.eventRepository = eventRepository;
+	}
 	public List<Event> findAll() {
 		return (List<Event>) eventRepository.findAll();
 	}

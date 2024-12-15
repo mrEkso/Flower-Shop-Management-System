@@ -13,12 +13,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.salespointframework.order.Cart;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import flowershop.AbstractIntegrationTests;
 import flowershop.product.ProductService;
 
+@WithMockUser(username = "boss", roles = {"BOSS", "USER"})
 public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 
 	@Mock
@@ -259,8 +261,9 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	public void testSellFromCart_EmptyCart() {
 		Model model = new ExtendedModelMap();
 		Cart emptyCart = new Cart();  // Empty cart scenario
+		String paymentMethod = "Cash";
 
-		String viewName = controller.sellFromCart(emptyCart, model);
+		String viewName = controller.sellFromCart(emptyCart, model, paymentMethod);
 
 		assertThat(viewName).isEqualTo("redirect:sell");
 		assertThat(model.asMap().get("message")).isEqualTo("Your basket is empty.");
@@ -270,8 +273,9 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	public void testBuyFromCart_EmptyCart() {
 		Model model = new ExtendedModelMap();
 		Cart emptyCart = new Cart();  // Empty cart scenario
+		String paymentMethod = "Cash";
 
-		String viewName = controller.buyFromCart(emptyCart, model);
+		String viewName = controller.buyFromCart(emptyCart, model, paymentMethod);
 
 		assertThat(viewName).isEqualTo("redirect:buy");
 		assertThat(model.asMap().get("message")).isEqualTo("Your basket is empty.");

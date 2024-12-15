@@ -24,7 +24,7 @@ import java.util.*;
 
 @Service
 @Primary
-public class CashRegisterService implements Accountancy{
+public class CashRegisterService implements Accountancy {
 /*
 Class with simply getters and setters, completely based on CashRegistered (all fields are same)
  */
@@ -50,21 +50,19 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 	}
 
 
-
 	public CashRegister getCashRegisterById(Long id) {
 		return cashRegisterRepository.findById(id)
 			.orElseThrow(() -> new IllegalStateException("Product not found with id " + id));
 	}
 
-	public MonetaryAmount getBalance()
-	{
+	public MonetaryAmount getBalance() {
 		return this.getCashRegister().getBalance();
 	}
 
 	@Override
 	//@Transactional
-	public <T extends AccountancyEntry> T add(T entry){
-		if(entry == null || entry instanceof OrderPaymentEntry){ //because salespoint is also doing it apparently
+	public <T extends AccountancyEntry> T add(T entry) {
+		if (entry == null || entry instanceof OrderPaymentEntry) { //because salespoint is also doing it apparently
 			return null;
 		}
 
@@ -78,7 +76,7 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 	}
 
 	@EventListener
-	public void onOrderPaid(OrderEvents.OrderPaid event){
+	public void onOrderPaid(OrderEvents.OrderPaid event) {
 		AbstractOrder order = (AbstractOrder) event.getOrder();
 		//convert order to AccountancyEntry
 		AccountancyEntryWrapper convertedOrder = new AccountancyEntryWrapper(order);
@@ -98,17 +96,17 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 	public Streamable<AccountancyEntry> filterEntries(Category category) {
 		Streamable<AccountancyEntry> filteredEntries = Streamable.empty();
 		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
-			if (((AccountancyEntryWrapper)entry).getCategory().equals(AccountancyEntryWrapper.categoryToString(category))){
+			if (((AccountancyEntryWrapper) entry).getCategory().equals(AccountancyEntryWrapper.categoryToString(category))) {
 				filteredEntries = filteredEntries.and(entry);
 			}
 		}
 		return filteredEntries;
 	}
 
-	public LinkedList<AccountancyEntry> filterIncomeOrSpending(boolean isIncome){
+	public LinkedList<AccountancyEntry> filterIncomeOrSpending(boolean isIncome) {
 		LinkedList<AccountancyEntry> filteredEntries = new LinkedList<>();
-		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()){
-			if (entry.isRevenue() == isIncome){
+		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
+			if (entry.isRevenue() == isIncome) {
 				filteredEntries.add(entry);
 			}
 		}
@@ -129,10 +127,10 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 	public Streamable<AccountancyEntry> find(Interval interval) {
 		Streamable<AccountancyEntry> output = Streamable.of();
 		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
-			if(((AccountancyEntryWrapper)entry).getTimestamp() == null){
+			if (((AccountancyEntryWrapper) entry).getTimestamp() == null) {
 				continue;
 			}
-			if(interval.contains(((AccountancyEntryWrapper)entry).getTimestamp())){
+			if (interval.contains(((AccountancyEntryWrapper) entry).getTimestamp())) {
 				output = output.and(entry);
 			}
 		}
@@ -146,16 +144,16 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 
 	@Override
 	public Map<Interval, Streamable<AccountancyEntry>> find(Interval interval, TemporalAmount duration) {
-		HashMap<Interval,Streamable<AccountancyEntry>> output = new HashMap<>();
+		HashMap<Interval, Streamable<AccountancyEntry>> output = new HashMap<>();
 		LocalDateTime start = interval.getStart();
 		LocalDateTime end = start.plus(duration);
-		do{
+		do {
 			Interval subinterval = Interval.from(start).to(end);
 			Streamable<AccountancyEntry> subset = Streamable.empty();
 			output.put(subinterval, subset.and(find(subinterval)));
 			end = end.plus(duration);
 			start = start.plus(duration);
-		}while(interval.contains(start));
+		} while (interval.contains(start));
 		return output;
 	}
 
@@ -166,35 +164,35 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 
 	@Override
 	public Map<Interval, MonetaryAmount> salesVolume(Interval interval, TemporalAmount duration) {
-		Map<Interval,Streamable<AccountancyEntry>> splits = find(interval, duration);
-		Map<Interval,MonetaryAmount> output = new HashMap<>();
-		for(Map.Entry<Interval,Streamable<AccountancyEntry>> entry : splits.entrySet()){
-			output.put(entry.getKey(),getProfit(entry.getValue()));
+		Map<Interval, Streamable<AccountancyEntry>> splits = find(interval, duration);
+		Map<Interval, MonetaryAmount> output = new HashMap<>();
+		for (Map.Entry<Interval, Streamable<AccountancyEntry>> entry : splits.entrySet()) {
+			output.put(entry.getKey(), getProfit(entry.getValue()));
 		}
 		return output;
 	}
 
-	public DailyFinancialReport createFinancialReportDay(LocalDateTime day){
+	public DailyFinancialReport createFinancialReportDay(LocalDateTime day) {
 		LocalDateTime start = LocalDateTime.of(day.getYear(), day.getMonth(), day.getDayOfMonth(), 0, 0);
 		LocalDateTime end = start.plusDays(1);
 		Interval interval = Interval.from(start).to(end);
 		Interval endToNow = Interval.from(end).to(LocalDateTime.now().plusDays(1));
 		TemporalAmount endToNowDuration = endToNow.toDuration();
-		MonetaryAmount moneyDifference = salesVolume(endToNow,endToNowDuration).get(endToNow);
+		MonetaryAmount moneyDifference = salesVolume(endToNow, endToNowDuration).get(endToNow);
 		CashRegister cashRegister = getCashRegister();
 		MonetaryAmount moneyThen = cashRegister.getBalance().subtract(moneyDifference);
 		List<AccountancyEntry> allEntries = getCashRegister().getAccountancyEntries().stream().toList();
-		if(allEntries.isEmpty()){
+		if (allEntries.isEmpty()) {
 			return null;
 		}
 		return new DailyFinancialReport(
 			interval,
 			moneyThen,
 			this,
-			((AccountancyEntryWrapper)allEntries.get(0)).getTimestamp());
+			((AccountancyEntryWrapper) allEntries.get(0)).getTimestamp());
 	}
 
-	public MonthlyFinancialReport createFinancialReportMonth(LocalDateTime day){
+	public MonthlyFinancialReport createFinancialReportMonth(LocalDateTime day) {
 		LocalDateTime start = LocalDateTime.of(day.getYear(), day.getMonth(), 1, 0, 0);
 		LocalDateTime end = start.plusMonths(1);
 		if (end.isAfter(LocalDateTime.now())) {
@@ -204,39 +202,42 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 
 		Interval endToNow = Interval.from(end).to(LocalDateTime.now().plusDays(1));
 		TemporalAmount endToNowDuration = endToNow.toDuration();
-		MonetaryAmount moneyDifference = salesVolume(endToNow,endToNowDuration).get(endToNow);
+		MonetaryAmount moneyDifference = salesVolume(endToNow, endToNowDuration).get(endToNow);
 		CashRegister cashRegister = getCashRegister();
 		MonetaryAmount moneyThen = cashRegister.getBalance().subtract(moneyDifference);
 		List<AccountancyEntry> allEntries = getCashRegister().getAccountancyEntries().stream().toList();
-		if(allEntries.isEmpty()){
+		if (allEntries.isEmpty()) {
 			return null;
 		}
 		return new MonthlyFinancialReport(
 			interval,
 			moneyThen,
 			this,
-			((AccountancyEntryWrapper)allEntries.get(0)).getTimestamp());
+			((AccountancyEntryWrapper) allEntries.get(0)).getTimestamp());
 	}
-	public MonetaryAmount getProfit(Streamable<AccountancyEntry> set){
-		Money output = Money.of(0,getCashRegister().getBalance().getCurrency());
-		for(AccountancyEntry entry : set){
+
+	public MonetaryAmount getProfit(Streamable<AccountancyEntry> set) {
+		Money output = Money.of(0, getCashRegister().getBalance().getCurrency());
+		for (AccountancyEntry entry : set) {
 			output.add(entry.getValue());
 		}
 		return output;
 	}
-	public MonetaryAmount getRevenue(Streamable<AccountancyEntry> set){
-		Money output = Money.of(0,getCashRegister().getBalance().getCurrency());
-		for(AccountancyEntry entry : set){
-			if(entry.isRevenue()) {
+
+	public MonetaryAmount getRevenue(Streamable<AccountancyEntry> set) {
+		Money output = Money.of(0, getCashRegister().getBalance().getCurrency());
+		for (AccountancyEntry entry : set) {
+			if (entry.isRevenue()) {
 				output = output.add(entry.getValue());
 			}
 		}
 		return output;
 	}
-	public MonetaryAmount getExpences(Streamable<AccountancyEntry> set){
-		Money output = Money.of(0,getCashRegister().getBalance().getCurrency());
-		for(AccountancyEntry entry : set){
-			if(entry.isExpense()) {
+
+	public MonetaryAmount getExpences(Streamable<AccountancyEntry> set) {
+		Money output = Money.of(0, getCashRegister().getBalance().getCurrency());
+		for (AccountancyEntry entry : set) {
+			if (entry.isExpense()) {
 				output = output.add(entry.getValue());
 			}
 		}

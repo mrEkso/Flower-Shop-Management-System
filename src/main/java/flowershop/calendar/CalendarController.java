@@ -18,6 +18,9 @@ public class CalendarController {
 
 	@Autowired
 	private CalendarService service;
+	public CalendarController(CalendarService service) {
+		this.service = service;
+	}
 
 	@GetMapping("/calendar")
 	public String showCalendar(Model model,

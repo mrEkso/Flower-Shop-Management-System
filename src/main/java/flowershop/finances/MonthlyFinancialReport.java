@@ -17,24 +17,24 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 
-public class MonthlyFinancialReport extends FinancialReport{
+public class MonthlyFinancialReport extends FinancialReport {
 
 	private LinkedList<DailyFinancialReport> dailyFinancialReports = new LinkedList<>();
 
 	public MonthlyFinancialReport(Interval month,
 								  MonetaryAmount balanceEndOfTheMonth,
 								  CashRegisterService cashRegister,
-								  LocalDateTime firstEverTransaction){
-		super(month, balanceEndOfTheMonth, cashRegister,firstEverTransaction);
-		this.income = Money.of(0,balanceEndOfTheMonth.getCurrency());
-		this.expenditure = Money.of(0,balanceEndOfTheMonth.getCurrency());
+								  LocalDateTime firstEverTransaction) {
+		super(month, balanceEndOfTheMonth, cashRegister, firstEverTransaction);
+		this.income = Money.of(0, balanceEndOfTheMonth.getCurrency());
+		this.expenditure = Money.of(0, balanceEndOfTheMonth.getCurrency());
 
 		Map<Interval, Streamable<AccountancyEntry>> daysOfMonth = cashRegister.find(month, Duration.ofDays(1));
 		List<Interval> sortedBackwards = new ArrayList<>(daysOfMonth.keySet().stream().toList());
 		sortedBackwards.sort(new IntervalComparator());
 		MonetaryAmount moneyAfterEachDay = balanceEndOfTheMonth;
-		for(Interval day : sortedBackwards) {
-			DailyFinancialReport currentDay = new DailyFinancialReport(day,moneyAfterEachDay,cashRegister, firstEverTransaction);
+		for (Interval day : sortedBackwards) {
+			DailyFinancialReport currentDay = new DailyFinancialReport(day, moneyAfterEachDay, cashRegister, firstEverTransaction);
 			this.dailyFinancialReports.add(currentDay);
 			moneyAfterEachDay = moneyAfterEachDay.subtract(currentDay.getProfit());
 			this.income = this.income.add(currentDay.getIncome());
@@ -62,7 +62,7 @@ public class MonthlyFinancialReport extends FinancialReport{
 	@Override
 	protected String intervalToString() {
 		LocalDateTime day = interval.getStart();
-		String month = (day.getMonth().getValue()<10) ? "0"+day.getMonth().getValue() : String.valueOf(day.getMonth().getValue());
+		String month = (day.getMonth().getValue() < 10) ? "0" + day.getMonth().getValue() : String.valueOf(day.getMonth().getValue());
 		String dateRepr = new StringBuilder().append(month).append(".").append(day.getYear()).toString();
 		return dateRepr;
 	}
@@ -78,7 +78,7 @@ public class MonthlyFinancialReport extends FinancialReport{
 		List<Row> neededRows = new ArrayList<>();
 
 		for (DailyFinancialReport dailyFinancialReport : dailyFinancialReports) {
-			if (dailyFinancialReport.getOrders().isEmpty()){
+			if (dailyFinancialReport.getOrders().isEmpty()) {
 				continue;
 			}
 			neededRows.addAll(dailyFinancialReport.getNeededRows(font));
@@ -107,14 +107,17 @@ public class MonthlyFinancialReport extends FinancialReport{
 		//Reverses backwards [31.12, 30.12...]
 		@Override
 		public int compare(Interval o1, Interval o2) {
-			if(o1.getEnd().isAfter(o2.getEnd())) {
+			if (o1.getEnd().isAfter(o2.getEnd())) {
 				return -1;
 			} else if (o1.getEnd().isBefore(o2.getEnd())) {
 				return +1;
-			}
-			else {
+			} else {
 				return 0;
 			}
 		}
+	}
+
+	public LinkedList<DailyFinancialReport> getDailyFinancialReports() {
+		return dailyFinancialReports;
 	}
 }
