@@ -54,6 +54,8 @@ public class Application {
 				.anyRequest().authenticated())
 				.formLogin(login -> login.loginProcessingUrl("/login"))
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/"))
+				.exceptionHandling(ex -> ex
+					.accessDeniedPage("/403"))
 				.build();
 		}
 
