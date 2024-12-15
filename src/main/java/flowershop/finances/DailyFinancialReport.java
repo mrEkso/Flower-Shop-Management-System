@@ -15,6 +15,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 
+/**
+ * This class is used to generate PDF-reports for a given day
+ */
 public class DailyFinancialReport extends FinancialReport {
 
 	private List<AccountancyEntry> orders;
@@ -49,15 +52,17 @@ public class DailyFinancialReport extends FinancialReport {
 		return Streamable.of(this.orders);
 	}
 
+	/**
+	 *
+	 * @return true if no entries are registered at the moment, and no report can be made
+	 */
 	@Override
 	public boolean isBeforeBeginning() {
 		return orders.isEmpty() && this.startDate.isAfter(interval.getEnd());
 	}
 
 	/**
-	 * Will return either 12.2024 or 13.12.2024 depending on is it month or day report
-	 *
-	 * @return
+	 * @return for example "13.12.2024" if the report is made for 13 of December 2024
 	 */
 	@Override
 	protected String intervalToString() {
@@ -68,10 +73,9 @@ public class DailyFinancialReport extends FinancialReport {
 	}
 
 	/**
-	 * Will return a list of the rows of the table that represents the day
-	 *
-	 * @param font
-	 * @return
+	 * @param font to be used in these rows
+	 * @return a list of the rows of the table that represents the day (date, balance in the morning, header,
+	 * entries, profit and balance in the evening)
 	 */
 	@Override
 	protected List<Row> getNeededRows(PDFont font) {
