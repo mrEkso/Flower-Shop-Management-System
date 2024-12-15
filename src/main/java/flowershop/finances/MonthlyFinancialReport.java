@@ -116,4 +116,8 @@ public class MonthlyFinancialReport extends FinancialReport {
 			}
 		}
 	}
+
+	public LinkedList<DailyFinancialReport> getDailyFinancialReports() {
+		return dailyFinancialReports;
+	}
 }
