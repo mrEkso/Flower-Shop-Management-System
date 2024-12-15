@@ -18,6 +18,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+
+/**
+ * This class is used to adapt Order to AccountancyEntry to then be used in CashRegisterService (Accountancy child class)
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class AccountancyEntryWrapper extends AccountancyEntry {
@@ -35,6 +39,12 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 	private Category category;
 	private LocalDateTime timestamp;
 
+
+	/**
+	 *
+	 * @param category
+	 * @return the names of categories of orders in German
+	 */
 	public static String categoryToString(Category category) {
 		return category.toString().replace('_', ' ');
 	}
@@ -43,10 +53,18 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		return this.categoryToString(this.category);
 	}
 
+	/**
+	 * USE THIS METHOD INSTEAD OF getDate()!
+	 * @return the time when the order was paid.
+	 */
 	public LocalDateTime getTimestamp() {
 		return this.timestamp;
 	}
 
+	/**
+	 *
+	 * @return the map where keys are name of the products, and values - their quantity
+	 */
 	public Map<String, Quantity> getItems() {
 		return itemQuantityMap;
 	}

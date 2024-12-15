@@ -25,14 +25,10 @@ import java.util.*;
 @Service
 @Primary
 public class CashRegisterService implements Accountancy {
-/*
-Class with simply getters and setters, completely based on CashRegistered (all fields are same)
- */
 
 	private final OrderManagement<AbstractOrder> orderManagement;
-	//private CashRegister cashRegister = new CashRegister();
+
 	private final CashRegisterRepository cashRegisterRepository;
-	//private long cashRegisterId;
 
 
 	@Autowired
@@ -46,7 +42,7 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order);
 			this.add(convertedOrder);
 		}
-		//this.cashRegister=getCashRegister();
+
 	}
 
 
@@ -59,8 +55,13 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return this.getCashRegister().getBalance();
 	}
 
+	/**
+	 * Is used to add an AccountancyEntry instance to the register
+	 * @param entry
+	 * @return entry, if everything went well. Otherwise - null
+	 * @param <T> type of the entry (T extends AccountancyEntry)
+	 */
 	@Override
-	//@Transactional
 	public <T extends AccountancyEntry> T add(T entry) {
 		if (entry == null || entry instanceof OrderPaymentEntry) { //because salespoint is also doing it apparently
 			return null;
@@ -75,6 +76,10 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return entry;
 	}
 
+	/**
+	 * Will wrap the order into AccountancyEntryWrapper and add it to the register
+	 * @param event of type OrderPaid that carries an order
+	 */
 	@EventListener
 	public void onOrderPaid(OrderEvents.OrderPaid event) {
 		AbstractOrder order = (AbstractOrder) event.getOrder();
@@ -83,6 +88,10 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		this.add(convertedOrder);
 	}
 
+	/**
+	 *
+	 * @return all registered AccountancyEntries
+	 */
 	@Override
 	public Streamable<AccountancyEntry> findAll() {
 		return Streamable.of(this.getCashRegister().getAccountancyEntries());
@@ -93,6 +102,11 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return Streamable.of();
 	}
 
+	/**
+	 *
+	 * @param category
+	 * @return all registered AccountancyEntries of the given Category
+	 */
 	public Streamable<AccountancyEntry> filterEntries(Category category) {
 		Streamable<AccountancyEntry> filteredEntries = Streamable.empty();
 		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
@@ -103,6 +117,11 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return filteredEntries;
 	}
 
+	/**
+	 *
+	 * @param isIncome
+	 * @return a list of all AccountancyEntries that are either incomes or spendings
+	 */
 	public LinkedList<AccountancyEntry> filterIncomeOrSpending(boolean isIncome) {
 		LinkedList<AccountancyEntry> filteredEntries = new LinkedList<>();
 		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
@@ -123,6 +142,11 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return Optional.empty();
 	}
 
+	/**
+	 *
+	 * @param interval
+	 * @return all AccountancyEntries form this interval of time
+	 */
 	@Override
 	public Streamable<AccountancyEntry> find(Interval interval) {
 		Streamable<AccountancyEntry> output = Streamable.of();
@@ -142,6 +166,12 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return null;
 	}
 
+	/**
+	 *
+	 * @param interval overall period
+	 * @param duration periodity of how to split the data
+	 * @return the map of smaller periods of duration to AccountancyEntries from that interval
+	 */
 	@Override
 	public Map<Interval, Streamable<AccountancyEntry>> find(Interval interval, TemporalAmount duration) {
 		HashMap<Interval, Streamable<AccountancyEntry>> output = new HashMap<>();
@@ -162,6 +192,12 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return Map.of();
 	}
 
+	/**
+	 *
+	 * @param interval overall period
+	 * @param duration periodity of how to split the data
+	 * @return a map of smaller periods of duration to the overall profit from that interval
+	 */
 	@Override
 	public Map<Interval, MonetaryAmount> salesVolume(Interval interval, TemporalAmount duration) {
 		Map<Interval, Streamable<AccountancyEntry>> splits = find(interval, duration);
@@ -172,6 +208,11 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return output;
 	}
 
+	/**
+	 * Use this method instead of the DailyFinancialReport constructor
+	 * @param day any timestamp during the needed day
+	 * @return an instance of DailyFinancialReport
+	 */
 	public DailyFinancialReport createFinancialReportDay(LocalDateTime day) {
 		LocalDateTime start = LocalDateTime.of(day.getYear(), day.getMonth(), day.getDayOfMonth(), 0, 0);
 		LocalDateTime end = start.plusDays(1);
@@ -192,6 +233,11 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 			((AccountancyEntryWrapper) allEntries.get(0)).getTimestamp());
 	}
 
+	/**
+	 * Use this method instead of the MonthlyFinancialReport constructor
+	 * @param day any timestamp during the needed month
+	 * @return an instance of MonthlyFinancialReport
+	 */
 	public MonthlyFinancialReport createFinancialReportMonth(LocalDateTime day) {
 		LocalDateTime start = LocalDateTime.of(day.getYear(), day.getMonth(), 1, 0, 0);
 		LocalDateTime end = start.plusMonths(1);
@@ -216,6 +262,11 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 			((AccountancyEntryWrapper) allEntries.get(0)).getTimestamp());
 	}
 
+	/**
+	 *
+	 * @param set AccountancyEntries, for which profit has to be calculated
+	 * @return profit
+	 */
 	public MonetaryAmount getProfit(Streamable<AccountancyEntry> set) {
 		Money output = Money.of(0, getCashRegister().getBalance().getCurrency());
 		for (AccountancyEntry entry : set) {
@@ -224,6 +275,11 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return output;
 	}
 
+	/**
+	 *
+	 * @param set AccountancyEntries, for which income has to be calculated
+	 * @return income (all positive values added up and negative - ignored)
+	 */
 	public MonetaryAmount getRevenue(Streamable<AccountancyEntry> set) {
 		Money output = Money.of(0, getCashRegister().getBalance().getCurrency());
 		for (AccountancyEntry entry : set) {
@@ -234,6 +290,11 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return output;
 	}
 
+	/**
+	 *
+	 * @param set AccountancyEntries, for which spendings have to be calculated
+	 * @return expences (all negative values added up and positive - ignored)
+	 */
 	public MonetaryAmount getExpences(Streamable<AccountancyEntry> set) {
 		Money output = Money.of(0, getCashRegister().getBalance().getCurrency());
 		for (AccountancyEntry entry : set) {
@@ -244,17 +305,11 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return output;
 	}
 
+	/**
+	 *
+	 * @return the instance of CashRegister, stored in the repository
+	 */
 	public CashRegister getCashRegister() {
-		//List<CashRegister> test = cashRegisterRepository.findAll();
-		/*
-		if(test.isEmpty()){
-			throw new IllegalStateException("CashRegister instance not found");
-		}
-
-		if(this.cashRegister.getBalance() != null){
-			this.cashRegister = cashRegisterRepository.findFirstByOrderById().get();
-		}
-		 */
 		Optional<CashRegister> cashRegister = cashRegisterRepository.findFirstByOrderById();
 		return cashRegisterRepository.findFirstByOrderById()
 			.orElseThrow(() -> new IllegalStateException("CashRegister instance not found"));
