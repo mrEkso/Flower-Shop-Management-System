@@ -261,8 +261,9 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	public void testSellFromCart_EmptyCart() {
 		Model model = new ExtendedModelMap();
 		Cart emptyCart = new Cart();  // Empty cart scenario
+		String paymentMethod = "Cash";
 
-		String viewName = controller.sellFromCart(emptyCart, model);
+		String viewName = controller.sellFromCart(emptyCart, model, paymentMethod);
 
 		assertThat(viewName).isEqualTo("redirect:sell");
 		assertThat(model.asMap().get("message")).isEqualTo("Your basket is empty.");
@@ -272,8 +273,9 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	public void testBuyFromCart_EmptyCart() {
 		Model model = new ExtendedModelMap();
 		Cart emptyCart = new Cart();  // Empty cart scenario
+		String paymentMethod = "Cash";
 
-		String viewName = controller.buyFromCart(emptyCart, model);
+		String viewName = controller.buyFromCart(emptyCart, model, paymentMethod);
 
 		assertThat(viewName).isEqualTo("redirect:buy");
 		assertThat(model.asMap().get("message")).isEqualTo("Your basket is empty.");

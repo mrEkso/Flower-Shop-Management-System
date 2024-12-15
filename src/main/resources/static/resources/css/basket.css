@@ -18,6 +18,16 @@
   align-self: center;
 }
 
+.payment-method {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+}
+
+.payment-method input[type="radio"] {
+  margin-right: 5px;
+}
+
 .basket-submit-btn {
   width: 170px;
   height: 40px;
