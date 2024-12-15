@@ -1,6 +1,7 @@
 package flowershop.services;
 
 import flowershop.calendar.CalendarService;
+import flowershop.calendar.Event;
 import flowershop.product.ProductService;
 import javassist.NotFoundException;
 import org.javamoney.moneta.Money;
@@ -251,6 +252,11 @@ public class ServiceController {
 			}
 			contractOrder.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
 			contractOrderService.save(contractOrder, products);
+			Event e = new Event();
+			e.setName("Contract for" + clientName);
+			e.setDate(startDate.atStartOfDay());
+			e.setDescription(notes);
+			calendarService.save(e);
 			return "redirect:/services";
 		} catch (Exception e) {
 			redirectAttribute.addFlashAttribute("error", e.getMessage());
@@ -286,6 +292,11 @@ public class ServiceController {
 				deliveryAddress, getOrCreateClient(clientName, phone), notes);
 			eventOrder.addChargeLine(Money.of(deliveryPrice, "EUR"), "Delivery Price");
 			eventOrderService.save(eventOrder, products);
+			Event e = new Event();
+			e.setName("Event for" + clientName);
+			e.setDate(eventDate.atStartOfDay());
+			e.setDescription(notes);
+			calendarService.save(e);
 			return "redirect:/services";
 		} catch (Exception e) {
 			redirectAttribute.addFlashAttribute("error", e.getMessage());
@@ -317,6 +328,11 @@ public class ServiceController {
 			ReservationOrder reservationOrder = orderFactory.createReservationOrder(reservationDateTime,
 				getOrCreateClient(clientName, phone), notes);
 			reservationOrderService.save(reservationOrder, products);
+			Event e = new Event();
+			e.setName("Reservation for" + clientName);
+			e.setDate(reservationDateTime.toLocalDate().atStartOfDay());
+			e.setDescription(notes);
+			calendarService.save(e);
 			return "redirect:/services";
 		} catch (Exception e) {
 			redirectAttribute.addFlashAttribute("error", e.getMessage());
