@@ -2,6 +2,7 @@ package flowershop.product;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 
 @Entity
@@ -12,6 +13,7 @@ public class Flower extends Product {
 
 	private String color;
 	private Integer quantity;
+	private Integer deletedQuantity;
 
 	public Flower(String name, Pricing pricing, String color, Integer quantity) {
 		super(name, pricing.getSellPrice());
@@ -48,4 +50,13 @@ public class Flower extends Product {
 	public Integer getQuantity() {
 		return quantity;
 	}
+
+	public Integer getDeletedQuantity() {
+		return deletedQuantity;
+	}
+
+	public void setDeletedQuantity(Integer deletedQuantity) {
+		this.deletedQuantity = deletedQuantity;
+	}
 }
+

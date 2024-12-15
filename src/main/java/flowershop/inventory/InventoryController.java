@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Controller
 public class InventoryController {
 
-	final List<DeletedProduct> deletedProducts = new ArrayList<>();
+	public final List<DeletedProduct> deletedProducts = new ArrayList<>();
 	final List<Flower> selectedFlowersForBouquet = new ArrayList<>();
 
 	public final ProductService productService;
