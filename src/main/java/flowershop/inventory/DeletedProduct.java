@@ -27,4 +27,8 @@ public class DeletedProduct {
 	public double getTotalLoss() {
 		return totalLoss;
 	}
+
+	public int getQuantity() {
+		return quantityDeleted;
+	}
 }

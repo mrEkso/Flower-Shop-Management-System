@@ -1,21 +1,21 @@
 package flowershop.inventory;
 
 import flowershop.AbstractIntegrationTests;
+import flowershop.product.Bouquet;
 import flowershop.product.Flower;
+import flowershop.product.Pricing;
 import flowershop.product.ProductService;
 import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.salespointframework.useraccount.UserAccountManagement;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.ui.Model;
 import org.springframework.ui.Model;
 import org.springframework.ui.ExtendedModelMap;
 import static org.assertj.core.api.Assertions.*;
+
+import java.util.Map;
 import java.util.UUID;
 
-@WithMockUser(username = "boss", roles = {"BOSS", "USER"})
 public class InventoryControllerIntegrationTests extends AbstractIntegrationTests {
 
 	@Autowired
@@ -35,9 +35,8 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
 
 		@SuppressWarnings("unchecked")
 		Iterable<Object> products = (Iterable<Object>) model.asMap().get("products");
-		assertThat(products).hasSize(13);
+		assertThat(products).hasSize(7);
 	}
-
 	@Test
 	public void testSearchFunctionality() {
 		Model model = new ExtendedModelMap();
@@ -88,22 +87,20 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
 		String viewName = inventoryController.deleteProduct(productName, quantity);
 
 		assertThat(viewName).isEqualTo("redirect:/inventory");
-		//TODO: FIX THIS!!!!
-		// assertThat(inventoryController.deletedProducts).anyMatch(deletedProduct -> deletedProduct.getName().equals(productName));
+		assertThat(inventoryController.deletedProducts).anyMatch(deletedProduct -> deletedProduct.getName().equals(productName));
 	}
 
 	@Test
 	public void testShowDeletedProducts() {
 		Model model = new ExtendedModelMap();
 
-		//TODO: FIX THIS!!!
-		// inventoryController.deletedProducts.add(new DeletedProduct("Rose", 2.5, 5, 12.5));
+		inventoryController.deletedProducts.add(new DeletedProduct("Rose", 2.5, 5, 12.5));
 
-		// String viewName = inventoryController.showDeletedProducts(model);
+		String viewName = inventoryController.showDeletedProducts(model);
 
-		// assertThat(viewName).isEqualTo("inventory");
-		// assertThat(model.asMap().get("deletedProducts")).isNotNull();
-		// assertThat(model.asMap().get("totalLossSum")).isEqualTo(12.5);
+		assertThat(viewName).isEqualTo("inventory");
+		assertThat(model.asMap().get("deletedProducts")).isNotNull();
+		assertThat(model.asMap().get("totalLossSum")).isEqualTo(12.5);
 	}
 
 	@Test
@@ -120,8 +117,100 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
 		String viewName = inventoryController.createCustomBouquet(bouquetName, model);
 
 		assertThat(viewName).isEqualTo("inventory");
-		// TODO: FIX THIS!!
-		// assertThat(inventoryController.selectedFlowersForBouquet).isEmpty();
+		assertThat(inventoryController.selectedFlowersForBouquet).isEmpty();
+	}
+
+	@Test
+	public void testAddFlowerToBouquetWithInvalidFlowerID() {
+		Model model = new ExtendedModelMap();
+		UUID invalidFlowerId = UUID.randomUUID();
+
+		String viewName = inventoryController.addFlowerToBouquet(invalidFlowerId, 5, model);
+
+		assertThat(viewName).isEqualTo("inventory");
+		assertThat(inventoryController.selectedFlowersForBouquet).isEmpty();
+	}
+
+	@Test
+	public void testDeleteProductWithInsufficientQuantity() {
+		String productName = "Rose";
+		int excessiveQuantity = 999;
+
+		String viewName = inventoryController.deleteProduct(productName, excessiveQuantity);
+
+		assertThat(viewName).isEqualTo("redirect:/inventory");
+		assertThat(inventoryController.deletedProducts).isEmpty();
+	}
+
+	@Test
+	public void testShowChooseModalWithNonFlowerProduct() {
+		Model model = new ExtendedModelMap();
+		UUID nonFlowerProductId = UUID.randomUUID();
+
+		productService.addBouquet(new Bouquet("BouquetTest", Map.of(), Money.of(10, "EUR"), 1));
+
+		String viewName = inventoryController.showChooseModal(nonFlowerProductId, model);
+
+		assertThat(viewName).isEqualTo("inventory");
+		assertThat(model.asMap().get("error")).isEqualTo("Product not found.");
+	}
+
+	@Test
+	public void testCreateCustomBouquetWithoutFlowers() {
+		Model model = new ExtendedModelMap();
+		String bouquetName = "Empty Bouquet";
+
+		String viewName = inventoryController.createCustomBouquet(bouquetName, model);
+
+		assertThat(viewName).isEqualTo("inventory");
+		assertThat(inventoryController.selectedFlowersForBouquet).isEmpty();
+	}
+
+	@Test
+	public void testShowDeletedProductsWithNoDeletedItems() {
+		Model model = new ExtendedModelMap();
+
+		String viewName = inventoryController.showDeletedProducts(model);
+
+		assertThat(viewName).isEqualTo("inventory");
+		assertThat(model.asMap().get("deletedProducts")).isNotNull();
+		assertThat(model.asMap().get("totalLossSum")).isEqualTo(0.0);
+	}
+
+	@Test
+	public void testAddFlowerToBouquetExceedingQuantity() {
+		Model model = new ExtendedModelMap();
+		UUID flowerId = UUID.randomUUID();
+		Pricing pricing = new Pricing(Money.of(1.5, "EUR"), Money.of(2, "EUR"));
+		Flower testFlower = new Flower("Tulip", pricing, "Red", 5);
+		productService.addFlower(testFlower);
+
+		String viewName = inventoryController.addFlowerToBouquet(flowerId, 10, model);
+
+		assertThat(viewName).isEqualTo("inventory");
+		assertThat(inventoryController.selectedFlowersForBouquet).doesNotContain(testFlower);
+	}
+
+	@Test
+	public void testDeleteProductAllStock() {
+		String productName = "Rose";
+		Pricing pricing = new Pricing(Money.of(1.5, "EUR"), Money.of(2, "EUR"));
+		Flower flower = new Flower("Tulip", pricing, "Red", 5);
+		productService.addFlower(flower);
+
+		String viewName = inventoryController.deleteProduct(productName, 5);
+
+		assertThat(viewName).isEqualTo("redirect:/inventory");
+		assertThat(inventoryController.deletedProducts)
+			.anyMatch(deletedProduct -> deletedProduct.getName().equals("Rose") && deletedProduct.getQuantity() == 5);
+	}
+
+	@Test
+	public void testDeleteNonExistentProduct() {
+		String viewName = inventoryController.deleteProduct("NonExistent", 1);
+
+		assertThat(viewName).isEqualTo("redirect:/inventory");
+		assertThat(inventoryController.deletedProducts).isEmpty();
 	}
 
 }

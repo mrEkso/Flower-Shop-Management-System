@@ -41,7 +41,6 @@ public class UserInitializer implements DataInitializer {
 		if (userAccountManagement.findByUsername("boss").isPresent()) {
 			return;
 		}
-		System.out.println("--------------USER-INIT---------------");
 		
 		userAccountManagement.create("boss", 
 			UnencryptedPassword.of("123"), 
