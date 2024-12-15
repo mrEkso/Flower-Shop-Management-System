@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service for managing {@link SimpleOrder}s, including creation, retrieval, and deletion operations.
+ */
 @Service
 public class SimpleOrderService {
 
