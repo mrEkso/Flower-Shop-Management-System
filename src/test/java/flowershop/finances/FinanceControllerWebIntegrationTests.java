@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +16,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.money.MonetaryAmount;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 
 @SpringBootTest
@@ -24,6 +28,7 @@ import java.util.List;
 public class FinanceControllerWebIntegrationTests {
 
 	@Autowired private MockMvc mvc;
+
 
 	@Test
 	@WithMockUser(roles = "EMPLOYEE")
@@ -124,7 +129,30 @@ public class FinanceControllerWebIntegrationTests {
 			.andExpect(status().isOk())
 			.andExpect(view().name("finance/askForMonth"));
 	}
+	//Bad bcz is empty
+	@Test
+	@WithMockUser(roles ="BOSS")
+	void dayReportPDF_ReturnsBadRequest() throws Exception {
+		mvc.perform(get("/dayReport")
+			.param("day", LocalDate.now().toString()))
+			.andExpect(status().isBadRequest());
+		mvc.perform(get("/dayReport")
+			.param("day", LocalDate.now().plusDays(100).toString()))
+			.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	@WithMockUser(roles ="BOSS")
+	void monthReportPDF_ReturnsBadRequest() throws Exception {
+		mvc.perform(get("/monthReport")
+				.param("month", YearMonth.now().toString()))
+			.andExpect(status().isBadRequest());
+		mvc.perform(get("/monthReport")
+				.param("month", YearMonth.now().plusMonths(100).toString()))
+			.andExpect(status().isBadRequest());
+	}
 
 
 
+	//TO-DO: add test cases for when pdfs are returned
 }
