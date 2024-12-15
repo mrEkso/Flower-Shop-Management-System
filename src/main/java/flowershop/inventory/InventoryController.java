@@ -89,7 +89,6 @@ public class InventoryController {
 
 	private double computePricePerUnit(Product product) {
 		if (product instanceof Bouquet) {
-			// System.out.println( );
 			return ((Bouquet)product).getPrice().getNumber().doubleValue();
 		}
 
