@@ -31,12 +31,12 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 
 
 	@ElementCollection
-	private Map<String, Quantity> itemQuantityMap = new HashMap<String,Quantity>();
+	private Map<String, Quantity> itemQuantityMap = new HashMap<String, Quantity>();
 	private Category category;
 	private LocalDateTime timestamp;
 
-	public static String categoryToString(Category category){
-		return category.toString().replace('_',' ');
+	public static String categoryToString(Category category) {
+		return category.toString().replace('_', ' ');
 	}
 
 	public String getCategory() {
@@ -51,36 +51,32 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		return itemQuantityMap;
 	}
 
-	protected AccountancyEntryWrapper() {}
+	protected AccountancyEntryWrapper() {
+	}
 
 	public AccountancyEntryWrapper(Order order) {
 		super(order.getTotal());
 		this.timestamp = LocalDateTime.now();
-		if(order instanceof WholesalerOrder){
+		if (order instanceof WholesalerOrder) {
 			this.category = Category.Einkauf;
-		}
-		else if(order instanceof ContractOrder){
+		} else if (order instanceof ContractOrder) {
 			this.category = Category.Vertraglicher_Verkauf;
-		}
-		else if(order instanceof EventOrder){
+		} else if (order instanceof EventOrder) {
 			this.category = Category.Veranstaltung_Verkauf;
-		}
-		else if(order instanceof ReservationOrder){
+		} else if (order instanceof ReservationOrder) {
 			this.category = Category.Reservierter_Verkauf;
-		}
-		else if(order instanceof SimpleOrder){
+		} else if (order instanceof SimpleOrder) {
 			this.category = Category.Einfacher_Verkauf;
-		}
-		else{
+		} else {
 			throw new IllegalArgumentException("Order is not recognized");
 		}
 		Totalable<OrderLine> kindaItemQuantityMap = order.getOrderLines();
 		for (OrderLine orderLine : kindaItemQuantityMap) {
-			itemQuantityMap.put(orderLine.getProductName(),orderLine.getQuantity());
+			itemQuantityMap.put(orderLine.getProductName(), orderLine.getQuantity());
 		}
 		Totalable<ChargeLine> extraFees = order.getAllChargeLines();
 		for (ChargeLine chargeLine : extraFees) {
-			itemQuantityMap.put(chargeLine.getDescription(),Quantity.of(1));
+			itemQuantityMap.put(chargeLine.getDescription(), Quantity.of(1));
 		}
 	}
 

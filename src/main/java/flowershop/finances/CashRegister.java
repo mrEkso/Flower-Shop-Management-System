@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-public class CashRegister  {
+public class CashRegister {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
