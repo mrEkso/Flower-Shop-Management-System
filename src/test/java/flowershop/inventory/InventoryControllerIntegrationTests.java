@@ -10,6 +10,7 @@ import org.salespointframework.useraccount.UserAccountManagement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.ui.Model;
+import org.springframework.ui.Model;
 import org.springframework.ui.ExtendedModelMap;
 import static org.assertj.core.api.Assertions.*;
 import java.util.UUID;

@@ -48,6 +48,20 @@ public class CalendarServiceTests {
 		assertNotNull(savedEvent);
 		assertEquals(event, savedEvent);
 	}
+	@Test
+	public void testUpdate() {
+		Event event = new Event(1L, "Event 1", LocalDateTime.now(), "Description 1");
+		when(eventRepository.save(event)).thenReturn(event);
+		when(eventRepository.findAll()).thenReturn(List.of(event));
+
+		assertEquals("Event 1", calendarService.findAll().getFirst().getName());
+		event.setName("Updated Event");
+		calendarService.update(event);
+		assertEquals("Updated Event", calendarService.findAll().getFirst().getName());
+
+		when(eventRepository.findAll()).thenReturn(List.of(event));
+		assertEquals("Updated Event", calendarService.findAll().get(0).getName());
+	}
 
 	@Test
 	public void testDelete() {
