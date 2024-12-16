@@ -152,7 +152,6 @@ public class InventoryController {
 	 */
 	@GetMapping("/inventory/create-bouquet")
 	@PreAuthorize("hasRole('BOSS')")
-	@PreAuthorize("hasRole('BOSS')")
 	public String createBouquetMode(Model model) {
 		List<Map<String, Object>> flowersOnly = productService.getAllProducts().stream()
 			.filter(product -> product instanceof Flower) // Filter only Flower products
@@ -178,7 +177,6 @@ public class InventoryController {
 	 * @return the name of the inventory view
 	 */
 	@GetMapping("/inventory/choose-flower")
-	@PreAuthorize("hasRole('BOSS')")
 	@PreAuthorize("hasRole('BOSS')")
 	public String showChooseModal(@RequestParam UUID flowerID, Model model) {
 		Optional<Product> selectedFlowerOpt = productService.getProductById(flowerID);
@@ -299,7 +297,6 @@ public class InventoryController {
 	 */
 	@GetMapping("/inventory/deleted-products")
 	@PreAuthorize("hasRole('BOSS')")
-	@PreAuthorize("hasRole('BOSS')")
 	public String showDeletedProducts(Model model) {
 		double totalLossSum = 0.0;
 		for (DeletedProduct deletedProduct : deletedProducts) {
@@ -330,7 +327,6 @@ public class InventoryController {
 	 * @return the inventory view name
 	 */
 	@GetMapping("/inventory/delete")
-	@PreAuthorize("hasRole('BOSS')")
 	@PreAuthorize("hasRole('BOSS')")
 	public String showDeleteModal(@RequestParam("productID") UUID productID, Model model) {
 		Optional<Product> selectedProductOpt = productService.getProductById(productID);
