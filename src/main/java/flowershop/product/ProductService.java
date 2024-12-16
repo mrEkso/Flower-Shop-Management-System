@@ -144,8 +144,8 @@ public class ProductService {
 			.collect(Collectors.toList());
 	}
 
-	public List<Flower> findFlowersByColor(String color) {
-		return findAllFlowers()
+	public List<Flower> findFlowersByColor(String color, List<Flower> givenFlowers) {
+		return givenFlowers
 			.stream()
 			.filter(flower -> flower.getColor().equalsIgnoreCase(color))
 			.toList();

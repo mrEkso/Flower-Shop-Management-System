@@ -6,6 +6,7 @@ import org.salespointframework.time.Interval;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,9 +41,16 @@ public class FinancesController {
 		this.todayDate = cashRegisterService.getActualDate();
 	}
 
-
-
+	/**
+	 * Will filter the entries shown to only those, which were registered inside of that interval
+	 *
+	 * @param date1 start date
+	 * @param date2 end date
+	 * @param model
+	 * @return "finances"
+	 */
 	@GetMapping("/filterDates")
+	@PreAuthorize("hasRole('BOSS')")
 	public String filterDates(@RequestParam("date1") LocalDate date1, @RequestParam("date2") LocalDate date2, Model model) {
 		if(date1.isAfter(date2)) {
 			return "finances";
@@ -74,7 +82,14 @@ public class FinancesController {
 		return "finances";
 	}
 
+
+	/**
+	 * Drops the date filter and adds all the other entries back to the table
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/resetDates")
+	@PreAuthorize("hasRole('BOSS')")
 	public String resetDates(Model model) {
 		this.filteredByDates = new HashSet<>();
 		this.isFilteredByDates = false;
@@ -88,7 +103,13 @@ public class FinancesController {
 		return "finances";
 	}
 
+	/**
+	 * Drops the category filter and returns all entries back to the table
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/resetCategory")
+	@PreAuthorize("hasRole('BOSS')")
 	public String resetCategory(Model model) {
 		this.filteredByCategory = new HashSet<>();
 		this.isFilteredByCategory = false;
@@ -107,6 +128,11 @@ public class FinancesController {
 		return "finances";
 	}
 
+	/**
+	 * Connects needed data to HTML
+	 * @param model
+	 * @param transactions
+	 */
 	private void prepareFinancesModel(Model model, List<AccountancyEntryWrapper> transactions) {
 		model.addAttribute("transactions", transactions);
 		model.addAttribute("currentBalance", cashRegisterService.getBalance());
@@ -115,6 +141,11 @@ public class FinancesController {
 		model.addAttribute("category", category);
 	}
 
+	/**
+	 * Will sort this list and show a cut version of it in the table
+	 * @param filteredOrdersList name speaks for itself
+	 * @param size max number of entries which are shown in the table at a time
+	 */
 	private void setFilteredOrdersList(List<AccountancyEntryWrapper> filteredOrdersList, int size) {
 		List<AccountancyEntryWrapper> tempList = new ArrayList<>(filteredOrdersList);
 		Collections.sort(tempList, new Comparator<AccountancyEntry>() {
@@ -134,7 +165,13 @@ public class FinancesController {
 		limitListSize(size);
 	}
 
+	/**
+	 *
+	 * @param model
+	 * @return The main finances page
+	 */
 	@GetMapping("/finances")
+	@PreAuthorize("hasRole('BOSS')")
 	public String getTransactionPage(Model model) {
 		this.filteredOrdersList = new LinkedList<>();
 		for (AccountancyEntry i : this.cashRegisterService.findAll().toList()) {
@@ -154,6 +191,7 @@ public class FinancesController {
 	 * @return
 	 */
 	@GetMapping("/askForDay")
+	@PreAuthorize("hasRole('BOSS')")
 	public String askDay(Model model) {
 		return "finance/askForDay";
 	}
@@ -164,6 +202,7 @@ public class FinancesController {
 	 * @return
 	 */
 	@GetMapping("/askForMonth")
+	@PreAuthorize("hasRole('BOSS')")
 	public String askMonth(Model model) {
 		return "finance/askForMonth";
 	}
@@ -172,9 +211,10 @@ public class FinancesController {
 	 * Uploads a generated day-report
 	 * @param date
 	 * @param model
-	 * @return
+	 * @return PDF-File
 	 */
 	@GetMapping("/dayReport")
+	@PreAuthorize("hasRole('BOSS')")
 	public ResponseEntity<byte[]> dayReport(@RequestParam("day") LocalDate date, Model model) {
 		if(date.isAfter(LocalDate.now())){
 			return ResponseEntity.badRequest()
@@ -198,8 +238,27 @@ public class FinancesController {
 			.contentType(MediaType.APPLICATION_PDF)
 			.body(docu);
 	}
+
+	/**
+	 * Uploads a generated month-report
+	 * @param year_month String of the form YYYY-MM.
+	 * @param model
+	 * @return PDF-File
+	 */
 	@GetMapping("/monthReport")
+	@PreAuthorize("hasRole('BOSS')")
 	public ResponseEntity<byte[]> monthReport(@RequestParam("month") String year_month, Model model) {
+		String[] date = year_month.split("-");
+		if(date.length != 2) {
+			return ResponseEntity.badRequest()
+				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM".getBytes(StandardCharsets.UTF_8));
+		}
+		if(date[0].length() != 4 ||
+			!date[1].matches("0[1-9]|1[1-2]") || !date[0].matches("19[0-9][0-9]|2[0-9][0-9][0-9]"))
+		{
+			return ResponseEntity.badRequest()
+				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM".getBytes(StandardCharsets.UTF_8));
+		}
 		YearMonth monthParsed = YearMonth.parse(year_month);
 		LocalDate firstOfMonth = monthParsed.atDay(1);
 		if (firstOfMonth.isAfter(LocalDate.now())) {
@@ -225,7 +284,14 @@ public class FinancesController {
 			.body(docu);
 	}
 
+	/**
+	 *
+	 * @param category chosen category
+	 * @param model
+	 * @return The page, where only chosen category of orders is shown
+	 */
 	@GetMapping("/filterCategories")
+	@PreAuthorize("hasRole('BOSS')")
 	public String filterCategories(@RequestParam("filter") String category, Model model) {
 		//this.categorySet = category;
 		if(category.equals("all")){
@@ -264,6 +330,10 @@ public class FinancesController {
 		return "finances";
 	}
 
+	/**
+	 *
+	 * @param size maximal number of entries to be shown in the table
+	 */
 	private void limitListSize(int size){
 		if(this.filteredOrdersList.size() > size){
 			this.filteredAndCutOrdersList = this.filteredOrdersList.subList(0, size);
@@ -272,6 +342,13 @@ public class FinancesController {
 			this.filteredAndCutOrdersList = this.filteredOrdersList;
 		}
 	}
+
+	/**
+	 *
+	 * @param set1
+	 * @param set2
+	 * @return the intersection of these two sets (in mathematical terms)
+	 */
 	private Set<AccountancyEntryWrapper> intersection(Set<AccountancyEntryWrapper> set1, Set<AccountancyEntryWrapper> set2) {
 		Set<AccountancyEntryWrapper> intersection = new HashSet<>(set1);
 		intersection.retainAll(set2);

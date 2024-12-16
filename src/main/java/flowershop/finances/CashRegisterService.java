@@ -24,15 +24,11 @@ import java.util.*;
 
 @Service
 @Primary
-public class CashRegisterService implements Accountancy{
-/*
-Class with simply getters and setters, completely based on CashRegistered (all fields are same)
- */
+public class CashRegisterService implements Accountancy {
 
 	private final OrderManagement<AbstractOrder> orderManagement;
-	//private CashRegister cashRegister = new CashRegister();
+
 	private final CashRegisterRepository cashRegisterRepository;
-	//private long cashRegisterId;
 
 
 	@Autowired
@@ -40,14 +36,14 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 							   CashRegisterRepository cashRegisterRepository) {
 		this.orderManagement = orderManagement;
 		this.cashRegisterRepository = cashRegisterRepository;
-		Streamable<AbstractOrder> previousOrders = orderManagement.findBy(OrderStatus.PAID);
+		Streamable<AbstractOrder> previousOrders = Optional.ofNullable(orderManagement.findBy(OrderStatus.PAID))
+			.orElse(Streamable.empty());
 		for (Order order : previousOrders) {
 			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order);
 			this.add(convertedOrder);
 		}
-		//this.cashRegister=getCashRegister();
-	}
 
+	}
 
 
 	public CashRegister getCashRegisterById(Long id) {
@@ -55,35 +51,47 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 			.orElseThrow(() -> new IllegalStateException("Product not found with id " + id));
 	}
 
-	public MonetaryAmount getBalance()
-	{
+	public MonetaryAmount getBalance() {
 		return this.getCashRegister().getBalance();
 	}
 
+	/**
+	 * Is used to add an AccountancyEntry instance to the register
+	 * @param entry
+	 * @return entry, if everything went well. Otherwise - null
+	 * @param <T> type of the entry (T extends AccountancyEntry)
+	 */
 	@Override
-	//@Transactional
-	public <T extends AccountancyEntry> T add(T entry){
-		if(entry == null || entry instanceof OrderPaymentEntry){ //because salespoint is also doing it apparently
+	public <T extends AccountancyEntry> T add(T entry) {
+		if (entry == null || entry instanceof OrderPaymentEntry) { //because salespoint is also doing it apparently
 			return null;
 		}
 
 		CashRegister cashRegister = getCashRegister();
 		Set<AccountancyEntry> existing = cashRegister.getAccountancyEntries();
 		existing.add(entry);
-		cashRegister.setAccountancyEntries(existing); // removed the cast to Acc..Wrapper
+		cashRegister.setAccountancyEntries(existing);
 		cashRegister.setBalance((Money) entry.getValue().add(cashRegister.getBalance()));
 		cashRegisterRepository.save(cashRegister);
 		return entry;
 	}
 
+	/**
+	 * Will wrap the order into AccountancyEntryWrapper and add it to the register
+	 * @param event of type OrderPaid that carries an order
+	 */
 	@EventListener
-	public void onOrderPaid(OrderEvents.OrderPaid event){
+	public void onOrderPaid(OrderEvents.OrderPaid event) {
 		AbstractOrder order = (AbstractOrder) event.getOrder();
 		//convert order to AccountancyEntry
 		AccountancyEntryWrapper convertedOrder = new AccountancyEntryWrapper(order);
 		this.add(convertedOrder);
 	}
 
+	/**
+	 *
+	 * @return all registered AccountancyEntries
+	 */
 	@Override
 	public Streamable<AccountancyEntry> findAll() {
 		return Streamable.of(this.getCashRegister().getAccountancyEntries());
@@ -94,20 +102,30 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return Streamable.of();
 	}
 
+	/**
+	 *
+	 * @param category
+	 * @return all registered AccountancyEntries of the given Category
+	 */
 	public Streamable<AccountancyEntry> filterEntries(Category category) {
 		Streamable<AccountancyEntry> filteredEntries = Streamable.empty();
 		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
-			if (((AccountancyEntryWrapper)entry).getCategory().equals(AccountancyEntryWrapper.categoryToString(category))){
+			if (((AccountancyEntryWrapper) entry).getCategory().equals(AccountancyEntryWrapper.categoryToString(category))) {
 				filteredEntries = filteredEntries.and(entry);
 			}
 		}
 		return filteredEntries;
 	}
 
-	public LinkedList<AccountancyEntry> filterIncomeOrSpending(boolean isIncome){
+	/**
+	 *
+	 * @param isIncome
+	 * @return a list of all AccountancyEntries that are either incomes or spendings
+	 */
+	public LinkedList<AccountancyEntry> filterIncomeOrSpending(boolean isIncome) {
 		LinkedList<AccountancyEntry> filteredEntries = new LinkedList<>();
-		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()){
-			if (entry.isRevenue() == isIncome){
+		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
+			if (entry.isRevenue() == isIncome) {
 				filteredEntries.add(entry);
 			}
 		}
@@ -124,14 +142,19 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return Optional.empty();
 	}
 
+	/**
+	 *
+	 * @param interval
+	 * @return all AccountancyEntries form this interval of time
+	 */
 	@Override
 	public Streamable<AccountancyEntry> find(Interval interval) {
 		Streamable<AccountancyEntry> output = Streamable.of();
 		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
-			if(((AccountancyEntryWrapper)entry).getTimestamp() == null){
+			if (((AccountancyEntryWrapper) entry).getTimestamp() == null) {
 				continue;
 			}
-			if(interval.contains(((AccountancyEntryWrapper)entry).getTimestamp())){
+			if (interval.contains(((AccountancyEntryWrapper) entry).getTimestamp())) {
 				output = output.and(entry);
 			}
 		}
@@ -143,18 +166,24 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return null;
 	}
 
+	/**
+	 *
+	 * @param interval overall period
+	 * @param duration periodity of how to split the data
+	 * @return the map of smaller periods of duration to AccountancyEntries from that interval
+	 */
 	@Override
 	public Map<Interval, Streamable<AccountancyEntry>> find(Interval interval, TemporalAmount duration) {
-		HashMap<Interval,Streamable<AccountancyEntry>> output = new HashMap<>();
+		HashMap<Interval, Streamable<AccountancyEntry>> output = new HashMap<>();
 		LocalDateTime start = interval.getStart();
 		LocalDateTime end = start.plus(duration);
-		do{
+		do {
 			Interval subinterval = Interval.from(start).to(end);
 			Streamable<AccountancyEntry> subset = Streamable.empty();
 			output.put(subinterval, subset.and(find(subinterval)));
 			end = end.plus(duration);
 			start = start.plus(duration);
-		}while(interval.contains(start));
+		} while (interval.contains(start));
 		return output;
 	}
 
@@ -163,37 +192,53 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 		return Map.of();
 	}
 
+	/**
+	 *
+	 * @param interval overall period
+	 * @param duration periodity of how to split the data
+	 * @return a map of smaller periods of duration to the overall profit from that interval
+	 */
 	@Override
 	public Map<Interval, MonetaryAmount> salesVolume(Interval interval, TemporalAmount duration) {
-		Map<Interval,Streamable<AccountancyEntry>> splits = find(interval, duration);
-		Map<Interval,MonetaryAmount> output = new HashMap<>();
-		for(Map.Entry<Interval,Streamable<AccountancyEntry>> entry : splits.entrySet()){
-			output.put(entry.getKey(),getProfit(entry.getValue()));
+		Map<Interval, Streamable<AccountancyEntry>> splits = find(interval, duration);
+		Map<Interval, MonetaryAmount> output = new HashMap<>();
+		for (Map.Entry<Interval, Streamable<AccountancyEntry>> entry : splits.entrySet()) {
+			output.put(entry.getKey(), getProfit(entry.getValue()));
 		}
 		return output;
 	}
 
-	public DailyFinancialReport createFinancialReportDay(LocalDateTime day){
+	/**
+	 * Use this method instead of the DailyFinancialReport constructor
+	 * @param day any timestamp during the needed day
+	 * @return an instance of DailyFinancialReport
+	 */
+	public DailyFinancialReport createFinancialReportDay(LocalDateTime day) {
 		LocalDateTime start = LocalDateTime.of(day.getYear(), day.getMonth(), day.getDayOfMonth(), 0, 0);
 		LocalDateTime end = start.plusDays(1);
 		Interval interval = Interval.from(start).to(end);
 		Interval endToNow = Interval.from(end).to(LocalDateTime.now().plusDays(1));
 		TemporalAmount endToNowDuration = endToNow.toDuration();
-		MonetaryAmount moneyDifference = salesVolume(endToNow,endToNowDuration).get(endToNow);
+		MonetaryAmount moneyDifference = salesVolume(endToNow, endToNowDuration).get(endToNow);
 		CashRegister cashRegister = getCashRegister();
 		MonetaryAmount moneyThen = cashRegister.getBalance().subtract(moneyDifference);
 		List<AccountancyEntry> allEntries = getCashRegister().getAccountancyEntries().stream().toList();
-		if(allEntries.isEmpty()){
+		if (allEntries.isEmpty()) {
 			return null;
 		}
 		return new DailyFinancialReport(
 			interval,
 			moneyThen,
 			this,
-			((AccountancyEntryWrapper)allEntries.get(0)).getTimestamp());
+			((AccountancyEntryWrapper) allEntries.get(0)).getTimestamp());
 	}
 
-	public MonthlyFinancialReport createFinancialReportMonth(LocalDateTime day){
+	/**
+	 * Use this method instead of the MonthlyFinancialReport constructor
+	 * @param day any timestamp during the needed month
+	 * @return an instance of MonthlyFinancialReport
+	 */
+	public MonthlyFinancialReport createFinancialReportMonth(LocalDateTime day) {
 		LocalDateTime start = LocalDateTime.of(day.getYear(), day.getMonth(), 1, 0, 0);
 		LocalDateTime end = start.plusMonths(1);
 		if (end.isAfter(LocalDateTime.now())) {
@@ -203,56 +248,69 @@ Class with simply getters and setters, completely based on CashRegistered (all f
 
 		Interval endToNow = Interval.from(end).to(LocalDateTime.now().plusDays(1));
 		TemporalAmount endToNowDuration = endToNow.toDuration();
-		MonetaryAmount moneyDifference = salesVolume(endToNow,endToNowDuration).get(endToNow);
+		MonetaryAmount moneyDifference = salesVolume(endToNow, endToNowDuration).get(endToNow);
 		CashRegister cashRegister = getCashRegister();
 		MonetaryAmount moneyThen = cashRegister.getBalance().subtract(moneyDifference);
 		List<AccountancyEntry> allEntries = getCashRegister().getAccountancyEntries().stream().toList();
-		if(allEntries.isEmpty()){
+		if (allEntries.isEmpty()) {
 			return null;
 		}
 		return new MonthlyFinancialReport(
 			interval,
 			moneyThen,
 			this,
-			((AccountancyEntryWrapper)allEntries.get(0)).getTimestamp());
+			((AccountancyEntryWrapper) allEntries.get(0)).getTimestamp());
 	}
-	public MonetaryAmount getProfit(Streamable<AccountancyEntry> set){
-		Money output = Money.of(0,getCashRegister().getBalance().getCurrency());
-		for(AccountancyEntry entry : set){
+
+	/**
+	 *
+	 * @param set AccountancyEntries, for which profit has to be calculated
+	 * @return profit
+	 */
+	public MonetaryAmount getProfit(Streamable<AccountancyEntry> set) {
+		Money output = Money.of(0, getCashRegister().getBalance().getCurrency());
+		for (AccountancyEntry entry : set) {
 			output.add(entry.getValue());
 		}
 		return output;
 	}
-	public MonetaryAmount getRevenue(Streamable<AccountancyEntry> set){
-		Money output = Money.of(0,getCashRegister().getBalance().getCurrency());
-		for(AccountancyEntry entry : set){
-			if(entry.isRevenue()) {
-				output = output.add(entry.getValue());
-			}
-		}
-		return output;
-	}
-	public MonetaryAmount getExpences(Streamable<AccountancyEntry> set){
-		Money output = Money.of(0,getCashRegister().getBalance().getCurrency());
-		for(AccountancyEntry entry : set){
-			if(entry.isExpense()) {
+
+	/**
+	 *
+	 * @param set AccountancyEntries, for which income has to be calculated
+	 * @return income (all positive values added up and negative - ignored)
+	 */
+	public MonetaryAmount getRevenue(Streamable<AccountancyEntry> set) {
+		Money output = Money.of(0, getCashRegister().getBalance().getCurrency());
+		for (AccountancyEntry entry : set) {
+			if (entry.isRevenue()) {
 				output = output.add(entry.getValue());
 			}
 		}
 		return output;
 	}
 
+	/**
+	 *
+	 * @param set AccountancyEntries, for which spendings have to be calculated
+	 * @return expences (all negative values added up and positive - ignored)
+	 */
+	public MonetaryAmount getExpences(Streamable<AccountancyEntry> set) {
+		Money output = Money.of(0, getCashRegister().getBalance().getCurrency());
+		for (AccountancyEntry entry : set) {
+			if (entry.isExpense()) {
+				output = output.add(entry.getValue());
+			}
+		}
+		return output;
+	}
+
+	/**
+	 *
+	 * @return the instance of CashRegister, stored in the repository
+	 */
 	public CashRegister getCashRegister() {
-		List<CashRegister> test = cashRegisterRepository.findAll();
-		/*
-		if(test.isEmpty()){
-			throw new IllegalStateException("CashRegister instance not found");
-		}
-
-		if(this.cashRegister.getBalance() != null){
-			this.cashRegister = cashRegisterRepository.findFirstByOrderById().get();
-		}
-		 */
+		Optional<CashRegister> cashRegister = cashRegisterRepository.findFirstByOrderById();
 		return cashRegisterRepository.findFirstByOrderById()
 			.orElseThrow(() -> new IllegalStateException("CashRegister instance not found"));
 	}

@@ -18,6 +18,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+
+/**
+ * This class is used to adapt Order to AccountancyEntry to then be used in CashRegisterService (Accountancy child class)
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class AccountancyEntryWrapper extends AccountancyEntry {
@@ -31,59 +35,66 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 
 
 	@ElementCollection
-	private Map<String, Quantity> itemQuantityMap = new HashMap<String,Quantity>();
+	private Map<String, Quantity> itemQuantityMap = new HashMap<String, Quantity>();
 	private Category category;
 	private LocalDateTime timestamp;
 
-	public static String categoryToString(Category category){
-		return category.toString().replace('_',' ');
+
+	/**
+	 *
+	 * @param category
+	 * @return the names of categories of orders in German
+	 */
+	public static String categoryToString(Category category) {
+		return category.toString().replace('_', ' ');
 	}
 
 	public String getCategory() {
 		return this.categoryToString(this.category);
 	}
 
+	/**
+	 * USE THIS METHOD INSTEAD OF getDate()!
+	 * @return the time when the order was paid.
+	 */
 	public LocalDateTime getTimestamp() {
 		return this.timestamp;
 	}
 
+	/**
+	 *
+	 * @return the map where keys are name of the products, and values - their quantity
+	 */
 	public Map<String, Quantity> getItems() {
 		return itemQuantityMap;
 	}
 
-	protected AccountancyEntryWrapper() {}
+	protected AccountancyEntryWrapper() {
+	}
 
 	public AccountancyEntryWrapper(Order order) {
 		super(order.getTotal());
-		if(order == null){
-			throw new IllegalArgumentException("Order is null, couldn't create an AccountancyEntryWrapper");
-		}
 		this.timestamp = LocalDateTime.now();
-		if(order instanceof WholesalerOrder){
+		if (order instanceof WholesalerOrder) {
 			this.category = Category.Einkauf;
-		}
-		else if(order instanceof ContractOrder){
+		} else if (order instanceof ContractOrder) {
 			this.category = Category.Vertraglicher_Verkauf;
-		}
-		else if(order instanceof EventOrder){
+		} else if (order instanceof EventOrder) {
 			this.category = Category.Veranstaltung_Verkauf;
-		}
-		else if(order instanceof ReservationOrder){
+		} else if (order instanceof ReservationOrder) {
 			this.category = Category.Reservierter_Verkauf;
-		}
-		else if(order instanceof SimpleOrder){
+		} else if (order instanceof SimpleOrder) {
 			this.category = Category.Einfacher_Verkauf;
-		}
-		else{
+		} else {
 			throw new IllegalArgumentException("Order is not recognized");
 		}
 		Totalable<OrderLine> kindaItemQuantityMap = order.getOrderLines();
 		for (OrderLine orderLine : kindaItemQuantityMap) {
-			itemQuantityMap.put(orderLine.getProductName(),orderLine.getQuantity());
+			itemQuantityMap.put(orderLine.getProductName(), orderLine.getQuantity());
 		}
 		Totalable<ChargeLine> extraFees = order.getAllChargeLines();
 		for (ChargeLine chargeLine : extraFees) {
-			itemQuantityMap.put(chargeLine.getDescription(),Quantity.of(1));
+			itemQuantityMap.put(chargeLine.getDescription(), Quantity.of(1));
 		}
 	}
 

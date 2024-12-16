@@ -62,19 +62,19 @@
           </div>
           <table class="basket-table">
             <tbody>
-              <tr th:each="selectedBasket : ${sellBasket}">
+              <tr th:each="selectedCart : ${sellCart}">
                 <td>
                   <div class="basket-card">
                     <div class="basket-card-header">
                       <span
                         class="basket-card-name"
-                        th:text="${selectedBasket.product.name}"
+                        th:text="${selectedCart.product.name}"
                       ></span>
-                      <form method="post" action="/remove-from-sellBasket">
+                      <form method="post" action="/remove-from-sell-cart">
                         <input
                           type="hidden"
                           name="productId"
-                          th:value="${selectedBasket.product.id}"
+                          th:value="${selectedCart.product.id}"
                         />
                         <button type="submit" class="close-btn">
                           <img
@@ -87,30 +87,30 @@
                     <div class="basket-card-body">
                       <p
                         class="basket-card-text"
-                        th:text="${selectedBasket.quantityAsInteger} + 'x' + ${selectedBasket.product.price.number * 1.0} + ' EUR'"
+                        th:text="${selectedCart.quantity.getAmount.doubleValue} + 'x' + ${selectedCart.product.price.number * 1.0} + ' EUR'"
                       ></p>
-                      <form method="post" action="/decrease-from-sellBasket">
+                      <form method="post" action="/decrease-from-sell-cart">
                         <input
                           type="hidden"
                           name="productId"
-                          th:value="${selectedBasket.product.id}"
+                          th:value="${selectedCart.product.id}"
                         />
                         <button class="basket-minus-btn" type="submit">
                           -
                         </button>
                       </form>
-                      <form method="post" action="/increase-from-sellBasket">
+                      <form method="post" action="/add-to-sell-cart">
                         <input
                           type="hidden"
                           name="productId"
-                          th:value="${selectedBasket.product.id}"
+                          th:value="${selectedCart.product.id}"
                         />
                         <button
                           class="basket-minus-btn"
                           type="submit"
-                          th:disabled="${(selectedBasket.product instanceof T(flowershop.product.Flower) ? selectedBasket.product.quantity :
-                                                        (selectedBasket.product instanceof T(flowershop.product.Bouquet) ? selectedBasket.product.quantity : 0))
-                                                        - selectedBasket.quantityAsInteger == 0}"
+                          th:disabled="${(selectedCart.product instanceof T(flowershop.product.Flower) ? selectedCart.product.quantity :
+                                                        (selectedCart.product instanceof T(flowershop.product.Bouquet) ? selectedCart.product.quantity : 0))
+                                                        - selectedCart.quantity.getAmount.doubleValue == 0}"
                         >
                           +
                         </button>
@@ -118,7 +118,7 @@
                     </div>
                     <div class="basket-card-footer">
                       <span
-                        th:text="${(selectedBasket.quantityAsInteger * 1.0) * selectedBasket.product.price.number * 1.0} + ' EUR'"
+                        th:text="${(selectedCart.quantity.getAmount.doubleValue* 1.0) * selectedCart.product.price.number * 1.0} + ' EUR'"
                       ></span>
                     </div>
                   </div>
@@ -130,12 +130,27 @@
               </tr> -->
             </tbody>
           </table>
-          <div class="basket-total-price" th:unless="${sellBasket.isEmpty()}">
+          <div class="basket-total-price" th:unless="${sellCart.isEmpty()}">
             <b>Total:</b>
             <div th:text="${fullSellPrice} + ' EUR'"></div>
           </div>
-          <div class="basket-footer" th:unless="${sellBasket.isEmpty()}">
-            <form th:action="@{/sell-from-basket}" method="post">
+          <div class="basket-footer" th:unless="${sellCart.isEmpty()}">
+            <form th:action="@{/sell-from-cart}" method="post">
+              <div class="payment-method">
+                <label>
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="Cash"
+                    checked
+                  />
+                  Cash
+                </label>
+                <label>
+                  <input type="radio" name="paymentMethod" value="Card" />
+                  Card
+                </label>
+              </div>
               <input
                 class="basket-submit-btn"
                 type="submit"

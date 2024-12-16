@@ -9,76 +9,80 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
-
-import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import org.salespointframework.order.Cart;
 
 import org.salespointframework.catalog.Product;
 
 import java.util.*;
-import java.util.stream.Stream;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
-import jakarta.servlet.http.HttpServletRequest;
 
-import static java.util.stream.Collectors.toList;
-
-import java.math.BigDecimal;
-
-
-@SessionAttributes({"buyBasket", "sellBasket", "fullSellPrice", "fullBuyPrice"})
+@SessionAttributes({"fullSellPrice", "fullBuyPrice",
+	"buyCart", "sellCart"})
 @Controller
 public class SalesController {
 
 	private final ProductService productService;
 	private final SalesService salesService;
-	private final WholesalerService wholesalerService;
-	private final BasketService basketService;
 
-	SalesController(ProductService productService, SalesService salesService, WholesalerService wholesalerService, BasketService basketService) {
+	SalesController(ProductService productService, SalesService salesService) {
 		this.productService = productService;
 		this.salesService = salesService;
-		this.wholesalerService = wholesalerService;
-		this.basketService = basketService;
 	}
 
-	@ModelAttribute("buyBasket")
-	public List<BasketItem> createBuyBasket() {
-		return new ArrayList<>();
+	@ModelAttribute("buyCart")
+	Cart initializeBuyCart() {
+		return new Cart();
 	}
 
-	@ModelAttribute("sellBasket")
-	public List<BasketItem> createSellBasket() {
-		return new ArrayList<>();
+	@ModelAttribute("sellCart")
+	Cart initializeSellCart() {
+		return new Cart();
 	}
 
+	/**
+	 * Redirects to the selling catalog, i.e. it is defined as the default page.
+	 *
+	 * @return the redirect URL to the selling catalog
+	 */
 	@GetMapping("/")
 	public String index() {
-		return "redirect:/sell";
+		return "redirect:/calendar";
 	}
 
+	/**
+	 * Displays the sell catalog with optional filters and search.
+	 * Shows only those products that are in stock, which makes it different from buy catalog.
+	 *
+	 * @param model       the model to hold attributes for the view
+	 * @param filterItem  the filter for product color (optional)
+	 * @param searchInput the search input for product name (optional)
+	 * @return the view name for the selling catalog
+	 */
 	@GetMapping("/sell")
+	@PreAuthorize("hasRole('BOSS')")
 	public String sellCatalog(Model model,
-					   @RequestParam(required = false) String filterItem,
-					   @RequestParam(required = false) String searchInput,
-					   @ModelAttribute("sellBasket") List<BasketItem> sellBasket) {
+							  @RequestParam(required = false) String filterItem,
+							  @RequestParam(required = false) String searchInput) {
 
 		List<Flower> flowers = productService.findAllFlowers();
 		List<Bouquet> bouquets = productService.findAllBouquets();
 
 		//List<Product> products = productService.getAllProducts(); // -------------- Please use me <3
-
-		// Filter by color
-		if (filterItem != null && !filterItem.isEmpty()) {
-			flowers = productService.findFlowersByColor(filterItem);
-			bouquets = new ArrayList<>();
-		}
-
+		
 		// Search by name
 		if (searchInput != null && !searchInput.isEmpty()) {
 			flowers = productService.findFlowersByName(searchInput);
 			bouquets = productService.findBouquetsByName(searchInput);
+		}
+
+		// Filter by color
+		if (filterItem != null && !filterItem.isEmpty()) {
+			flowers = productService.findFlowersByColor(filterItem, flowers);
+			bouquets = new ArrayList<>();
 		}
 
 		// Filter products with quantity > 0
@@ -96,186 +100,242 @@ public class SalesController {
 		model.addAttribute("filterItem", filterItem);
 		model.addAttribute("searchInput", searchInput);
 		model.addAttribute("products", products);
-		model.addAttribute("sellBasket", sellBasket);
 
 		return "sales/sell";
 	}
 
+	/**
+	 * Displays the buy catalog with optional filters and search.
+	 *
+	 * @param model       the model to hold attributes for the view
+	 * @param filterItem  the filter for product color (optional)
+	 * @param searchInput the search input for product name (optional)
+	 * @return the view name for the buying catalog
+	 */
 	@GetMapping("/buy")
+	@PreAuthorize("hasRole('BOSS')")
 	public String buyCatalog(Model model,
-					  @RequestParam(required = false) String filterItem,
-					  @RequestParam(required = false) String searchInput,
-					  @ModelAttribute("buyBasket") List<BasketItem> buyBasket) {
+							 @RequestParam(required = false) String filterItem,
+							 @RequestParam(required = false) String searchInput) {
 
 		// Shouldn't allow to work with bouquets because wholesalers sell only flowers.
-		List<Flower> flowers = wholesalerService.findAllFlowers();
+		List<Flower> flowers = productService.findAllFlowers();
+		
+		if (searchInput != null && !searchInput.isEmpty()) {
+			flowers = productService.findFlowersByName(searchInput);
+		}
 
 		// Only by color? Seems reasonable but who knows.
 		if (filterItem != null && !filterItem.isEmpty()) {
-			flowers = wholesalerService.findFlowersByColor(filterItem);
+			flowers = productService.findFlowersByColor(filterItem, flowers);
 		}
 
-		if (searchInput != null && !searchInput.isEmpty()) {
-			flowers = wholesalerService.findFlowersByName(searchInput);
-		}
-
-		Set<String> colors = wholesalerService.findAllFlowerColors();
+		Set<String> colors = productService.getAllFlowerColors();
 
 		model.addAttribute("typeList", colors);
 		model.addAttribute("filterItem", filterItem);
 		model.addAttribute("searchInput", searchInput);
 		model.addAttribute("flowers", flowers);
-		model.addAttribute("buyBasket", buyBasket);
 
 		return "sales/buy";
-	}
-
-	@PostMapping("/add-to-buyBasket")
-	public String addToBuyBasket(
-		Model model,
-		@RequestParam UUID productId, // Use UUID instead of product name
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
-	) {
-
-		basketService.addToBasket(buyBasket, productId);
-		model.addAttribute("fullBuyPrice", calculateFullBasketPrice(buyBasket));
-		return "redirect:/buy";
-	}
-
-	@PostMapping("/add-to-sellBasket")
-	public String addToSellBasket(
-		Model model,
-		@RequestParam UUID productId, // Use UUID instead of product name
-		@RequestParam(required = false) String redirectPage,
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
-	) {
-		basketService.addToBasket(sellBasket, productId);
-		model.addAttribute("fullSellPrice", calculateFullBasketPrice(sellBasket));
-		return "redirect:/sell";
-	}
-
-	@PostMapping("/remove-from-sellBasket")
-	public String removeFromSellBasket(
-		Model model,
-		@RequestParam UUID productId, // Use UUID instead of product name
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket,
-		HttpServletRequest request
-	) {
-		basketService.removeFromBasket(sellBasket, productId);
-		model.addAttribute("fullSellPrice", calculateFullBasketPrice(sellBasket));
-		return "redirect:/sell";
-	}
-
-	@PostMapping("/remove-from-buyBasket")
-	public String removeFromBuyBasket(
-		Model model,
-		@RequestParam UUID productId, // Use UUID instead of product name
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket,
-		HttpServletRequest request
-	) {
-		basketService.removeFromBasket(buyBasket, productId);
-		model.addAttribute("fullBuyPrice", calculateFullBasketPrice(buyBasket));
-		return "redirect:/buy";
-	}
+	} 
 
 	/**
-	 * Registers a {@link WholesalerOrder} instance based on the {@link BasketItem}s.
+	 * Processes the sale of products from the sell cart.
+	 *
+	 * @param sellCart the cart containing products to sell
+	 * @param model    the model to hold attributes for the view
+	 * @return the redirect URL to the selling catalog
 	 */
-	@PostMapping("buy-from-buyBasket")
-	public String buyFromBasket(
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket,
-		HttpServletRequest request,
-		Model model
+	@PostMapping("/sell-from-cart")
+	public String sellFromCart(
+		@ModelAttribute("sellCart") Cart sellCart, Model model,
+		@RequestParam(required = false) String paymentMethod
 	) {
-		if (buyBasket == null || buyBasket.isEmpty()) {
-			model.addAttribute("message", "Your buyBasket is empty.");
-			return "redirect:/buy";
-		}
-
-		salesService.buyProductsFromBasket(buyBasket, "Card");
-
-		model.addAttribute("message", "Your order has been successfully placed.");
-		return "redirect:/buy";
-	}
-
-	/**
-	 * Registers a {@link SimpleOrder} instance based on the {@link BasketItem}s.
-	 */
-	@PostMapping("/sell-from-basket")
-	public String sellFromBasket(
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket,
-		HttpServletRequest request,
-		Model model
-	) {
-		if (sellBasket == null || sellBasket.isEmpty()) {
+		
+		if (sellCart == null || sellCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:sell";
 		}
-		salesService.sellProductsFromBasket(sellBasket, "Cash");
+		salesService.sellProductsFromBasket(sellCart, paymentMethod);
+
+		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+		model.addAttribute("fullSellPrice", fp);
 
 		model.addAttribute("message", "Your order has been successfully placed.");
 		return "redirect:sell";
 	}
 
-	@PostMapping("/increase-from-sellBasket")
-	public String increaseFromSellBasket(
+
+	/**
+	 * Processes the purchase of products from the buy cart.
+	 *
+	 * @param buyCart the cart containing products to buy
+	 * @param model   the model to hold attributes for the view
+	 * @return the redirect URL to the buying catalog
+	 */
+	@PostMapping("/buy-from-cart")
+	public String buyFromCart(
+		@ModelAttribute("buyCart") Cart buyCart,
+		Model model,
+		@RequestParam(required = false) String paymentMethod
+	) {
+		if (buyCart == null || buyCart.isEmpty()) {
+			model.addAttribute("message", "Your basket is empty.");
+			return "redirect:buy";
+		}
+		salesService.buyProductsFromBasket(buyCart, paymentMethod);
+
+		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
+		model.addAttribute("fullBuyPrice", fp);
+
+		model.addAttribute("message", "Your order has been successfully placed.");
+		return "redirect:buy";
+	}
+
+	/**
+	 * Adds a product to the sell cart.
+	 *
+	 * @param model     the model to hold attributes for the view
+	 * @param productId the ID of the product to add
+	 * @param sellCart  the cart to which the product is added
+	 * @return the redirect URL to the selling catalog
+	 */
+	@PostMapping("add-to-sell-cart")
+	public String addToSellCart(
 		Model model,
 		@RequestParam UUID productId,
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
+		@ModelAttribute("sellCart") Cart sellCart
 	) {
-		basketService.increaseQuantity(sellBasket, productId);
-		model.addAttribute("fullSellPrice", calculateFullBasketPrice(sellBasket));
+		Product product = productService.getProductById(productId).get();
+
+		if(sellCart.getQuantity(product).getAmount().intValue() <
+			(product instanceof Flower ? ((Flower)product).getQuantity().intValue() : 
+				((Bouquet)product).getQuantity())){
+			sellCart.addOrUpdateItem(product, 1);
+
+			double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+			model.addAttribute("fullSellPrice", fp);
+		}
+
 		return "redirect:/sell";
 	}
 
-	@PostMapping("/decrease-from-sellBasket")
-	public String decreaseFromSellBasket(
+	/**
+	 * Removes a product entirely from the sell cart.
+	 *
+	 * @param model     the model to hold attributes for the view
+	 * @param productId the ID of the product to remove
+	 * @param sellCart  the cart from which the product is removed
+	 * @return the redirect URL to the selling catalog
+	 */
+	@PostMapping("remove-from-sell-cart")
+	public String removeFromSellCart(
 		Model model,
 		@RequestParam UUID productId,
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
+		@ModelAttribute("sellCart") Cart sellCart
 	) {
-		basketService.decreaseQuantity(sellBasket, productId);
-		model.addAttribute("fullSellPrice", calculateFullBasketPrice(sellBasket));
+		Product product = productService.getProductById(productId).get();
+
+		sellCart.addOrUpdateItem(product, -1.0 * sellCart.getQuantity(product).getAmount().doubleValue());
+
+		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+		model.addAttribute("fullSellPrice", fp);
+
 		return "redirect:/sell";
 	}
 
-	@PostMapping("/increase-from-buyBasket")
-	public String increaseFromBuyBasket(
+
+	/**
+	 * Decreases a product quantity by one in the sell cart.
+	 *
+	 * @param model     the model to hold attributes for the view
+	 * @param productId the ID of the product to remove
+	 * @param sellCart  the cart for which the product quantity is changed
+	 * @return the redirect URL to the selling catalog
+	 */
+	@PostMapping("decrease-from-sell-cart")
+	public String decreaseFromSellCart(
 		Model model,
 		@RequestParam UUID productId,
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
+		@ModelAttribute("sellCart") Cart sellCart
 	) {
-		basketService.increaseQuantity(buyBasket, productId);
-		model.addAttribute("fullBuyPrice", calculateFullBasketPrice(buyBasket));
+		Product product = productService.getProductById(productId).get();
+
+		sellCart.addOrUpdateItem(product, -1);
+
+		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+		model.addAttribute("fullSellPrice", fp);
+		return "redirect:/sell";
+	}
+
+	/**
+	 * Adds a product to the buy cart.
+	 *
+	 * @param model     the model to hold attributes for the view
+	 * @param productId the ID of the product to add
+	 * @param buyCart   the cart to which the product is added
+	 * @return the redirect URL to the selling catalog
+	 */
+	@PostMapping("add-to-buy-cart")
+	public String addToBuyCart(
+		Model model,
+		@RequestParam UUID productId,
+		@ModelAttribute("buyCart") Cart buyCart
+	) {
+		Product product = productService.getProductById(productId).get();
+		buyCart.addOrUpdateItem(product, 1);
+
+		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
+		model.addAttribute("fullBuyPrice", fp);
+
 		return "redirect:/buy";
 	}
 
-	@PostMapping("/decrease-from-buyBasket")
-	public String decreaseFromBuyBasket(
+	/**
+	 * Removes a product entirely from the buy cart.
+	 *
+	 * @param model     the model to hold attributes for the view
+	 * @param productId the ID of the product to remove
+	 * @param buyCart   the cart from which the product is removed
+	 * @return the redirect URL to the buy catalog
+	 */
+	@PostMapping("remove-from-buy-cart")
+	public String removeFromBuyCart(
 		Model model,
 		@RequestParam UUID productId,
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
+		@ModelAttribute("buyCart") Cart buyCart
 	) {
-		basketService.decreaseQuantity(buyBasket, productId);
-		model.addAttribute("fullBuyPrice", calculateFullBasketPrice(buyBasket));
+		Product product = productService.getProductById(productId).get();
+
+		buyCart.addOrUpdateItem(product, -1.0 * buyCart.getQuantity(product).getAmount().doubleValue());
+
+		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
+		model.addAttribute("fullBuyPrice", fp);
 		return "redirect:/buy";
 	}
 
-	public double calculateFullBasketPrice(List<BasketItem> basket) {
+	/**
+	 * Decreases a product quantity by one in the buy cart.
+	 *
+	 * @param model     the model to hold attributes for the view
+	 * @param productId the ID of the product to remove
+	 * @param buyCart   the cart for which the product quantity is changed
+	 * @return the redirect URL to the selling catalog
+	 */
+	@PostMapping("decrease-from-buy-cart")
+	public String decreaseFromBuyCart(
+		Model model,
+		@RequestParam UUID productId,
+		@ModelAttribute("buyCart") Cart buyCart
+	) {
+		Product product = productService.getProductById(productId).get();
 
-		double fp = basket.stream()
-		.mapToDouble(bi -> {
-			if (bi.getProduct() instanceof Flower flower) {
-				return flower.getPricing().getSellPrice().getNumber().doubleValue() * 1.0 * bi.getQuantityAsInteger() * 1.0;
-			} else if (bi.getProduct() instanceof Bouquet bouquet) {
-				return bouquet.getPrice().getNumber().doubleValue() * 1.0 * bi.getQuantityAsInteger() * 1.0;
-			} else {
-				return 0;
-			}
-		}).sum();
-		System.out.println(fp);
+		buyCart.addOrUpdateItem(product, -1);
 
-		return fp;
+		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
+		model.addAttribute("fullBuyPrice", fp);
+		return "redirect:/buy";
 	}
 }
  

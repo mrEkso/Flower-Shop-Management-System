@@ -99,28 +99,44 @@
                 </div>
 
                 <!-- Products Section -->
-                <div class="mb-3">
-                    <input type="hidden" id="product-index" name="index" value="0">
-                    <label class="form-label" th:text="#{order.selectProducts}">Select Products</label>
-                    <div id="product-container" data-index="0">
-                    </div>
-                    <button
-                            hx-get="/services/add-product-row"
-                            hx-target="#product-container"
-                            hx-swap="beforeend"
-                            hx-include="#product-index"
-                            hx-on="htmx:afterRequest: document.getElementById('product-index').value = parseInt(document.getElementById('product-index').value) + 1;"
-                            type="button"
-                            class="btn btn-outline-primary mt-2">
-                        Add Product
-                    </button>
-                </div>
+                <!--<div class="mb-3">
+                    <form th:action="@{/services/add-product-row}" method="post">
+                        <input type="hidden" id="product-index" name="index" th:value="${index}">
+                        <label class="form-label" th:text="#{order.selectProducts}">Select Products</label>
+                        <div id="product-container">
+                            <div th:each="i : ${#numbers.sequence(0, index - 1)}">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary mt-2">
+                            Add Product
+                        </button>
+                    </form>
+                </div>-->
+
+                <!-- Add Product Button -->
+                <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
+                      method="post" class="mt-2">
+                    <input type="hidden" name="index" th:value="${productRows.size()}" />
+                    <button type="submit" class="btn btn-outline-primary">Add Product</button>
+                </form>
 
                 <!-- Notes -->
                 <div class="mb-3">
                     <label for="contractNotes" class="form-label" th:text="#{contract.notes}">Notes</label>
                     <textarea class="form-control" id="contractNotes" name="notes" rows="3"
                               placeholder="Enter any additional notes here">Test notes</textarea>
+                </div>
+
+                <!-- Service price -->
+                <div class="mb-3">
+                    <label for="servicePrice" class="form-label" th:text="#{contract.servicePrice}">Service
+                        price</label>
+                    <input class="form-control" id="servicePrice" name="servicePrice" placeholder="0" th:default="0">
+                </div>
+
+                <!-- Error Message -->
+                <div th:if="${error}" class="alert alert-danger" role="alert">
+                    <span th:text="${error}"></span>
                 </div>
 
                 <!-- Submit and Cancel Buttons -->
@@ -169,6 +185,18 @@
                               placeholder="Enter any additional notes here">Test notes</textarea>
                 </div>
 
+                <!-- Delivery price -->
+                <div class="mb-3">
+                    <label for="deliveryPrice" class="form-label" th:text="#{event.deliveryPrice}">Delivery
+                        price</label>
+                    <input class="form-control" id="deliveryPrice" name="deliveryPrice" placeholder="0" th:default="0">
+                </div>
+
+                <!-- Error Message -->
+                <div th:if="${error}" class="alert alert-danger" role="alert">
+                    <span th:text="${error}"></span>
+                </div>
+
                 <!-- Submit and Cancel Buttons -->
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary mr-2" th:text="#{action.submit}">Submit</button>
@@ -207,6 +235,11 @@
                     <label for="reservationNotes" class="form-label" th:text="#{reservation.notes}">Notes</label>
                     <textarea class="form-control" id="reservationNotes" name="notes" rows="3"
                               placeholder="Enter any additional notes here">Test notes</textarea>
+                </div>
+
+                <!-- Error Message -->
+                <div th:if="${error}" class="alert alert-danger" role="alert">
+                    <span th:text="${error}"></span>
                 </div>
 
                 <!-- Submit and Cancel Buttons -->

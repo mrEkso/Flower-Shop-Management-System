@@ -6,6 +6,7 @@ import flowershop.product.Pricing;
 import flowershop.product.ProductService;
 import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,22 +20,17 @@ import java.util.stream.Collectors;
 @Controller
 public class InventoryController {
 
-	private final List<DeletedProduct> deletedProducts = new ArrayList<>();
-	private final List<Flower> selectedFlowersForBouquet = new ArrayList<>();
+	public final List<DeletedProduct> deletedProducts = new ArrayList<>();
+	public final List<Flower> selectedFlowersForBouquet = new ArrayList<>();
 
-	private final ProductService productService;
+	public final ProductService productService;
 
 	public InventoryController(ProductService productService) {
 		this.productService = productService;
 	}
 
-	/*private Optional<Product> findProductByName(String name) {
-		return products.stream()
-			.filter(product -> product.getName().equalsIgnoreCase(name))
-			.findFirst();
-	}*/
-
 	@GetMapping("/inventory")
+	@PreAuthorize("hasRole('BOSS')")
 	public String inventoryMode(@RequestParam(required = false) String search,
 								@RequestParam(required = false, defaultValue = "all") String filter,
 								Model model) {
@@ -93,14 +89,14 @@ public class InventoryController {
 
 	private double computePricePerUnit(Product product) {
 		if (product instanceof Bouquet) {
-			// System.out.println( );
 			return ((Bouquet)product).getPrice().getNumber().doubleValue();
 		}
-		
+
 		return product.getPrice().getNumber().doubleValue();
 	}
 
 	@GetMapping("/inventory/create-bouquet")
+	@PreAuthorize("hasRole('BOSS')")
 	public String createBouquetMode(Model model) {
 		List<Map<String, Object>> flowersOnly = productService.getAllProducts().stream()
 			.filter(product -> product instanceof Flower) // Filter only Flower products
@@ -120,6 +116,7 @@ public class InventoryController {
 
 
 	@GetMapping("/inventory/choose-flower")
+	@PreAuthorize("hasRole('BOSS')")
 	public String showChooseModal(@RequestParam UUID flowerID, Model model) {
 		Optional<Product> selectedFlowerOpt = productService.getProductById(flowerID);
 
@@ -127,20 +124,24 @@ public class InventoryController {
 			.map(this::enrichProductData)
 			.collect(Collectors.toList());
 
-		selectedFlowerOpt.ifPresent(product -> {
+		if (selectedFlowerOpt.isPresent()) {
+			Product product = selectedFlowerOpt.get();
 			if (product instanceof Flower) {
 				model.addAttribute("selectedFlower", (Flower) product);
 				model.addAttribute("showChooseModal", true);
 			} else {
 				model.addAttribute("error", "Selected product is not a flower.");
 			}
-		});
+		} else {
+			model.addAttribute("error", "Product not found.");
+		}
 
 		model.addAttribute("createBouquetMode", true);
 		model.addAttribute("products", enrichedProducts);
 
 		return "inventory";
 	}
+
 
 
 
@@ -218,6 +219,7 @@ public class InventoryController {
 	}
 
 	@GetMapping("/inventory/deleted-products")
+	@PreAuthorize("hasRole('BOSS')")
 	public String showDeletedProducts(Model model) {
 		double totalLossSum = 0.0;
 		for (DeletedProduct deletedProduct : deletedProducts) {
@@ -242,6 +244,7 @@ public class InventoryController {
 
 
 	@GetMapping("/inventory/delete")
+	@PreAuthorize("hasRole('BOSS')")
 	public String showDeleteModal(@RequestParam("productID") UUID productID, Model model) {
 		Optional<Product> selectedProductOpt = productService.getProductById(productID);
 
@@ -276,39 +279,39 @@ public class InventoryController {
 
 	@PostMapping("/delete-product")
 	public String deleteProduct(@RequestParam String productName, @RequestParam int deleteQuantity) {
-			List<Flower> flowers = productService.findAllFlowers();
-			List<Bouquet> bouquets = productService.findAllBouquets();
-			for (Flower flower : flowers) {
-				if (flower.getName().equals(productName)) {
-					if (flower.getQuantity() >= deleteQuantity) {
-						productService.removeFlowers(flower, deleteQuantity);
-						DeletedProduct deletedProduct = new DeletedProduct(
-							flower.getName(),
-							flower.getPrice().getNumber().doubleValue(),
-							deleteQuantity,
-							flower.getPrice().getNumber().doubleValue() * deleteQuantity
-						);
-						deletedProducts.add(deletedProduct);
-						return "redirect:/inventory";
-					}
+		List<Flower> flowers = productService.findAllFlowers();
+		List<Bouquet> bouquets = productService.findAllBouquets();
+		for (Flower flower : flowers) {
+			if (flower.getName().equals(productName)) {
+				if (flower.getQuantity() >= deleteQuantity) {
+					productService.removeFlowers(flower, deleteQuantity);
+					DeletedProduct deletedProduct = new DeletedProduct(
+						flower.getName(),
+						flower.getPrice().getNumber().doubleValue(),
+						deleteQuantity,
+						flower.getPrice().getNumber().doubleValue() * deleteQuantity
+					);
+					deletedProducts.add(deletedProduct);
+					return "redirect:/inventory";
 				}
+			}
 
-			}
-			for (Bouquet bouquet : bouquets) {
-				if (bouquet.getName().equals(productName)) {
-					if (bouquet.getQuantity() >= deleteQuantity) {
-						productService.removeBouquet(bouquet, deleteQuantity);
-						DeletedProduct deletedProduct = new DeletedProduct(
-							bouquet.getName(),
-							bouquet.getPrice().getNumber().doubleValue(),
-							deleteQuantity,
-							bouquet.getPrice().getNumber().doubleValue() * deleteQuantity
-						);
-						deletedProducts.add(deletedProduct);
-						return "redirect:/inventory";
-					}
+		}
+		for (Bouquet bouquet : bouquets) {
+			if (bouquet.getName().equals(productName)) {
+				if (bouquet.getQuantity() >= deleteQuantity) {
+					productService.removeBouquet(bouquet, deleteQuantity);
+					DeletedProduct deletedProduct = new DeletedProduct(
+						bouquet.getName(),
+						bouquet.getPrice().getNumber().doubleValue(),
+						deleteQuantity,
+						bouquet.getPrice().getNumber().doubleValue() * deleteQuantity
+					);
+					deletedProducts.add(deletedProduct);
+					return "redirect:/inventory";
 				}
 			}
+		}
 
 		return "redirect:/inventory";
 	}

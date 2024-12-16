@@ -115,8 +115,7 @@
           />
           <button type="submit">Confirm Delete</button>
         </form>
-          <!--<button type="button" th:href="@{/inventory}">cancel</button>-->
-
+        <!--<button type="button" th:href="@{/inventory}">cancel</button>-->
       </div>
     </div>
 
@@ -149,9 +148,10 @@
             </tr>
           </tfoot>
         </table>
-          <form action="/inventory" method="get">
-              <button type="submit">Close</button>
-          </form>      </div>
+        <form action="/inventory" method="get">
+          <button type="submit">Close</button>
+        </form>
+      </div>
     </div>
 
     <div th:if="${showChooseModal}" class="modal">
