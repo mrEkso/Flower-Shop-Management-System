@@ -177,14 +177,13 @@ public class SalesController {
 	@PostMapping("/buy-from-cart")
 	public String buyFromCart(
 		@ModelAttribute("buyCart") Cart buyCart,
-		Model model,
-		@RequestParam(required = false) String paymentMethod
+		Model model
 	) {
 		if (buyCart == null || buyCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:buy";
 		}
-		salesService.buyProductsFromBasket(buyCart, paymentMethod);
+		salesService.buyProductsFromBasket(buyCart, "Card");
 
 		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
 		model.addAttribute("fullBuyPrice", fp);
