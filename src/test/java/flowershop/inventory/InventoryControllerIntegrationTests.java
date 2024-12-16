@@ -5,6 +5,7 @@ import flowershop.product.Bouquet;
 import flowershop.product.Flower;
 import flowershop.product.Pricing;
 import flowershop.product.ProductService;
+import flowershop.services.ServiceController;
 import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,10 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.Map;
 import java.util.UUID;
+
+/**
+ * Integration tests for {@link InventoryController}.
+ **/
 
 @WithMockUser(username = "boss", roles = {"BOSS", "USER"})
 public class InventoryControllerIntegrationTests extends AbstractIntegrationTests {

@@ -19,16 +19,36 @@ import java.util.stream.Collectors;
 
 @Controller
 public class InventoryController {
-
+	/**
+	 * List to keep track of deleted products along with their details.
+	 */
 	public final List<DeletedProduct> deletedProducts = new ArrayList<>();
+	/**
+	 * List to store flowers selected for bouquet creation.
+	 */
 	public final List<Flower> selectedFlowersForBouquet = new ArrayList<>();
-
+	/**
+	 * Service layer dependency for product-related operations.
+	 */
 	public final ProductService productService;
 
+	/**
+	 * Constructor to initialize the InventoryController with a ProductService instance.
+	 *
+	 * @param productService the service for managing products
+	 */
 	public InventoryController(ProductService productService) {
 		this.productService = productService;
 	}
 
+	/**
+	 * Displays the inventory page with optional search and filter parameters.
+	 *
+	 * @param search search term to filter products by name
+	 * @param filter filter to show specific product types (e.g., Flower, Bouquet)
+	 * @param model  the model to pass data to the view
+	 * @return the name of the inventory view
+	 */
 	@GetMapping("/inventory")
 	@PreAuthorize("hasRole('BOSS')")
 	public String inventoryMode(@RequestParam(required = false) String search,
@@ -37,12 +57,14 @@ public class InventoryController {
 		List<Product> products = productService.getAllProducts();
 		List<Product> filteredProducts = new ArrayList<>(products);
 
+		// Apply search filter
 		if (search != null && !search.isEmpty()) {
 			filteredProducts = filteredProducts.stream()
 				.filter(product -> product.getName().toLowerCase().contains(search.toLowerCase()))
 				.collect(Collectors.toList());
 		}
 
+		// Apply type filter
 		if (!filter.equals("all")) {
 			filteredProducts = filteredProducts.stream()
 				.filter(product -> {
@@ -68,6 +90,12 @@ public class InventoryController {
 		return "inventory";
 	}
 
+	/**
+	 * Enriches a product with additional display data.
+	 *
+	 * @param product the product to enrich
+	 * @return a map containing enriched product data
+	 */
 	private Map<String, Object> enrichProductData(Product product) {
 		Map<String, Object> data = new HashMap<>();
 		data.put("name", product.getName());
@@ -78,6 +106,12 @@ public class InventoryController {
 		return data;
 	}
 
+	/**
+	 * Determines the type of a product.
+	 *
+	 * @param product the product to check
+	 * @return the type of the product as a string
+	 */
 	private String determineType(Product product) {
 		if (product instanceof Flower) {
 			return "Flower";
@@ -87,6 +121,12 @@ public class InventoryController {
 		return "Unknown";
 	}
 
+	/**
+	 * Computes the price per unit for a product.
+	 *
+	 * @param product the product to calculate price for
+	 * @return the price per unit as a double
+	 */
 	private double computePricePerUnit(Product product) {
 		if (product instanceof Bouquet) {
 			return ((Bouquet)product).getPrice().getNumber().doubleValue();
@@ -95,6 +135,12 @@ public class InventoryController {
 		return product.getPrice().getNumber().doubleValue();
 	}
 
+	/**
+	 * Enables bouquet creation mode by filtering the product list to only include flowers.
+	 *
+	 * @param model the model to pass data to the view
+	 * @return the name of the inventory view
+	 */
 	@GetMapping("/inventory/create-bouquet")
 	@PreAuthorize("hasRole('BOSS')")
 	public String createBouquetMode(Model model) {
@@ -106,7 +152,6 @@ public class InventoryController {
 
 		model.addAttribute("products", flowersOnly);
 		model.addAttribute("createBouquetMode", true);
-		//model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
 		model.addAttribute("showModal", false);
 		model.addAttribute("showDeletedModal", false);
 		model.addAttribute("selectedFlower", productService.findAllFlowers().getFirst());
@@ -115,6 +160,13 @@ public class InventoryController {
 	}
 
 
+	/**
+	 * Shows a modal for choosing a flower to add to a bouquet.
+	 *
+	 * @param flowerID the ID of the selected flower
+	 * @param model    the model to pass data to the view
+	 * @return the name of the inventory view
+	 */
 	@GetMapping("/inventory/choose-flower")
 	@PreAuthorize("hasRole('BOSS')")
 	public String showChooseModal(@RequestParam UUID flowerID, Model model) {
@@ -144,8 +196,14 @@ public class InventoryController {
 
 
 
-
-	@PostMapping("/inventory/add-flower")
+	/**
+	 * Adds a flower to the list for bouquet creation.
+	 *
+	 * @param flowerID       the ID of the flower to be added
+	 * @param chooseQuantity the quantity of the flower to be added
+	 * @param model          the model to hold attributes for the view
+	 * @return the inventory view name
+	 */
 	public String addFlowerToBouquet(@RequestParam UUID flowerID,
 									 @RequestParam int chooseQuantity,
 									 Model model) {
@@ -162,11 +220,9 @@ public class InventoryController {
 					if (!selectedFlowersForBouquet.contains(selectedFlower)) {
 						selectedFlowersForBouquet.add(selectedFlower);
 					}
-					//productService.removeFlowers(selectedFlower, chooseQuantity);
 				}
 			}
 		}
-
 
 		List<Map<String, Object>> enrichedProducts = productService.getAllProducts().stream()
 			.map(this::enrichProductData)
@@ -180,7 +236,13 @@ public class InventoryController {
 		return "inventory";
 	}
 
-
+	/**
+	 * Creates a custom bouquet using the selected flowers.
+	 *
+	 * @param bouquetName the name of the custom bouquet
+	 * @param model       the model to hold attributes for the view
+	 * @return the inventory view name
+	 */
 	@PostMapping("/create-custom-bouquet")
 	public String createCustomBouquet(@RequestParam String bouquetName, Model model) {
 		if (!selectedFlowersForBouquet.isEmpty() && bouquetName != null && !bouquetName.isEmpty()) {
@@ -218,6 +280,12 @@ public class InventoryController {
 		return "inventory";
 	}
 
+	/**
+	 * Displays deleted products and calculates the total monetary loss.
+	 *
+	 * @param model the model to hold attributes for the view
+	 * @return the inventory view name
+	 */
 	@GetMapping("/inventory/deleted-products")
 	@PreAuthorize("hasRole('BOSS')")
 	public String showDeletedProducts(Model model) {
@@ -242,7 +310,13 @@ public class InventoryController {
 	}
 
 
-
+	/**
+	 * Displays a modal to confirm deletion of a product.
+	 *
+	 * @param productID the ID of the product to delete
+	 * @param model     the model to hold attributes for the view
+	 * @return the inventory view name
+	 */
 	@GetMapping("/inventory/delete")
 	@PreAuthorize("hasRole('BOSS')")
 	public String showDeleteModal(@RequestParam("productID") UUID productID, Model model) {
@@ -262,10 +336,12 @@ public class InventoryController {
 		return "inventory";
 	}
 
-
-
-
-
+	/**
+	 * Retrieves the quantity of a product.
+	 *
+	 * @param product the product whose quantity is retrieved
+	 * @return the quantity of the product
+	 */
 	public int getQuantity(Product product) {
 		if (product instanceof Flower) {
 			return ((Flower) product).getQuantity();
@@ -277,6 +353,13 @@ public class InventoryController {
 		return 0;
 	}
 
+	/**
+	 * Deletes a product and records the loss caused by the deletion.
+	 *
+	 * @param productName    the name of the product to delete
+	 * @param deleteQuantity the quantity of the product to delete
+	 * @return the redirect path to the inventory view
+	 */
 	@PostMapping("/delete-product")
 	public String deleteProduct(@RequestParam String productName, @RequestParam int deleteQuantity) {
 		List<Flower> flowers = productService.findAllFlowers();
