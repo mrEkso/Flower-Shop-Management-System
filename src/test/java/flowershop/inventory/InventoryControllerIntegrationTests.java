@@ -36,7 +36,7 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
   public void testInventoryMode() {
     Model model = new ExtendedModelMap();
 
-    String viewName = inventoryController.inventoryMode(null, "all", model);
+    String viewName = inventoryController.inventoryMode(null, "all", false, model);
 
     assertThat(viewName).isEqualTo("inventory");
 
@@ -48,7 +48,7 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
   public void testSearchFunctionality() {
     Model model = new ExtendedModelMap();
 
-    String viewName = inventoryController.inventoryMode("Rose", "all", model);
+    String viewName = inventoryController.inventoryMode("Rose", "all",false, model);
 
     assertThat(viewName).isEqualTo("inventory");
 
@@ -76,7 +76,7 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
   public void testInventoryModeWithFilter() {
     Model model = new ExtendedModelMap();
 
-    String viewName = inventoryController.inventoryMode(null, "Flower", model);
+    String viewName = inventoryController.inventoryMode(null, "Flower", false, model);
 
     assertThat(viewName).isEqualTo("inventory");
 
@@ -90,8 +90,9 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
   public void testDeleteProduct() {
     String productName = "Rose";
     int quantity = 2;
+	Model model = new ExtendedModelMap();
 
-    String viewName = inventoryController.deleteProduct(productName, quantity);
+	  String viewName = inventoryController.deleteProduct(productName, quantity, model);
 
     assertThat(viewName).isEqualTo("redirect:/inventory");
   }
@@ -136,8 +137,9 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
   public void testDeleteProductWithInsufficientQuantity() {
     String productName = "Rose";
     int excessiveQuantity = 999;
+	Model model = new ExtendedModelMap();
 
-    String viewName = inventoryController.deleteProduct(productName, excessiveQuantity);
+	String viewName = inventoryController.deleteProduct(productName, excessiveQuantity, model);
 
     assertThat(viewName).isEqualTo("redirect:/inventory");
   }
@@ -191,19 +193,23 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
 
   @Test
   public void testDeleteProductAllStock() {
-    String productName = "Rose";
+	  Model model = new ExtendedModelMap();
+	  String productName = "Rose";
+
     Pricing pricing = new Pricing(Money.of(1.5, "EUR"), Money.of(2, "EUR"));
     Flower flower = new Flower("Tulip", pricing, "Red", 5);
     productService.addFlower(flower);
 
-    String viewName = inventoryController.deleteProduct(productName, 5);
+    String viewName = inventoryController.deleteProduct(productName, 5, model);
 
     assertThat(viewName).isEqualTo("redirect:/inventory");
   }
 
   @Test
   public void testDeleteNonExistentProduct() {
-    String viewName = inventoryController.deleteProduct("NonExistent", 1);
+	  Model model = new ExtendedModelMap();
+
+	  String viewName = inventoryController.deleteProduct("NonExistent", 1, model);
 
     assertThat(viewName).isEqualTo("redirect:/inventory");
   }

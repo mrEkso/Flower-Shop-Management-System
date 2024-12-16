@@ -46,25 +46,27 @@ public class InventoryController {
 	 *
 	 * @param search search term to filter products by name
 	 * @param filter filter to show specific product types (e.g., Flower, Bouquet)
+	 * @param quantityProblemLabel appear when the user try to over delete quantity product
 	 * @param model  the model to pass data to the view
 	 * @return the name of the inventory view
 	 */
 	@GetMapping("/inventory")
 	@PreAuthorize("hasRole('BOSS')")
-	public String inventoryMode(@RequestParam(required = false) String search,
-								@RequestParam(required = false, defaultValue = "all") String filter,
-								Model model) {
+	public String inventoryMode(
+		@RequestParam(required = false) String search,
+		@RequestParam(required = false, defaultValue = "all") String filter,
+		@RequestParam(required = false) Boolean quantityProblemLabel,
+		Model model) {
+
 		List<Product> products = productService.getAllProducts();
 		List<Product> filteredProducts = new ArrayList<>(products);
 
-		// Apply search filter
 		if (search != null && !search.isEmpty()) {
 			filteredProducts = filteredProducts.stream()
 				.filter(product -> product.getName().toLowerCase().contains(search.toLowerCase()))
 				.collect(Collectors.toList());
 		}
 
-		// Apply type filter
 		if (!filter.equals("all")) {
 			filteredProducts = filteredProducts.stream()
 				.filter(product -> {
@@ -87,8 +89,14 @@ public class InventoryController {
 		model.addAttribute("selectedProduct", productService.findAllFlowers().getFirst());
 		model.addAttribute("showModal", true);
 		model.addAttribute("showDeletedModal", false);
+
+		if (quantityProblemLabel != null && quantityProblemLabel) {
+			model.addAttribute("quantityProblemLabel", true);
+		}
+
 		return "inventory";
 	}
+
 
 	/**
 	 * Enriches a product with additional display data.
@@ -155,7 +163,7 @@ public class InventoryController {
 		model.addAttribute("showModal", false);
 		model.addAttribute("showDeletedModal", false);
 		model.addAttribute("selectedFlower", productService.findAllFlowers().getFirst());
-		model.addAttribute("showChooseModal", true);
+		//model.addAttribute("showChooseModal", true);
 		return "inventory";
 	}
 
@@ -361,7 +369,7 @@ public class InventoryController {
 	 * @return the redirect path to the inventory view
 	 */
 	@PostMapping("/delete-product")
-	public String deleteProduct(@RequestParam String productName, @RequestParam int deleteQuantity) {
+	public String deleteProduct(@RequestParam String productName, @RequestParam int deleteQuantity, Model model) {
 		List<Flower> flowers = productService.findAllFlowers();
 		List<Bouquet> bouquets = productService.findAllBouquets();
 		for (Flower flower : flowers) {
@@ -376,6 +384,10 @@ public class InventoryController {
 					);
 					deletedProducts.add(deletedProduct);
 					return "redirect:/inventory";
+				}
+				else {
+					model.addAttribute("quantityProblemLabel", true);
+					return "redirect:/inventory?quantityProblemLabel=true";
 				}
 			}
 
@@ -393,9 +405,14 @@ public class InventoryController {
 					deletedProducts.add(deletedProduct);
 					return "redirect:/inventory";
 				}
+				else {
+					model.addAttribute("quantityProblemLabel", true);
+					return "redirect:/inventory?quantityProblemLabel=true";
+				}
 			}
 		}
 
 		return "redirect:/inventory";
 	}
 }
+
