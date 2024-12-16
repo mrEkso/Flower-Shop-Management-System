@@ -1,5 +1,6 @@
 package flowershop.finances;
 
+import flowershop.clock.ClockService;
 import flowershop.services.AbstractOrder;
 import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.Accountancy;
@@ -29,20 +30,21 @@ public class CashRegisterService implements Accountancy {
 	private final OrderManagement<AbstractOrder> orderManagement;
 
 	private final CashRegisterRepository cashRegisterRepository;
+	private final ClockService clockService;
 
 
 	@Autowired
 	public CashRegisterService(OrderManagement<AbstractOrder> orderManagement,
-							   CashRegisterRepository cashRegisterRepository) {
+							   CashRegisterRepository cashRegisterRepository, ClockService clockService) {
 		this.orderManagement = orderManagement;
 		this.cashRegisterRepository = cashRegisterRepository;
 		Streamable<AbstractOrder> previousOrders = Optional.ofNullable(orderManagement.findBy(OrderStatus.PAID))
 			.orElse(Streamable.empty());
 		for (Order order : previousOrders) {
-			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order);
+			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order, clockService.now());
 			this.add(convertedOrder);
 		}
-
+		this.clockService = clockService;
 	}
 
 
@@ -84,7 +86,7 @@ public class CashRegisterService implements Accountancy {
 	public void onOrderPaid(OrderEvents.OrderPaid event) {
 		AbstractOrder order = (AbstractOrder) event.getOrder();
 		//convert order to AccountancyEntry
-		AccountancyEntryWrapper convertedOrder = new AccountancyEntryWrapper(order);
+		AccountancyEntryWrapper convertedOrder = new AccountancyEntryWrapper(order,clockService.now());
 		this.add(convertedOrder);
 	}
 
@@ -314,4 +316,6 @@ public class CashRegisterService implements Accountancy {
 		return cashRegisterRepository.findFirstByOrderById()
 			.orElseThrow(() -> new IllegalStateException("CashRegister instance not found"));
 	}
+
+
 }

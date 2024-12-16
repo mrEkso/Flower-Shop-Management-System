@@ -1,5 +1,6 @@
 package flowershop.finances;
 
+import flowershop.clock.ClockService;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.time.Interval;
@@ -25,6 +26,7 @@ public class FinancesController {
 
 
 	private final CashRegisterService cashRegisterService;
+	private final ClockService clockService;
 	private List<AccountancyEntryWrapper> filteredOrdersList = new ArrayList<>();
 	private List<AccountancyEntryWrapper> filteredAndCutOrdersList;
 	private HashSet<AccountancyEntryWrapper> filteredByDates = new HashSet<>();
@@ -34,11 +36,10 @@ public class FinancesController {
 	private boolean isFilteredByDates;
 	private boolean isFilteredByCategory;
 	private String category;
-	private LocalDate todayDate;
 
-	public FinancesController(CashRegisterService cashRegisterService) {
+	public FinancesController(CashRegisterService cashRegisterService, ClockService clockService) {
 		this.cashRegisterService = cashRegisterService;
-		this.todayDate = cashRegisterService.getActualDate();
+		this.clockService = clockService;
 	}
 
 	/**
@@ -139,6 +140,7 @@ public class FinancesController {
 		model.addAttribute("date1", date1);
 		model.addAttribute("date2", date2);
 		model.addAttribute("category", category);
+		model.addAttribute("todayDate",clockService.getCurrentDate());
 	}
 
 	/**
@@ -181,6 +183,7 @@ public class FinancesController {
 		setFilteredOrdersList(filteredOrdersList, 100);
 		model.addAttribute("transactions", filteredAndCutOrdersList);
 		model.addAttribute("currentBalance", cashRegisterService.getBalance());
+		model.addAttribute("todayDate",clockService.getCurrentDate());
 		return "finances";
 	}
 

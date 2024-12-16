@@ -72,9 +72,9 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 	protected AccountancyEntryWrapper() {
 	}
 
-	public AccountancyEntryWrapper(Order order) {
+	public AccountancyEntryWrapper(Order order, LocalDateTime time) {
 		super(order.getTotal());
-		this.timestamp = LocalDateTime.now();
+		this.timestamp = time;
 		if (order instanceof WholesalerOrder) {
 			this.category = Category.Einkauf;
 		} else if (order instanceof ContractOrder) {

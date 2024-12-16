@@ -96,31 +96,31 @@ public class AccountancyEntryWrapperTest {
 
 	@Test
 	void testGetCategoryForWholesalerOrder() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(wholesalerOrder);
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(wholesalerOrder,LocalDateTime.now());
 		assertEquals("Einkauf", wrapper.getCategory());
 	}
 
 	@Test
 	void testGetCategoryForContractOrder() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(contractOrder);
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(contractOrder,LocalDateTime.now());
 		assertEquals("Vertraglicher Verkauf", wrapper.getCategory());
 	}
 
 	@Test
 	void testGetCategoryForEventOrder() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(eventOrder);
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(eventOrder,LocalDateTime.now());
 		assertEquals("Veranstaltung Verkauf", wrapper.getCategory());
 	}
 
 	@Test
 	void testGetCategoryForReservationOrder() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(reservationOrder);
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(reservationOrder,LocalDateTime.now());
 		assertEquals("Reservierter Verkauf", wrapper.getCategory());
 	}
 
 	@Test
 	void testGetCategoryForSimpleOrder() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder);
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder,LocalDateTime.now());
 		assertEquals("Einfacher Verkauf", wrapper.getCategory());
 	}
 
@@ -128,13 +128,13 @@ public class AccountancyEntryWrapperTest {
 	void testConstructorThrowsForUnrecognizedOrder() {
 		//AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(fake);
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-			new AccountancyEntryWrapper(fake);
+			new AccountancyEntryWrapper(fake,LocalDateTime.now());
 		});
 		assertEquals("Order is not recognized", exception.getMessage());
 	}
 	@Test
 	void testGetTimestamp() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder);
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder,LocalDateTime.now());
 		LocalDateTime now = LocalDateTime.now();
 		wrapper.getTimestamp();
 		assertNotNull(wrapper.getTimestamp(), "Timestamp should not be null");
@@ -144,14 +144,14 @@ public class AccountancyEntryWrapperTest {
 
 	@Test
 	void testGetItemsEmptyMap() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder);
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder,LocalDateTime.now());
 		assertNotNull(wrapper.getItems(), "Items map should not be null");
 		//assertTrue(wrapper.getItems().isEmpty(), "Items map should be empty by default");
 	}
 
 	@Test
 	void testGetItemsModifiedMap() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder);
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder,LocalDateTime.now());
 		Map<String, Quantity> mockItems = new HashMap<>();
 		mockItems.put("Product 1", Quantity.of(2));
 		mockItems.put("Product 2", Quantity.of(5));
