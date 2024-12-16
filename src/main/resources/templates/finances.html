@@ -15,6 +15,15 @@
         <div class="col" th:replace="~{navbar}"></div>
 
         <div class="col d-flex flex-column align-items-center justify-items-center p-5">
+            <div class="position-absolute" style="top: 10px; right: 20px;">
+                <div class="d-flex align-items-center">
+                    <label class="mr-2" th:text="${todayDate}"></label>
+                    <form th:action="@{/toggleState}" method="post">
+                        <button type="submit" class="btn btn-primary btn-sm"
+                                th:text="${shopOpened ? #{finances.day.end} : #{finances.day.start}}"></button>
+                    </form>
+                </div>
+            </div>
             <div class="row"><h2 th:text="#{finances.title}">Transactions History</h2></div>
             <div class="row d-flex flex-column justify-content-center mb-4">
                 <div class="row d-flex">
@@ -23,11 +32,11 @@
                     <input type="date" name="date1" th:value="${date1}" required/>
                     <p class="mb-0 mx-2" th:text="#{finances.until}"></p>
                     <input type="date" name="date2" th:value="${date2}" required/>
-                    <button class="btn btn-primary mb-0 mx-2" th:text="Filter"></button>
+                    <button class="btn btn-primary mb-0 mx-2" th:text="#{finances.filter.button.set}"></button>
                 </form>
 
                 <form th:method="get" th:action="@{/resetDates}">
-                    <button class="btn btn-secondary" th:text="#{finances.filter.button}"></button>
+                    <button class="btn btn-secondary" th:text="#{finances.filter.button.reset}"></button>
                 </form>
                 </div>
                 <div class="row d-flex gap-3">
@@ -74,10 +83,10 @@
                                 th:selected="${category}=='wholesaler'"
                         />
                     </select>
-                    <button class="btn btn-primary mb-0 mx-2" th:text="#{finances.filter.button}"></button>
+                    <button class="btn btn-primary mb-0 mx-2" th:text="#{finances.filter.button.set}"></button>
                 </form>
                 <form th:method="get" th:action="@{/resetCategory}">
-                    <button class="btn btn-secondary" th:text="Reset"></button>
+                    <button class="btn btn-secondary" th:text="#{finances.filter.button.reset}"></button>
                 </form>
                 </div>
             </div>

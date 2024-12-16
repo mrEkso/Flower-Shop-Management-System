@@ -33,9 +33,11 @@ public class FinancesController {
 	private boolean isFilteredByDates;
 	private boolean isFilteredByCategory;
 	private String category;
+	private LocalDate todayDate;
 
 	public FinancesController(CashRegisterService cashRegisterService) {
 		this.cashRegisterService = cashRegisterService;
+		this.todayDate = cashRegisterService.getActualDate();
 	}
 
 
