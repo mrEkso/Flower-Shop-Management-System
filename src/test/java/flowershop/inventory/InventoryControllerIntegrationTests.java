@@ -141,7 +141,7 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
 
 	String viewName = inventoryController.deleteProduct(productName, excessiveQuantity, model);
 
-    assertThat(viewName).isEqualTo("redirect:/inventory");
+    assertThat(viewName).isEqualTo("redirect:/inventory?quantityProblemLabel=true");
   }
 
   @Test
