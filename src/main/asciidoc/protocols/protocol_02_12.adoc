@@ -1,0 +1,68 @@
+= Protokoll Gruppe 07
+
+Treffen am 02.12.2024
+
+Ort:      APB +
+Beginn:   9:30 Uhr +
+Ende:     10:35 Uhr
+
+__Schriftführer: Vadym Zaitsev__
+
+*Nächstes Treffen:* +
+9.12.2024, 9:20 Uhr, APB
+
+__Teilnehmer:__
+//Tabellarisch oder Aufzählung, Kennzeichnung von Teilnehmern mit besonderer Rolle (z.B. Kunde)
+
+- Vincent Kruse, Tutor
+- Vadym Zaitsev, vertreter des Scrum-masters, Schriftfuehrer
+- Oleh Khmelyk
+- Bechir Sayadi
+- Davyd Okaianchenko
+- Valeriia Sarkisian
+- Paul-Valentin Vela
+
+== Bemerkungen
+Achtes Treffen. Erstes Scrum-meeting.
+
+== Retrospektive des letzten Sprints
+// Wie ist der Status der im letzten Sprint erstellten Issues/veteilten Aufgaben?
+
+// See http://asciidoctor.org/docs/user-manual/=tables
+[option="headers"]
+|===
+|Package |Aufgabe |Status |Bemerkung
+|Calender     |Bug Fixing       |in Prozess      |
+|Calender     |Styling       |fertig      |
+|Inventory     |Unit-Tests       |in Prozess      |
+|Services     |Unit-Tests       |rund 50% fertig      |
+|Services     |Bug Fixing       |in Prozess      |
+|Services     |JavaScript mit reinen HTML und CSS ersetzen       |fertig      |
+|Sales     |Bug Fixing für Blumen       |in Prozess      |
+|Sales     |Summe im Korb       |fertig      |
+|Sales     |Unit-Tests       |in Prozess      |
+|===
+
+
+== Aktueller Stand
+Einige Unit-Tests sind schon schon geschrieben. Bis übernächstes Montag soll das Projekt für Cross-testing fertig sein. 
+
+== Planung des nächsten Sprints
+
+// See http://asciidoctor.org/docs/user-manual/=tables
+[option="headers"]
+|===
+|Package |Aufgabe |Beschreibung |Verantwortliche(r) |Deadline
+|Services     |Detallierter Ansicht     |Eine seite, die Zusätzliche info über die Service anzeigen wird            |Davyd und Valeriia                |04.12.2024
+|Services |Folgendes Status Knopf |Statt Radiobuttons für Status, eine einzide Knopf einführen |Davyd und Valeriia |04.12.2024
+|Services |Bug Fixes | |Davyd und Valeriia |04.12.2024
+|Calender |Verbindung mit Services  |Services müssen automatisch im Calendar erscheinen |Paul und Bechir |04.12.2024
+|Calender |Detallierter Ansicht     |Eine seite, die Zusätzliche info über die Service im Calendar anzeigen wird            |Paul und Bechir                |04.12.2024
+|Services |Produkte zur Events und Reservierungen anknüpfen | |Davyd und Valeriia |16.12.2024
+|Services |Automatisches bestellung von Blumen für die Veranstaltungen  | |Davyd und Valeriia |16.12.2024
+|Sales |Verzögerung von der Großhändlerbestellung |Neue Blumen sollen nur am nächsten Tag im Inventar erscheinen |Oleh und Andrejs |16.12.2024
+|Finances |Tägliche und Monatliche Finanzübersichten |Erstellung von PDF-übersichten |Vadym |16.12.2024
+|Alle |Unit-Tests |40% in SonarCube |Alle |16.12.2024
+|Dokumantation |Nicht vergessen | |Alle |
+|Alle |Java-Doc |Für Klassen und wichtigsten Methoden |Alle |
+|===

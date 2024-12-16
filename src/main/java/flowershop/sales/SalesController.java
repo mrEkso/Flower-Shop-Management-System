@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.salespointframework.order.Cart;
+
 import org.salespointframework.catalog.Product;
 
 import java.util.*;
@@ -16,33 +18,28 @@ import java.util.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
-import jakarta.servlet.http.HttpServletRequest;
 
-
-@SessionAttributes({"buyBasket", "sellBasket"})
+@SessionAttributes({"fullSellPrice", "fullBuyPrice",
+	"buyCart", "sellCart"})
 @Controller
 public class SalesController {
 
 	private final ProductService productService;
 	private final SalesService salesService;
-	private final WholesalerService wholesalerService;
-	private final BasketService basketService;
 
-	SalesController(ProductService productService, SalesService salesService, WholesalerService wholesalerService, BasketService basketService) {
+	SalesController(ProductService productService, SalesService salesService) {
 		this.productService = productService;
 		this.salesService = salesService;
-		this.wholesalerService = wholesalerService;
-		this.basketService = basketService;
 	}
 
-	@ModelAttribute("buyBasket")
-	public List<BasketItem> createBuyBasket() {
-		return new ArrayList<>();
+	@ModelAttribute("buyCart")
+	Cart initializeBuyCart() {
+		return new Cart();
 	}
 
-	@ModelAttribute("sellBasket")
-	public List<BasketItem> createSellBasket() {
-		return new ArrayList<>();
+	@ModelAttribute("sellCart")
+	Cart initializeSellCart() {
+		return new Cart();
 	}
 
 	@GetMapping("/")
@@ -52,9 +49,8 @@ public class SalesController {
 
 	@GetMapping("/sell")
 	public String sellCatalog(Model model,
-					   @RequestParam(required = false) String filterItem,
-					   @RequestParam(required = false) String searchInput,
-					   @ModelAttribute("sellBasket") List<BasketItem> sellBasket) {
+							  @RequestParam(required = false) String filterItem,
+							  @RequestParam(required = false) String searchInput) {
 
 		List<Flower> flowers = productService.findAllFlowers();
 		List<Bouquet> bouquets = productService.findAllBouquets();
@@ -73,171 +69,186 @@ public class SalesController {
 			bouquets = productService.findBouquetsByName(searchInput);
 		}
 
+		// Filter products with quantity > 0
+		flowers = productService.filterFlowersInStock(flowers);
+		bouquets = productService.filterBouquetsInStock(bouquets);
+
+		// Add both flowers and bouquets together.
 		List<Product> products = new ArrayList<>();
 		products.addAll(flowers);
 		products.addAll(bouquets);
+
 		Set<String> colors = productService.getAllFlowerColors();
 
 		model.addAttribute("typeList", colors);
 		model.addAttribute("filterItem", filterItem);
 		model.addAttribute("searchInput", searchInput);
 		model.addAttribute("products", products);
-		model.addAttribute("flowers", flowers);
-		model.addAttribute("bouquets", bouquets);
-		model.addAttribute("sellBasket", sellBasket);
 
 		return "sales/sell";
 	}
 
 	@GetMapping("/buy")
 	public String buyCatalog(Model model,
-					  @RequestParam(required = false) String filterItem,
-					  @RequestParam(required = false) String searchInput,
-					  @ModelAttribute("buyBasket") List<BasketItem> buyBasket) {
+							 @RequestParam(required = false) String filterItem,
+							 @RequestParam(required = false) String searchInput) {
 
 		// Shouldn't allow to work with bouquets because wholesalers sell only flowers.
-		List<Flower> flowers = wholesalerService.findAllFlowers();
+		List<Flower> flowers = productService.findAllFlowers();
 
 		// Only by color? Seems reasonable but who knows.
 		if (filterItem != null && !filterItem.isEmpty()) {
-			flowers = wholesalerService.findFlowersByColor(filterItem);
+			flowers = productService.findFlowersByColor(filterItem);
 		}
 
 		if (searchInput != null && !searchInput.isEmpty()) {
-			flowers = wholesalerService.findFlowersByName(searchInput);
+			flowers = productService.findFlowersByName(searchInput);
 		}
 
-		Set<String> colors = wholesalerService.findAllFlowerColors();
+		Set<String> colors = productService.getAllFlowerColors();
 
 		model.addAttribute("typeList", colors);
 		model.addAttribute("filterItem", filterItem);
 		model.addAttribute("searchInput", searchInput);
 		model.addAttribute("flowers", flowers);
-		model.addAttribute("buyBasket", buyBasket);
 
 		return "sales/buy";
 	}
 
-	@PostMapping("/add-to-buyBasket")
-	public String addToBuyBasket(
-		Model model,
-		@RequestParam UUID productId, // Use UUID instead of product name
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
-	) {
-
-		basketService.addToBasket(buyBasket, productId);
-
-		//model.addAttribute("buyBasket", buyBasket);
-
-		return "redirect:/buy";
-	}
-
-	@PostMapping("/add-to-sellBasket")
-	public String addToSellBasket(
-		Model model,
-		@RequestParam UUID productId, // Use UUID instead of product name
-		@RequestParam(required = false) String redirectPage,
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
-	) {
-		basketService.addToBasket(sellBasket, productId);
-
-		//model.addAttribute("sellBasket", sellBasket);
-
-		return "redirect:/sell";
-	}
-
-	@PostMapping("/remove-from-sellBasket")
-	public String removeFromSellBasket(
-		@RequestParam UUID productId, // Use UUID instead of product name
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket,
-		HttpServletRequest request
-	) {
-		basketService.removeFromBasket(sellBasket, productId);
-		return "redirect:/sell";
-	}
-
-	@PostMapping("/remove-from-buyBasket")
-	public String removeFromBuyBasket(
-		@RequestParam UUID productId, // Use UUID instead of product name
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket,
-		HttpServletRequest request
-	) {
-		basketService.removeFromBasket(buyBasket, productId);
-		return "redirect:/buy";
-	}
-
 	/**
-	 * Registers a {@link WholesalerOrder} instance based on the {@link BasketItem}s.
+	 * Registers a {@link SimpleOrder} instance based on the {@link Cart}.
 	 */
-	@PostMapping("buy-from-buyBasket")
-	public String buyFromBasket(
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket,
-		HttpServletRequest request,
-		Model model
+	@PostMapping("/sell-from-cart")
+	public String sellFromCart(
+		@ModelAttribute("sellCart") Cart sellCart, Model model
 	) {
-		if (buyBasket == null || buyBasket.isEmpty()) {
-			model.addAttribute("message", "Your buyBasket is empty.");
-			return "redirect:/buy";
-		}
 
-		salesService.buyProductsFromBasket(buyBasket, "Card");
-
-		model.addAttribute("message", "Your order has been successfully placed.");
-		return "redirect:/buy";
-	}
-
-	/**
-	 * Registers a {@link SimpleOrder} instance based on the {@link BasketItem}s.
-	 */
-	@PostMapping("/sell-from-basket")
-	public String sellFromBasket(
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket,
-		HttpServletRequest request,
-		Model model
-	) {
-		if (sellBasket == null || sellBasket.isEmpty()) {
+		if (sellCart == null || sellCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:sell";
 		}
-		salesService.sellProductsFromBasket(sellBasket, "Cash");
+		salesService.sellProductsFromBasket(sellCart, "Cash");
+
+		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+		model.addAttribute("fullSellPrice", fp);
 
 		model.addAttribute("message", "Your order has been successfully placed.");
 		return "redirect:sell";
 	}
 
-	@PostMapping("/increase-from-sellBasket")
-	public String increaseFromSellBasket(
-		@RequestParam UUID productId,
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
+
+	/**
+	 * Registers a {@link SimpleOrder} instance based on the {@link Cart}.
+	 */
+	@PostMapping("/buy-from-cart")
+	public String buyFromCart(
+		@ModelAttribute("buyCart") Cart buyCart,
+		Model model
 	) {
-		basketService.increaseQuantity(sellBasket, productId);
+		if (buyCart == null || buyCart.isEmpty()) {
+			model.addAttribute("message", "Your basket is empty.");
+			return "redirect:buy";
+		}
+		salesService.buyProductsFromBasket(buyCart, "Cash");
+
+		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
+		model.addAttribute("fullBuyPrice", fp);
+
+		model.addAttribute("message", "Your order has been successfully placed.");
+		return "redirect:buy";
+	}
+
+
+	@PostMapping("add-to-sell-cart")
+	public String addToSellCart(
+		Model model,
+		@RequestParam UUID productId,
+		@ModelAttribute("sellCart") Cart sellCart
+	) {
+		Product product = productService.getProductById(productId).get();
+		sellCart.addOrUpdateItem(product, 1);
+
+		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+		model.addAttribute("fullSellPrice", fp);
+
 		return "redirect:/sell";
 	}
 
-	@PostMapping("/decrease-from-sellBasket")
-	public String decreaseFromSellBasket(
+	@PostMapping("remove-from-sell-cart")
+	public String removeFromSellCart(
+		Model model,
 		@RequestParam UUID productId,
-		@ModelAttribute("sellBasket") List<BasketItem> sellBasket
+		@ModelAttribute("sellCart") Cart sellCart
 	) {
-		basketService.decreaseQuantity(sellBasket, productId);
+		Product product = productService.getProductById(productId).get();
+
+		sellCart.addOrUpdateItem(product, -1.0 * sellCart.getQuantity(product).getAmount().doubleValue());
+
+		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+		model.addAttribute("fullSellPrice", fp);
+
 		return "redirect:/sell";
 	}
 
-	@PostMapping("/increase-from-buyBasket")
-	public String increaseFromBuyBasket(
+	
+
+	@PostMapping("decrease-from-sell-cart")
+	public String decreaseFromSellCart(
+		Model model,
 		@RequestParam UUID productId,
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
+		@ModelAttribute("sellCart") Cart sellCart
 	) {
-		basketService.increaseQuantity(buyBasket, productId);
+		Product product = productService.getProductById(productId).get();
+
+		sellCart.addOrUpdateItem(product, -1);
+
+		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+		model.addAttribute("fullSellPrice", fp);
+		return "redirect:/sell";
+	}
+
+	@PostMapping("add-to-buy-cart")
+	public String addToBuyCart(
+		Model model,
+		@RequestParam UUID productId,
+		@ModelAttribute("buyCart") Cart buyCart
+	) {
+		Product product = productService.getProductById(productId).get();
+		buyCart.addOrUpdateItem(product, 1);
+
+		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
+		model.addAttribute("fullBuyPrice", fp);
+
 		return "redirect:/buy";
 	}
 
-	@PostMapping("/decrease-from-buyBasket")
-	public String decreaseFromBuyBasket(
+	@PostMapping("remove-from-buy-cart")
+	public String removeFromBuyCart(
+		Model model,
 		@RequestParam UUID productId,
-		@ModelAttribute("buyBasket") List<BasketItem> buyBasket
+		@ModelAttribute("buyCart") Cart buyCart
 	) {
-		basketService.decreaseQuantity(buyBasket, productId);
+		Product product = productService.getProductById(productId).get();
+
+		buyCart.addOrUpdateItem(product, -1.0 * buyCart.getQuantity(product).getAmount().doubleValue());
+
+		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
+		model.addAttribute("fullBuyPrice", fp);
+		return "redirect:/buy";
+	}
+
+	@PostMapping("decrease-from-buy-cart")
+	public String decreaseFromBuyCart(
+		Model model,
+		@RequestParam UUID productId,
+		@ModelAttribute("buyCart") Cart buyCart
+	) {
+		Product product = productService.getProductById(productId).get();
+
+		buyCart.addOrUpdateItem(product, -1);
+
+		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
+		model.addAttribute("fullBuyPrice", fp);
 		return "redirect:/buy";
 	}
 }

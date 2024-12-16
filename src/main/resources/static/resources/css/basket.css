@@ -36,8 +36,12 @@
   height: 12px;
 }
 
+.close-btn {
+  border-color: #eeeeee;
+}
+
 .basket-card {
-  width: calc(100% - 40px);
+  width: calc(100% - 5px);
   padding: 10px;
   background-color: #fff;
   border: 1px solid #ddd;
@@ -64,10 +68,12 @@
   overflow: hidden;
 }
 
-.close-btn {
-  width: 16px;
-  height: 16px;
+.basket-minus-btn {
+  width: 30px;
+  height: 30px;
   cursor: pointer;
+  border-color: #eeeeee;
+  font-size: 16px;
 }
 
 .basket-card-body {
@@ -87,4 +93,11 @@
   font-size: 14px;
   color: #888;
   margin-top: 8px;
+}
+
+.basket-total-price {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 5px;
+  padding-right: 5px;
 }

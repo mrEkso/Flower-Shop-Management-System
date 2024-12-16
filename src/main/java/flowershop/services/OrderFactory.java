@@ -74,8 +74,8 @@ public class OrderFactory {
 	 * @param notes        additional notes for the order
 	 * @return a new `ContractOrder`
 	 */
-	public ContractOrder createContractOrder(String contractType, LocalDateTime startDate, LocalDateTime endDate, String address, Client client, String notes) {
-		return new ContractOrder(getDefaultUserAccount(), contractType, startDate, endDate, address, client, notes);
+	public ContractOrder createContractOrder(String contractType, String frequency, LocalDateTime startDate, LocalDateTime endDate, String address, Client client, String notes) {
+		return new ContractOrder(getDefaultUserAccount(), contractType, frequency, startDate, endDate, address, client, notes);
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class OrderFactory {
 	 * @return a new `ContractOrder`
 	 */
 	public ContractOrder createContractOrder(String contractType, String frequency, LocalDateTime startDate, LocalDateTime endDate, Client client) {
-		return new ContractOrder(getDefaultUserAccount(), contractType, startDate, endDate, frequency, client, "");
+		return new ContractOrder(getDefaultUserAccount(), frequency, contractType, startDate, endDate, frequency, client, "");
 	}
 
 	/**

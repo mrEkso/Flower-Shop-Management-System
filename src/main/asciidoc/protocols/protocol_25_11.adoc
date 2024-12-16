@@ -1,0 +1,47 @@
+= Protokoll Gruppe 07
+
+Treffen am 25.11.2024
+
+Ort:      JAN + 
+Beginn:   9:20 Uhr +
+Ende:     11:00 Uhr
+
+__Schriftführer: Vadym Zaitsev__
+
+*Nächstes Treffen:* +
+02.12.2024, 9:20 Uhr, Ort des nächsten Treffens
+
+__Teilnehmer:__
+//Tabellarisch oder Aufzählung, Kennzeichnung von Teilnehmern mit besonderer Rolle (z.B. Kunde)
+
+- Vincent Kruse, Tutor
+- Vadym Zaitsev, vertreter des Scrum-masters, Schriftfuehrer
+- Oleh Khmelyk
+- Bechir Sayadi
+- Davyd Okaianchenko
+- Valeriia Sarkisian
+
+== Bemerkungen
+Siebtes Treffen. *Zwischenpräsentation.*
+
+== Retrospektive des letzten Sprints
+// Wie ist der Status der im letzten Sprint erstellten Issues/veteilten Aufgaben?
+
+// See http://asciidoctor.org/docs/user-manual/=tables
+[option="headers"]
+|===
+|Issue |Aufgabe |Status |Bemerkung
+|1     |Developer Dokumentation |Fertig für die Zwischenpräsentation |
+|2      |Finances |Prototyp fertig |
+|3      |Sales    |Prototyp fertig |
+|4      |Calendar |Prototyp fertig |Verbindung mit Services fehlt noch 
+|5      |Services |Prototyp fertig | 
+|6      |Inventar |Prototyp fertig |
+|===
+
+
+== Aktueller Stand
+Zwischenpräsentation ist bestanden.
+
+== Planung des nächsten Sprints
+Wir fangen an Unit-Tests und weitere Features in jedem Teil des Projektes zu schreiben. Ab jetzt werden wir die Developer Dokumentation während des Entwurfsprozess schreiben. Ab nächstes Treffen werden wir Scrum-meetings haben.

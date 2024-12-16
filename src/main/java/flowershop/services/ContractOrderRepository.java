@@ -2,11 +2,15 @@ package flowershop.services;
 
 import org.jetbrains.annotations.NotNull;
 import org.salespointframework.order.Order;
+import org.salespointframework.order.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
+
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  * The `ContractOrderRepository` interface provides CRUD operations and pagination for `ContractOrder` entities.
@@ -37,4 +41,14 @@ public interface ContractOrderRepository extends CrudRepository<ContractOrder, O
 	@NotNull
 	@Query("select o from #{#entityName} o")
 	Page<ContractOrder> findAll(@NotNull Pageable pageable);
+
+	/**
+	 * Retrieves all `ContractOrder` entities with the specified start date, end date, and order status.
+	 *
+	 * @param startDate   the start date of the contract order
+	 * @param endDate     the end date of the contract order
+	 * @param orderStatus the status of the contract order
+	 * @return a list of `ContractOrder` entities that match the specified criteria
+	 */
+	List<ContractOrder> findAllByStartDateLessThanEqualAndEndDateGreaterThanEqualAndOrderStatus(LocalDate startDate, LocalDate endDate, OrderStatus orderStatus);
 }

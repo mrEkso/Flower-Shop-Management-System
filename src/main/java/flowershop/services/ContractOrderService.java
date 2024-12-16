@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.*;
 
 /**
@@ -57,6 +59,18 @@ public class ContractOrderService {
 	 */
 	public Optional<ContractOrder> getById(UUID id) {
 		return contractOrderRepository.findById(Order.OrderIdentifier.of(id.toString()));
+	}
+
+	/**
+	 * Retrieves all active contract orders.
+	 *
+	 * @return a list of all active contract orders
+	 */
+	public List<ContractOrder> findAllActiveLastMonth() {
+		YearMonth lastMonth = YearMonth.now().minusMonths(1);
+		LocalDate startOfLastMonth = lastMonth.atDay(1);
+		LocalDate endOfLastMonth = lastMonth.atEndOfMonth();
+		return contractOrderRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanEqualAndOrderStatus(endOfLastMonth, startOfLastMonth, OrderStatus.OPEN);
 	}
 
 	/**

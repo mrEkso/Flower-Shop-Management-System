@@ -98,29 +98,36 @@
                            id="phone" name="phone" placeholder="+49 xxx xxx xxx" value="+49151232232" required>
                 </div>
 
-                <!--&lt;!&ndash; Products Section &ndash;&gt;
+                <!-- Products Section -->
                 <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
 
-                &lt;!&ndash; Product Rows &ndash;&gt;
-                <div id="product-container1">
-                    &lt;!&ndash; Loop through existing rows &ndash;&gt;
+                <!-- Product Rows -->
+                <div id="product-container">
+                    <!-- Loop through existing rows -->
                     <div th:each="row, iterStat : ${productRows}">
                         <div th:replace="fragments/product-row :: productRow(index=${iterStat.index}, product=row)"></div>
                     </div>
                 </div>
 
-                &lt;!&ndash; Add Product Button &ndash;&gt;
+                <!-- Add Product Button -->
                 <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
                       method="post" class="mt-2">
                     <input type="hidden" name="index" th:value="${productRows.size()}" />
-                    <button type="button" class="btn btn-outline-primary">Add Product</button>
-                </form>-->
+                    <button type="submit" class="btn btn-outline-primary">Add Product</button>
+                </form>
 
                 <!-- Notes -->
                 <div class="mb-3">
                     <label for="contractNotes" class="form-label" th:text="#{contract.notes}">Notes</label>
                     <textarea class="form-control" id="contractNotes" name="notes" rows="3"
                               placeholder="Enter any additional notes here">Test notes</textarea>
+                </div>
+
+                <!-- Service price -->
+                <div class="mb-3">
+                    <label for="servicePrice" class="form-label" th:text="#{contract.servicePrice}">Service
+                        price</label>
+                    <input class="form-control" id="servicePrice" name="servicePrice" placeholder="0" th:default="0">
                 </div>
 
                 <!-- Error Message -->
@@ -190,6 +197,13 @@
                     <label for="eventNotes" class="form-label" th:text="#{event.notes}">Notes</label>
                     <textarea class="form-control" id="eventNotes" name="notes" rows="3"
                               placeholder="Enter any additional notes here">Test notes</textarea>
+                </div>
+
+                <!-- Delivery price -->
+                <div class="mb-3">
+                    <label for="deliveryPrice" class="form-label" th:text="#{event.deliveryPrice}">Delivery
+                        price</label>
+                    <input class="form-control" id="deliveryPrice" name="deliveryPrice" placeholder="0" th:default="0">
                 </div>
 
                 <!-- Error Message -->

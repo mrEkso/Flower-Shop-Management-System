@@ -136,6 +136,13 @@
                           placeholder="Enter any additional notes here"></textarea>
             </div>
 
+            <!-- Delivery price -->
+            <div class="mb-3">
+                <label for="deliveryPrice" class="form-label" th:text="#{event.deliveryPrice}">Delivery price</label>
+                <input class="form-control" th:value="${eventOrder.getChargeLines().getTotal().getNumber()}"
+                       id="deliveryPrice" name="deliveryPrice" placeholder="0">
+            </div>
+
             <!-- Error Message -->
             <div th:if="${error}" class="alert alert-danger" role="alert">
                 <span th:text="${error}"></span>

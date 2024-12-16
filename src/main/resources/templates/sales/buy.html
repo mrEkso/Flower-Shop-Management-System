@@ -1,118 +1,138 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link th:href="@{/resources/css/navbar.css}" rel="stylesheet"/>
-    <link th:href="@{/resources/css/buy.css}" rel="stylesheet"/>
-    <link th:href="@{/resources/css/basket.css}" rel="stylesheet"/>
-    <link th:href="@{/resources/css/product-table.css}" rel="stylesheet"/>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link th:href="@{/resources/css/navbar.css}" rel="stylesheet" />
+    <link th:href="@{/resources/css/buy.css}" rel="stylesheet" />
+    <link th:href="@{/resources/css/basket.css}" rel="stylesheet" />
+    <link th:href="@{/resources/css/product-table.css}" rel="stylesheet" />
     <title th:text="#{buy.title}"></title>
-</head>
-<body>
-<div class="container-fluid vh-100">
-    <div class="row">
+  </head>
+  <body>
+    <div class="container-fluid vh-100">
+      <div class="row">
         <div class="col" th:replace="~{navbar}"></div>
-        <div class="col d-flex flex-column vh-100">
-            <div class="row">
-                <h2 th:text="#{buy.header}"></h2>
-                <p th:text="#{buy.description}"></p>
-            </div>
-            <div class="row inputs-div">
-                <form method="get" action="/buy">
-                    <input id="search-input" type="text" name="searchInput" th:placeholder="#{buy.search}"
-                           th:value="${searchInput}"/>
-                    <!-- <div id="filter-div"> -->
-                    <select id="filter-dd" name="filterItem" th:value="${filterItem}">
-                        <option value="">All</option>
-                        <option th:each="type : ${typeList}"
-                                th:value="${type}"
-                                th:text="${type}"
-                                th:selected="${type == filterItem}">
-                        </option>
-                    </select>
-                    <!-- </div> -->
-                    <button type="submit"><img th:src="@{/resources/img/filter.png}"/></button>
-                </form>
-            </div>
-            <div
-                    th:replace="~{product-table.html :: productTableFragment(products=${flowers}, type='buy')}">
-            </div>
-        </div>
-    <div class="basket col-2 vh-100">
-        <h2 class="basket-head">Modify order</h2>
-        <div class="basket-head">
-            <img class="basket-img" th:src="@{/resources/img/shopping-basket.png}"/>
-            <b class="basket-header">Your basket</b>
-        </div>
-        <table class="basket-table">
-            <tbody>
-            <tr th:each="selectedBasket : ${buyBasket}">
-                <td>
-                    <div class="basket-card">
-                        <div class="basket-card-header">
-                  <span
-                          class="basket-card-name"
-                          th:text="${selectedBasket.product.name}"
-                  ></span>
-                            <form method="post" action="/remove-from-buyBasket">
-                                <input
-                                        type="hidden"
-                                        name="productId"
-                                        th:value="${selectedBasket.product.id}"
-                                />
-                                <button type="submit">
-                                    <img
-                                            class="basket-img close-btn"
-                                            th:src="@{/resources/img/close.png}"
-                                    />
-                                </button>
-                            </form>
-                        </div>
-                        <div class="basket-card-body">
-                            <p
-                                    class="basket-card-text"
-                                    th:text="${selectedBasket.quantityAsInteger} + 'x' + ${selectedBasket.product.pricing.buyPrice.number*1.0} + ' EUR'"
-                            ></p>
-                            <form method="post" action="/decrease-from-buyBasket">
-                                <input
-                                        type="hidden"
-                                        name="productId"
-                                        th:value="${selectedBasket.product.id}"
-                                />
-                                <button class="basket-minus-btn" type="submit">-</button>
-                            </form>
-                            <form method="post" action="/increase-from-buyBasket">
-                                <input
-                                        type="hidden"
-                                        name="productId"
-                                        th:value="${selectedBasket.product.id}"
-                                />
-                                <button class="basket-minus-btn" type="submit">+</button>
-                            </form>
-                        </div>
-                        <div class="basket-card-footer">
-                  <span
-                          th:text="${(selectedBasket.quantityAsInteger * 1.0) * selectedBasket.product.pricing.buyPrice.number*1.0} + ' EUR'"
-                  ></span>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="basket-footer" th:unless="${buyBasket.isEmpty()}">
-            <form th:action="@{/buy-from-buyBasket}" method="post">
-                <input
-                        class="basket-submit-btn"
-                        type="submit"
-                        th:value="#{basket.footer.button}"/>
+        <div class="col vh-100">
+          <h2 th:text="#{buy.header}"></h2>
+          <p th:text="#{buy.description}"></p>
+          <div class="row inputs-div">
+            <form method="get" action="/buy">
+              <input
+                id="search-input"
+                type="text"
+                name="searchInput"
+                th:placeholder="#{buy.search}"
+                th:value="${searchInput}"
+              />
+              <!-- <div id="filter-div"> -->
+              <select id="filter-dd" name="filterItem" th:value="${filterItem}">
+                <option value="">All</option>
+                <option
+                  th:each="type : ${typeList}"
+                  th:value="${type}"
+                  th:text="${type}"
+                  th:selected="${type == filterItem}"
+                ></option>
+              </select>
+              <!-- </div> -->
+              <button type="submit">
+                <img th:src="@{/resources/img/filter.png}" />
+              </button>
             </form>
+          </div>
+          <div
+            th:replace="~{product-table.html :: productTableFragment(products=${flowers}, type='buy')}"
+          ></div>
         </div>
+        <div class="basket col-2 vh-100">
+          <h2 class="basket-head">Modify order</h2>
+          <div class="basket-head">
+            <img
+              class="basket-img"
+              th:src="@{/resources/img/shopping-basket.png}"
+            />
+            <b class="basket-header">Your basket</b>
+          </div>
+          <table class="basket-table">
+            <tbody>
+              <tr th:each="selectedCart : ${buyCart}">
+                <td>
+                  <div class="basket-card">
+                    <div class="basket-card-header">
+                      <span
+                        class="basket-card-name"
+                        th:text="${selectedCart.product.name}"
+                      ></span>
+                      <form method="post" action="/remove-from-buy-cart">
+                        <input
+                          type="hidden"
+                          name="productId"
+                          th:value="${selectedCart.product.id}"
+                        />
+                        <button type="submit" class="close-btn">
+                          <img
+                            class="basket-img"
+                            th:src="@{/resources/img/close.png}"
+                          />
+                        </button>
+                      </form>
+                    </div>
+                    <div class="basket-card-body">
+                      <p
+                        class="basket-card-text"
+                        th:text="${selectedCart.quantity.getAmount.doubleValue} + 'x' + ${selectedCart.product.pricing.buyPrice.number*1.0} + ' EUR'"
+                      ></p>
+                      <form method="post" action="/decrease-from-buy-cart">
+                        <input
+                          type="hidden"
+                          name="productId"
+                          th:value="${selectedCart.product.id}"
+                        />
+                        <button class="basket-minus-btn" type="submit">
+                          -
+                        </button>
+                      </form>
+                      <form method="post" action="/add-to-buy-cart">
+                        <input
+                          type="hidden"
+                          name="productId"
+                          th:value="${selectedCart.product.id}"
+                        />
+                        <button class="basket-minus-btn" type="submit">
+                          +
+                        </button>
+                      </form>
+                    </div>
+                    <div class="basket-card-footer">
+                      <span
+                        th:text="${(selectedCart.quantity.getAmount.doubleValue* 1.0) * selectedCart.product.price.number * 1.0} + ' EUR'"
+                      ></span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="basket-total-price" th:unless="${buyCart.isEmpty()}">
+            <b>Total:</b>
+            <div th:text="${fullBuyPrice} + ' EUR'"></div>
+          </div>
+          <div class="basket-footer" th:unless="${buyCart.isEmpty()}">
+            <form th:action="@{/buy-from-cart}" method="post">
+              <input
+                class="basket-submit-btn"
+                type="submit"
+                th:value="#{basket.footer.button}"
+              />
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-    </div>
-
-</div>
-</body>
+  </body>
 </html>

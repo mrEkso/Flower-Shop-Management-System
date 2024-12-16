@@ -1,60 +1,72 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
+  <head>
     <!-- Bootstrap CSS -->
-    <link th:href="@{/resources/css/bootstrap.min.css}" rel="stylesheet"/>
-    <link th:href="@{/resources/css/product-table.css}" rel="stylesheet"/>
-</head>
+    <link th:href="@{/resources/css/bootstrap.min.css}" rel="stylesheet" />
+    <link th:href="@{/resources/css/product-table.css}" rel="stylesheet" />
+  </head>
 
-<body>
-<th:block th:fragment="productTableFragment(products, type)">
-    <table id="product-table">
+  <body>
+    <th:block th:fragment="productTableFragment(products, type)">
+      <table id="product-table">
         <thead>
-        <div class="table-header">
+          <div class="table-header">
             <tr>
-                <th th:text="#{buy.table.head.icon}"></th>
-                <th th:text="#{buy.table.head.name}"></th>
-                <th th:text="#{buy.table.head.color}"></th>
-                <th th:text="#{buy.table.head.quantity}"></th>
-                <th th:text="#{buy.table.head.price}"></th>
-                <th></th>
+              <th th:text="#{buy.table.head.icon}"></th>
+              <th th:text="#{buy.table.head.name}"></th>
+              <th th:text="#{buy.table.head.color}"></th>
+              <th th:text="#{buy.table.head.quantity}"></th>
+              <th th:text="#{buy.table.head.price}"></th>
+              <th></th>
             </tr>
-        </div>
+          </div>
         </thead>
         <tbody>
-        <tr th:each="product : ${products}">
-            <td th:text="${product instanceof T(flowershop.product.Flower) ? '🌸' : '💐'}"></td>
+          <tr th:each="product : ${products}">
+            <td
+              th:text="${product instanceof T(flowershop.product.Flower) ? '🌸' : '💐'}"
+            ></td>
             <td>
-                <div class="text-cell name-cell" th:text="${product.name}"></div>
+              <div class="text-cell name-cell" th:text="${product.name}"></div>
             </td>
             <td>
-                <div class="text-cell type-cell"
-                     th:text="${product instanceof T(flowershop.product.Flower) ? product.color : 'Bouquet'}"></div>
+              <div
+                class="text-cell type-cell"
+                th:text="${product instanceof T(flowershop.product.Flower) ? product.color : 'Bouquet'}"
+              ></div>
             </td>
             <td>
-                <div class="text-cell quantity-cell" th:text="${product.quantity}"></div>
+              <div
+                class="text-cell quantity-cell"
+                th:text="${product.quantity}"
+              ></div>
             </td>
             <td>
-                <div class="text-cell price-cell"
-                     th:text="${product instanceof T(flowershop.product.Bouquet) ?
+              <div
+                class="text-cell price-cell"
+                th:text="${product instanceof T(flowershop.product.Bouquet) ?
                                product.price :
-                               (type == 'buy' ? product.pricing?.buyPrice : product.pricing?.sellPrice)}">
-                </div>
-
+                               (type == 'buy' ? product.pricing?.buyPrice : product.pricing?.sellPrice)}"
+              ></div>
             </td>
             <td>
-                <form method="post"
-                      th:action="@{${type == 'sell' ? '/add-to-sellBasket' : '/add-to-buyBasket'}}">
-                    <input type="hidden" name="productId" th:value="${product.id}"/>
-                    <button type="submit">
-                        <img th:src="@{/resources/img/shopping-basket.png}"/>
-                    </button>
-                </form>
+              <form
+                method="post"
+                th:action="@{${type == 'sell' ? '/add-to-sell-cart' : '/add-to-buy-cart'}}"
+              >
+                <input
+                  type="hidden"
+                  name="productId"
+                  th:value="${product.id}"
+                />
+                <button type="submit" class="basket-btn">
+                  <img th:src="@{/resources/img/shopping-basket.png}" />
+                </button>
+              </form>
             </td>
-        </tr>
+          </tr>
         </tbody>
-    </table>
-</th:block>
-</body>
+      </table>
+    </th:block>
+  </body>
 </html>
