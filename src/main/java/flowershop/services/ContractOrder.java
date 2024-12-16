@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import org.salespointframework.useraccount.UserAccount;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * This type of order is intended for clients who receive regular flower deliveries over a
@@ -23,8 +23,8 @@ public class ContractOrder extends AbstractOrder {
 	private String frequency;
 	private Integer customFrequency;
 	private String customUnit;
-	private LocalDate startDate;
-	private LocalDate endDate;
+	private LocalDateTime startDate;
+	private LocalDateTime endDate;
 	private String address;
 	@ManyToOne
 	private Client client;
@@ -34,13 +34,13 @@ public class ContractOrder extends AbstractOrder {
 	 *
 	 * @param user         the user account associated with the order
 	 * @param contractType the type of contract (e.g., weekly, monthly)
-	 * @param startDate    the start date of the contract
+	 * @param startDate   the start date of the contract
 	 * @param endDate      the end date of the contract
 	 * @param address      the delivery address
 	 * @param client       the client associated with the order
 	 * @param notes        additional notes for the order
 	 */
-	public ContractOrder(UserAccount user, String contractType, LocalDate startDate, LocalDate endDate, String address, Client client, String notes) {
+	public ContractOrder(UserAccount user, String contractType, LocalDateTime startDate, LocalDateTime endDate, String address, Client client, String notes) {
 		super(user, notes);
 		this.client = client;
 		this.contractType = contractType;
@@ -80,7 +80,7 @@ public class ContractOrder extends AbstractOrder {
 	 *
 	 * @return the start date
 	 */
-	public LocalDate getStartDate() {
+	public LocalDateTime getStartDate() {
 		return startDate;
 	}
 
@@ -89,7 +89,7 @@ public class ContractOrder extends AbstractOrder {
 	 *
 	 * @param startDate the start date to set
 	 */
-	public void setStartDate(LocalDate startDate) {
+	public void setStartDate(LocalDateTime startDate) {
 		this.startDate = startDate;
 	}
 
@@ -98,7 +98,7 @@ public class ContractOrder extends AbstractOrder {
 	 *
 	 * @return the end date
 	 */
-	public LocalDate getEndDate() {
+	public LocalDateTime getEndDate() {
 		return endDate;
 	}
 
@@ -107,7 +107,7 @@ public class ContractOrder extends AbstractOrder {
 	 *
 	 * @param endDate the end date to set
 	 */
-	public void setEndDate(LocalDate endDate) {
+	public void setEndDate(LocalDateTime endDate) {
 		this.endDate = endDate;
 	}
 

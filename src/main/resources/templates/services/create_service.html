@@ -75,12 +75,12 @@
 
                 <!-- Contract start and end date -->
                 <div class="mb-3">
-                    <label for="startDate" class="form-label" th:text="#{contract.startDate}">Start Date</label>
-                    <input type="date" class="form-control" id="startDate" name="startDate" value="2024-01-01" required>
+                    <label for="startDate" class="form-label" th:text="#{contract.startDate}">Start Date and Time</label>
+                    <input type="datetime-local" class="form-control" id="startDate" name="startDate" value="2024-01-01T12:30" required>
                 </div>
                 <div class="mb-3">
-                    <label for="endDate" class="form-label" th:text="#{contract.endDate}">End Date</label>
-                    <input type="date" class="form-control" id="endDate" name="endDate" value="2025-01-01" required>
+                    <label for="endDate" class="form-label" th:text="#{contract.endDate}">End Date and Time</label>
+                    <input type="datetime-local" class="form-control" id="endDate" name="endDate" value="2025-01-01T12:30" required>
                 </div>
 
                 <!-- Address -->
@@ -98,23 +98,23 @@
                            id="phone" name="phone" placeholder="+49 xxx xxx xxx" value="+49151232232" required>
                 </div>
 
-                <!-- Products Section -->
+                <!--&lt;!&ndash; Products Section &ndash;&gt;
                 <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
 
-                <!-- Product Rows -->
-                <div id="product-container">
-                    <!-- Loop through existing rows -->
+                &lt;!&ndash; Product Rows &ndash;&gt;
+                <div id="product-container1">
+                    &lt;!&ndash; Loop through existing rows &ndash;&gt;
                     <div th:each="row, iterStat : ${productRows}">
                         <div th:replace="fragments/product-row :: productRow(index=${iterStat.index}, product=row)"></div>
                     </div>
                 </div>
 
-                <!-- Add Product Button -->
+                &lt;!&ndash; Add Product Button &ndash;&gt;
                 <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
                       method="post" class="mt-2">
                     <input type="hidden" name="index" th:value="${productRows.size()}" />
-                    <button type="submit" class="btn btn-outline-primary">Add Product</button>
-                </form>
+                    <button type="button" class="btn btn-outline-primary">Add Product</button>
+                </form>-->
 
                 <!-- Notes -->
                 <div class="mb-3">
@@ -148,8 +148,8 @@
 
                 <!-- Event Date and Time -->
                 <div class="mb-3">
-                    <label for="eventDate" class="form-label" th:text="#{event.eventDate}">Event Date</label>
-                    <input type="date" class="form-control" id="eventDate" name="eventDate" value="2025-01-01" required>
+                    <label for="eventDate" class="form-label" th:text="#{event.eventDate}">Event Date and Time</label>
+                    <input type="datetime-local" class="form-control" id="eventDate" name="eventDate" value="2025-01-01T12:00" required>
                 </div>
 
                 <!-- Delivery Address -->
@@ -166,6 +166,24 @@
                     <input type="tel" class="form-control" id="eventClientPhone" name="phone"
                            placeholder="+1 xxx xxx xxx" value="+49151232233" required>
                 </div>
+
+                <!-- Products Section -->
+                <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
+
+                <!-- Product Rows -->
+                <div id="product-container2">
+                    <!-- Loop through existing rows -->
+                    <div th:each="row, iterStat : ${productRows}">
+                        <div th:replace="fragments/product-row :: productRow(index=${iterStat.index}, product=row)"></div>
+                    </div>
+                </div>
+
+                <!-- Add Product Button -->
+                <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
+                      method="post" class="mt-2">
+                    <input type="hidden" name="index" th:value="${productRows.size()}" />
+                    <button type="button" class="btn btn-outline-primary">Add Product</button>
+                </form>
 
                 <!-- Notes -->
                 <div class="mb-3">
@@ -211,6 +229,24 @@
                     <input type="tel" class="form-control" id="reservationClientPhone" name="phone"
                            placeholder="+1 xxx xxx xxx" value="+49151232234" required>
                 </div>
+
+                <!-- Products Section -->
+                <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
+
+                <!-- Product Rows -->
+                <div id="product-container3">
+                    <!-- Loop through existing rows -->
+                    <div th:each="row, iterStat : ${productRows}">
+                        <div th:replace="fragments/product-row :: productRow(index=${iterStat.index}, product=row)"></div>
+                    </div>
+                </div>
+
+                <!-- Add Product Button -->
+                <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
+                      method="post" class="mt-2">
+                    <input type="hidden" name="index" th:value="${productRows.size()}" />
+                    <button type="button" class="btn btn-outline-primary">Add Product</button>
+                </form>
 
                 <!-- Notes -->
                 <div class="mb-3">

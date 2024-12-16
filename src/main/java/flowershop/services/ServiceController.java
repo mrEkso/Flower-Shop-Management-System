@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -118,23 +117,6 @@ public class ServiceController {
 		return "fragments/product-row :: productRow";
 	}
 
-	/**
-	 * Handles POST requests to create a new contract order.
-	 *
-	 * @param clientName        the name of the client
-	 * @param contractType      the type of the contract
-	 * @param frequency         the frequency of the contract
-	 * @param customFrequency   the custom frequency of the contract
-	 * @param customUnit        the custom unit of the contract
-	 * @param startDate         the start date of the contract
-	 * @param endDate           the end date of the contract
-	 * @param address           the address associated with the contract
-	 * @param phone             the phone number of the client
-	 * @param products          a map of product IDs and their quantities
-	 * @param notes             additional notes for the order
-	 * @param redirectAttribute the redirect attributes to add flash attributes to
-	 * @return the redirect URL
-	 */
 	// Adding a product during creation
 	@PostMapping("/{type}/create/add-product")
 	public String addProductDuringCreation(@PathVariable String type,
@@ -214,14 +196,31 @@ public class ServiceController {
 		return rows;
 	}
 
+	/**
+	 * Handles POST requests to create a new contract order.
+	 *
+	 * @param clientName        the name of the client
+	 * @param contractType      the type of the contract
+	 * @param frequency         the frequency of the contract
+	 * @param customFrequency   the custom frequency of the contract
+	 * @param customUnit        the custom unit of the contract
+	 * @param startDate         the start date of the contract
+	 * @param endDate           the end date of the contract
+	 * @param address           the address associated with the contract
+	 * @param phone             the phone number of the client
+	 * @param products          a map of product IDs and their quantities
+	 * @param notes             additional notes for the order
+	 * @param redirectAttribute the redirect attributes to add flash attributes to
+	 * @return the redirect URL
+	 */
 	@PostMapping("/contracts/create")
 	public String createContractOrder(@RequestParam("clientName") String clientName,
 									  @RequestParam("contractType") String contractType,
 									  @RequestParam(value = "frequency", required = false) String frequency,
 									  @RequestParam(value = "customFrequency", required = false) Integer customFrequency,
 									  @RequestParam(value = "customUnit", required = false) String customUnit,
-									  @RequestParam("startDate") LocalDate startDate,
-									  @RequestParam("endDate") LocalDate endDate,
+									  @RequestParam("startDate") LocalDateTime startDate,
+									  @RequestParam("endDate") LocalDateTime endDate,
 									  @RequestParam("address") String address,
 									  @RequestParam("phone") String phone,
 									  @RequestParam Map<String, String> products,
@@ -260,7 +259,7 @@ public class ServiceController {
 	 */
 	@PostMapping("/events/create")
 	public String createEventOrder(@RequestParam String clientName,
-								   @RequestParam("eventDate") LocalDate eventDate,
+								   @RequestParam("eventDate") LocalDateTime eventDate,
 								   @RequestParam("phone") String phone,
 								   @RequestParam("deliveryAddress") String deliveryAddress,
 								   @RequestParam Map<String, String> products,
@@ -353,8 +352,8 @@ public class ServiceController {
 									@RequestParam(value = "frequency", required = false) String frequency,
 									@RequestParam(value = "customFrequency", required = false) Integer customFrequency,
 									@RequestParam(value = "customUnit", required = false) String customUnit,
-									@RequestParam("startDate") LocalDate startDate,
-									@RequestParam("endDate") LocalDate endDate,
+									@RequestParam("startDate") LocalDateTime startDate,
+									@RequestParam("endDate") LocalDateTime endDate,
 									@RequestParam("address") String address,
 									@RequestParam("phone") String phone,
 									@RequestParam Map<String, String> products,
@@ -423,7 +422,7 @@ public class ServiceController {
 	@PutMapping("/events/edit/{id}")
 	public String editEventOrder(@PathVariable UUID id,
 								 @RequestParam String clientName,
-								 @RequestParam("eventDate") LocalDate eventDate,
+								 @RequestParam("eventDate") LocalDateTime eventDate,
 								 @RequestParam("phone") String phone,
 								 @RequestParam("deliveryAddress") String deliveryAddress,
 								 @RequestParam Map<String, String> products,

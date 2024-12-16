@@ -4,7 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import org.salespointframework.useraccount.UserAccount;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Represents a one-time order for event-based flower arrangements. This type of order is designed
@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Entity
 public class EventOrder extends AbstractOrder {
 
-	private LocalDate eventDate;
+	private LocalDateTime eventDate;
 	private String deliveryAddress;
 
 	@ManyToOne
@@ -31,7 +31,7 @@ public class EventOrder extends AbstractOrder {
 	 * @param client          the client associated with the order
 	 * @param notes           additional notes for the order
 	 */
-	public EventOrder(UserAccount user, LocalDate eventDate, String deliveryAddress, Client client, String notes) {
+	public EventOrder(UserAccount user, LocalDateTime eventDate, String deliveryAddress, Client client, String notes) {
 		super(user, notes);
 		this.client = client;
 		this.eventDate = eventDate;
@@ -50,7 +50,7 @@ public class EventOrder extends AbstractOrder {
 	 *
 	 * @return the event date
 	 */
-	public LocalDate getEventDate() {
+	public LocalDateTime getEventDate() {
 		return eventDate;
 	}
 
@@ -59,7 +59,7 @@ public class EventOrder extends AbstractOrder {
 	 *
 	 * @param eventDate the event date to set
 	 */
-	public void setEventDate(LocalDate eventDate) {
+	public void setEventDate(LocalDateTime eventDate) {
 		this.eventDate = eventDate;
 	}
 
