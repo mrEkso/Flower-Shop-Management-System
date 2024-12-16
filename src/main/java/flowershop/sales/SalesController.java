@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.salespointframework.order.Cart;
 
 import org.salespointframework.catalog.Product;
@@ -150,8 +151,16 @@ public class SalesController {
 	@PostMapping("/sell-from-cart")
 	public String sellFromCart(
 		@ModelAttribute("sellCart") Cart sellCart, Model model,
-		@RequestParam(required = false) String paymentMethod
+		@RequestParam(required = false) String paymentMethod,
+		RedirectAttributes redirAttrs
 	) {
+
+		// Alert to new day
+		if(true){
+			redirAttrs.addFlashAttribute("success", "Done");
+		} else {
+			redirAttrs.addFlashAttribute("error", "The error XYZ occurred.");
+		}
 		
 		if (sellCart == null || sellCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
@@ -166,7 +175,6 @@ public class SalesController {
 		return "redirect:sell";
 	}
 
-
 	/**
 	 * Processes the purchase of products from the buy cart.
 	 *
@@ -177,8 +185,16 @@ public class SalesController {
 	@PostMapping("/buy-from-cart")
 	public String buyFromCart(
 		@ModelAttribute("buyCart") Cart buyCart,
-		Model model
+		Model model,
+		RedirectAttributes redirAttrs
 	) {
+		// Alert to new day
+		if(true){
+			redirAttrs.addFlashAttribute("success", "Done");
+		} else {
+			redirAttrs.addFlashAttribute("error", "The error XYZ occurred.");
+		}
+
 		if (buyCart == null || buyCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:buy";
