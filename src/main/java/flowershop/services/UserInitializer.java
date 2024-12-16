@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.salespointframework.core.DataInitializer;
 import org.salespointframework.useraccount.Password.UnencryptedPassword;
-import org.salespointframework.useraccount.Password.UnencryptedPassword;
 import org.salespointframework.useraccount.Role;
 import org.salespointframework.useraccount.UserAccountManagement;
 import org.springframework.core.annotation.Order;
@@ -52,15 +51,5 @@ public class UserInitializer implements DataInitializer {
 		// Creating Floris Nichte
 		userAccountManagement.create("shop_worker", 
 		UnencryptedPassword.of("123"), Role.of("USER"));
-		// dummyShopWorker.setFirstname("Shop");
-		// dummyShopWorker.setLastname("Worker");
-		// userAccountManagement.save(dummyShopWorker);
-		// userAccountManagement.save(boss);
-		userAccountManagement.create("shop_worker", 
-		UnencryptedPassword.of("123"), Role.of("USER"));
-		// dummyShopWorker.setFirstname("Shop");
-		// dummyShopWorker.setLastname("Worker");
-		// userAccountManagement.save(dummyShopWorker);
-		// userAccountManagement.save(boss);
 	}
 }
