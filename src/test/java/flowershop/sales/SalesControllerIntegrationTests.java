@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import flowershop.AbstractIntegrationTests;
 import flowershop.product.ProductService;
@@ -262,8 +264,9 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 		Model model = new ExtendedModelMap();
 		Cart emptyCart = new Cart();  // Empty cart scenario
 		String paymentMethod = "Cash";
+		RedirectAttributes redirectAttributes = new RedirectAttributesModelMap();
 
-		String viewName = controller.sellFromCart(emptyCart, model, paymentMethod);
+		String viewName = controller.sellFromCart(emptyCart, model, paymentMethod, redirectAttributes);
 
 		assertThat(viewName).isEqualTo("redirect:sell");
 		assertThat(model.asMap().get("message")).isEqualTo("Your basket is empty.");
@@ -273,8 +276,9 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	public void testBuyFromCart_EmptyCart() {
 		Model model = new ExtendedModelMap();
 		Cart emptyCart = new Cart();  // Empty cart scenario
+		RedirectAttributes redirectAttributes = new RedirectAttributesModelMap();
 
-		String viewName = controller.buyFromCart(emptyCart, model);
+		String viewName = controller.buyFromCart(emptyCart, model, redirectAttributes);
 
 		assertThat(viewName).isEqualTo("redirect:buy");
 		assertThat(model.asMap().get("message")).isEqualTo("Your basket is empty.");
