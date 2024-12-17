@@ -1,5 +1,7 @@
 package flowershop.finances;
 
+import flowershop.clock.ClockService;
+import flowershop.clock.PendingOrder;
 import flowershop.services.AbstractOrder;
 import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.Accountancy;
@@ -22,6 +24,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.*;
 
+import static flowershop.finances.Category.Einkauf;
+
 @Service
 @Primary
 public class CashRegisterService implements Accountancy {
@@ -29,20 +33,21 @@ public class CashRegisterService implements Accountancy {
 	private final OrderManagement<AbstractOrder> orderManagement;
 
 	private final CashRegisterRepository cashRegisterRepository;
+	private final ClockService clockService;
 
 
 	@Autowired
 	public CashRegisterService(OrderManagement<AbstractOrder> orderManagement,
-							   CashRegisterRepository cashRegisterRepository) {
+							   CashRegisterRepository cashRegisterRepository, ClockService clockService) {
 		this.orderManagement = orderManagement;
 		this.cashRegisterRepository = cashRegisterRepository;
 		Streamable<AbstractOrder> previousOrders = Optional.ofNullable(orderManagement.findBy(OrderStatus.PAID))
 			.orElse(Streamable.empty());
 		for (Order order : previousOrders) {
-			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order);
+			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order, clockService.now());
 			this.add(convertedOrder);
 		}
-
+		this.clockService = clockService;
 	}
 
 
@@ -72,6 +77,13 @@ public class CashRegisterService implements Accountancy {
 		existing.add(entry);
 		cashRegister.setAccountancyEntries(existing);
 		cashRegister.setBalance((Money) entry.getValue().add(cashRegister.getBalance()));
+		if(((AccountancyEntryWrapper)entry).getCategory().equals("Einkauf"))
+		{
+			Set<PendingOrder> pendingOrders = cashRegister.getPendingOrders();
+			PendingOrder newOrder = new PendingOrder(((AccountancyEntryWrapper) entry).getItems(), clockService.nextWorkingDay());
+			pendingOrders.add(newOrder);
+			cashRegister.setPendingOrders(pendingOrders);
+		}
 		cashRegisterRepository.save(cashRegister);
 		return entry;
 	}
@@ -84,7 +96,7 @@ public class CashRegisterService implements Accountancy {
 	public void onOrderPaid(OrderEvents.OrderPaid event) {
 		AbstractOrder order = (AbstractOrder) event.getOrder();
 		//convert order to AccountancyEntry
-		AccountancyEntryWrapper convertedOrder = new AccountancyEntryWrapper(order);
+		AccountancyEntryWrapper convertedOrder = new AccountancyEntryWrapper(order,clockService.now());
 		this.add(convertedOrder);
 	}
 
@@ -314,4 +326,6 @@ public class CashRegisterService implements Accountancy {
 		return cashRegisterRepository.findFirstByOrderById()
 			.orElseThrow(() -> new IllegalStateException("CashRegister instance not found"));
 	}
+
+
 }
