@@ -1,5 +1,6 @@
 package flowershop.finances;
 
+import flowershop.clock.ClockService;
 import flowershop.sales.SimpleOrder;
 import flowershop.services.AbstractOrder;
 import org.javamoney.moneta.Money;
@@ -33,6 +34,8 @@ public class CashRegisterServiceTest {
 	private OrderManagement<AbstractOrder> orderManagement;
 	@Mock
 	private CashRegisterRepository cashRegisterRepository;
+	@Mock
+	private ClockService clockService;
 	/*
 	@Mock
 	private Streamable<AbstractOrder> previousOrders;
@@ -80,7 +83,7 @@ public class CashRegisterServiceTest {
 		when(cashRegisterRepository.findFirstByOrderById()).thenReturn(Optional.of(mockCashRegister));
 	//when(cashRegisterRepository.findFirstByOrderById()).thenReturn(Optional.empty());
 		when(orderManagement.findBy(OrderStatus.PAID)).thenReturn(mockPreviousOrders);
-
+		when(clockService.now()).thenReturn(LocalDateTime.now());
 
 	}
 
@@ -139,10 +142,10 @@ public class CashRegisterServiceTest {
 
 	@Test
 	void testAddEntry() {
-		AccountancyEntry entry = mock(AccountancyEntry.class);
+		AccountancyEntryWrapper entry = mock(AccountancyEntryWrapper.class);
 		when(cashRegisterRepository.save(any(CashRegister.class))).thenReturn(null);
 		when(entry.getValue()).thenReturn(Money.of(100, "EUR"));
-
+		when(entry.getCategory()).thenReturn("Einfacher Verkauf");
 		AccountancyEntry result = cashRegisterService.add(entry);
 		assertNotNull(result, "AccountancyEntry should not be null");
 		verify(cashRegisterRepository, times(1)).save(any(CashRegister.class));
