@@ -103,7 +103,7 @@ public class ClockService {
 					Map<Flower,Integer> todaysGoods = new HashMap<>();
 					for(String flowerName: i.getItemQuantityMap().keySet())
 					{
-						todaysGoods.put(productService.findFlowersByName(flowerName).getFirst(),
+						todaysGoods.put(productService.findFlowersByName(flowerName).getFirst(), //TODO what if several instances with the same name
 									i.getItemQuantityMap().get(flowerName).getAmount().intValue());
 					}
 				}

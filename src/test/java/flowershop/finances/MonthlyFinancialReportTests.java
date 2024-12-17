@@ -1,5 +1,6 @@
 package flowershop.finances;
 
+import flowershop.clock.ClockService;
 import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,11 +23,13 @@ public class MonthlyFinancialReportTests {
 	private MonetaryAmount balanceEndOfMonth;
 	private LocalDateTime firstTransaction;
 	private Interval monthInterval;
+	private ClockService clockService;
 
 	@BeforeEach
 	void setUp() {
 		// Mock dependencies
 		cashRegisterService = mock(CashRegisterService.class);
+		clockService = mock(ClockService.class);
 
 		// Prepare test data
 		balanceEndOfMonth = Money.of(1000, "EUR");
@@ -71,7 +74,7 @@ public class MonthlyFinancialReportTests {
 		when(cashRegisterService.find(monthInterval, Duration.ofDays(1))).thenReturn(Collections.emptyMap());
 
 		// Act
-		MonthlyFinancialReport report = new MonthlyFinancialReport(monthInterval, balanceEndOfMonth, cashRegisterService, firstTransaction);
+		MonthlyFinancialReport report = new MonthlyFinancialReport(monthInterval, balanceEndOfMonth, cashRegisterService, firstTransaction, clockService);
 
 		// Assert
 		assertEquals(0, report.getDailyFinancialReports().size(), "There should be no daily reports.");
@@ -88,7 +91,8 @@ public class MonthlyFinancialReportTests {
 		when(dailyReport1.isBeforeBeginning()).thenReturn(true);
 		when(dailyReport2.isBeforeBeginning()).thenReturn(false);
 
-		MonthlyFinancialReport report = spy(new MonthlyFinancialReport(monthInterval, balanceEndOfMonth, cashRegisterService, firstTransaction));
+		when(clockService.now()).thenReturn(LocalDateTime.now());
+		MonthlyFinancialReport report = spy(new MonthlyFinancialReport(monthInterval, balanceEndOfMonth, cashRegisterService, firstTransaction, clockService));
 		report.getDailyFinancialReports().addAll(List.of(dailyReport1, dailyReport2));
 
 		assertFalse(report.isBeforeBeginning(), "Report should return false if any daily report is not before the beginning.");
@@ -103,7 +107,7 @@ public class MonthlyFinancialReportTests {
 		when(dailyReport1.isBeforeBeginning()).thenReturn(true);
 		when(dailyReport2.isBeforeBeginning()).thenReturn(true);
 
-		MonthlyFinancialReport report = spy(new MonthlyFinancialReport(monthInterval, balanceEndOfMonth, cashRegisterService, firstTransaction));
+		MonthlyFinancialReport report = spy(new MonthlyFinancialReport(monthInterval, balanceEndOfMonth, cashRegisterService, firstTransaction, clockService));
 		report.getDailyFinancialReports().addAll(List.of(dailyReport1, dailyReport2));
 
 		assertTrue(report.isBeforeBeginning(), "Report should return true if all daily reports are before the beginning.");

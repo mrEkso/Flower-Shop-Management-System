@@ -229,7 +229,7 @@ public class CashRegisterService implements Accountancy {
 		LocalDateTime start = LocalDateTime.of(day.getYear(), day.getMonth(), day.getDayOfMonth(), 0, 0);
 		LocalDateTime end = start.plusDays(1);
 		Interval interval = Interval.from(start).to(end);
-		Interval endToNow = Interval.from(end).to(LocalDateTime.now().plusDays(1));
+		Interval endToNow = Interval.from(end).to(clockService.now().plusDays(1));
 		TemporalAmount endToNowDuration = endToNow.toDuration();
 		MonetaryAmount moneyDifference = salesVolume(endToNow, endToNowDuration).get(endToNow);
 		CashRegister cashRegister = getCashRegister();
@@ -242,7 +242,8 @@ public class CashRegisterService implements Accountancy {
 			interval,
 			moneyThen,
 			this,
-			((AccountancyEntryWrapper) allEntries.get(0)).getTimestamp());
+			((AccountancyEntryWrapper) allEntries.get(0)).getTimestamp(),
+			clockService);
 	}
 
 	/**
@@ -253,12 +254,12 @@ public class CashRegisterService implements Accountancy {
 	public MonthlyFinancialReport createFinancialReportMonth(LocalDateTime day) {
 		LocalDateTime start = LocalDateTime.of(day.getYear(), day.getMonth(), 1, 0, 0);
 		LocalDateTime end = start.plusMonths(1);
-		if (end.isAfter(LocalDateTime.now())) {
-			end = LocalDateTime.now();
+		if (end.isAfter(clockService.now())) {
+			end = clockService.now();
 		}
 		Interval interval = Interval.from(start).to(end);
 
-		Interval endToNow = Interval.from(end).to(LocalDateTime.now().plusDays(1));
+		Interval endToNow = Interval.from(end).to(clockService.now().plusDays(1));
 		TemporalAmount endToNowDuration = endToNow.toDuration();
 		MonetaryAmount moneyDifference = salesVolume(endToNow, endToNowDuration).get(endToNow);
 		CashRegister cashRegister = getCashRegister();
@@ -271,7 +272,8 @@ public class CashRegisterService implements Accountancy {
 			interval,
 			moneyThen,
 			this,
-			((AccountancyEntryWrapper) allEntries.get(0)).getTimestamp());
+			((AccountancyEntryWrapper) allEntries.get(0)).getTimestamp(),
+			clockService);
 	}
 
 	/**
@@ -282,7 +284,7 @@ public class CashRegisterService implements Accountancy {
 	public MonetaryAmount getProfit(Streamable<AccountancyEntry> set) {
 		Money output = Money.of(0, getCashRegister().getBalance().getCurrency());
 		for (AccountancyEntry entry : set) {
-			output.add(entry.getValue());
+			output = output.add(entry.getValue());
 		}
 		return output;
 	}

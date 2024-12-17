@@ -1,5 +1,6 @@
 package flowershop.finances;
 
+import flowershop.clock.ClockService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.salespointframework.accountancy.AccountancyEntry;
@@ -25,6 +26,7 @@ class DailyFinancialReportTests {
 	private LocalDateTime firstTransactionTime;
 
 	private DailyFinancialReport report;
+	private ClockService clockService;
 
 	@BeforeEach
 	void setUp() {
@@ -33,6 +35,9 @@ class DailyFinancialReportTests {
 		dayInterval = Interval.from(LocalDateTime.of(2024, 6, 1, 0, 0))
 			.to(LocalDateTime.of(2024, 6, 1, 23, 59));
 		firstTransactionTime = LocalDateTime.of(2024, 1, 1, 0, 0);
+
+		ClockService clockService = mock(ClockService.class);
+		when(clockService.now()).thenReturn(LocalDateTime.now());
 
 		// this prevents NullPointerException:
 		when(cashRegisterService.getRevenue(any())).thenReturn(Monetary.getDefaultAmountFactory()
@@ -58,8 +63,9 @@ class DailyFinancialReportTests {
 		when(cashRegisterService.getExpences(accountEntries)).thenReturn(Monetary.getDefaultAmountFactory()
 			.setCurrency("EUR").setNumber(200).create());
 
+
 		// Act
-		report = new DailyFinancialReport(dayInterval, balanceEndOfDay, cashRegisterService, firstTransactionTime);
+		report = new DailyFinancialReport(dayInterval, balanceEndOfDay, cashRegisterService, firstTransactionTime, clockService);
 
 		// Assert
 		assertNotNull(report.getOrders());
@@ -84,7 +90,7 @@ class DailyFinancialReportTests {
 
 		when(cashRegisterService.find(dayInterval)).thenReturn(entries);
 
-		report = new DailyFinancialReport(dayInterval, balanceEndOfDay, cashRegisterService, firstTransactionTime);
+		report = new DailyFinancialReport(dayInterval, balanceEndOfDay, cashRegisterService, firstTransactionTime,clockService);
 
 		// Act & Assert
 		assertFalse(report.isBeforeBeginning());
@@ -94,7 +100,7 @@ class DailyFinancialReportTests {
 	void intervalToString_ShouldFormatCorrectly() {
 		// Arrange
 		when(cashRegisterService.find(dayInterval)).thenReturn(Streamable.empty());
-		report = new DailyFinancialReport(dayInterval, balanceEndOfDay, cashRegisterService, firstTransactionTime);
+		report = new DailyFinancialReport(dayInterval, balanceEndOfDay, cashRegisterService, firstTransactionTime,clockService);
 
 		String formattedInterval = report.intervalToString();
 
@@ -113,7 +119,7 @@ class DailyFinancialReportTests {
 		Streamable<AccountancyEntry> entries = Streamable.of(entry);
 		when(cashRegisterService.find(dayInterval)).thenReturn(entries);
 
-		report = new DailyFinancialReport(dayInterval, balanceEndOfDay, cashRegisterService, firstTransactionTime);
+		report = new DailyFinancialReport(dayInterval, balanceEndOfDay, cashRegisterService, firstTransactionTime,clockService);
 
 		// Act
 		List<Row> rows = report.getNeededRows(null); // Assuming PDFont is optional
