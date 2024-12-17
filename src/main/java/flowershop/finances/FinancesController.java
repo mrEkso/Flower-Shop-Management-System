@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.nio.charset.StandardCharsets;
@@ -141,6 +142,8 @@ public class FinancesController {
 		model.addAttribute("date2", date2);
 		model.addAttribute("category", category);
 		model.addAttribute("todayDate",clockService.getCurrentDate());
+		System.out.println(clockService.isOpen());
+		model.addAttribute("shopOpened", clockService.isOpen());
 	}
 
 	/**
@@ -184,6 +187,8 @@ public class FinancesController {
 		model.addAttribute("transactions", filteredAndCutOrdersList);
 		model.addAttribute("currentBalance", cashRegisterService.getBalance());
 		model.addAttribute("todayDate",clockService.getCurrentDate());
+		System.out.println(clockService.isOpen());
+		model.addAttribute("shopOpened", clockService.isOpen());
 		return "finances";
 	}
 
@@ -285,6 +290,13 @@ public class FinancesController {
 			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report_month.pdf")
 			.contentType(MediaType.APPLICATION_PDF)
 			.body(docu);
+	}
+
+	@PostMapping("/toggleState")
+	@PreAuthorize("hasRole('BOSS')")
+	public String toggleState(Model model) {
+		clockService.openOrClose();
+		return "finances";
 	}
 
 	/**

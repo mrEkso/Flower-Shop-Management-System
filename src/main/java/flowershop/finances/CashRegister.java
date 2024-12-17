@@ -4,13 +4,10 @@ import flowershop.clock.PendingOrder;
 import jakarta.persistence.*;
 import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.AccountancyEntry;
-import org.springframework.data.util.Streamable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -32,13 +29,13 @@ public class CashRegister {
 
 	private final LocalDate firstEverDate;
 
-	private LocalDate currentDate;
+	private LocalDate inGameDate;
 	private LocalDateTime newDayStarted;
 
-	private boolean isOpen;
+	private boolean open;
 
-	@OneToMany(mappedBy = "yourEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<PendingOrder> entryDates = new HashSet<>();
+	@OneToMany(cascade = CascadeType.ALL)
+	private Set<PendingOrder> pendingOrders;
 
 
 	public Set<AccountancyEntry> getAccountancyEntries() {
@@ -55,6 +52,7 @@ public class CashRegister {
 
 	protected CashRegister() {
 		this.firstEverDate = LocalDate.now();
+		this.open = true;
 	}
 
 
@@ -62,11 +60,11 @@ public class CashRegister {
 		this.balance = balance;
 	}
 
-	public boolean isOpen() {
-		return isOpen;
+	public boolean getOpen() {
+		return open;
 	}
 	public void setOpen(boolean open) {
-		isOpen = open;
+		this.open = open;
 	}
 	public LocalDateTime getNewDayStarted() {
 		return newDayStarted;
@@ -78,11 +76,19 @@ public class CashRegister {
 	public Money getBalance() {
 		return balance;
 	}
-	public LocalDate getCurrentDate() {
-		return currentDate;
+	public LocalDate getInGameDate() {
+		return inGameDate;
 	}
-	public void setCurrentDate(LocalDate currentDate) {
-		this.currentDate = currentDate;
+	public void setInGameDate(LocalDate currentDate) {
+		this.inGameDate = currentDate;
+	}
+
+	public void setPendingOrders(Set<PendingOrder> pendingOrders) {
+		this.pendingOrders = pendingOrders;
+	}
+
+	public Set<PendingOrder> getPendingOrders() {
+		return pendingOrders;
 	}
 
 	public CashRegister(Set<AccountancyEntry> accountancyEntries,
@@ -90,6 +96,11 @@ public class CashRegister {
 		this.accountancyEntries = accountancyEntries;
 		this.balance = balance;
 		this.firstEverDate = LocalDate.now();
+		this.pendingOrders = new HashSet<>();
+		this.open = true;
+		this.newDayStarted = LocalDateTime.now();
+		this.inGameDate = LocalDate.now();
+
 		/*
 		Streamable<AbstractOrder> previousOrders = orderManagement.findBy(OrderStatus.PAID);
 		for (Order order : previousOrders) {

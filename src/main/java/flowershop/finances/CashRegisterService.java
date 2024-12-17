@@ -1,6 +1,7 @@
 package flowershop.finances;
 
 import flowershop.clock.ClockService;
+import flowershop.clock.PendingOrder;
 import flowershop.services.AbstractOrder;
 import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.Accountancy;
@@ -22,6 +23,8 @@ import javax.money.MonetaryAmount;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.*;
+
+import static flowershop.finances.Category.Einkauf;
 
 @Service
 @Primary
@@ -74,6 +77,13 @@ public class CashRegisterService implements Accountancy {
 		existing.add(entry);
 		cashRegister.setAccountancyEntries(existing);
 		cashRegister.setBalance((Money) entry.getValue().add(cashRegister.getBalance()));
+		if(((AccountancyEntryWrapper)entry).getCategory().equals("Einkauf"))
+		{
+			Set<PendingOrder> pendingOrders = cashRegister.getPendingOrders();
+			PendingOrder newOrder = new PendingOrder(((AccountancyEntryWrapper) entry).getItems(), clockService.nextWorkingDay());
+			pendingOrders.add(newOrder);
+			cashRegister.setPendingOrders(pendingOrders);
+		}
 		cashRegisterRepository.save(cashRegister);
 		return entry;
 	}
