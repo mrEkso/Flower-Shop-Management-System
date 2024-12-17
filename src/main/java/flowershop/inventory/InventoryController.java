@@ -309,4 +309,10 @@ public class InventoryController {
 
 		return "redirect:/inventory";
 	}
+	
+	public void addDeliveredFlowersFromWholesaler(Map<Flower, Integer> flowersBought) {
+		for (Map.Entry<Flower, Integer> flowerBought : flowersBought.entrySet()) {
+		  productService.addFlowers(flowerBought.getKey(), flowerBought.getValue());
+		}
+	  }
 }
