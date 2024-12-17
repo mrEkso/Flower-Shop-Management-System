@@ -36,7 +36,7 @@ class DailyFinancialReportTests {
 			.to(LocalDateTime.of(2024, 6, 1, 23, 59));
 		firstTransactionTime = LocalDateTime.of(2024, 1, 1, 0, 0);
 
-		ClockService clockService = mock(ClockService.class);
+		clockService = mock(ClockService.class);
 		when(clockService.now()).thenReturn(LocalDateTime.now());
 
 		// this prevents NullPointerException:
