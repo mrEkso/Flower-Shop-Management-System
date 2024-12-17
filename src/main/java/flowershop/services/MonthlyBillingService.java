@@ -38,9 +38,9 @@ public class MonthlyBillingService {
 
 	/**
 	 * Adds monthly charges to active contracts and marks contracts as paid if their end date has passed.
-	 * This method is scheduled to run at midnight on the first day of every month.
+	 * This method is scheduled to run at 9:00 on the first working day of every month.
 	 */
-	@Scheduled(cron = "0 0 0 1 * ?")
+	//@Scheduled(cron = "0 0 0 1 * ?")
 	@Transactional
 	public void addMonthlyCharges() {
 		for (ContractOrder contract : contractOrderService.findAllActiveLastMonth()) {
