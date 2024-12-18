@@ -1,28 +1,27 @@
 package flowershop.service;
 
-import flowershop.product.ProductCatalog;
 import flowershop.services.*;
-import org.salespointframework.order.Order;
-import org.salespointframework.order.OrderManagement;
-import org.salespointframework.useraccount.UserAccountManagement;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.testng.annotations.BeforeMethod;
+import org.salespointframework.order.Order;
+import org.salespointframework.order.OrderManagement;
 import org.salespointframework.useraccount.UserAccount;
+import org.salespointframework.useraccount.UserAccountManagement;
 
-import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Map;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
-import static org.testng.AssertJUnit.assertTrue;
 
 public class ContractOrderServiceTest {
 	@Mock
@@ -43,7 +42,7 @@ public class ContractOrderServiceTest {
 	private UserAccount mockUserAccount;
 	private Client mockClient;
 
-	@BeforeMethod
+	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
 
