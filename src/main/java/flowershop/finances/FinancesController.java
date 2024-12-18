@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Controller
@@ -235,12 +236,25 @@ public class FinancesController {
 	 */
 	@GetMapping("/dayReport")
 	@PreAuthorize("hasRole('BOSS')")
-	public ResponseEntity<byte[]> dayReport(@RequestParam("day") LocalDate date, Model model) {
-		if (date.isAfter(clockService.getCurrentDate())) {
+	public ResponseEntity<byte[]> dayReport(@RequestParam("day") String date, Model model) {
+		String[] dateArray = date.split("-");
+		if (dateArray.length != 3) {
+			return ResponseEntity.badRequest()
+				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM-DD".getBytes(StandardCharsets.UTF_8));
+		}
+		//if (dateArray[0].length() != 4 || !dateArray[0].matches("19[0-9][0-9]|2[0-9][0-9][0-9]"))
+		LocalDate actualDate;
+		try{
+			actualDate = LocalDate.parse(date);
+		} catch (DateTimeParseException e){
+			return ResponseEntity.badRequest()
+				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM-DD".getBytes(StandardCharsets.UTF_8));
+		}
+		if (actualDate.isAfter(clockService.getCurrentDate())) {
 			return ResponseEntity.badRequest()
 				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
 		}
-		DailyFinancialReport report = cashRegisterService.createFinancialReportDay(date.atStartOfDay());
+		DailyFinancialReport report = cashRegisterService.createFinancialReportDay(actualDate.atStartOfDay());
 		if (report == null) {
 			return ResponseEntity.badRequest()
 				.body("No Transactions saved in the system.".getBytes(StandardCharsets.UTF_8));
@@ -361,6 +375,7 @@ public class FinancesController {
 		} else {
 			this.filteredAndCutOrdersList = this.filteredOrdersList;
 		}
+
 	}
 
 	/**

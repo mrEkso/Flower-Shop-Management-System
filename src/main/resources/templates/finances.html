@@ -111,7 +111,7 @@
                         <div class="table-header">
                             <tr>
                                 <th
-                                        colspan="4"
+                                        colspan="5"
                                         style="text-align: left"
                                         th:text="#{finances.table.head.balance}"
                                 >
@@ -121,7 +121,7 @@
                             </tr>
                             <tr>
                                 <th
-                                        colspan="4"
+                                        colspan="5"
                                         style="text-align: left"
                                         th:text="#{finances.table.head.saldo} + ' ' + ${todayDate}"
                                 >
@@ -132,6 +132,7 @@
                             <tr>
                                 <th th:text="#{finances.table.head.timestamp}"></th>
                                 <th th:text="#{finances.table.head.category}"></th>
+                                <th th:text="#{finances.table.head.client}"></th>
                                 <th th:text="#{finances.table.head.item}"></th>
                                 <th th:text="#{finances.table.head.quantity}"></th>
                                 <th th:text="#{finances.table.head.value}"></th>
@@ -141,12 +142,13 @@
                         <tbody>
                         <tr></tr>
                         <tr th:each="order : ${transactions}">
-                            <td th:text="${order.timestamp}"></td>
+                            <td th:text="${order.timestampStr}"></td>
 
                             <td
                                     th:text="${order.category}"
                                     th:classappend="${order.category.equals('Einkauf') ? 'text-danger' : 'text-success'}"
                             ></td>
+                            <td th:text="${order.clientName}"></td>
                             <td>
                                 <ul>
                                     <li

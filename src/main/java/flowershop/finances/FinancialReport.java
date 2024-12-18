@@ -136,13 +136,13 @@ public abstract class FinancialReport {
 		// Add the header and "Finanzuebersicht fuer ... here
 		List<Row> rows = getNeededRows(font);
 		Table.TableBuilder builder = Table.builder()
-			.addColumnsOfWidth(110, 115, 100, 105, 55);
+			.addColumnsOfWidth(110, 115, 110, 50, 45, 55);
 		Row shapka1 = Row.builder()
 			.add(TextCell.builder()
 				.text(" ").fontSize(16).colSpan(2)
 				.build())
 			.add(TextCell.builder()
-				.text("Floris Blumenladen Dresden").fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text("Floris Blumenladen Dresden").fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
 		builder.addRow(shapka1);
@@ -151,7 +151,7 @@ public abstract class FinancialReport {
 				.text(" ").fontSize(16).colSpan(2)
 				.build())
 			.add(TextCell.builder()
-				.text("Wiener Platz 4, 01069 Dresden").fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text("Wiener Platz 4, 01069 Dresden").fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
 		builder.addRow(adress);
@@ -164,7 +164,7 @@ public abstract class FinancialReport {
 				.text(" ").fontSize(16).colSpan(2)
 				.build())
 			.add(TextCell.builder()
-				.text("Am " + dateRepr).fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text("Am " + dateRepr).fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
 		builder.addRow(datum);
@@ -172,7 +172,7 @@ public abstract class FinancialReport {
 		//builder.addRow(emptyRow());
 		Row title = Row.builder()
 			.add(TextCell.builder()
-				.text("Finanzübersicht für " + intervalToString()).font(font).fontSize(24).colSpan(5).horizontalAlignment(HorizontalAlignment.CENTER)
+				.text("Finanzübersicht für " + intervalToString()).font(font).fontSize(24).colSpan(6).horizontalAlignment(HorizontalAlignment.CENTER)
 				.build())
 			.build();
 		builder.addRow(title);
@@ -188,7 +188,7 @@ public abstract class FinancialReport {
 	 * @return the instance of an empty row (just to add distance between rows)
 	 */
 	protected Row emptyRow() {
-		return Row.builder().add(TextCell.builder().text("  ").colSpan(5).fontSize(10).build())
+		return Row.builder().add(TextCell.builder().text("  ").colSpan(6).fontSize(10).build())
 			.build();
 	}
 
