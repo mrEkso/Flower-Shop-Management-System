@@ -109,6 +109,16 @@
                                 <th th:text="${currentBalance}"></th>
                             </tr>
                             <tr>
+                                <th
+                                        colspan="4"
+                                        style="text-align: left"
+                                        th:text="#{finances.table.head.saldo} + ' ' + ${todayDate}"
+                                >
+                                    Day profit
+                                </th>
+                                <th th:text="${dayProfit}"></th>
+                            </tr>
+                            <tr>
                                 <th th:text="#{finances.table.head.timestamp}"></th>
                                 <th th:text="#{finances.table.head.category}"></th>
                                 <th th:text="#{finances.table.head.item}"></th>

@@ -1,5 +1,6 @@
 package flowershop.finances;
 
+import flowershop.clock.ClockService;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.AccountancyEntry;
@@ -27,8 +28,9 @@ public class MonthlyFinancialReport extends FinancialReport {
 	public MonthlyFinancialReport(Interval month,
 								  MonetaryAmount balanceEndOfTheMonth,
 								  CashRegisterService cashRegister,
-								  LocalDateTime firstEverTransaction) {
-		super(month, balanceEndOfTheMonth, cashRegister, firstEverTransaction);
+								  LocalDateTime firstEverTransaction,
+								  ClockService clockService) {
+		super(month, balanceEndOfTheMonth, cashRegister, firstEverTransaction, clockService);
 		this.income = Money.of(0, balanceEndOfTheMonth.getCurrency());
 		this.expenditure = Money.of(0, balanceEndOfTheMonth.getCurrency());
 
@@ -37,13 +39,13 @@ public class MonthlyFinancialReport extends FinancialReport {
 		sortedBackwards.sort(new IntervalComparator());
 		MonetaryAmount moneyAfterEachDay = balanceEndOfTheMonth;
 		for (Interval day : sortedBackwards) {
-			DailyFinancialReport currentDay = new DailyFinancialReport(day, moneyAfterEachDay, cashRegister, firstEverTransaction);
+			DailyFinancialReport currentDay = new DailyFinancialReport(day, moneyAfterEachDay, cashRegister, firstEverTransaction, clockService);
 			this.dailyFinancialReports.add(currentDay);
 			moneyAfterEachDay = moneyAfterEachDay.subtract(currentDay.getProfit());
 			this.income = this.income.add(currentDay.getIncome());
 			this.expenditure = this.expenditure.add(currentDay.getExpenditure());
 		}
-		this.dailyFinancialReports.reversed();
+		this.dailyFinancialReports = this.dailyFinancialReports.reversed();
 		countProfit();
 	}
 
@@ -95,11 +97,11 @@ public class MonthlyFinancialReport extends FinancialReport {
 
 		Row difference = Row.builder()
 			.add(TextCell.builder()
-				.text("Monatsdifferenz:").font(font).fontSize(22).colSpan(3)
+				.text("Monatsdifferenz:").font(font).fontSize(14).colSpan(3)
 				.borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
 				.build())
 			.add(TextCell.builder()
-				.text(profitRepr).font(font).fontSize(22)
+				.text(profitRepr).font(font).fontSize(14)
 				.colSpan(2).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
 				.build())
 			.padding(10).borderWidth(1.5f).borderStyle(BorderStyle.DOTTED).build();

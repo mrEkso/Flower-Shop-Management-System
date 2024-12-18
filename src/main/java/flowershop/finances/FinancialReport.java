@@ -1,5 +1,6 @@
 package flowershop.finances;
 
+import flowershop.clock.ClockService;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -32,14 +33,17 @@ public abstract class FinancialReport {
 	protected MonetaryAmount balance;
 	protected LocalDateTime startDate;
 	protected Interval interval;
+	protected ClockService clockService;
 
 	public FinancialReport(Interval period,
 						   MonetaryAmount balanceEndOfThePeriod,
 						   CashRegisterService cashRegister,
-						   LocalDateTime firstEverTransaction) {
+						   LocalDateTime firstEverTransaction,
+						   ClockService clockService) {
 		this.balance = balanceEndOfThePeriod;
 		this.interval = period;
 		this.startDate = firstEverTransaction;
+		this.clockService = clockService;
 		//this.orders = orders;
 		//count the fields based on orders
 	}
@@ -147,7 +151,7 @@ public abstract class FinancialReport {
 				.build())
 			.build();
 		builder.addRow(adress);
-		LocalDateTime day = LocalDateTime.now();
+		LocalDateTime day = clockService.now();
 		String month = (day.getMonth().getValue() < 10) ? "0" + day.getMonth().getValue() : String.valueOf(day.getMonth().getValue());
 		String dateRepr = new StringBuilder().append(day.getDayOfMonth()).append(".").append(month).append(".").append(day.getYear()).toString();
 

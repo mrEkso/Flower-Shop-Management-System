@@ -1,5 +1,6 @@
 package flowershop.finances;
 
+import flowershop.clock.ClockService;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.time.Interval;
@@ -25,8 +26,9 @@ public class DailyFinancialReport extends FinancialReport {
 	public DailyFinancialReport(Interval day,
 								MonetaryAmount balanceEndOfTheDay,
 								CashRegisterService cashRegister,
-								LocalDateTime firstEverTransaction) {
-		super(day, balanceEndOfTheDay, cashRegister, firstEverTransaction);
+								LocalDateTime firstEverTransaction,
+								ClockService clockService) {
+		super(day, balanceEndOfTheDay, cashRegister, firstEverTransaction,clockService);
 		Streamable<AccountancyEntry> set = cashRegister.find(day);
 		this.orders = new ArrayList<>(set.stream().toList());
 		Collections.sort(orders, new Comparator<AccountancyEntry>() {
@@ -95,14 +97,14 @@ public class DailyFinancialReport extends FinancialReport {
 		// balance in the morning of the day
 		Row kontostandMorning = Row.builder()
 			.add(TextCell.builder()
-				.text("Kontostand am Anfang des Tages:").font(font).fontSize(20).colSpan(3)
+				.text("Kontostand am Anfang des Tages:").font(font).fontSize(14).colSpan(3)
 				.borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
 				.build())
 			.add(TextCell.builder()
-				.text(getBalance().subtract(getProfit()).toString()).font(font).fontSize(20)
+				.text(getBalance().subtract(getProfit()).toString()).font(font).fontSize(14)
 				.colSpan(2).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
 				.build())
-			.padding(10).borderWidth(1).build();
+			.borderWidth(1).build();
 		neededRows.add(kontostandMorning);
 		neededRows.add(emptyRow());
 
@@ -177,27 +179,27 @@ public class DailyFinancialReport extends FinancialReport {
 		String profitRepr = profit.toString();
 		Row difference = Row.builder()
 			.add(TextCell.builder()
-				.text("Tagesdifferenz:").font(font).fontSize(20).colSpan(3)
+				.text("Tagesdifferenz:").font(font).fontSize(14).colSpan(3)
 				.borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
 				.build())
 			.add(TextCell.builder()
-				.text(profitRepr).font(font).fontSize(20)
+				.text(profitRepr).font(font).fontSize(14)
 				.colSpan(2).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
 				.build())
-			.padding(10).borderWidth(1).build();
+			.borderWidth(1).build();
 		neededRows.add(difference);
 
 		//balance in the evening
 		Row evening = Row.builder()
 			.add(TextCell.builder()
 				.text(new StringBuilder().append("Kontostand am Ende des Tages (").append(dateRepr).append(")").toString())
-				.font(font).fontSize(16).colSpan(3).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+				.font(font).fontSize(14).colSpan(3).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
 				.build())
 			.add(TextCell.builder()
-				.text(getBalance().toString()).font(font).fontSize(20)
+				.text(getBalance().toString()).font(font).fontSize(14)
 				.colSpan(2).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
 				.build())
-			.padding(10).borderWidth(1).build();
+			.borderWidth(1).build();
 		neededRows.add(evening);
 
 		return neededRows;

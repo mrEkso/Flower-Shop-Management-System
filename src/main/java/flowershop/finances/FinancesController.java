@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -142,8 +143,10 @@ public class FinancesController {
 		model.addAttribute("date2", date2);
 		model.addAttribute("category", category);
 		model.addAttribute("todayDate",clockService.getCurrentDate());
-		System.out.println(clockService.isOpen());
 		model.addAttribute("shopOpened", clockService.isOpen());
+		LocalDateTime startOfDay = clockService.getCurrentDate().atTime(9,0,0);
+		LocalDateTime endOfInterval = startOfDay.plusDays(1);
+		model.addAttribute("dayProfit", cashRegisterService.salesVolume(Interval.from(startOfDay).to(endOfInterval), Duration.ofDays(1)).get(Interval.from(startOfDay).to(endOfInterval)));
 	}
 
 	/**
@@ -189,6 +192,9 @@ public class FinancesController {
 		model.addAttribute("todayDate",clockService.getCurrentDate());
 		System.out.println(clockService.isOpen());
 		model.addAttribute("shopOpened", clockService.isOpen());
+		LocalDateTime startOfDay = clockService.getCurrentDate().atTime(9,0,0);
+		LocalDateTime endOfInterval = startOfDay.plusDays(1);
+		model.addAttribute("dayProfit", cashRegisterService.salesVolume(Interval.from(startOfDay).to(endOfInterval), Duration.ofDays(1)).get(Interval.from(startOfDay).to(endOfInterval)));
 		return "finances";
 	}
 
@@ -224,7 +230,7 @@ public class FinancesController {
 	@GetMapping("/dayReport")
 	@PreAuthorize("hasRole('BOSS')")
 	public ResponseEntity<byte[]> dayReport(@RequestParam("day") LocalDate date, Model model) {
-		if(date.isAfter(LocalDate.now())){
+		if(date.isAfter(clockService.getCurrentDate())){
 			return ResponseEntity.badRequest()
 				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
 		}
@@ -269,7 +275,7 @@ public class FinancesController {
 		}
 		YearMonth monthParsed = YearMonth.parse(year_month);
 		LocalDate firstOfMonth = monthParsed.atDay(1);
-		if (firstOfMonth.isAfter(LocalDate.now())) {
+		if (firstOfMonth.isAfter(clockService.getCurrentDate())) {
 			return ResponseEntity.badRequest()
 				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
 		}
@@ -295,7 +301,9 @@ public class FinancesController {
 	@PostMapping("/toggleState")
 	@PreAuthorize("hasRole('BOSS')")
 	public String toggleState(Model model) {
+		//TODO everything dissapears
 		clockService.openOrClose();
+		prepareFinancesModel(model,filteredAndCutOrdersList);
 		return "finances";
 	}
 
