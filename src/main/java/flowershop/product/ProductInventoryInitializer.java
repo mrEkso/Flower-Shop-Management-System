@@ -99,7 +99,5 @@ public class ProductInventoryInitializer implements DataInitializer {
 				inventory.save(new UniqueInventoryItem(flower, Quantity.of(10)));
 			}
 		});
-
-		System.out.println("-----------------------------------------");
 	}
 }

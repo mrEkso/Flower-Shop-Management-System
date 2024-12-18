@@ -13,7 +13,10 @@ import org.springframework.data.util.Streamable;
 
 import java.time.LocalDateTime;
 
-public interface WholesalerOrderRepository extends CrudRepository<WholesalerOrder, Order.OrderIdentifier>, PagingAndSortingRepository<WholesalerOrder, Order.OrderIdentifier>{
+/**
+ * Repository for storing {@link WholesalerOrder}s.
+ */
+public interface WholesalerOrderRepository extends CrudRepository<WholesalerOrder, Order.OrderIdentifier>, PagingAndSortingRepository<WholesalerOrder, Order.OrderIdentifier> {
 	@NotNull
 	@Query("select o from #{#entityName} o")
 	Page<WholesalerOrder> findAll(@NotNull Pageable pageable);

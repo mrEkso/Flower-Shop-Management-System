@@ -21,6 +21,18 @@
         <div class="col vh-100">
           <h2 th:text="#{sell.header}"></h2>
           <p th:text="#{sell.description}"></p>
+          <div
+            class="alert alert-primary"
+            role="alert"
+            th:text="${success}"
+            th:if="${success}"
+          ></div>
+          <div
+            class="alert alert-danger"
+            role="alert"
+            th:text="${error}"
+            th:if="${error}"
+          ></div>
           <div class="inputs-div">
             <form method="get" action="/sell">
               <input
@@ -136,6 +148,21 @@
           </div>
           <div class="basket-footer" th:unless="${sellCart.isEmpty()}">
             <form th:action="@{/sell-from-cart}" method="post">
+              <div class="payment-method">
+                <label>
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="Cash"
+                    checked
+                  />
+                  Cash
+                </label>
+                <label>
+                  <input type="radio" name="paymentMethod" value="Card" />
+                  Card
+                </label>
+              </div>
               <input
                 class="basket-submit-btn"
                 type="submit"

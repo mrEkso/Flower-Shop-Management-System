@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="#{calendar.view.title}"></title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://unpkg.com/htmx.org@1.7.0"></script>
+
+</head>
+<body>
+<div class="container p-4">
+
+    <div class="text-center mb-4">
+        <h1 th:text="#{calendar.view.title}"></h1>
+    </div>
+
+
+    <div class="flex-column justify-content-center">
+
+        <form class="d-flex flex-column" action="/calendar/update" method="post">
+            <input disabled type="hidden" name="id" th:value="${event.getId()}">
+            <input disabled     type="text" name="name" class="form-control mb-2" th:value="${event.getName()}">
+            <input disabled type="datetime-local" name="date" class="form-control mb-2" th:value="${event.getDate()}">
+            <input disabled type="text" name="description" class="form-control mb-2" th:value="${event.getDescription()}">
+        </form>
+        <form>
+            <button type="button" class="btn btn-danger mt-2" onclick="window.location.href='/calendar'" th:text="#{calendar.cancel}"></button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

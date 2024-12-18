@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service for managing {@link WholesalerOrder}s, including creation, retrieval, and deletion operations.
+ */
 @Service
 public class WholesalerOrderService {
 	private final WholesalerOrderRepository wholesalerOrderRepository;
@@ -32,4 +35,3 @@ public class WholesalerOrderService {
 		wholesalerOrderRepository.delete(order);
 	}
 }
-

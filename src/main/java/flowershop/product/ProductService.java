@@ -144,8 +144,8 @@ public class ProductService {
 			.collect(Collectors.toList());
 	}
 
-	public List<Flower> findFlowersByColor(String color) {
-		return findAllFlowers()
+	public List<Flower> findFlowersByColor(String color, List<Flower> givenFlowers) {
+		return givenFlowers
 			.stream()
 			.filter(flower -> flower.getColor().equalsIgnoreCase(color))
 			.toList();
@@ -153,6 +153,10 @@ public class ProductService {
 
 	public Optional<Product> getProductById(UUID id) {
 		return productCatalog.findById(getProductId(id));
+	}
+
+	public Optional<Product> getProductById(Product.ProductIdentifier id) {
+		return productCatalog.findById(id);
 	}
 
 	public List<Product> findProductsByName(String name) {

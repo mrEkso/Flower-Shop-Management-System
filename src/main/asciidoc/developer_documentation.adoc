@@ -179,6 +179,8 @@ NOTE: Name the used external frameworks, in which packages you used them, and wh
 |Spring Security |Security |Bietet Authentifizierung, Autorisierung und Schutz vor gängigen Sicherheitslücken.
 |salespointframework |Backend | Zur Entwicklung von Point-of-Sales-Anwendungen (PoS) mit Spring Framework und Spring Boot. Es besteht aus einer Vielzahl von Geschäftsmodulen, die es dem Nutzer ermöglichen, darauf aufbauend anspruchsvolle Webanwendungen zu implementieren.
 |Bootstrap | UI | Stellt Seiten-Layout-Tools und vordefinierte HTML-Elemente zu Verfügung.
+|Apache PDFBox | Backend | Ermöglicht die Erstellung von PDF Dokumenten
+|easytable | Backend | Vereinfacht die Erstellung von Tabellen in ApachePDFBox (https://github.com/vandeseer/easytable)
 |===
 
 NOTE: If you use JavaScript frameworks like Bootstrap, HTMX, etc. you have to add them to the list. The category is
@@ -208,7 +210,7 @@ image::./models/images/product_package_a.svg[class diagram, 100%, 100%, pdfwidth
 
 === Sales
 [[class_diagram_sales]]
-image::./models/images/sales_package_a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für sales package in UML", align=center]
+image::./models/images/sales_package_b.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für sales package in UML", align=center]
 
 === Calendar
 [[class_diagram_calendar]]
@@ -220,7 +222,7 @@ image::./models/images/InventoryPackage.svg[class diagram, 100%, 100%, pdfwidth=
 
 === Finances
 [[class_diagram_finances]]
-image::./models/images/finances_uml.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für finances package in UML", align=center]
+image::./models/images/Finances_uml.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für finances package in UML", align=center]
 
 === Services
 [[class_diagram_services]]
