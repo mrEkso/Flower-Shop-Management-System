@@ -6,6 +6,7 @@ import flowershop.inventory.InventoryController;
 import flowershop.product.Flower;
 import flowershop.product.ProductService;
 import flowershop.services.MonthlyBillingService;
+import org.salespointframework.catalog.Product;
 import org.salespointframework.time.Interval;
 import org.springframework.stereotype.Service;
 
@@ -98,20 +99,22 @@ public class ClockService {
 			cashRegister.setInGameDate(this.nextWorkingDay());
 			cashRegister.setNewDayStarted(LocalDateTime.now());
 			Set<PendingOrder> newPendingOrdersSet = new HashSet<>();
+			Map<Flower,Integer> todaysGoods = new HashMap<>();
 			for (PendingOrder i : cashRegister.getPendingOrders()) {
 				if(i.getDueDate().equals(getCurrentDate())){
-					Map<Flower,Integer> todaysGoods = new HashMap<>();
-					for(String flowerName: i.getItemQuantityMap().keySet())
+					for(Product flower: i.getItemQuantityMap().keySet())
 					{
-						todaysGoods.put(productService.findFlowersByName(flowerName).getFirst(), //TODO what if several instances with the same name
-									i.getItemQuantityMap().get(flowerName).getAmount().intValue());
+						// The ones that will be delivered today
+						todaysGoods.put((Flower) flower, i.getItemQuantityMap().get(flower).getAmount().intValue());
 					}
 				}
 				else{
+						// The ones, that will be later
 					newPendingOrdersSet.add(i);
 				}
 			}
-			cashRegister.setPendingOrders(newPendingOrdersSet);
+			inventoryController.addDeliveredFlowersFromWholesaler(todaysGoods);
+			cashRegister.setPendingOrders(newPendingOrdersSet); // Only the ones that are later are added to the waiting list
 		}
 		cashRegisterRepository.save(cashRegister);
 	}

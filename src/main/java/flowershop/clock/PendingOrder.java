@@ -1,6 +1,7 @@
 package flowershop.clock;
 
 import jakarta.persistence.*;
+import org.salespointframework.catalog.Product;
 import org.salespointframework.quantity.Quantity;
 
 import java.time.LocalDate;
@@ -11,14 +12,14 @@ import java.util.Map;
 public class PendingOrder {
 
 	@ElementCollection
-	private Map<String, Quantity> itemQuantityMap = new HashMap<String, Quantity>();
+	private Map<Product, Quantity> itemQuantityMap = new HashMap<Product, Quantity>();
 	private LocalDate dueDate;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	public PendingOrder(Map<String, Quantity> itemQuantityMap, LocalDate dueDate) {
+	public PendingOrder(Map<Product, Quantity> itemQuantityMap, LocalDate dueDate) {
 		this.itemQuantityMap = itemQuantityMap;
 		this.dueDate = dueDate;
 	}
@@ -31,7 +32,7 @@ public class PendingOrder {
 	public Long getId() {
 		return id;
 	}
-	public Map<String, Quantity> getItemQuantityMap() {
+	public Map<Product, Quantity> getItemQuantityMap() {
 		return itemQuantityMap;
 	}
 
@@ -42,7 +43,7 @@ public class PendingOrder {
 		return dueDate;
 	}
 
-	public void setItemQuantityMap(Map<String, Quantity> itemQuantityMap) {
+	public void setItemQuantityMap(Map<Product, Quantity> itemQuantityMap) {
 		this.itemQuantityMap = itemQuantityMap;
 	}
 }

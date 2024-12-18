@@ -1,5 +1,7 @@
 package flowershop.finances;
 
+import flowershop.product.Flower;
+import flowershop.product.ProductService;
 import flowershop.sales.SimpleOrder;
 import flowershop.sales.WholesalerOrder;
 import flowershop.services.ContractOrder;
@@ -7,6 +9,7 @@ import flowershop.services.EventOrder;
 import flowershop.services.ReservationOrder;
 import jakarta.persistence.*;
 import org.salespointframework.accountancy.AccountancyEntry;
+import org.salespointframework.catalog.Product;
 import org.salespointframework.order.ChargeLine;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderLine;
@@ -15,6 +18,7 @@ import org.salespointframework.quantity.Quantity;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,9 +39,16 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 
 
 	@ElementCollection
-	private Map<String, Quantity> itemQuantityMap = new HashMap<String, Quantity>();
+	private Map<String, Quantity> nameQuantityMap = new HashMap<String, Quantity>();
+
+	@ElementCollection
+	private Map<Product, Quantity> productQuantityMap = new HashMap<>();
+
 	private Category category;
 	private LocalDateTime timestamp;
+
+	@Transient
+	private ProductService productService;
 
 
 	/**
@@ -66,14 +77,23 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 	 * @return the map where keys are name of the products, and values - their quantity
 	 */
 	public Map<String, Quantity> getItems() {
-		return itemQuantityMap;
+		/*
+		return productQuantityMap.entrySet().stream()
+			.collect(Collectors.toMap(
+				entry -> entry.getKey().getName(),
+				Map.Entry::getValue
+			));
+
+		 */
+		return nameQuantityMap;
 	}
 
 	protected AccountancyEntryWrapper() {
 	}
 
-	public AccountancyEntryWrapper(Order order, LocalDateTime time) {
+	public AccountancyEntryWrapper(Order order, LocalDateTime time, ProductService productService) {
 		super(order.getTotal());
+		this.productService = productService;
 		this.timestamp = time;
 		if (order instanceof WholesalerOrder) {
 			this.category = Category.Einkauf;
@@ -90,12 +110,20 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		}
 		Totalable<OrderLine> kindaItemQuantityMap = order.getOrderLines();
 		for (OrderLine orderLine : kindaItemQuantityMap) {
-			itemQuantityMap.put(orderLine.getProductName(), orderLine.getQuantity());
+			nameQuantityMap.put(orderLine.getProductName(), orderLine.getQuantity());
+
+			String name = orderLine.getProductName();
+			List<Flower> lst = productService.findFlowersByName(name);
+			productQuantityMap.put(lst.getFirst(), orderLine.getQuantity());
 		}
 		Totalable<ChargeLine> extraFees = order.getAllChargeLines();
 		for (ChargeLine chargeLine : extraFees) {
-			itemQuantityMap.put(chargeLine.getDescription(), Quantity.of(1));
+			nameQuantityMap.put(chargeLine.getDescription(), Quantity.of(1));
 		}
+	}
+
+	public Map<Product, Quantity> getFlowers(){
+		return productQuantityMap;
 	}
 
 }
