@@ -136,7 +136,7 @@ public abstract class FinancialReport {
 		// Add the header and "Finanzuebersicht fuer ... here
 		List<Row> rows = getNeededRows(font);
 		Table.TableBuilder builder = Table.builder()
-			.addColumnsOfWidth(110, 115, 100, 60, 45, 55);
+			.addColumnsOfWidth(110, 115, 110, 50, 45, 55);
 		Row shapka1 = Row.builder()
 			.add(TextCell.builder()
 				.text(" ").fontSize(16).colSpan(2)

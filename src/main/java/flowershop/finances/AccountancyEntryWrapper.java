@@ -72,6 +72,20 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		return this.clientName;
 	}
 
+	public String getTimestampStr()
+	{
+		StringBuilder str = new StringBuilder(this.timestamp.getDayOfMonth() + ".");
+		str.append(this.timestamp.getMonthValue() + ".")
+			.append(this.timestamp.getYear() + " ")
+			.append(this.timestamp.getHour() + ":");
+		if(this.timestamp.getMinute() < 10)
+		{
+			str.append("0");
+		}
+		str.append(this.timestamp.getMinute());
+		return str.toString();
+	}
+
 	/**
 	 * USE THIS METHOD INSTEAD OF getDate()!
 	 * @return the time when the order was paid.

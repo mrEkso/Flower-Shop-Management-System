@@ -147,7 +147,7 @@ public class DailyFinancialReport extends FinancialReport {
 				Row.RowBuilder eintrag = Row.builder();
 				if (currentRow == 0) {
 					eintrag.add(TextCell.builder()
-							.text(realEntry.getTimestamp().toString()).rowSpan(numRows).verticalAlignment(VerticalAlignment.TOP)
+							.text(realEntry.getTimestampStr()).rowSpan(numRows).verticalAlignment(VerticalAlignment.TOP)
 							.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
 							.build())
 						.add(TextCell.builder()
