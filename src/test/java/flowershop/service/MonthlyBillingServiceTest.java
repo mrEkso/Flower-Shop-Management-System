@@ -47,8 +47,8 @@ class MonthlyBillingServiceTest {
 		ContractOrder contractOrder = orderFactory.createContractOrder(
 			"one-time",
 			"weekly",
-			LocalDate.of(2024, 11, 12),
-			LocalDate.of(2026, 1, 1),
+			LocalDate.of(2024, 11, 12).atStartOfDay(),
+			LocalDate.of(2026, 1, 1).atStartOfDay(),
 			"test address",
 			new Client(),
 			"test notes"
