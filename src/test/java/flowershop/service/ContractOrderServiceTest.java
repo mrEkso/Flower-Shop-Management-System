@@ -69,7 +69,7 @@ public class ContractOrderServiceTest {
 		UUID uuid = UUID.randomUUID();
 		Order.OrderIdentifier orderId = Order.OrderIdentifier.of(uuid.toString());
 
-		ContractOrder mockOrder = new ContractOrder(mockUserAccount, null, null, null, null, null, "notes");
+		ContractOrder mockOrder = new ContractOrder(mockUserAccount, null, null, null, null, null, null, "notes");
 
 		when(contractOrderRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
 
@@ -107,7 +107,7 @@ public class ContractOrderServiceTest {
 		LocalDateTime startDate = LocalDateTime.of(2024, Month.DECEMBER, 15, 19, 16, 6);
 		LocalDateTime endDate = LocalDateTime.of(2024, Month.DECEMBER, 15, 19, 16, 6);
 
-		ContractOrder mockOrder = new ContractOrder(mockUserAccount, "recurring", startDate, endDate, "address", mockClient, "notes");
+		ContractOrder mockOrder = new ContractOrder(mockUserAccount, "recurring", null, startDate, endDate, "address", mockClient, "notes");
 
 		// Simulated products with product IDs as keys and quantities as values
 		Map<String, String> products = Map.of(
@@ -120,17 +120,16 @@ public class ContractOrderServiceTest {
 
 		when(contractOrderRepository.save(any(ContractOrder.class))).thenReturn(mockOrder);
 
-		ContractOrder result = contractOrderService.update(mockOrder, products, orderStatus, cancelReason);
+		ContractOrder result = contractOrderService.update(mockOrder, products, 0, orderStatus, cancelReason);
 
 		assertEquals(result, mockOrder);
 		verify(contractOrderRepository, times(1)).save(mockOrder);
 	}
 
 
-
 	@Test
 	public void testDelete() throws Exception {
-		ContractOrder mockOrder = new ContractOrder(mockUserAccount, null, null, null, null, null, "notes");
+		ContractOrder mockOrder = new ContractOrder(mockUserAccount, null, null, null, null, null, null, "notes");
 
 		contractOrderService.delete(mockOrder);
 
@@ -143,7 +142,7 @@ public class ContractOrderServiceTest {
 		Order.OrderIdentifier orderId = Order.OrderIdentifier.of(orderUuid.toString());
 		UUID productUuid = UUID.randomUUID();
 
-		ContractOrder mockOrder = new ContractOrder(mockUserAccount, null, null, null, null, null, "notes");
+		ContractOrder mockOrder = new ContractOrder(mockUserAccount, null, null, null, null, null, null, "notes");
 		when(contractOrderRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
 		when(contractOrderRepository.save(any(ContractOrder.class))).thenReturn(mockOrder);
 

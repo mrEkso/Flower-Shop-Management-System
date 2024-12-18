@@ -4,7 +4,9 @@ import flowershop.calendar.CalendarService;
 import flowershop.calendar.Event;
 import flowershop.product.ProductService;
 import javassist.NotFoundException;
+import org.hibernate.validator.internal.constraintvalidators.bv.notempty.NotEmptyValidatorForArray;
 import org.javamoney.moneta.Money;
+import org.salespointframework.order.ChargeLine;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -402,6 +404,8 @@ public class ServiceController {
 				.orElseThrow(() -> new NotFoundException("Contract order not found"));
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
+			if (startDate.isAfter(endDate))
+				throw new IllegalArgumentException("Start date cannot be later than end date");
 			contractOrder.setClient(getOrCreateClient(clientName, phone));
 			contractOrder.setContractType(contractType);
 			contractOrder.setStartDate(startDate);
@@ -409,16 +413,16 @@ public class ServiceController {
 			contractOrder.setAddress(address);
 			contractOrder.setNotes(notes);
 			contractOrder.setPaymentMethod(paymentMethod);
-			contractOrder.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
 			if ("recurring".equals(frequency)) {
 				contractOrder.setFrequency(frequency);
 			} else if ("custom".equals(frequency)) {
 				contractOrder.setCustomFrequency(customFrequency);
 				contractOrder.setCustomUnit(customUnit);
 			}
-			contractOrderService.update(contractOrder, products, orderStatus, cancelReason);
+			contractOrderService.update(contractOrder, products, servicePrice, orderStatus, cancelReason);
 			return "redirect:/services";
 		} catch (Exception e) {
+			System.out.println(Arrays.toString(e.getStackTrace()));
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/contracts/edit/" + id;
 		}
@@ -479,10 +483,10 @@ public class ServiceController {
 			eventOrder.setDeliveryAddress(deliveryAddress);
 			eventOrder.setNotes(notes);
 			eventOrder.setPaymentMethod(paymentMethod);
-			eventOrder.addChargeLine(Money.of(deliveryPrice, "EUR"), "Delivery Price");
-			eventOrderService.update(eventOrder, products, orderStatus, cancelReason);
+			eventOrderService.update(eventOrder, products, deliveryPrice, orderStatus, cancelReason);
 			return "redirect:/services";
 		} catch (Exception e) {
+			System.out.println(Arrays.toString(e.getStackTrace()));
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/events/edit/" + id;
 		}

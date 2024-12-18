@@ -10,6 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -50,5 +51,5 @@ public interface ContractOrderRepository extends CrudRepository<ContractOrder, O
 	 * @param orderStatus the status of the contract order
 	 * @return a list of `ContractOrder` entities that match the specified criteria
 	 */
-	List<ContractOrder> findAllByStartDateLessThanEqualAndEndDateGreaterThanEqualAndOrderStatus(LocalDate startDate, LocalDate endDate, OrderStatus orderStatus);
+	List<ContractOrder> findAllByStartDateLessThanEqualAndEndDateGreaterThanEqualAndOrderStatus(LocalDateTime startDate, LocalDateTime endDate, OrderStatus orderStatus);
 }
