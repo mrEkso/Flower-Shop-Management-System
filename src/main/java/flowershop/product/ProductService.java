@@ -155,6 +155,10 @@ public class ProductService {
 		return productCatalog.findById(getProductId(id));
 	}
 
+	public Optional<Product> getProductById(Product.ProductIdentifier id) {
+		return productCatalog.findById(id);
+	}
+
 	public List<Product> findProductsByName(String name) {
 		return productCatalog.findAll()
 			.stream()
