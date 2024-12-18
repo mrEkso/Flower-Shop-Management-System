@@ -92,7 +92,7 @@ public class SalesService {
 			Product product = cartItem.getProduct();
 
 			if (product instanceof Flower) {
-				productService.addFlowers((Flower) product, (int) cartItem.getQuantity().getAmount().doubleValue());
+				//productService.addFlowers((Flower) product, (int) cartItem.getQuantity().getAmount().doubleValue()); //TODO: Check this logic
 				wholesalerOrder.addOrderLine(product, cartItem.getQuantity());
 			} else if (product instanceof Bouquet) {
 				throw new IllegalArgumentException("Unsupported product type: Bouquet cannot be bought from Wholesaler.");
