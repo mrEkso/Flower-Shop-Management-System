@@ -89,7 +89,7 @@ public class DailyFinancialReport extends FinancialReport {
 		Row date = Row.builder()
 			.add(TextCell.builder().text(
 				(new StringBuilder().append(FinancialReport.getWeekdayNameDE(day.getDayOfWeek().getValue()))
-					.append(", ").append(dateRepr)).toString()).backgroundColor(Color.WHITE).fontSize(16).horizontalAlignment(HorizontalAlignment.CENTER).colSpan(5).font(font).build()).build();
+					.append(", ").append(dateRepr)).toString()).backgroundColor(Color.WHITE).fontSize(16).horizontalAlignment(HorizontalAlignment.CENTER).colSpan(6).font(font).build()).build();
 		neededRows.add(date);
 
 
@@ -102,7 +102,7 @@ public class DailyFinancialReport extends FinancialReport {
 				.build())
 			.add(TextCell.builder()
 				.text(getBalance().subtract(getProfit()).toString()).font(font).fontSize(14)
-				.colSpan(2).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
+				.colSpan(3).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
 				.build())
 			.borderWidth(1).build();
 		neededRows.add(kontostandMorning);
@@ -116,6 +116,10 @@ public class DailyFinancialReport extends FinancialReport {
 				.build())
 			.add(TextCell.builder()
 				.text("Typ").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+				.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+				.build())
+			.add(TextCell.builder()
+				.text("Client Name").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
 				.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
 				.build())
 			.add(TextCell.builder()
@@ -149,7 +153,11 @@ public class DailyFinancialReport extends FinancialReport {
 						.add(TextCell.builder()
 							.text(realEntry.getCategory()).rowSpan(numRows).verticalAlignment(VerticalAlignment.TOP)
 							.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
-							.build());
+							.build())
+						.add(TextCell.builder()
+						.text(realEntry.getClientName()).rowSpan(numRows).verticalAlignment(VerticalAlignment.TOP)
+						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
+						.build());
 				}
 				String productName = itemList.get(currentRow);
 				eintrag.add(TextCell.builder()
@@ -184,7 +192,7 @@ public class DailyFinancialReport extends FinancialReport {
 				.build())
 			.add(TextCell.builder()
 				.text(profitRepr).font(font).fontSize(14)
-				.colSpan(2).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
+				.colSpan(3).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
 				.build())
 			.borderWidth(1).build();
 		neededRows.add(difference);
@@ -197,7 +205,7 @@ public class DailyFinancialReport extends FinancialReport {
 				.build())
 			.add(TextCell.builder()
 				.text(getBalance().toString()).font(font).fontSize(14)
-				.colSpan(2).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
+				.colSpan(3).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
 				.build())
 			.borderWidth(1).build();
 		neededRows.add(evening);

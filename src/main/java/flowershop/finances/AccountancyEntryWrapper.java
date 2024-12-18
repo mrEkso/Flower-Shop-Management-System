@@ -46,6 +46,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 
 	private Category category;
 	private LocalDateTime timestamp;
+	private String clientName;
 
 	@Transient
 	private ProductService productService;
@@ -62,6 +63,13 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 
 	public String getCategory() {
 		return this.categoryToString(this.category);
+	}
+
+	public String getClientName() {
+		if(this.clientName == null) {
+			return "";
+		}
+		return this.clientName;
 	}
 
 	/**
@@ -98,10 +106,13 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		if (order instanceof WholesalerOrder) {
 			this.category = Category.Einkauf;
 		} else if (order instanceof ContractOrder) {
+			this.clientName = ((ContractOrder) order).getClient().getName();
 			this.category = Category.Vertraglicher_Verkauf;
 		} else if (order instanceof EventOrder) {
+			this.clientName = ((EventOrder) order).getClient().getName();
 			this.category = Category.Veranstaltung_Verkauf;
 		} else if (order instanceof ReservationOrder) {
+			this.clientName = ((ReservationOrder) order).getClient().getName();
 			this.category = Category.Reservierter_Verkauf;
 		} else if (order instanceof SimpleOrder) {
 			this.category = Category.Einfacher_Verkauf;
@@ -112,9 +123,11 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		for (OrderLine orderLine : kindaItemQuantityMap) {
 			nameQuantityMap.put(orderLine.getProductName(), orderLine.getQuantity());
 
-			String name = orderLine.getProductName();
-			List<Flower> lst = productService.findFlowersByName(name);
-			productQuantityMap.put(lst.getFirst(), orderLine.getQuantity());
+			if(order instanceof WholesalerOrder) {
+				String name = orderLine.getProductName();
+				List<Flower> lst = productService.findFlowersByName(name);
+				productQuantityMap.put(lst.getFirst(), orderLine.getQuantity());
+			}
 		}
 		Totalable<ChargeLine> extraFees = order.getAllChargeLines();
 		for (ChargeLine chargeLine : extraFees) {
