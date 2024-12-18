@@ -19,6 +19,7 @@ import javax.money.MonetaryAmount;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,7 +55,10 @@ public abstract class FinancialReport {
 	 */
 	public byte[] generatePDF() {
 		try (PDDocument document = new PDDocument()) {
-			PDType0Font customFont = PDType0Font.load(document, new File("src/main/resources/fonts/josefin-sans.semibold.ttf"));
+			InputStream inFont = getClass().getResourceAsStream("/fonts/josefin-sans.semibold.ttf");
+			System.out.println(inFont.toString());
+      		PDType0Font customFont = PDType0Font.load(document, inFont);
+
 			TableDrawer.builder()
 				.startX(50)
 				.endY(50)
