@@ -78,6 +78,16 @@ public class SalesService {
 		}
 
 		WholesalerOrder wholesalerOrder = orderFactory.createWholesalerOrder();
+		addFlowersFromCart(cart, wholesalerOrder);
+		wholesalerOrder.setPaymentMethod(paymentMethod);
+		wholesalerOrderService.create(wholesalerOrder);
+		cart.clear();
+
+		var event = OrderEvents.OrderPaid.of(wholesalerOrder);
+		eventPublisher.publishEvent(event); // Needed for Finances
+	}
+
+	private void addFlowersFromCart(Cart cart, WholesalerOrder wholesalerOrder) {
 		for (CartItem cartItem : cart) {
 			Product product = cartItem.getProduct();
 
@@ -91,12 +101,6 @@ public class SalesService {
 			}
 
 		}
-		wholesalerOrder.setPaymentMethod(paymentMethod);
-		wholesalerOrderService.create(wholesalerOrder);
-		cart.clear();
-
-		var event = OrderEvents.OrderPaid.of(wholesalerOrder);
-		eventPublisher.publishEvent(event); // Needed for Finances
 	}
 
 	/**

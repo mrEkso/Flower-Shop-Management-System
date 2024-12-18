@@ -234,7 +234,12 @@ public class CashRegisterService implements Accountancy {
 		MonetaryAmount moneyDifference = salesVolume(endToNow, endToNowDuration).get(endToNow);
 		CashRegister cashRegister = getCashRegister();
 		MonetaryAmount moneyThen = cashRegister.getBalance().subtract(moneyDifference);
-		List<AccountancyEntry> allEntries = getCashRegister().getAccountancyEntries().stream().toList();
+		//List<AccountancyEntry> allEntries = getCashRegister().getAccountancyEntries().stream().toList();
+		List<AccountancyEntryWrapper> allEntries = getCashRegister().getAccountancyEntries().stream()
+			.map(entry -> (AccountancyEntryWrapper) entry)
+			.sorted(Comparator.comparing(AccountancyEntryWrapper::getTimestamp))
+			.toList();
+
 		if (allEntries.isEmpty()) {
 			return null;
 		}
@@ -242,7 +247,7 @@ public class CashRegisterService implements Accountancy {
 			interval,
 			moneyThen,
 			this,
-			((AccountancyEntryWrapper) allEntries.get(0)).getTimestamp(),
+			allEntries.getFirst().getTimestamp(),
 			clockService);
 	}
 
@@ -264,7 +269,10 @@ public class CashRegisterService implements Accountancy {
 		MonetaryAmount moneyDifference = salesVolume(endToNow, endToNowDuration).get(endToNow);
 		CashRegister cashRegister = getCashRegister();
 		MonetaryAmount moneyThen = cashRegister.getBalance().subtract(moneyDifference);
-		List<AccountancyEntry> allEntries = getCashRegister().getAccountancyEntries().stream().toList();
+		List<AccountancyEntryWrapper> allEntries = getCashRegister().getAccountancyEntries().stream()
+			.map(entry -> (AccountancyEntryWrapper) entry)
+			.sorted(Comparator.comparing(AccountancyEntryWrapper::getTimestamp))
+			.toList();
 		if (allEntries.isEmpty()) {
 			return null;
 		}
@@ -272,7 +280,7 @@ public class CashRegisterService implements Accountancy {
 			interval,
 			moneyThen,
 			this,
-			((AccountancyEntryWrapper) allEntries.get(0)).getTimestamp(),
+			allEntries.getFirst().getTimestamp(),
 			clockService);
 	}
 

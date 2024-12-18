@@ -1,5 +1,6 @@
 package flowershop.sales;
 
+import flowershop.clock.ClockService;
 import flowershop.product.Bouquet;
 import flowershop.product.Flower;
 import flowershop.product.ProductService;
@@ -28,10 +29,12 @@ public class SalesController {
 
 	private final ProductService productService;
 	private final SalesService salesService;
+	private final ClockService clockService;
 
-	SalesController(ProductService productService, SalesService salesService) {
+	SalesController(ProductService productService, SalesService salesService, ClockService clockService) {
 		this.productService = productService;
 		this.salesService = salesService;
+		this.clockService = clockService;
 	}
 
 	@ModelAttribute("buyCart")
@@ -155,11 +158,11 @@ public class SalesController {
 		RedirectAttributes redirAttrs
 	) {
 
-		// Alert to new day
-		if(true){
-			redirAttrs.addFlashAttribute("success", "Done");
-		} else {
-			redirAttrs.addFlashAttribute("error", "The error XYZ occurred.");
+		// Alert when shop is closed
+		if(!clockService.isOpen()){
+			sellCart.clear();
+			redirAttrs.addFlashAttribute("error", "The day is closed, go home");
+			return "redirect:sell";
 		}
 		
 		if (sellCart == null || sellCart.isEmpty()) {
@@ -171,6 +174,7 @@ public class SalesController {
 		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
 		model.addAttribute("fullSellPrice", fp);
 
+		redirAttrs.addFlashAttribute("success", "Done");
 		model.addAttribute("message", "Your order has been successfully placed.");
 		return "redirect:sell";
 	}
@@ -188,11 +192,11 @@ public class SalesController {
 		Model model,
 		RedirectAttributes redirAttrs
 	) {
-		// Alert to new day
-		if(true){
-			redirAttrs.addFlashAttribute("success", "Done");
-		} else {
-			redirAttrs.addFlashAttribute("error", "The error XYZ occurred.");
+		// Alert when shop is closed
+		if(!clockService.isOpen()){
+			buyCart.clear();
+			redirAttrs.addFlashAttribute("error", "The day is closed, go home");
+			return "redirect:buy";
 		}
 
 		if (buyCart == null || buyCart.isEmpty()) {
@@ -204,6 +208,7 @@ public class SalesController {
 		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
 		model.addAttribute("fullBuyPrice", fp);
 
+		redirAttrs.addFlashAttribute("success", "Done");
 		model.addAttribute("message", "Your order has been successfully placed.");
 		return "redirect:buy";
 	}
@@ -281,6 +286,7 @@ public class SalesController {
 
 		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
 		model.addAttribute("fullSellPrice", fp);
+
 		return "redirect:/sell";
 	}
 

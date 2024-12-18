@@ -7,6 +7,7 @@ import flowershop.services.EventOrder;
 import flowershop.services.ReservationOrder;
 import jakarta.persistence.*;
 import org.salespointframework.accountancy.AccountancyEntry;
+import org.salespointframework.catalog.Product;
 import org.salespointframework.order.ChargeLine;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderLine;
@@ -36,6 +37,10 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 
 	@ElementCollection
 	private Map<String, Quantity> itemQuantityMap = new HashMap<String, Quantity>();
+
+	@ElementCollection
+	private Map<Product, Quantity> productQuantityMap = new HashMap<>();
+
 	private Category category;
 	private LocalDateTime timestamp;
 
@@ -91,6 +96,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		Totalable<OrderLine> kindaItemQuantityMap = order.getOrderLines();
 		for (OrderLine orderLine : kindaItemQuantityMap) {
 			itemQuantityMap.put(orderLine.getProductName(), orderLine.getQuantity());
+			// TODO productQuantityMap.put(orderLine.getProductIdentifier())
 		}
 		Totalable<ChargeLine> extraFees = order.getAllChargeLines();
 		for (ChargeLine chargeLine : extraFees) {
