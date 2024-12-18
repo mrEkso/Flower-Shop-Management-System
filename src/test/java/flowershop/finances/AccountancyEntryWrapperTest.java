@@ -1,5 +1,6 @@
 package flowershop.finances;
 
+import flowershop.product.ProductService;
 import flowershop.sales.SimpleOrder;
 import flowershop.sales.WholesalerOrder;
 import flowershop.services.ContractOrder;
@@ -32,9 +33,11 @@ public class AccountancyEntryWrapperTest {
 	private Order reservationOrder;
 	private Order simpleOrder;
 	private Order fake;
+	private ProductService productService;
 
 	@BeforeEach
 	void setUp() {
+		productService = mock(ProductService.class);
 		Totalable<OrderLine> mockedTotalable = mock(Totalable.class);
 		List<OrderLine> mockedOrderLines = new ArrayList<>();
 		OrderLine orderLine1 = mock(OrderLine.class);
@@ -96,31 +99,31 @@ public class AccountancyEntryWrapperTest {
 
 	@Test
 	void testGetCategoryForWholesalerOrder() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(wholesalerOrder,LocalDateTime.now());
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(wholesalerOrder,LocalDateTime.now(), productService);
 		assertEquals("Einkauf", wrapper.getCategory());
 	}
 
 	@Test
 	void testGetCategoryForContractOrder() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(contractOrder,LocalDateTime.now());
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(contractOrder,LocalDateTime.now(), productService);
 		assertEquals("Vertraglicher Verkauf", wrapper.getCategory());
 	}
 
 	@Test
 	void testGetCategoryForEventOrder() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(eventOrder,LocalDateTime.now());
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(eventOrder,LocalDateTime.now(), productService);
 		assertEquals("Veranstaltung Verkauf", wrapper.getCategory());
 	}
 
 	@Test
 	void testGetCategoryForReservationOrder() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(reservationOrder,LocalDateTime.now());
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(reservationOrder,LocalDateTime.now(), productService);
 		assertEquals("Reservierter Verkauf", wrapper.getCategory());
 	}
 
 	@Test
 	void testGetCategoryForSimpleOrder() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder,LocalDateTime.now());
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder,LocalDateTime.now(), productService);
 		assertEquals("Einfacher Verkauf", wrapper.getCategory());
 	}
 
@@ -128,13 +131,13 @@ public class AccountancyEntryWrapperTest {
 	void testConstructorThrowsForUnrecognizedOrder() {
 		//AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(fake);
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-			new AccountancyEntryWrapper(fake,LocalDateTime.now());
+			new AccountancyEntryWrapper(fake,LocalDateTime.now(), productService);
 		});
 		assertEquals("Order is not recognized", exception.getMessage());
 	}
 	@Test
 	void testGetTimestamp() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder,LocalDateTime.now());
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder,LocalDateTime.now(), productService);
 		LocalDateTime now = LocalDateTime.now();
 		wrapper.getTimestamp();
 		assertNotNull(wrapper.getTimestamp(), "Timestamp should not be null");
@@ -144,14 +147,14 @@ public class AccountancyEntryWrapperTest {
 
 	@Test
 	void testGetItemsEmptyMap() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder,LocalDateTime.now());
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder,LocalDateTime.now(), productService);
 		assertNotNull(wrapper.getItems(), "Items map should not be null");
 		//assertTrue(wrapper.getItems().isEmpty(), "Items map should be empty by default");
 	}
 
 	@Test
 	void testGetItemsModifiedMap() {
-		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder,LocalDateTime.now());
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(simpleOrder,LocalDateTime.now(), productService);
 		Map<String, Quantity> mockItems = new HashMap<>();
 		mockItems.put("Product 1", Quantity.of(2));
 		mockItems.put("Product 2", Quantity.of(5));

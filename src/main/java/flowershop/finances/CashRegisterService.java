@@ -2,6 +2,7 @@ package flowershop.finances;
 
 import flowershop.clock.ClockService;
 import flowershop.clock.PendingOrder;
+import flowershop.product.ProductService;
 import flowershop.services.AbstractOrder;
 import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.Accountancy;
@@ -34,17 +35,19 @@ public class CashRegisterService implements Accountancy {
 
 	private final CashRegisterRepository cashRegisterRepository;
 	private final ClockService clockService;
+	private final ProductService productService;
 
 
 	@Autowired
 	public CashRegisterService(OrderManagement<AbstractOrder> orderManagement,
-							   CashRegisterRepository cashRegisterRepository, ClockService clockService) {
+							   CashRegisterRepository cashRegisterRepository, ClockService clockService, ProductService productService) {
 		this.orderManagement = orderManagement;
 		this.cashRegisterRepository = cashRegisterRepository;
+		this.productService = productService;
 		Streamable<AbstractOrder> previousOrders = Optional.ofNullable(orderManagement.findBy(OrderStatus.PAID))
 			.orElse(Streamable.empty());
 		for (Order order : previousOrders) {
-			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order, clockService.now());
+			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order, clockService.now(), productService);
 			this.add(convertedOrder);
 		}
 		this.clockService = clockService;
@@ -80,7 +83,7 @@ public class CashRegisterService implements Accountancy {
 		if(((AccountancyEntryWrapper)entry).getCategory().equals("Einkauf"))
 		{
 			Set<PendingOrder> pendingOrders = cashRegister.getPendingOrders();
-			PendingOrder newOrder = new PendingOrder(((AccountancyEntryWrapper) entry).getItems(), clockService.nextWorkingDay());
+			PendingOrder newOrder = new PendingOrder(((AccountancyEntryWrapper) entry).getFlowers(), clockService.nextWorkingDay());
 			pendingOrders.add(newOrder);
 			cashRegister.setPendingOrders(pendingOrders);
 		}
@@ -96,7 +99,7 @@ public class CashRegisterService implements Accountancy {
 	public void onOrderPaid(OrderEvents.OrderPaid event) {
 		AbstractOrder order = (AbstractOrder) event.getOrder();
 		//convert order to AccountancyEntry
-		AccountancyEntryWrapper convertedOrder = new AccountancyEntryWrapper(order,clockService.now());
+		AccountancyEntryWrapper convertedOrder = new AccountancyEntryWrapper(order,clockService.now(), productService);
 		this.add(convertedOrder);
 	}
 
