@@ -286,6 +286,7 @@ public class SalesController {
 
 		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
 		model.addAttribute("fullSellPrice", fp);
+
 		return "redirect:/sell";
 	}
 
