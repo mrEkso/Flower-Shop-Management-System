@@ -119,6 +119,16 @@
       </div>
     </div>
 
+    <div th:if="${quantityProblemLabel}" class="modal3">
+        <div class="modal-content">
+            <h2 th:text="'You chosed more quantity than the existing'"></h2>
+            <form action="/inventory" method="get">
+                <button type="submit">Close</button>
+            </form>
+        </div>
+    </div>
+
+
     <div th:if="${showDeletedModal}" class="modal2">
       <div class="modal-content">
         <h2>Deleted Products</h2>

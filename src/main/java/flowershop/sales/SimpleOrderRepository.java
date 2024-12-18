@@ -13,6 +13,9 @@ import org.springframework.data.util.Streamable;
 
 import java.time.LocalDateTime;
 
+/**
+ * Repository for storing {@link SimpleOrder}s.
+ */
 public interface SimpleOrderRepository extends CrudRepository<SimpleOrder, Order.OrderIdentifier>, PagingAndSortingRepository<SimpleOrder, Order.OrderIdentifier> {
 	@NotNull
 	@Query("select o from #{#entityName} o")

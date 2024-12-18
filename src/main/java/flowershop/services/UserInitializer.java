@@ -1,9 +1,12 @@
 package flowershop.services;
 
+import java.util.List;
+
+import java.util.List;
+
 import org.salespointframework.core.DataInitializer;
-import org.salespointframework.useraccount.Password;
+import org.salespointframework.useraccount.Password.UnencryptedPassword;
 import org.salespointframework.useraccount.Role;
-import org.salespointframework.useraccount.UserAccount;
 import org.salespointframework.useraccount.UserAccountManagement;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -35,10 +38,18 @@ public class UserInitializer implements DataInitializer {
 	 */
 	@Override
 	public void initialize() {
+
+		// Skip creation if database was already populated
+		if (userAccountManagement.findByUsername("boss").isPresent()) {
+			return;
+		}
+		
+		userAccountManagement.create("boss", 
+			UnencryptedPassword.of("123"), 
+			List.of(Role.of("BOSS"), Role.of("USER")));
+
 		// Creating Floris Nichte
-		UserAccount dummyShopWorker = userAccountManagement.create("shop_worker", Password.UnencryptedPassword.of("password"), Role.of("ROLE_USER"));
-		dummyShopWorker.setFirstname("Shop");
-		dummyShopWorker.setLastname("Worker");
-		userAccountManagement.save(dummyShopWorker);
+		userAccountManagement.create("shop_worker", 
+		UnencryptedPassword.of("123"), Role.of("USER"));
 	}
 }

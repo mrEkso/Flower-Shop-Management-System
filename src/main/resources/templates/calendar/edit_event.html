@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Edit Service</title>
+    <title th:text="#{calendar.edit.title}"></title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://unpkg.com/htmx.org@1.7.0"></script>
@@ -13,22 +13,22 @@
 <div class="container p-4">
 
     <div class="text-center mb-4">
-        <h1>Edit Event</h1>
+        <h1 th:text="#{calendar.edit.title}"></h1>
     </div>
 
 
     <div class="flex-column justify-content-center">
 
         <form class="d-flex flex-column" action="/calendar/update" method="post">
-            <input type="hidden" name="id" th:value="${event.getId()}"> </input>
+            <input type="hidden" name="id" th:value="${event.getId()}">
             <input type="text" name="name" class="form-control mb-2" th:value="${event.getName()}">
             <input type="datetime-local" name="date" class="form-control mb-2" th:value="${event.getDate()}">
             <input type="text" name="description" class="form-control mb-2" th:value="${event.getDescription()}">
 
-            <button type="submit" class="btn btn-primary mt-2">Save modification</button>
+            <button type="submit" class="btn btn-primary mt-2" th:text="#{calendar.save}"></button>
         </form>
         <form>
-            <button type="button" class="btn btn-danger mt-2" onclick="window.location.href='/calendar'">Cancel</button>
+            <button type="button" class="btn btn-danger mt-2" onclick="window.location.href='/calendar'" th:text="#{calendar.cancel}"></button>
         </form>
     </div>
 </div>
