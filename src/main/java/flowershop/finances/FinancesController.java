@@ -64,11 +64,13 @@ public class FinancesController {
 			date1.getYear(),
 			date1.getMonth(),
 			date1.getDayOfMonth(), 0, 0)
-		).to(LocalDateTime.of(
+		).to(date2.plusDays(1).atStartOfDay());
+			/*
+			.to(LocalDateTime.of(
 			date2.getYear(),
 			date2.getMonth(),
-			date2.getDayOfMonth(), 0, 0
-		));
+			date2.getDayOfMonth()+, 0, 0
+			 */
 		HashSet<AccountancyEntryWrapper> filteredList = new HashSet<>();
 		for (AccountancyEntry i : cashRegisterService.find(interval).toList()) {
 			filteredList.add((AccountancyEntryWrapper) i);
