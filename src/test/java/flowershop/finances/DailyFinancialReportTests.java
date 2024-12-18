@@ -111,10 +111,12 @@ class DailyFinancialReportTests {
 	void getNeededRows_ShouldContainCorrectRows() {
 		// Arrange
 		AccountancyEntryWrapper entry = mock(AccountancyEntryWrapper.class);
-		when(entry.getTimestamp()).thenReturn(LocalDateTime.of(2024, 6, 1, 10, 0));
+		when(entry.getTimestampStr()).thenReturn(LocalDateTime.now().toString());
+		//when(entry.getTimestamp()).thenReturn(LocalDateTime.of(2024, 6, 1, 10, 0));
 		when(entry.getCategory()).thenReturn("Sale");
 		when(entry.getItems()).thenReturn(Map.of("Flower", Quantity.of(5)));
 		when(entry.getValue()).thenReturn(balanceEndOfDay);
+		when(entry.getClientName()).thenReturn("Ihor Perduta");
 
 		Streamable<AccountancyEntry> entries = Streamable.of(entry);
 		when(cashRegisterService.find(dayInterval)).thenReturn(entries);

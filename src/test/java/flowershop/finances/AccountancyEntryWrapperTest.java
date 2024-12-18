@@ -1,14 +1,17 @@
 package flowershop.finances;
 
+import flowershop.product.Flower;
 import flowershop.product.ProductService;
 import flowershop.sales.SimpleOrder;
 import flowershop.sales.WholesalerOrder;
+import flowershop.services.Client;
 import flowershop.services.ContractOrder;
 import flowershop.services.EventOrder;
 import flowershop.services.ReservationOrder;
 import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.salespointframework.catalog.Product;
 import org.salespointframework.order.ChargeLine;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderLine;
@@ -48,6 +51,8 @@ public class AccountancyEntryWrapperTest {
 		when(mockedTotalable.spliterator()).thenReturn(mockedOrderLines.spliterator());
 		when(mockedTotalable.stream()).thenReturn(mockedOrderLines.stream());
 		when(mockedTotalable.toList()).thenReturn(mockedOrderLines);
+		when(orderLine1.getProductName()).thenReturn("Rose");
+		when(orderLine2.getProductName()).thenReturn("Lily");
 
 		Totalable<ChargeLine> extraFees = mock(Totalable.class);
 		List<ChargeLine> mockedExtraFees = new ArrayList<>();
@@ -89,6 +94,15 @@ public class AccountancyEntryWrapperTest {
 
 		fake = mock(Order.class);
 		when(fake.getTotal()).thenReturn(Money.of(100, "EUR"));
+
+		Flower rose = mock(Flower.class);
+		ArrayList<Flower> roses = new ArrayList<>();
+		roses.add(rose);
+		when(productService.findFlowersByName("Rose")).thenReturn(roses);
+		Flower lily = mock(Flower.class);
+		ArrayList<Flower> lilys = new ArrayList<>();
+		lilys.add(lily);
+		when(productService.findFlowersByName("Lily")).thenReturn(lilys);
 	}
 
 	@Test
@@ -99,24 +113,34 @@ public class AccountancyEntryWrapperTest {
 
 	@Test
 	void testGetCategoryForWholesalerOrder() {
+
 		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(wholesalerOrder,LocalDateTime.now(), productService);
 		assertEquals("Einkauf", wrapper.getCategory());
 	}
 
 	@Test
 	void testGetCategoryForContractOrder() {
+		Client client = mock(Client.class);
+		when(((ContractOrder)(contractOrder)).getClient()).thenReturn(client);
+		when(client.getName()).thenReturn("Habibi");
 		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(contractOrder,LocalDateTime.now(), productService);
 		assertEquals("Vertraglicher Verkauf", wrapper.getCategory());
 	}
 
 	@Test
 	void testGetCategoryForEventOrder() {
+		Client client = mock(Client.class);
+		when(((EventOrder)(eventOrder)).getClient()).thenReturn(client);
+		when(client.getName()).thenReturn("Habibi");
 		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(eventOrder,LocalDateTime.now(), productService);
 		assertEquals("Veranstaltung Verkauf", wrapper.getCategory());
 	}
 
 	@Test
 	void testGetCategoryForReservationOrder() {
+		Client client = mock(Client.class);
+		when(((ReservationOrder)(reservationOrder)).getClient()).thenReturn(client);
+		when(client.getName()).thenReturn("Habibi");
 		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(reservationOrder,LocalDateTime.now(), productService);
 		assertEquals("Reservierter Verkauf", wrapper.getCategory());
 	}
@@ -160,7 +184,7 @@ public class AccountancyEntryWrapperTest {
 		mockItems.put("Product 2", Quantity.of(5));
 		wrapper.getItems().putAll(mockItems);
 		wrapper.getItems();
-		assertEquals(3, wrapper.getItems().size(), "Items map should have 2 entries");
+		assertEquals(4, wrapper.getItems().size(), "Items map should have 4 entries");
 		assertEquals(Quantity.of(2), wrapper.getItems().get("Product 1"), "Quantity for Product 1 should match");
 		assertEquals(Quantity.of(5), wrapper.getItems().get("Product 2"), "Quantity for Product 2 should match");
 	}

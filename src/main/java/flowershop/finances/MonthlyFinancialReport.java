@@ -102,7 +102,7 @@ public class MonthlyFinancialReport extends FinancialReport {
 				.build())
 			.add(TextCell.builder()
 				.text(profitRepr).font(font).fontSize(14)
-				.colSpan(2).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
+				.colSpan(3).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
 				.build())
 			.padding(10).borderWidth(1.5f).borderStyle(BorderStyle.DOTTED).build();
 		neededRows.add(difference);
