@@ -578,7 +578,7 @@ Was das zu erstellende Programm auf alle Fälle leisten muss.
 | [[F0501]]<<F0501>> 
 | v0.1 
 | Zugriffskontrolle und Berechtigungen 
-| Das System soll Login- und Logout-Funktionen sowie die Verwaltung der Zugriffsrechte für verschiedene Benutzerrollen bieten, um die Sicherheit zu gewährleisten.
+| Das System soll Login- und Logout-Funktionen bieten, um die Sicherheit zu gewährleisten.
 
 |===
 
