@@ -9,10 +9,6 @@ import java.util.Map;
 
 @Entity
 public class Bouquet extends Product {
-
-//	@OneToMany(cascade = CascadeType.ALL)
-//	private List<Flower> flowers;
-
 	@Transient
 	private Map<Flower, Integer> flowers = new HashMap<>();
 

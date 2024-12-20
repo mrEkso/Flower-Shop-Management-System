@@ -11,10 +11,10 @@ public class Flower extends Product {
 	private Pricing pricing;
 
 	private String color;
-	private Integer quantity;
-	private Integer deletedQuantity;
+	private int quantity;
+	private int deletedQuantity;
 
-	public Flower(String name, Pricing pricing, String color, Integer quantity) {
+	public Flower(String name, Pricing pricing, String color, int quantity) {
 		super(name, pricing.getSellPrice());
 		this.pricing = pricing;
 		this.color = color;
@@ -36,10 +36,6 @@ public class Flower extends Product {
 
 	public String getColor() {
 		return color;
-	}
-
-	public void setColor(String color) {
-		this.color = color;
 	}
 
 	protected void addQuantity(int quantity) {
