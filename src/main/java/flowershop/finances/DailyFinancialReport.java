@@ -1,7 +1,9 @@
 package flowershop.finances;
 
 import flowershop.clock.ClockService;
+import flowershop.inventory.DeletedProduct;
 import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.time.Interval;
 import org.springframework.data.util.Streamable;
@@ -45,9 +47,8 @@ public class DailyFinancialReport extends FinancialReport {
 		});
 		this.income = cashRegister.getRevenue(set);
 		this.expenditure = cashRegister.getExpences(set);
-
 		countProfit();
-		//do the rest.
+		this.deletedProducts = cashRegister.findDeletedProductsByDate(day.getStart().toLocalDate());
 	}
 
 	public Streamable<AccountancyEntry> getOrders() {
@@ -182,6 +183,7 @@ public class DailyFinancialReport extends FinancialReport {
 		}
 
 		neededRows.add(emptyRow());
+
 		// day difference
 		MonetaryAmount profit = getProfit();
 		String profitRepr = profit.toString();
@@ -209,6 +211,10 @@ public class DailyFinancialReport extends FinancialReport {
 				.build())
 			.borderWidth(1).build();
 		neededRows.add(evening);
+		neededRows.add(emptyRow());
+
+		// deleted products
+		neededRows.addAll(this.getDeletedProductRows(font));
 
 		return neededRows;
 	}

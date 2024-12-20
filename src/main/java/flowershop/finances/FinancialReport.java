@@ -1,6 +1,7 @@
 package flowershop.finances;
 
 import flowershop.clock.ClockService;
+import flowershop.inventory.DeletedProduct;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -11,11 +12,13 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.salespointframework.time.Interval;
 import org.vandeseer.easytable.TableDrawer;
 import org.vandeseer.easytable.settings.HorizontalAlignment;
+import org.vandeseer.easytable.settings.VerticalAlignment;
 import org.vandeseer.easytable.structure.Row;
 import org.vandeseer.easytable.structure.Table;
 import org.vandeseer.easytable.structure.cell.TextCell;
 
 import javax.money.MonetaryAmount;
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +38,7 @@ public abstract class FinancialReport {
 	protected LocalDateTime startDate;
 	protected Interval interval;
 	protected ClockService clockService;
+	protected List<DeletedProduct> deletedProducts;
 
 	public FinancialReport(Interval period,
 						   MonetaryAmount balanceEndOfThePeriod,
@@ -181,6 +185,74 @@ public abstract class FinancialReport {
 			builder.addRow(row);
 		}
 		return builder.build();
+	}
+
+	public List<Row> getDeletedProductRows(PDFont font){
+		List<Row> neededRows = new java.util.ArrayList<>();
+		if(!this.deletedProducts.isEmpty()){
+			Row title = Row.builder()
+				.add(TextCell.builder()
+					.text(this instanceof DailyFinancialReport ? "Verwelkte Blumen an diesem Tag:" : "Verwelkte Blumen in diesem Monat:")
+					.font(font).fontSize(14).colSpan(6).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.CENTER)
+					.build())
+				.build();
+			neededRows.add(title);
+			Row headerDeleted = Row.builder()
+				.add(TextCell.builder()
+					.text("Produkt").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+					.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+					.build())
+				.add(TextCell.builder()
+					.text("Preis pro Stück").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+					.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+					.build())
+				.add(TextCell.builder()
+					.text("Anzahl").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+					.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+					.build())
+				.add(TextCell.builder()
+					.text("Einnahmen verloren").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+					.fontSize(14).colSpan(3).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+					.build())
+				.build();
+			neededRows.add(headerDeleted);
+			for (DeletedProduct deletedProduct : this.deletedProducts) {
+				Row deleted = Row.builder()
+					.add(TextCell.builder()
+						.text(deletedProduct.getName()).verticalAlignment(VerticalAlignment.TOP)
+						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
+						.build())
+					.add(TextCell.builder()
+						.text(deletedProduct.getPricePerUnit().toString()).verticalAlignment(VerticalAlignment.TOP)
+						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
+						.build())
+					.add(TextCell.builder()
+						.text(String.valueOf(deletedProduct.getQuantityDeleted())).verticalAlignment(VerticalAlignment.TOP)
+						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
+						.build())
+					.add(TextCell.builder()
+						.text(String.valueOf(deletedProduct.getTotalLoss())).verticalAlignment(VerticalAlignment.TOP)
+						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT).colSpan(3)
+						.build())
+					.build();
+				neededRows.add(deleted);
+			}
+			MonetaryAmount total = this.deletedProducts.stream()
+				.map(DeletedProduct::getTotalLoss)
+				.reduce(MonetaryAmount::add).get();
+			Row totalLosses = Row.builder()
+				.add(TextCell.builder()
+					.text("Gesamte Verluste:").verticalAlignment(VerticalAlignment.TOP).colSpan(3)
+					.font(font).fontSize(14).horizontalAlignment(HorizontalAlignment.LEFT)
+					.build())
+				.add(TextCell.builder()
+					.text(total.toString()).verticalAlignment(VerticalAlignment.TOP).colSpan(3)
+					.font(font).fontSize(14).horizontalAlignment(HorizontalAlignment.LEFT)
+					.build()).borderWidth(1).borderColor(Color.BLACK).verticalAlignment(VerticalAlignment.MIDDLE)
+				.build();
+			neededRows.add(totalLosses);
+		}
+		return neededRows;
 	}
 
 	/**

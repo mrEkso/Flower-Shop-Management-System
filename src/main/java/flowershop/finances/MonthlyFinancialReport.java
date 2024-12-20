@@ -46,6 +46,7 @@ public class MonthlyFinancialReport extends FinancialReport {
 			this.expenditure = this.expenditure.add(currentDay.getExpenditure());
 		}
 		this.dailyFinancialReports = this.dailyFinancialReports.reversed();
+		this.deletedProducts = cashRegister.findDeletedProductsByMonth(month.getStart().toLocalDate());
 		countProfit();
 	}
 
@@ -85,7 +86,7 @@ public class MonthlyFinancialReport extends FinancialReport {
 		List<Row> neededRows = new ArrayList<>();
 
 		for (DailyFinancialReport dailyFinancialReport : dailyFinancialReports) {
-			if (dailyFinancialReport.getOrders().isEmpty()) {
+			if (dailyFinancialReport.getOrders().isEmpty() && dailyFinancialReport.deletedProducts.isEmpty()) {
 				continue;
 			}
 			neededRows.addAll(dailyFinancialReport.getNeededRows(font));
@@ -106,7 +107,8 @@ public class MonthlyFinancialReport extends FinancialReport {
 				.build())
 			.padding(10).borderWidth(1.5f).borderStyle(BorderStyle.DOTTED).build();
 		neededRows.add(difference);
-
+		neededRows.add(emptyRow());
+		neededRows.addAll(this.getDeletedProductRows(font));
 		return neededRows;
 	}
 
