@@ -23,16 +23,16 @@ public class ProductService {
 		this.productCatalog = productCatalog;
 	}
 
-	public Flower addFlowers(Flower flower, int quantity) {
+	public Flower addFlowers(@NotNull Flower flower, int quantity) {
 		Flower existingFlower = (Flower) productCatalog.findById(flower.getId()).orElse(null);
 
-		// If the flower exists, update its quantity
-		if (existingFlower != null) {
-			existingFlower.setQuantity(existingFlower.getQuantity() + quantity);
-			return productCatalog.save(existingFlower);
-		} else {
+		if (existingFlower == null) {
 			// If the flower doesn't exist, save it as a new flower
 			return productCatalog.save(flower);
+		} else {
+			// If the flower exists, update its quantity
+			existingFlower.addQuantity(quantity);
+			return productCatalog.save(existingFlower);
 		}
 	}
 
@@ -45,7 +45,7 @@ public class ProductService {
 		var bouquetQuantity = bouquet.getQuantity();
 
 		for (int n = 0; n < bouquetQuantity; n++) {
-			// remove for every single bouquet
+			// Reduce quantity for every single bouquet
 			for (Map.Entry<Flower, Integer> entry : bouquet.getFlowers().entrySet()) {
 				Flower flower = entry.getKey();
 				Integer quant = entry.getValue();
@@ -53,8 +53,7 @@ public class ProductService {
 				removeFlowers(flower, quant);
 			}
 		}
-
-		bouquet.setQuantity(bouquetQuantity);
+		bouquet.addQuantity(bouquetQuantity);
 		return productCatalog.save(bouquet);
 	}
 
@@ -62,23 +61,23 @@ public class ProductService {
 		Flower existingFlower = (Flower) productCatalog.findById(flower.getId()).orElse(null);
 		if (existingFlower == null) {
 			throw new IllegalStateException("Flower not found in the catalog.");
-		} else {
-			// Calculate the new quantity
-			int newQuantity = existingFlower.getQuantity() - quantity;
-
-			if (newQuantity >= 0) {
-				// Update the quantity if still positive or zero
-				existingFlower.setQuantity(newQuantity);
-				productCatalog.save(existingFlower);
-			} else {
-				throw new IllegalStateException(
-					"Insufficient stock for flower: " + existingFlower.getName() +
-						" [ID: " + existingFlower.getId() + "]. Required: " + quantity +
-						", Available: " + existingFlower.getQuantity());
-			}
 		}
-	}
 
+		// Calculate the new quantity
+		int newQuantity = existingFlower.getQuantity() - quantity;
+
+		if (newQuantity >= 0) {
+			// Update the quantity if still positive or zero
+			existingFlower.reduceQuantity(quantity);
+			productCatalog.save(existingFlower);
+		} else {
+			throw new IllegalStateException(
+				"Insufficient stock for flower: " + existingFlower.getName() +
+					" [ID: " + existingFlower.getId() + "]. Required: " + quantity +
+					", Available: " + existingFlower.getQuantity());
+		}
+
+	}
 
 	public void removeBouquet(Bouquet bouquet, int quantity) throws IllegalStateException {
 		Bouquet existingBouquet = (Bouquet) productCatalog.findById(bouquet.getId()).orElse(null);
@@ -90,7 +89,7 @@ public class ProductService {
 
 			if (newQuantity >= 0) {
 				// Update the quantity if it's still positive
-				existingBouquet.setQuantity(newQuantity);
+				existingBouquet.reduceQuantity(quantity);
 				productCatalog.save(existingBouquet);
 //			} else if (newQuantity == 0) {
 //				// Remove the bouquet completely if the quantity becomes zero
@@ -101,7 +100,6 @@ public class ProductService {
 			}
 		}
 	}
-
 
 	public List<Product> getAllProducts() {
 		return productCatalog.findAll().toList();
@@ -127,7 +125,6 @@ public class ProductService {
 			.map(Flower::getColor)
 			.collect(Collectors.toSet());
 	}
-
 
 	public List<Bouquet> findBouquetsByName(String subString) {
 		return productCatalog.findAll()
@@ -193,6 +190,7 @@ public class ProductService {
 			.filter(flower -> flower.getQuantity() > 0)
 			.collect(toList());
 	}
+
 	/**
 	 * @param bouquets
 	 * @return Returns all bouquets that have Quantity > 0, i.e. that are in stock.
