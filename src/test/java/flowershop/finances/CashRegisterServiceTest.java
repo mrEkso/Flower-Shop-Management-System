@@ -1,6 +1,7 @@
 package flowershop.finances;
 
 import flowershop.clock.ClockService;
+import flowershop.product.ProductService;
 import flowershop.sales.SimpleOrder;
 import flowershop.services.AbstractOrder;
 import org.javamoney.moneta.Money;
@@ -36,6 +37,8 @@ public class CashRegisterServiceTest {
 	private CashRegisterRepository cashRegisterRepository;
 	@Mock
 	private ClockService clockService;
+	@Mock
+	private ProductService productService;
 	/*
 	@Mock
 	private Streamable<AbstractOrder> previousOrders;
@@ -212,10 +215,12 @@ public class CashRegisterServiceTest {
 	void testCreateFinancialReportDay() {
 		LocalDateTime day = LocalDateTime.now();
 		Interval interval = Interval.from(day.minusDays(1)).to(day); // Assuming a custom Interval implementation
+
 		/*
 		CashRegister mockCashRegister = mock(CashRegister.class);
 		when(cashRegisterRepository.findFirstByOrderById()).thenReturn(Optional.of(mockCashRegister));
 */
+		when(productService.getDeletedProducts()).thenReturn(new ArrayList<>());
 		DailyFinancialReport report = cashRegisterService.createFinancialReportDay(day);
 		assertNotNull(report, "Financial report for the day cannot be null.");
 	}
