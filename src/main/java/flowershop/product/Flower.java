@@ -55,7 +55,7 @@ public class Flower extends Product {
 		return deletedQuantity;
 	}
 
-	public void setDeletedQuantity(Integer deletedQuantity) {
+	public void setDeletedQuantity(int deletedQuantity) {
 		this.deletedQuantity = deletedQuantity;
 	}
 }
