@@ -2,6 +2,7 @@ package flowershop.finances;
 
 import flowershop.clock.ClockService;
 import flowershop.clock.PendingOrder;
+import flowershop.inventory.DeletedProduct;
 import flowershop.product.ProductService;
 import flowershop.services.AbstractOrder;
 import org.javamoney.moneta.Money;
@@ -21,9 +22,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.money.MonetaryAmount;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static flowershop.finances.Category.Einkauf;
 
@@ -101,6 +104,57 @@ public class CashRegisterService implements Accountancy {
 		//convert order to AccountancyEntry
 		AccountancyEntryWrapper convertedOrder = new AccountancyEntryWrapper(order,clockService.now(), productService);
 		this.add(convertedOrder);
+	}
+
+	/**
+	 *
+	 * @return list of all deleted products ever
+	 */
+	public List<DeletedProduct> getAllDeletedProducts(){
+		return productService.getDeletedProducts();
+	}
+
+	public List<DeletedProduct> getAllDeletedProducts(LocalDate date1, LocalDate date2){
+		return productService.getDeletedProducts().stream()
+			.filter(product -> (!date1.isAfter(product.getDateWhenDeleted()) && !date2.isBefore(product.getDateWhenDeleted())))
+			.toList();
+	}
+
+	/**
+	 *
+	 * @param date
+	 * @return list of all deleted products on a certain date
+	 */
+	public List<DeletedProduct> findDeletedProductsByDate(LocalDate date){
+		return normalizeDeletedProducts(productService.getDeletedProducts().stream()
+			.filter(product -> date.equals(product.getDateWhenDeleted()))
+			.toList());
+	}
+
+	/**
+	 *
+	 * @param month any day in a desired month
+	 * @return list of all deleted products during a certain month
+	 */
+	public List<DeletedProduct> findDeletedProductsByMonth(LocalDate month){
+		return normalizeDeletedProducts(productService.getDeletedProducts().stream()
+			.filter(product -> month.getMonth().equals(product.getDateWhenDeleted().getMonth())
+				&& month.getYear() == product.getDateWhenDeleted().getYear())
+			.toList());
+	}
+
+	private List<DeletedProduct> normalizeDeletedProducts(List<DeletedProduct> deletedProducts) {
+		Map<String, List<DeletedProduct>> grouped = deletedProducts.stream().collect(Collectors.groupingBy((DeletedProduct::getName)));
+		List<DeletedProduct> output = new ArrayList<>();
+		for (Map.Entry<String, List<DeletedProduct>> entry : grouped.entrySet()) {
+			String name = entry.getKey();
+			MonetaryAmount pricePerUnit = entry.getValue().getFirst().getPricePerUnit();
+			int quantityDeleted = entry.getValue().stream().mapToInt(DeletedProduct::getQuantityDeleted).sum();
+			MonetaryAmount totalLoss = pricePerUnit.multiply(quantityDeleted);
+			LocalDate dateWhenDeleted = entry.getValue().getFirst().getDateWhenDeleted();
+			output.add(new DeletedProduct(name, pricePerUnit, quantityDeleted, totalLoss, dateWhenDeleted));
+		}
+		return output;
 	}
 
 	/**

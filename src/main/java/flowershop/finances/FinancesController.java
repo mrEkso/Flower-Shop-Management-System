@@ -1,6 +1,7 @@
 package flowershop.finances;
 
 import flowershop.clock.ClockService;
+import flowershop.inventory.DeletedProduct;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.time.Interval;
@@ -39,6 +40,7 @@ public class FinancesController {
 	private boolean isFilteredByDates;
 	private boolean isFilteredByCategory;
 	private String category;
+	private List<DeletedProduct> deletedProducts = new ArrayList<>();
 
 	public FinancesController(CashRegisterService cashRegisterService, ClockService clockService) {
 		this.cashRegisterService = cashRegisterService;
@@ -83,6 +85,9 @@ public class FinancesController {
 			setFilteredOrdersList(filteredList.stream().toList(), 100);
 		}
 		this.isFilteredByDates = true;
+		List<DeletedProduct> tempList = new ArrayList<>(cashRegisterService.getAllDeletedProducts(date1,date2));
+		tempList.sort(Comparator.comparing(DeletedProduct::getDateWhenDeleted).reversed());
+		this.deletedProducts = tempList;
 		prepareFinancesModel(model, filteredAndCutOrdersList);
 		return "finances";
 	}
@@ -105,6 +110,9 @@ public class FinancesController {
 		if (this.isFilteredByCategory) {
 			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByCategory).stream().toList(), 100);
 		}
+		List<DeletedProduct> tempList = new ArrayList<>(cashRegisterService.getAllDeletedProducts());
+		tempList.sort(Comparator.comparing(DeletedProduct::getDateWhenDeleted).reversed());
+		this.deletedProducts = tempList;
 		prepareFinancesModel(model, filteredAndCutOrdersList);
 		return "finances";
 	}
@@ -149,9 +157,12 @@ public class FinancesController {
 		model.addAttribute("category", category);
 		model.addAttribute("todayDate", clockService.getCurrentDate());
 		model.addAttribute("shopOpened", clockService.isOpen());
+		model.addAttribute("deletedProducts", this.deletedProducts);
+		model.addAttribute("deletedProductsNotEmpty", !this.deletedProducts.isEmpty());
 		LocalDateTime startOfDay = clockService.getCurrentDate().atTime(9, 0, 0);
 		LocalDateTime endOfInterval = startOfDay.plusDays(1);
 		model.addAttribute("dayProfit", cashRegisterService.salesVolume(Interval.from(startOfDay).to(endOfInterval), Duration.ofDays(1)).get(Interval.from(startOfDay).to(endOfInterval)));
+		model.addAttribute("transactionsNotEmpty", !transactions.isEmpty());
 	}
 
 	/**
@@ -189,6 +200,9 @@ public class FinancesController {
 		for (AccountancyEntry i : this.cashRegisterService.findAll().toList()) {
 			this.filteredOrdersList.add((AccountancyEntryWrapper) i);
 		}
+		List<DeletedProduct> tempList = new ArrayList<>(cashRegisterService.getAllDeletedProducts());
+		tempList.sort(Comparator.comparing(DeletedProduct::getDateWhenDeleted).reversed());
+		this.deletedProducts = tempList;
 
 		setFilteredOrdersList(filteredOrdersList, 100);
 		model.addAttribute("transactions", filteredAndCutOrdersList);
@@ -199,6 +213,9 @@ public class FinancesController {
 		LocalDateTime startOfDay = clockService.getCurrentDate().atTime(9, 0, 0);
 		LocalDateTime endOfInterval = startOfDay.plusDays(1);
 		model.addAttribute("dayProfit", cashRegisterService.salesVolume(Interval.from(startOfDay).to(endOfInterval), Duration.ofDays(1)).get(Interval.from(startOfDay).to(endOfInterval)));
+		model.addAttribute("deletedProducts", this.deletedProducts);
+		model.addAttribute("deletedProductsNotEmpty", !this.deletedProducts.isEmpty());
+		model.addAttribute("transactionsNotEmpty", !filteredOrdersList.isEmpty());
 		return "finances";
 	}
 

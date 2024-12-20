@@ -302,7 +302,7 @@ public class InventoryController {
 	public String showDeletedProducts(Model model) {
 		double totalLossSum = 0.0;
 		for (DeletedProduct deletedProduct : productService.getDeletedProducts()) {
-			totalLossSum += deletedProduct.getTotalLoss();
+			totalLossSum += deletedProduct.getTotalLoss().getNumber().doubleValue();
 		}
 
 		List<Map<String, Object>> enrichedProducts = productService.getAllProducts().stream()
@@ -381,9 +381,9 @@ public class InventoryController {
 					productService.removeFlowers(flower, deleteQuantity);
 					DeletedProduct deletedProduct = new DeletedProduct(
 						flower.getName(),
-						flower.getPrice().getNumber().doubleValue(),
+						flower.getPrice(),
 						deleteQuantity,
-						flower.getPrice().getNumber().doubleValue() * deleteQuantity,
+						flower.getPrice().multiply(deleteQuantity),
 						clockService.getCurrentDate()
 					);
 					//deletedProducts.add(deletedProduct);
@@ -403,9 +403,9 @@ public class InventoryController {
 					productService.removeBouquet(bouquet, deleteQuantity);
 					DeletedProduct deletedProduct = new DeletedProduct(
 						bouquet.getName(),
-						bouquet.getPrice().getNumber().doubleValue(),
+						bouquet.getPrice(),
 						deleteQuantity,
-						bouquet.getPrice().getNumber().doubleValue() * deleteQuantity,
+						bouquet.getPrice().multiply(deleteQuantity),
 						clockService.getCurrentDate()
 					);
 					//deletedProducts.add(deletedProduct);

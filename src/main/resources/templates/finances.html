@@ -129,7 +129,7 @@
                                 </th>
                                 <th th:text="${dayProfit}"></th>
                             </tr>
-                            <tr>
+                            <tr th:if="${transactionsNotEmpty}">
                                 <th th:text="#{finances.table.head.timestamp}"></th>
                                 <th th:text="#{finances.table.head.category}"></th>
                                 <th th:text="#{finances.table.head.client}"></th>
@@ -171,12 +171,41 @@
                     </table>
                 </div>
             </div>
-            <div class="row w-100 d-flex justify-content-center mt-3">
 
-                <a class="btn btn-primary" th:href="@{/askForDay}" th:text="#{finances.dailyReport}"></a>
-                <a class="btn btn-primary" th:href="@{/askForMonth}" th:text="#{finances.monthlyReport}"></a>
+            <div class="row w-100 mt-4">
+                <!--                    To do: Make h variable-->
+                <div class="table-responsive" style="max-height: calc(60vh); overflow-y: auto;">
+                    <h3 th:text="#{finances.anotherTable.title}"></h3>
+                    <table class="table table-striped w-100 text-center" id="deleted-table">
+                        <thead>
+                            <tr th:if="${deletedProductsNotEmpty}">
+                                <th th:text="#{finances.anotherTable.head.date}"></th>
+                                <th th:text="#{finances.anotherTable.head.name}">Name</th>
+                                <th th:text="#{finances.anotherTable.head.price}">Price per Unit</th>
+                                <th th:text="#{finances.anotherTable.head.quantity}">Quantity Deleted</th>
+                                <th th:text="#{finances.anotherTable.head.loss}">Total Loss</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="deletedProduct : ${deletedProducts}">
+                                <td th:text="${deletedProduct.dateWhenDeleted}"></td>
+                                <td th:text="${deletedProduct.name}"></td>
+                                <td th:text="${deletedProduct.pricePerUnit}"></td>
+                                <td th:text="${deletedProduct.quantityDeleted}"></td>
+                                <td th:text="${deletedProduct.totalLoss}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+            <div class="table-header">
+                <div class="row w-100 d-flex justify-content-center mt-3">
 
+                    <a class="btn btn-primary" th:href="@{/askForDay}" th:text="#{finances.dailyReport}"></a>
+                    <a class="btn btn-primary" th:href="@{/askForMonth}" th:text="#{finances.monthlyReport}"></a>
+                </div>
+
+            </div>
         </div>
     </div>
 </div>

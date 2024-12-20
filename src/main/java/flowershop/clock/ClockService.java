@@ -24,16 +24,14 @@ public class ClockService {
 	private final CashRegisterRepository cashRegisterRepository;
 
 	private final MonthlyBillingService monthlyBillingService;
-	//private final InventoryController inventoryController;
+
 	private final ProductService productService;
 
 	public ClockService(CashRegisterRepository cashRegisterRepository,
 						MonthlyBillingService monthlyBillingService,
-						//InventoryController inventoryController,
 						ProductService productService) {
 		this.cashRegisterRepository = cashRegisterRepository;
 		this.monthlyBillingService = monthlyBillingService;
-		//this.inventoryController = inventoryController;
 		this.productService = productService;
 	}
 
@@ -42,7 +40,6 @@ public class ClockService {
 	 * @return the instance of CashRegister, stored in the repository
 	 */
 	public CashRegister getCashRegister() {
-		Optional<CashRegister> cashRegister = cashRegisterRepository.findFirstByOrderById();
 		return cashRegisterRepository.findFirstByOrderById()
 			.orElseThrow(() -> new IllegalStateException("CashRegister instance not found"));
 	}
