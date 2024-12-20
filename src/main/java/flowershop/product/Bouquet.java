@@ -5,7 +5,6 @@ import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -44,10 +43,6 @@ public class Bouquet extends Product {
 		super.setPrice(pricing.getSellPrice());
 	}
 
-	public void addFlower(Flower flower, int quantity) {
-		flowers.put(flower, flowers.getOrDefault(flower, 0) + quantity);
-	}
-
 	public Money getAdditionalPrice() {
 		return additionalPrice;
 	}
@@ -80,7 +75,21 @@ public class Bouquet extends Product {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
+	protected void addQuantity(int quantity) {
+		if (quantity < 0) {
+			throw new IllegalArgumentException("Quantity to add cannot be negative");
+		}
+		this.quantity += quantity;
 	}
+
+	protected void reduceQuantity(int quantity) {
+		if (quantity < 0) {
+			throw new IllegalArgumentException("Quantity to reduce cannot be negative");
+		}
+		if (this.quantity < quantity) {
+			throw new IllegalArgumentException("Insufficient quantity to reduce");
+		}
+		this.quantity -= quantity;
+	}
+
 }

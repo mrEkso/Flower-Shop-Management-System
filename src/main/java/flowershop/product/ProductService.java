@@ -20,7 +20,7 @@ public class ProductService {
 		this.productCatalog = productCatalog;
 	}
 
-	public Flower addFlowers(Flower flower, int quantity) {
+	public Flower addFlowers(@NotNull Flower flower, int quantity) {
 		Flower existingFlower = (Flower) productCatalog.findById(flower.getId()).orElse(null);
 
 		if (existingFlower == null) {
@@ -28,7 +28,7 @@ public class ProductService {
 			return productCatalog.save(flower);
 		} else {
 			// If the flower exists, update its quantity
-			existingFlower.setQuantity(existingFlower.getQuantity() + quantity);
+			existingFlower.addQuantity(quantity);
 			return productCatalog.save(existingFlower);
 		}
 	}
@@ -50,7 +50,7 @@ public class ProductService {
 				removeFlowers(flower, quant);
 			}
 		}
-		bouquet.setQuantity(bouquetQuantity);
+		bouquet.addQuantity(bouquetQuantity);
 		return productCatalog.save(bouquet);
 	}
 
@@ -65,7 +65,7 @@ public class ProductService {
 
 		if (newQuantity >= 0) {
 			// Update the quantity if still positive or zero
-			existingFlower.setQuantity(newQuantity);
+			existingFlower.reduceQuantity(quantity);
 			productCatalog.save(existingFlower);
 		} else {
 			throw new IllegalStateException(
@@ -86,7 +86,7 @@ public class ProductService {
 
 			if (newQuantity >= 0) {
 				// Update the quantity if it's still positive
-				existingBouquet.setQuantity(newQuantity);
+				existingBouquet.reduceQuantity(quantity);
 				productCatalog.save(existingBouquet);
 //			} else if (newQuantity == 0) {
 //				// Remove the bouquet completely if the quantity becomes zero

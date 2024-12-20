@@ -2,7 +2,6 @@ package flowershop.product;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 
 @Entity
@@ -43,15 +42,28 @@ public class Flower extends Product {
 		this.color = color;
 	}
 
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
+	protected void addQuantity(int quantity) {
+		if (quantity < 0) {
+			throw new IllegalArgumentException("Quantity to add cannot be negative");
+		}
+		this.quantity += quantity;
 	}
 
-	public Integer getQuantity() {
+	protected void reduceQuantity(int quantity) {
+		if (quantity < 0) {
+			throw new IllegalArgumentException("Quantity to reduce cannot be negative");
+		}
+		if (this.quantity < quantity) {
+			throw new IllegalArgumentException("Insufficient quantity to reduce");
+		}
+		this.quantity -= quantity;
+	}
+
+	public int getQuantity() {
 		return quantity;
 	}
 
-	public Integer getDeletedQuantity() {
+	public int getDeletedQuantity() {
 		return deletedQuantity;
 	}
 
