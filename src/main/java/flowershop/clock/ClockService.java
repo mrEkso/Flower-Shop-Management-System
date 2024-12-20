@@ -24,16 +24,16 @@ public class ClockService {
 	private final CashRegisterRepository cashRegisterRepository;
 
 	private final MonthlyBillingService monthlyBillingService;
-	private final InventoryController inventoryController;
+	//private final InventoryController inventoryController;
 	private final ProductService productService;
 
 	public ClockService(CashRegisterRepository cashRegisterRepository,
 						MonthlyBillingService monthlyBillingService,
-						InventoryController inventoryController,
+						//InventoryController inventoryController,
 						ProductService productService) {
 		this.cashRegisterRepository = cashRegisterRepository;
 		this.monthlyBillingService = monthlyBillingService;
-		this.inventoryController = inventoryController;
+		//this.inventoryController = inventoryController;
 		this.productService = productService;
 	}
 
@@ -113,7 +113,7 @@ public class ClockService {
 					newPendingOrdersSet.add(i);
 				}
 			}
-			inventoryController.addDeliveredFlowersFromWholesaler(todaysGoods);
+			productService.addDeliveredFlowersFromWholesaler(todaysGoods);
 			cashRegister.setPendingOrders(newPendingOrdersSet); // Only the ones that are later are added to the waiting list
 		}
 		cashRegisterRepository.save(cashRegister);

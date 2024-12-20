@@ -1,5 +1,6 @@
 package flowershop.inventory;
 
+import flowershop.clock.ClockService;
 import flowershop.product.Bouquet;
 import flowershop.product.Flower;
 import flowershop.product.Pricing;
@@ -31,14 +32,16 @@ public class InventoryController {
 	 * Service layer dependency for product-related operations.
 	 */
 	public final ProductService productService;
+	private final ClockService clockService;
 
 	/**
 	 * Constructor to initialize the InventoryController with a ProductService instance.
 	 *
 	 * @param productService the service for managing products
 	 */
-	public InventoryController(ProductService productService) {
+	public InventoryController(ProductService productService, ClockService clockService) {
 		this.productService = productService;
+		this.clockService = clockService;
 	}
 
 	/**
@@ -298,7 +301,7 @@ public class InventoryController {
 	@PreAuthorize("hasRole('BOSS')")
 	public String showDeletedProducts(Model model) {
 		double totalLossSum = 0.0;
-		for (DeletedProduct deletedProduct : deletedProducts) {
+		for (DeletedProduct deletedProduct : productService.getDeletedProducts()) {
 			totalLossSum += deletedProduct.getTotalLoss();
 		}
 
@@ -306,9 +309,9 @@ public class InventoryController {
 			.map(this::enrichProductData)
 			.collect(Collectors.toList());
 
-		model.addAttribute("deletedProducts", deletedProducts);
+		model.addAttribute("deletedProducts", productService.getDeletedProducts());
 		model.addAttribute("totalLossSum", totalLossSum);
-		model.addAttribute("showDeletedModal", !deletedProducts.isEmpty());
+		model.addAttribute("showDeletedModal", !productService.getDeletedProducts().isEmpty());
 
 		model.addAttribute("createBouquetMode", false);
 		model.addAttribute("selectedProduct", productService.findAllFlowers().getFirst());
@@ -336,7 +339,7 @@ public class InventoryController {
 			.map(this::enrichProductData)
 			.collect(Collectors.toList());
 
-		model.addAttribute("deletedProducts", deletedProducts);
+		model.addAttribute("deletedProducts", productService.getDeletedProducts());
 		model.addAttribute("showModal", true);
 		model.addAttribute("createBouquetMode", false);
 		model.addAttribute("products", enrichedProducts);
@@ -380,9 +383,11 @@ public class InventoryController {
 						flower.getName(),
 						flower.getPrice().getNumber().doubleValue(),
 						deleteQuantity,
-						flower.getPrice().getNumber().doubleValue() * deleteQuantity
+						flower.getPrice().getNumber().doubleValue() * deleteQuantity,
+						clockService.getCurrentDate()
 					);
-					deletedProducts.add(deletedProduct);
+					//deletedProducts.add(deletedProduct);
+					productService.addDeletedProduct(deletedProduct);
 					return "redirect:/inventory";
 				}
 				else {
@@ -400,9 +405,11 @@ public class InventoryController {
 						bouquet.getName(),
 						bouquet.getPrice().getNumber().doubleValue(),
 						deleteQuantity,
-						bouquet.getPrice().getNumber().doubleValue() * deleteQuantity
+						bouquet.getPrice().getNumber().doubleValue() * deleteQuantity,
+						clockService.getCurrentDate()
 					);
-					deletedProducts.add(deletedProduct);
+					//deletedProducts.add(deletedProduct);
+					productService.addDeletedProduct(deletedProduct);
 					return "redirect:/inventory";
 				}
 				else {
@@ -414,11 +421,13 @@ public class InventoryController {
 
 		return "redirect:/inventory";
 	}
-	
+	/*
 	public void addDeliveredFlowersFromWholesaler(Map<Flower, Integer> flowersBought) {
 		for (Map.Entry<Flower, Integer> flowerBought : flowersBought.entrySet()) {
 		  productService.addFlowers(flowerBought.getKey(), flowerBought.getValue());
 		}
 	  }
+
+	 */
 }
 
