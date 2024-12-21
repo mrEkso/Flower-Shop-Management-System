@@ -98,7 +98,7 @@ public class ClockService {
 			Set<PendingOrder> newPendingOrdersSet = new HashSet<>();
 			Map<Flower,Integer> todaysGoods = new HashMap<>();
 			for (PendingOrder i : cashRegister.getPendingOrders()) {
-				if(i.getDueDate().equals(getCurrentDate())){
+				if(i.getDueDate().equals(getCurrentDate()) || i.getDueDate().isBefore(getCurrentDate())){
 					for(Product flower: i.getItemQuantityMap().keySet())
 					{
 						// The ones that will be delivered today

@@ -4,15 +4,15 @@ import flowershop.clock.ClockService;
 import flowershop.clock.PendingOrder;
 import flowershop.inventory.DeletedProduct;
 import flowershop.product.ProductService;
+import flowershop.sales.SalesService;
 import flowershop.services.AbstractOrder;
 import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.Accountancy;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.accountancy.OrderPaymentEntry;
-import org.salespointframework.order.Order;
-import org.salespointframework.order.OrderEvents;
-import org.salespointframework.order.OrderManagement;
-import org.salespointframework.order.OrderStatus;
+import org.salespointframework.catalog.Product;
+import org.salespointframework.order.*;
+import org.salespointframework.quantity.Quantity;
 import org.salespointframework.time.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -39,11 +39,12 @@ public class CashRegisterService implements Accountancy {
 	private final CashRegisterRepository cashRegisterRepository;
 	private final ClockService clockService;
 	private final ProductService productService;
+	private final SalesService salesService;
 
 
 	@Autowired
 	public CashRegisterService(OrderManagement<AbstractOrder> orderManagement,
-							   CashRegisterRepository cashRegisterRepository, ClockService clockService, ProductService productService) {
+							   CashRegisterRepository cashRegisterRepository, ClockService clockService, ProductService productService, SalesService salesService) {
 		this.orderManagement = orderManagement;
 		this.cashRegisterRepository = cashRegisterRepository;
 		this.productService = productService;
@@ -54,6 +55,7 @@ public class CashRegisterService implements Accountancy {
 			this.add(convertedOrder);
 		}
 		this.clockService = clockService;
+		this.salesService = salesService;
 	}
 
 
@@ -65,6 +67,7 @@ public class CashRegisterService implements Accountancy {
 	public MonetaryAmount getBalance() {
 		return this.getCashRegister().getBalance();
 	}
+
 
 	/**
 	 * Is used to add an AccountancyEntry instance to the register
@@ -86,10 +89,24 @@ public class CashRegisterService implements Accountancy {
 		if(((AccountancyEntryWrapper)entry).getCategory().equals("Einkauf"))
 		{
 			Set<PendingOrder> pendingOrders = cashRegister.getPendingOrders();
-			PendingOrder newOrder = new PendingOrder(((AccountancyEntryWrapper) entry).getFlowers(), clockService.nextWorkingDay());
+			PendingOrder newOrder = new PendingOrder(((AccountancyEntryWrapper) entry).getFlowers(),
+				((AccountancyEntryWrapper) entry).getDeliveryDate()==null ? clockService.nextWorkingDay() : ((AccountancyEntryWrapper) entry).getDeliveryDate());
 			pendingOrders.add(newOrder);
 			cashRegister.setPendingOrders(pendingOrders);
 		}
+		else if(((AccountancyEntryWrapper)entry).getCategory().equals("Veranstaltung Verkauf"))
+		{
+			if(((AccountancyEntryWrapper) entry).getDeliveryDate().isAfter(clockService.getCurrentDate())) {
+				Cart cart = new Cart();
+				for (Map.Entry<Product, Quantity> i : ((AccountancyEntryWrapper) entry).getFlowers().entrySet()) {
+					cart.addOrUpdateItem(i.getKey(), i.getValue());
+				}
+				if (!cart.isEmpty()) {
+					salesService.buyProductsFromBasket(cart, "Card", ((AccountancyEntryWrapper) entry).getDeliveryDate().toString());
+				}
+			}
+		}
+
 		cashRegisterRepository.save(cashRegister);
 		return entry;
 	}
