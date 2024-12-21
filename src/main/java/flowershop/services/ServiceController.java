@@ -133,10 +133,19 @@ public class ServiceController {
 	public String addProductDuringCreation(@PathVariable String type,
 										   @RequestParam int index,
 										   Model model) {
-		model.addAttribute("index", index);
+		// Retrieve  the current list of product rows
+		List<Map<String, String>> productRows = (List<Map<String, String>>) model.getAttribute("productRows");
+		if (productRows == null) {
+			productRows = new ArrayList<>();
+		}
+
+		// Add a new product row (you can customize this with default values if needed)
+		productRows.add(new HashMap<>());
+
+		// Update the model with the new product rows and product options
+		model.addAttribute("productRows", productRows);
 		model.addAttribute("products", productService.getAllProducts());
-		model.addAttribute("type", type);
-		return "fragments/product-row :: productRow";
+		return "services/create";  // Re-render the form with updated rows
 	}
 
 	// Removing a product during creation
@@ -235,7 +244,7 @@ public class ServiceController {
 									  @RequestParam("address") String address,
 									  @RequestParam("phone") String phone,
 									  @RequestParam Map<String, String> products,
-									  @RequestParam("notes") String notes,
+									  @RequestParam(value = "notes", required = false) String notes,
 									  @RequestParam("servicePrice") int servicePrice,
 									  RedirectAttributes redirectAttribute) {
 		try {
@@ -261,6 +270,22 @@ public class ServiceController {
 			redirectAttribute.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/create";
 		}
+	}
+
+	@GetMapping("/contracts/create")
+	public String showCreateForm(
+		Model model,
+		@RequestParam(value = "contractType", required = false) String contractType,
+		@RequestParam(value = "frequency", required = false) String frequency,
+		@RequestParam(value = "customFrequency", required = false) Integer customFrequency,
+		@RequestParam(value = "customUnit", required = false) String customUnit
+	) {
+		model.addAttribute("contractType", contractType != null ? contractType : "One-Time");
+		model.addAttribute("frequency", frequency != null ? frequency : "");
+		model.addAttribute("customFrequency", customFrequency);
+		model.addAttribute("customUnit", customUnit);
+
+		return "redirect:/services/create";
 	}
 
 	/**
@@ -394,7 +419,7 @@ public class ServiceController {
 									@RequestParam("paymentMethod") String paymentMethod,
 									@RequestParam("orderStatus") String orderStatus,
 									@RequestParam(value = "cancelReason", required = false) String cancelReason,
-									@RequestParam("notes") String notes,
+									@RequestParam(value = "notes", required = false) String notes,
 									@RequestParam("servicePrice") int servicePrice,
 									RedirectAttributes redirectAttributes) {
 		try {

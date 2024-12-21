@@ -41,35 +41,37 @@
                            value="Test client name" required>
                 </div>
 
-                <!-- Frequency -->
-                <!-- Step 1: Choose between One-Time or Recurring -->
+                <!-- Frequency (Contract Type) -->
                 <div class="mb-3">
                     <label for="contractType" class="form-label" th:text="#{contract.type}">Contract Type</label>
-                    <select id="contractType" class="form-control" name="contractType" required>
-                        <option value="One-Time" th:text="#{contract.type.oneTime}">One-Time</option>
-                        <option value="Recurring" th:text="#{contract.type.recurring}">Recurring</option>
+                    <select id="contractType" class="form-control" name="contractType" required
+                            th:onchange="this.form.submit()">
+                        <option value="One-Time" th:selected="${contractType == 'One-Time'}" th:text="#{contract.type.oneTime}">One-Time</option>
+                        <option value="Recurring" th:selected="${contractType == 'Recurring'}" th:text="#{contract.type.recurring}">Recurring</option>
                     </select>
                 </div>
-                <!-- Step 2: Frequency options -->
-                <div id="frequencyOptions" class="form-group d-none">
+
+                <!-- Frequency Options (Only shown for Recurring) -->
+                <div id="frequencyOptions" class="form-group" th:classappend="${contractType != 'Recurring'} ? 'd-none'">
                     <label for="frequency" th:text="#{contract.frequency}">Frequency</label>
-                    <select id="frequency" name="frequency" class="form-control">
-                        <option value="daily" th:text="#{frequency.daily}">Daily</option>
-                        <option value="weekly" th:text="#{frequency.weekly}">Weekly</option>
-                        <option value="monthly" th:text="#{frequency.monthly}">Monthly</option>
-                        <option value="custom" th:text="#{frequency.custom}">Custom</option>
+                    <select id="frequency" name="frequency" class="form-control" th:onchange="this.form.submit()">
+                        <option value="daily" th:selected="${frequency == 'daily'}" th:text="#{frequency.daily}">Daily</option>
+                        <option value="weekly" th:selected="${frequency == 'weekly'}" th:text="#{frequency.weekly}">Weekly</option>
+                        <option value="monthly" th:selected="${frequency == 'monthly'}" th:text="#{frequency.monthly}">Monthly</option>
+                        <option value="custom" th:selected="${frequency == 'custom'}" th:text="#{frequency.custom}">Custom</option>
                     </select>
                 </div>
-                <!-- Step 3: Custom options -->
-                <div id="customOptions" class="form-group d-none">
+
+                <!-- Custom Options (Only shown for Custom Frequency) -->
+                <div id="customOptions" class="form-group" th:classappend="${frequency != 'custom'} ? 'd-none'">
                     <label>Customize Frequency</label>
-                    <input type="number" class="form-control" name="customFrequency"
-                           placeholder="Every X days/weeks/etc.">
+                    <input type="number" class="form-control" name="customFrequency" placeholder="Every X days/weeks/etc."
+                           th:value="${customFrequency}">
                     <select name="customUnit" class="form-control">
-                        <option value="day">Day</option>
-                        <option value="week">Week</option>
-                        <option value="month">Month</option>
-                        <option value="year">Year</option>
+                        <option value="day" th:selected="${customUnit == 'day'}">Day</option>
+                        <option value="week" th:selected="${customUnit == 'week'}">Week</option>
+                        <option value="month" th:selected="${customUnit == 'month'}">Month</option>
+                        <option value="year" th:selected="${customUnit == 'year'}">Year</option>
                     </select>
                 </div>
 
@@ -103,15 +105,13 @@
 
                 <!-- Product Rows -->
                 <div id="product-container">
-                    <!-- Loop through existing rows -->
                     <div th:each="row, iterStat : ${productRows}">
                         <div th:replace="fragments/product-row :: productRow(index=${iterStat.index}, product=row)"></div>
                     </div>
                 </div>
 
                 <!-- Add Product Button -->
-                <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
-                      method="post" class="mt-2">
+                <form th:action="@{/services/create/add-product}" method="post" class="mt-2">
                     <input type="hidden" name="index" th:value="${productRows.size()}" />
                     <button type="submit" class="btn btn-outline-primary">Add Product</button>
                 </form>

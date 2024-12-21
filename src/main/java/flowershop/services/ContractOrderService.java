@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.*;
 
@@ -68,8 +69,8 @@ public class ContractOrderService {
 	 */
 	public List<ContractOrder> findAllActiveLastMonth() {
 		YearMonth lastMonth = YearMonth.now().minusMonths(1);
-		LocalDate startOfLastMonth = lastMonth.atDay(1);
-		LocalDate endOfLastMonth = lastMonth.atEndOfMonth();
+		LocalDateTime startOfLastMonth = lastMonth.atDay(1).atStartOfDay();
+		LocalDateTime endOfLastMonth = lastMonth.atEndOfMonth().atStartOfDay();
 		return contractOrderRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanEqualAndOrderStatus(endOfLastMonth, startOfLastMonth, OrderStatus.OPEN);
 	}
 

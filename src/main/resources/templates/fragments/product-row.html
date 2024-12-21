@@ -1,7 +1,8 @@
 <div th:fragment="productRow(index=${index}, product=product)" class="input-group mb-2">
     <!-- Product Selection -->
     <select th:name="'products[' + ${index} + '][id]'" class="form-select" required>
-        <option th:each="productOption : ${products}" th:value="${productOption.id}" th:text="${productOption.name}">
+        <option th:each="productOption : ${products}" th:value="${productOption.id}"
+                th:text="${productOption.name}">
             Product Name
         </option>
     </select>
@@ -15,3 +16,4 @@
         Delete
     </button>
 </div>
+

@@ -1,6 +1,7 @@
 
 package flowershop.services;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import org.salespointframework.useraccount.UserAccount;
