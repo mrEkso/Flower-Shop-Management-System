@@ -30,7 +30,13 @@ public class ClientService {
 	 */
 	public Client getOrCreateClient(String name, String phone) {
 		Optional<Client> existingClient = clientRepository.findByPhone(phone);
-		if (existingClient.isPresent()) return existingClient.get();
+		if (existingClient.isPresent()) {
+			if (!existingClient.get().getName().equals(name)) {
+				existingClient.get().setName(name);
+				clientRepository.save(existingClient.get());
+			}
+			return existingClient.get();
+		}
 		Client newClient = new Client(name, phone);
 		return clientRepository.save(newClient);
 	}

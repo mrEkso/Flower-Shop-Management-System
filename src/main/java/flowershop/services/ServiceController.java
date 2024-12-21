@@ -2,9 +2,11 @@ package flowershop.services;
 
 import flowershop.calendar.CalendarService;
 import flowershop.calendar.Event;
+import flowershop.clock.ClockService;
 import flowershop.product.ProductService;
 import javassist.NotFoundException;
 import org.javamoney.moneta.Money;
+import org.salespointframework.order.OrderStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -31,6 +33,7 @@ public class ServiceController {
 	private final ClientService clientService;
 	private final OrderFactory orderFactory;
 	private final MonthlyBillingService monthlyBillingService;
+	private final ClockService clockService;
 
 	/**
 	 * Constructs a `ServiceController` with the specified services and order factory.
@@ -44,7 +47,8 @@ public class ServiceController {
 	 * @param monthlyBillingService   the service for managing monthly billing
 	 */
 	public ServiceController(EventOrderService eventOrderService, ContractOrderService contractOrderService, ReservationOrderService reservationOrderService,
-							 ProductService productService, ClientService clientService, OrderFactory orderFactory, CalendarService calendarService, MonthlyBillingService monthlyBillingService) {
+							 ProductService productService, ClientService clientService, OrderFactory orderFactory, CalendarService calendarService,
+							 MonthlyBillingService monthlyBillingService, ClockService clockService) {
 		this.eventOrderService = eventOrderService;
 		this.contractOrderService = contractOrderService;
 		this.reservationOrderService = reservationOrderService;
@@ -53,6 +57,8 @@ public class ServiceController {
 		this.orderFactory = orderFactory;
 		this.calendarService = calendarService;
 		this.monthlyBillingService = monthlyBillingService;
+		this.clockService = clockService;
+
 	}
 
 	/**
@@ -248,6 +254,8 @@ public class ServiceController {
 									  @RequestParam("servicePrice") int servicePrice,
 									  RedirectAttributes redirectAttribute) {
 		try {
+			if (!clockService.isOpen())
+				throw new IllegalArgumentException("The shop is closed");
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
 			ContractOrder contractOrder = orderFactory.createContractOrder(contractType, frequency,
@@ -310,6 +318,8 @@ public class ServiceController {
 								   @RequestParam("deliveryPrice") int deliveryPrice,
 								   RedirectAttributes redirectAttribute) {
 		try {
+			if (!clockService.isOpen())
+				throw new IllegalArgumentException("The shop is closed");
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
 			EventOrder eventOrder = orderFactory.createEventOrder(eventDate,
@@ -347,6 +357,8 @@ public class ServiceController {
 										 @RequestParam("notes") String notes,
 										 RedirectAttributes redirectAttribute) {
 		try {
+			if (!clockService.isOpen())
+				throw new IllegalArgumentException("The shop is closed");
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
 			ReservationOrder reservationOrder = orderFactory.createReservationOrder(reservationDateTime,
@@ -423,27 +435,33 @@ public class ServiceController {
 									@RequestParam("servicePrice") int servicePrice,
 									RedirectAttributes redirectAttributes) {
 		try {
+			if (!clockService.isOpen())
+				throw new IllegalArgumentException("The shop is closed");
 			ContractOrder contractOrder = contractOrderService.getById(id)
 				.orElseThrow(() -> new NotFoundException("Contract order not found"));
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
+			if (startDate.isAfter(endDate))
+				throw new IllegalArgumentException("Start date cannot be later than end date");
 			contractOrder.setClient(getOrCreateClient(clientName, phone));
-			contractOrder.setContractType(contractType);
-			contractOrder.setStartDate(startDate);
-			contractOrder.setEndDate(endDate);
+			if (contractOrder.getOrderStatus().equals(OrderStatus.OPEN)) {
+				contractOrder.setContractType(contractType);
+				contractOrder.setStartDate(startDate);
+				contractOrder.setEndDate(endDate);
+			}
 			contractOrder.setAddress(address);
 			contractOrder.setNotes(notes);
 			contractOrder.setPaymentMethod(paymentMethod);
-			contractOrder.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
 			if ("recurring".equals(frequency)) {
 				contractOrder.setFrequency(frequency);
 			} else if ("custom".equals(frequency)) {
 				contractOrder.setCustomFrequency(customFrequency);
 				contractOrder.setCustomUnit(customUnit);
 			}
-			contractOrderService.update(contractOrder, products, orderStatus, cancelReason);
+			contractOrderService.update(contractOrder, products, servicePrice, orderStatus, cancelReason);
 			return "redirect:/services";
 		} catch (Exception e) {
+			System.out.println(Arrays.toString(e.getStackTrace()));
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/contracts/edit/" + id;
 		}
@@ -495,6 +513,8 @@ public class ServiceController {
 								 @RequestParam("deliveryPrice") int deliveryPrice,
 								 RedirectAttributes redirectAttributes) {
 		try {
+			if (!clockService.isOpen())
+				throw new IllegalArgumentException("The shop is closed");
 			EventOrder eventOrder = eventOrderService.getById(id)
 				.orElseThrow(() -> new NotFoundException("Event order not found"));
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
@@ -504,10 +524,10 @@ public class ServiceController {
 			eventOrder.setDeliveryAddress(deliveryAddress);
 			eventOrder.setNotes(notes);
 			eventOrder.setPaymentMethod(paymentMethod);
-			eventOrder.addChargeLine(Money.of(deliveryPrice, "EUR"), "Delivery Price");
-			eventOrderService.update(eventOrder, products, orderStatus, cancelReason);
+			eventOrderService.update(eventOrder, products, deliveryPrice, orderStatus, cancelReason);
 			return "redirect:/services";
 		} catch (Exception e) {
+			System.out.println(Arrays.toString(e.getStackTrace()));
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/events/edit/" + id;
 		}
@@ -557,6 +577,8 @@ public class ServiceController {
 									   @RequestParam("notes") String notes,
 									   RedirectAttributes redirectAttributes) {
 		try {
+			if (!clockService.isOpen())
+				throw new IllegalArgumentException("The shop is closed");
 			ReservationOrder reservationOrder = reservationOrderService.getById(id)
 				.orElseThrow(() -> new NotFoundException("Reservation order not found"));
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))

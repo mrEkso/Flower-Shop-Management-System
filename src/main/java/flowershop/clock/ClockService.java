@@ -2,7 +2,6 @@ package flowershop.clock;
 
 import flowershop.finances.CashRegister;
 import flowershop.finances.CashRegisterRepository;
-import flowershop.inventory.InventoryController;
 import flowershop.product.Flower;
 import flowershop.product.ProductService;
 import flowershop.services.MonthlyBillingService;
@@ -13,7 +12,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -24,16 +26,14 @@ public class ClockService {
 	private final CashRegisterRepository cashRegisterRepository;
 
 	private final MonthlyBillingService monthlyBillingService;
-	private final InventoryController inventoryController;
+
 	private final ProductService productService;
 
 	public ClockService(CashRegisterRepository cashRegisterRepository,
 						MonthlyBillingService monthlyBillingService,
-						InventoryController inventoryController,
 						ProductService productService) {
 		this.cashRegisterRepository = cashRegisterRepository;
 		this.monthlyBillingService = monthlyBillingService;
-		this.inventoryController = inventoryController;
 		this.productService = productService;
 	}
 
@@ -42,7 +42,6 @@ public class ClockService {
 	 * @return the instance of CashRegister, stored in the repository
 	 */
 	public CashRegister getCashRegister() {
-		Optional<CashRegister> cashRegister = cashRegisterRepository.findFirstByOrderById();
 		return cashRegisterRepository.findFirstByOrderById()
 			.orElseThrow(() -> new IllegalStateException("CashRegister instance not found"));
 	}
@@ -101,7 +100,7 @@ public class ClockService {
 			Set<PendingOrder> newPendingOrdersSet = new HashSet<>();
 			Map<Flower,Integer> todaysGoods = new HashMap<>();
 			for (PendingOrder i : cashRegister.getPendingOrders()) {
-				if(i.getDueDate().equals(getCurrentDate())){
+				if(i.getDueDate().equals(getCurrentDate()) || i.getDueDate().isBefore(getCurrentDate())){
 					for(Product flower: i.getItemQuantityMap().keySet())
 					{
 						// The ones that will be delivered today
@@ -113,7 +112,7 @@ public class ClockService {
 					newPendingOrdersSet.add(i);
 				}
 			}
-			inventoryController.addDeliveredFlowersFromWholesaler(todaysGoods);
+			productService.addDeliveredFlowersFromWholesaler(todaysGoods);
 			cashRegister.setPendingOrders(newPendingOrdersSet); // Only the ones that are later are added to the waiting list
 		}
 		cashRegisterRepository.save(cashRegister);

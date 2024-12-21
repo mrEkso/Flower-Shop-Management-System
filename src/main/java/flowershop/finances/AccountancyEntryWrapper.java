@@ -1,5 +1,6 @@
 package flowershop.finances;
 
+import flowershop.product.Bouquet;
 import flowershop.product.Flower;
 import flowershop.product.ProductService;
 import flowershop.sales.SimpleOrder;
@@ -16,11 +17,11 @@ import org.salespointframework.order.OrderLine;
 import org.salespointframework.order.Totalable;
 import org.salespointframework.quantity.Quantity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
 /**
@@ -46,6 +47,8 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 
 	private Category category;
 	private LocalDateTime timestamp;
+	private String clientName;
+	private LocalDate reservationExecution;
 
 	@Transient
 	private ProductService productService;
@@ -64,12 +67,37 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		return this.categoryToString(this.category);
 	}
 
+	public String getClientName() {
+		if(this.clientName == null) {
+			return "";
+		}
+		return this.clientName;
+	}
+
+	public String getTimestampStr()
+	{
+		StringBuilder str = new StringBuilder(this.timestamp.getDayOfMonth() + ".");
+		str.append(this.timestamp.getMonthValue() + ".")
+			.append(this.timestamp.getYear() + " ")
+			.append(this.timestamp.getHour() + ":");
+		if(this.timestamp.getMinute() < 10)
+		{
+			str.append("0");
+		}
+		str.append(this.timestamp.getMinute());
+		return str.toString();
+	}
+
 	/**
 	 * USE THIS METHOD INSTEAD OF getDate()!
 	 * @return the time when the order was paid.
 	 */
 	public LocalDateTime getTimestamp() {
 		return this.timestamp;
+	}
+
+	public LocalDate getDeliveryDate() {
+		return reservationExecution;
 	}
 
 	/**
@@ -97,11 +125,19 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		this.timestamp = time;
 		if (order instanceof WholesalerOrder) {
 			this.category = Category.Einkauf;
+			String notes = ((WholesalerOrder) order).getNotes();
+			if(notes != null) {
+				this.reservationExecution = LocalDate.parse(notes);
+			}
 		} else if (order instanceof ContractOrder) {
+			this.clientName = ((ContractOrder) order).getClient().getName();
 			this.category = Category.Vertraglicher_Verkauf;
 		} else if (order instanceof EventOrder) {
+			this.clientName = ((EventOrder) order).getClient().getName();
 			this.category = Category.Veranstaltung_Verkauf;
+			this.reservationExecution = ((EventOrder) order).getEventDate().toLocalDate();
 		} else if (order instanceof ReservationOrder) {
+			this.clientName = ((ReservationOrder) order).getClient().getName();
 			this.category = Category.Reservierter_Verkauf;
 		} else if (order instanceof SimpleOrder) {
 			this.category = Category.Einfacher_Verkauf;
@@ -112,9 +148,22 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		for (OrderLine orderLine : kindaItemQuantityMap) {
 			nameQuantityMap.put(orderLine.getProductName(), orderLine.getQuantity());
 
-			String name = orderLine.getProductName();
-			List<Flower> lst = productService.findFlowersByName(name);
-			productQuantityMap.put(lst.getFirst(), orderLine.getQuantity());
+			if(order instanceof WholesalerOrder || order instanceof EventOrder) {
+				String name = orderLine.getProductName();
+				List<Flower> lst = productService.findFlowersByName(name);
+				if(!lst.isEmpty()) {
+					productQuantityMap.merge(lst.getFirst(), orderLine.getQuantity(), Quantity::add);
+				}
+				if (order instanceof EventOrder){
+					List<Bouquet> bouquetList = productService.findBouquetsByName(name);
+					if(!bouquetList.isEmpty()) {
+						Bouquet bouquet = bouquetList.getFirst();
+						for (Map.Entry<Flower, Integer> eventBouquettePair: bouquet.getFlowers().entrySet()) {
+							productQuantityMap.merge(eventBouquettePair.getKey(), Quantity.of(eventBouquettePair.getValue()), Quantity::add);
+						}
+					}
+				}
+			}
 		}
 		Totalable<ChargeLine> extraFees = order.getAllChargeLines();
 		for (ChargeLine chargeLine : extraFees) {

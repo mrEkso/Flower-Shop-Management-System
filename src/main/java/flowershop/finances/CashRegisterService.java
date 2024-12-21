@@ -2,30 +2,30 @@ package flowershop.finances;
 
 import flowershop.clock.ClockService;
 import flowershop.clock.PendingOrder;
+import flowershop.inventory.DeletedProduct;
 import flowershop.product.ProductService;
+import flowershop.sales.SalesService;
 import flowershop.services.AbstractOrder;
 import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.Accountancy;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.accountancy.OrderPaymentEntry;
-import org.salespointframework.order.Order;
-import org.salespointframework.order.OrderEvents;
-import org.salespointframework.order.OrderManagement;
-import org.salespointframework.order.OrderStatus;
+import org.salespointframework.catalog.Product;
+import org.salespointframework.order.*;
+import org.salespointframework.quantity.Quantity;
 import org.salespointframework.time.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.money.MonetaryAmount;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.*;
-
-import static flowershop.finances.Category.Einkauf;
+import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -36,11 +36,12 @@ public class CashRegisterService implements Accountancy {
 	private final CashRegisterRepository cashRegisterRepository;
 	private final ClockService clockService;
 	private final ProductService productService;
+	private final SalesService salesService;
 
 
 	@Autowired
 	public CashRegisterService(OrderManagement<AbstractOrder> orderManagement,
-							   CashRegisterRepository cashRegisterRepository, ClockService clockService, ProductService productService) {
+							   CashRegisterRepository cashRegisterRepository, ClockService clockService, ProductService productService, SalesService salesService) {
 		this.orderManagement = orderManagement;
 		this.cashRegisterRepository = cashRegisterRepository;
 		this.productService = productService;
@@ -51,6 +52,7 @@ public class CashRegisterService implements Accountancy {
 			this.add(convertedOrder);
 		}
 		this.clockService = clockService;
+		this.salesService = salesService;
 	}
 
 
@@ -62,6 +64,7 @@ public class CashRegisterService implements Accountancy {
 	public MonetaryAmount getBalance() {
 		return this.getCashRegister().getBalance();
 	}
+
 
 	/**
 	 * Is used to add an AccountancyEntry instance to the register
@@ -83,10 +86,24 @@ public class CashRegisterService implements Accountancy {
 		if(((AccountancyEntryWrapper)entry).getCategory().equals("Einkauf"))
 		{
 			Set<PendingOrder> pendingOrders = cashRegister.getPendingOrders();
-			PendingOrder newOrder = new PendingOrder(((AccountancyEntryWrapper) entry).getFlowers(), clockService.nextWorkingDay());
+			PendingOrder newOrder = new PendingOrder(((AccountancyEntryWrapper) entry).getFlowers(),
+				((AccountancyEntryWrapper) entry).getDeliveryDate()==null ? clockService.nextWorkingDay() : ((AccountancyEntryWrapper) entry).getDeliveryDate());
 			pendingOrders.add(newOrder);
 			cashRegister.setPendingOrders(pendingOrders);
 		}
+		else if(((AccountancyEntryWrapper)entry).getCategory().equals("Veranstaltung Verkauf"))
+		{
+			if(((AccountancyEntryWrapper) entry).getDeliveryDate().isAfter(clockService.getCurrentDate())) {
+				Cart cart = new Cart();
+				for (Map.Entry<Product, Quantity> i : ((AccountancyEntryWrapper) entry).getFlowers().entrySet()) {
+					cart.addOrUpdateItem(i.getKey(), i.getValue());
+				}
+				if (!cart.isEmpty()) {
+					salesService.buyProductsFromBasket(cart, "Card", ((AccountancyEntryWrapper) entry).getDeliveryDate().toString());
+				}
+			}
+		}
+
 		cashRegisterRepository.save(cashRegister);
 		return entry;
 	}
@@ -101,6 +118,57 @@ public class CashRegisterService implements Accountancy {
 		//convert order to AccountancyEntry
 		AccountancyEntryWrapper convertedOrder = new AccountancyEntryWrapper(order,clockService.now(), productService);
 		this.add(convertedOrder);
+	}
+
+	/**
+	 *
+	 * @return list of all deleted products ever
+	 */
+	public List<DeletedProduct> getAllDeletedProducts(){
+		return productService.getDeletedProducts();
+	}
+
+	public List<DeletedProduct> getAllDeletedProducts(LocalDate date1, LocalDate date2){
+		return productService.getDeletedProducts().stream()
+			.filter(product -> (!date1.isAfter(product.getDateWhenDeleted()) && !date2.isBefore(product.getDateWhenDeleted())))
+			.toList();
+	}
+
+	/**
+	 *
+	 * @param date
+	 * @return list of all deleted products on a certain date
+	 */
+	public List<DeletedProduct> findDeletedProductsByDate(LocalDate date){
+		return normalizeDeletedProducts(productService.getDeletedProducts().stream()
+			.filter(product -> date.equals(product.getDateWhenDeleted()))
+			.toList());
+	}
+
+	/**
+	 *
+	 * @param month any day in a desired month
+	 * @return list of all deleted products during a certain month
+	 */
+	public List<DeletedProduct> findDeletedProductsByMonth(LocalDate month){
+		return normalizeDeletedProducts(productService.getDeletedProducts().stream()
+			.filter(product -> month.getMonth().equals(product.getDateWhenDeleted().getMonth())
+				&& month.getYear() == product.getDateWhenDeleted().getYear())
+			.toList());
+	}
+
+	private List<DeletedProduct> normalizeDeletedProducts(List<DeletedProduct> deletedProducts) {
+		Map<String, List<DeletedProduct>> grouped = deletedProducts.stream().collect(Collectors.groupingBy((DeletedProduct::getName)));
+		List<DeletedProduct> output = new ArrayList<>();
+		for (Map.Entry<String, List<DeletedProduct>> entry : grouped.entrySet()) {
+			String name = entry.getKey();
+			MonetaryAmount pricePerUnit = entry.getValue().getFirst().getPricePerUnit();
+			int quantityDeleted = entry.getValue().stream().mapToInt(DeletedProduct::getQuantityDeleted).sum();
+			MonetaryAmount totalLoss = pricePerUnit.multiply(quantityDeleted);
+			LocalDate dateWhenDeleted = entry.getValue().getFirst().getDateWhenDeleted();
+			output.add(new DeletedProduct(name, pricePerUnit, quantityDeleted, totalLoss, dateWhenDeleted));
+		}
+		return output;
 	}
 
 	/**

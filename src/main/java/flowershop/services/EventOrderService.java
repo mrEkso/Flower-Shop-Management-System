@@ -1,15 +1,14 @@
 package flowershop.services;
 
-import flowershop.calendar.Event;
 import flowershop.product.ProductCatalog;
-import flowershop.calendar.CalendarService;
+import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
+import org.salespointframework.order.ChargeLine;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderManagement;
 import org.salespointframework.order.OrderStatus;
 import org.salespointframework.payment.Cash;
 import org.salespointframework.quantity.Quantity;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -48,7 +47,25 @@ public class EventOrderService {
 	 * @return a list of all event orders
 	 */
 	public List<EventOrder> findAll() {
-		return eventOrderRepository.findAll(Pageable.unpaged()).toList();
+		List<EventOrder> orders = (List<EventOrder>) eventOrderRepository.findAll();
+		orders.sort(Comparator.comparingInt(this::getOrderStatusPriority));
+		return orders;
+	}
+
+	/**
+	 * Assigns a priority to each order status for sorting purposes.
+	 *
+	 * @param order the event order
+	 * @return the priority of the order status
+	 */
+	private int getOrderStatusPriority(EventOrder order) {
+		return switch (order.getOrderStatus()) {
+			case OPEN -> 1;
+			case PAID -> 2;
+			case COMPLETED -> 3;
+			case CANCELED -> 4;
+			default -> 5;
+		};
 	}
 
 	/**
@@ -64,7 +81,7 @@ public class EventOrderService {
 	/**
 	 * Saves a new event order with the specified products.
 	 *
-	 * @param order the event order to save
+	 * @param order    the event order to save
 	 * @param products a map of product IDs and their quantities
 	 * @return the saved event order
 	 */
@@ -92,14 +109,14 @@ public class EventOrderService {
 	/**
 	 * Updates an existing event order with the specified products and status.
 	 *
-	 * @param order the event order to update
-	 * @param products a map of product IDs and their quantities
-	 * @param orderStatus the new status of the order
+	 * @param order        the event order to update
+	 * @param products     a map of product IDs and their quantities
+	 * @param orderStatus  the new status of the order
 	 * @param cancelReason the reason for cancellation, if applicable
 	 * @return the updated event order
 	 * @throws IllegalArgumentException if the order is already canceled, not paid yet, or cannot be canceled
 	 */
-	public EventOrder update(EventOrder order, Map<String, String> products, String orderStatus, String cancelReason) {
+	public EventOrder update(EventOrder order, Map<String, String> products, int deliveryPrice, String orderStatus, String cancelReason) {
 		if (order.getOrderStatus().equals(OrderStatus.CANCELED))
 			throw new IllegalArgumentException("Order is already canceled!");
 		if (order.getOrderStatus().equals(OrderStatus.OPEN)) {
@@ -109,6 +126,11 @@ public class EventOrderService {
 				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
 				return eventOrderRepository.save(order);
 			}
+			List<ChargeLine> chargeLinesToRemove = order.getChargeLines().stream()
+				.filter(chargeLine -> chargeLine.getDescription().equals("Delivery Price"))
+				.toList();
+			chargeLinesToRemove.forEach(order::remove);
+			order.addChargeLine(Money.of(deliveryPrice, "EUR"), "Delivery Price");
 			Map<UUID, Integer> incoming = extractProducts(products);
 			order.getOrderLines().toList().forEach(line -> {
 				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) order.remove(line);

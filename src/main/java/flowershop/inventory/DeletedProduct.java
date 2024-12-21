@@ -1,22 +1,27 @@
 package flowershop.inventory;
 
+import javax.money.MonetaryAmount;
+import java.time.LocalDate;
+
 public class DeletedProduct {
 	private String name;
-	private double pricePerUnit;
+	private MonetaryAmount pricePerUnit;
 	private int quantityDeleted;
-	private double totalLoss;
+	private MonetaryAmount totalLoss;
+	private LocalDate dateWhenDeleted;
 
-	public DeletedProduct(String name, double pricePerUnit, int quantityDeleted, double totalLoss) {
+	public DeletedProduct(String name, MonetaryAmount pricePerUnit, int quantityDeleted, MonetaryAmount totalLoss, LocalDate dateWhenDeleted) {
 		this.name = name;
 		this.pricePerUnit = pricePerUnit;
 		this.quantityDeleted = quantityDeleted;
 		this.totalLoss = totalLoss;
+		this.dateWhenDeleted = dateWhenDeleted;
 	}
 	public String getName() {
 		return name;
 	}
 
-	public double getPricePerUnit() {
+	public MonetaryAmount getPricePerUnit() {
 		return pricePerUnit;
 	}
 
@@ -24,11 +29,13 @@ public class DeletedProduct {
 		return quantityDeleted;
 	}
 
-	public double getTotalLoss() {
+	public MonetaryAmount getTotalLoss() {
 		return totalLoss;
 	}
 
 	public int getQuantity() {
 		return quantityDeleted;
 	}
+
+	public LocalDate getDateWhenDeleted() { return dateWhenDeleted; }
 }

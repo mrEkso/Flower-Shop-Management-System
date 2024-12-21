@@ -6,6 +6,7 @@ import jakarta.persistence.MappedSuperclass;
 import org.salespointframework.order.Order;
 import org.salespointframework.payment.Cash;
 import org.salespointframework.useraccount.UserAccount;
+
 import java.util.Objects;
 
 /**

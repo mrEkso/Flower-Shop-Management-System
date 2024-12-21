@@ -7,7 +7,6 @@ import org.salespointframework.order.OrderManagement;
 import org.salespointframework.order.OrderStatus;
 import org.salespointframework.payment.Cash;
 import org.salespointframework.quantity.Quantity;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -46,7 +45,25 @@ public class ReservationOrderService {
 	 * @return a list of all reservation orders
 	 */
 	public List<ReservationOrder> findAll() {
-		return reservationOrderRepository.findAll(Pageable.unpaged()).toList();
+		List<ReservationOrder> orders = (List<ReservationOrder>) reservationOrderRepository.findAll();
+		orders.sort(Comparator.comparingInt(this::getOrderStatusPriority));
+		return orders;
+	}
+
+	/**
+	 * Assigns a priority to each order status for sorting purposes.
+	 *
+	 * @param order the reservation order
+	 * @return the priority of the order status
+	 */
+	private int getOrderStatusPriority(ReservationOrder order) {
+		return switch (order.getOrderStatus()) {
+			case OPEN -> 1;
+			case PAID -> 2;
+			case COMPLETED -> 3;
+			case CANCELED -> 4;
+			default -> 5;
+		};
 	}
 
 	/**

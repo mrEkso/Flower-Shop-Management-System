@@ -15,8 +15,8 @@ import javax.money.MonetaryAmount;
 import java.awt.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * Is used to create financial PDF-reports for a given month
@@ -46,6 +46,7 @@ public class MonthlyFinancialReport extends FinancialReport {
 			this.expenditure = this.expenditure.add(currentDay.getExpenditure());
 		}
 		this.dailyFinancialReports = this.dailyFinancialReports.reversed();
+		this.deletedProducts = cashRegister.findDeletedProductsByMonth(month.getStart().toLocalDate());
 		countProfit();
 	}
 
@@ -85,7 +86,7 @@ public class MonthlyFinancialReport extends FinancialReport {
 		List<Row> neededRows = new ArrayList<>();
 
 		for (DailyFinancialReport dailyFinancialReport : dailyFinancialReports) {
-			if (dailyFinancialReport.getOrders().isEmpty()) {
+			if (dailyFinancialReport.getOrders().isEmpty() && dailyFinancialReport.deletedProducts.isEmpty()) {
 				continue;
 			}
 			neededRows.addAll(dailyFinancialReport.getNeededRows(font));
@@ -102,11 +103,12 @@ public class MonthlyFinancialReport extends FinancialReport {
 				.build())
 			.add(TextCell.builder()
 				.text(profitRepr).font(font).fontSize(14)
-				.colSpan(2).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
+				.colSpan(3).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.RIGHT)
 				.build())
 			.padding(10).borderWidth(1.5f).borderStyle(BorderStyle.DOTTED).build();
 		neededRows.add(difference);
-
+		neededRows.add(emptyRow());
+		neededRows.addAll(this.getDeletedProductRows(font));
 		return neededRows;
 	}
 

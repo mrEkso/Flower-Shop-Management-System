@@ -77,12 +77,15 @@
 
                 <!-- Contract start and end date -->
                 <div class="mb-3">
-                    <label for="startDate" class="form-label" th:text="#{contract.startDate}">Start Date and Time</label>
-                    <input type="datetime-local" class="form-control" id="startDate" name="startDate" value="2024-01-01T12:30" required>
+                    <label for="startDate" class="form-label" th:text="#{contract.startDate}">Start Date and
+                        Time</label>
+                    <input type="datetime-local" class="form-control" id="startDate" name="startDate"
+                           value="2024-01-01T12:30" required>
                 </div>
                 <div class="mb-3">
                     <label for="endDate" class="form-label" th:text="#{contract.endDate}">End Date and Time</label>
-                    <input type="datetime-local" class="form-control" id="endDate" name="endDate" value="2025-01-01T12:30" required>
+                    <input type="datetime-local" class="form-control" id="endDate" name="endDate"
+                           value="2025-01-01T12:30" required>
                 </div>
 
                 <!-- Address -->
@@ -111,8 +114,11 @@
                 </div>
 
                 <!-- Add Product Button -->
-                <form th:action="@{/services/create/add-product}" method="post" class="mt-2">
-                    <input type="hidden" name="index" th:value="${productRows.size()}" />
+                <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
+                      method="post" class="mt-2">
+                    <input type="hidden" name="index" th:value="${productRows.size()}"/>
+                <!--<form th:action="@{/services/create/add-product}" method="post" class="mt-2">
+                    <input type="hidden" name="index" th:value="${productRows.size()}" />-->
                     <button type="submit" class="btn btn-outline-primary">Add Product</button>
                 </form>
 
@@ -156,7 +162,8 @@
                 <!-- Event Date and Time -->
                 <div class="mb-3">
                     <label for="eventDate" class="form-label" th:text="#{event.eventDate}">Event Date and Time</label>
-                    <input type="datetime-local" class="form-control" id="eventDate" name="eventDate" value="2025-01-01T12:00" required>
+                    <input type="datetime-local" class="form-control" id="eventDate" name="eventDate"
+                           value="2025-01-01T12:00" required>
                 </div>
 
                 <!-- Delivery Address -->
@@ -188,7 +195,7 @@
                 <!-- Add Product Button -->
                 <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
                       method="post" class="mt-2">
-                    <input type="hidden" name="index" th:value="${productRows.size()}" />
+                    <input type="hidden" name="index" th:value="${productRows.size()}"/>
                     <button type="button" class="btn btn-outline-primary">Add Product</button>
                 </form>
 
@@ -258,7 +265,7 @@
                 <!-- Add Product Button -->
                 <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
                       method="post" class="mt-2">
-                    <input type="hidden" name="index" th:value="${productRows.size()}" />
+                    <input type="hidden" name="index" th:value="${productRows.size()}"/>
                     <button type="button" class="btn btn-outline-primary">Add Product</button>
                 </form>
 

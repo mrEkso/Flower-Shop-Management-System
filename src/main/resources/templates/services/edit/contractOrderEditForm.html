@@ -28,9 +28,7 @@
             <!-- Step 1: Choose between One-Time or Recurring -->
             <div class="mb-3">
                 <label for="contractType" class="form-label" th:text="#{contract.type}">Contract Type</label>
-                <select th:value="${contractOrder.contractType}" id="contractType" class="form-control"
-                        name="contractType"
-                        required>
+                <select th:field="*{contractOrder.contractType}" id="contractType" class="form-control" name="contractType" required>
                     <option value="One-Time" th:text="#{contract.type.oneTime}">One-Time</option>
                     <option value="Recurring" th:text="#{contract.type.recurring}">Recurring</option>
                 </select>
@@ -60,11 +58,13 @@
             <!-- Contract start and end date -->
             <div class="mb-3">
                 <label for="startDate" class="form-label" th:text="#{contract.startDate}">Start Date and Time</label>
-                <input type="datetime-local" class="form-control" th:value="${contractOrder.startDate}" id="startDate" name="startDate" value="2024-01-01T12:30" required>
+                <input type="datetime-local" class="form-control" th:value="${contractOrder.startDate}" id="startDate"
+                       name="startDate" value="2024-01-01T12:30" required>
             </div>
             <div class="mb-3">
                 <label for="endDate" class="form-label" th:text="#{contract.endDate}">End Date and Time</label>
-                <input type="datetime-local" class="form-control" th:value="${contractOrder.endDate}" id="endDate" name="endDate" value="2025-01-01T12:30" required>
+                <input type="datetime-local" class="form-control" th:value="${contractOrder.endDate}" id="endDate"
+                       name="endDate" value="2025-01-01T12:30" required>
             </div>
 
             <!-- Address -->
@@ -170,8 +170,8 @@
             <!-- Notes -->
             <div class="mb-3">
                 <label for="notes" class="form-label" th:text="#{contract.notes}">Notes</label>
-                <textarea class="form-control" th:value="${contractOrder.notes}" id="notes" name="notes" rows="3"
-                          placeholder="Enter any additional notes here"></textarea>
+                <textarea class="form-control" id="notes" name="notes" rows="3"
+                          placeholder="Enter any additional notes here" th:text="${contractOrder.notes}"></textarea>
             </div>
 
             <!-- Service price -->
