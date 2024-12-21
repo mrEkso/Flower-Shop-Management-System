@@ -1,6 +1,7 @@
 package flowershop.product;
 
 import flowershop.inventory.DeletedProduct;
+import org.javamoney.moneta.Money;
 import org.jetbrains.annotations.NotNull;
 import org.salespointframework.catalog.Product;
 import org.springframework.stereotype.Service;
@@ -201,11 +202,11 @@ public class ProductService {
 			.collect(toList());
 	}
 
-	public List<DeletedProduct> getDeletedProducts(){
+	public List<DeletedProduct> getDeletedProducts() {
 		return deletedProducts;
 	}
 
-	public void addDeletedProduct(DeletedProduct deletedProduct){
+	public void addDeletedProduct(DeletedProduct deletedProduct) {
 		deletedProducts.add(deletedProduct);
 	}
 
@@ -213,6 +214,17 @@ public class ProductService {
 		for (Map.Entry<Flower, Integer> flowerBought : flowersBought.entrySet()) {
 			this.addFlowers(flowerBought.getKey(), flowerBought.getValue());
 		}
+	}
+
+	public void updateSellPrice(Product product, double newSellPrice) {
+		if (product instanceof Flower flower) {
+			flower.getPricing().setSellPrice(Money.of(newSellPrice, "EUR"));
+		} else if (product instanceof Bouquet bouquet) {
+			bouquet.getPricing().setSellPrice(Money.of(newSellPrice, "EUR"));
+		} else {
+			throw new IllegalStateException("Unsupported product type: " + product.getClass().getSimpleName());
+		}
+		productCatalog.save(product);
 	}
 
 }
