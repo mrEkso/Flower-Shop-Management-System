@@ -82,7 +82,28 @@ public class SalesService {
 		wholesalerOrder.setPaymentMethod(paymentMethod);
 		wholesalerOrderService.create(wholesalerOrder);
 		cart.clear();
+		var event = OrderEvents.OrderPaid.of(wholesalerOrder);
+		eventPublisher.publishEvent(event); // Needed for Finances
+	}
+	/**
+	 * Processes the purchase of products from a cart and creates a corresponding wholesaler order.
+	 *
+	 * @param cart          the cart containing products to buy
+	 * @param paymentMethod the payment method for the purchase
+	 * @param deliveryDate  the delivery date
+	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
+	 */
+	public void buyProductsFromBasket(Cart cart, String paymentMethod, String deliveryDate) throws IllegalArgumentException{
+		if (cart == null || cart.isEmpty()) {
+			throw new IllegalArgumentException("Basket is null or empty");
+		}
 
+		WholesalerOrder wholesalerOrder = orderFactory.createWholesalerOrder();
+		addFlowersFromCart(cart, wholesalerOrder);
+		wholesalerOrder.setPaymentMethod(paymentMethod);
+		wholesalerOrderService.create(wholesalerOrder);
+		wholesalerOrder.setNotes(deliveryDate);
+		cart.clear();
 		var event = OrderEvents.OrderPaid.of(wholesalerOrder);
 		eventPublisher.publishEvent(event); // Needed for Finances
 	}
