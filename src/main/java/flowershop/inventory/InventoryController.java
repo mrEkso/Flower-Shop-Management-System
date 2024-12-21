@@ -226,13 +226,15 @@ public class InventoryController {
 			Product product = productOpt.get();
 
 			if (product instanceof Flower selectedFlower) {
+				System.out.println("--------------"+"Selected flower: " + selectedFlower+"--------------------------------");
+				selectedFlowersForBouquet.add(selectedFlower);
 
-				if (selectedFlower.getQuantity() >= chooseQuantity) {
+				/*if (selectedFlower.getQuantity() >= chooseQuantity) {
 					selectedFlower.setDeletedQuantity(chooseQuantity);
 					if (!selectedFlowersForBouquet.contains(selectedFlower)) {
 						selectedFlowersForBouquet.add(selectedFlower);
 					}
-				}
+				}*/
 			}
 		}
 
