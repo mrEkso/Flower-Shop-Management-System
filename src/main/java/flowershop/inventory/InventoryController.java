@@ -1,12 +1,13 @@
 package flowershop.inventory;
 
 import flowershop.clock.ClockService;
-import flowershop.product.Bouquet;
-import flowershop.product.Flower;
-import flowershop.product.Pricing;
-import flowershop.product.ProductService;
+import flowershop.product.*;
+import flowershop.services.ContractOrder;
+import flowershop.services.ContractOrderService;
+import flowershop.services.ReservationOrder;
 import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
+import org.salespointframework.order.OrderLine;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,8 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
+
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.antlr.v4.runtime.tree.xpath.XPath.findAll;
+import static org.salespointframework.order.QOrder.order;
 
 @Controller
 public class InventoryController {
@@ -34,14 +39,21 @@ public class InventoryController {
 	public final ProductService productService;
 	private final ClockService clockService;
 
+	private final ContractOrderService contractOrderService;
+	private final ProductCatalog productCatalog;
+
+
+
 	/**
 	 * Constructor to initialize the InventoryController with a ProductService instance.
 	 *
 	 * @param productService the service for managing products
 	 */
-	public InventoryController(ProductService productService, ClockService clockService) {
+	public InventoryController(ProductService productService, ClockService clockService, ContractOrderService contractOrderService, ProductCatalog productCatalog) {
 		this.productService = productService;
 		this.clockService = clockService;
+		this.contractOrderService = contractOrderService;
+		this.productCatalog = productCatalog;
 	}
 
 	/**
@@ -112,11 +124,28 @@ public class InventoryController {
 		Map<String, Object> data = new HashMap<>();
 		data.put("name", product.getName());
 		data.put("quantity", getQuantity(product));
+
+		int reservedQuantity = getReservedQuantity(product.getName());
+		data.put("quantityReserved", reservedQuantity);
+
 		data.put("pricePerUnit", computePricePerUnit(product));
 		data.put("type", determineType(product));
 		data.put("id", product.getId());
 		return data;
 	}
+
+	/**
+	* @param productName the name of the product
+ 	* @return the reserved quantity
+ 	*/
+	private int getReservedQuantity(String productName) {
+		return getTotalUsedQuantities().entrySet().stream()
+			.filter(entry -> entry.getKey().getName().equalsIgnoreCase(productName))
+			.map(Map.Entry::getValue)
+			.findFirst()
+			.orElse(0);
+	}
+
 
 	/**
 	 * Determines the type of a product.
@@ -475,13 +504,26 @@ public class InventoryController {
 
 		return "inventory";
 	}
-	/*
-	public void addDeliveredFlowersFromWholesaler(Map<Flower, Integer> flowersBought) {
-		for (Map.Entry<Flower, Integer> flowerBought : flowersBought.entrySet()) {
-		  productService.addFlowers(flowerBought.getKey(), flowerBought.getValue());
-		}
-	  }
 
-	 */
+	public Map<Product, Integer> getTotalUsedQuantities() {
+		Map<Product, Integer> productQuantities = new HashMap<>();
+
+		List<ContractOrder> orders = contractOrderService.findAll();
+
+		for (ContractOrder order : orders) {
+			for (OrderLine line : order.getOrderLines()) {
+				Product product = productCatalog.findById(line.getProductIdentifier())
+					.orElseThrow(() -> new IllegalArgumentException("Product not found: " + line.getProductIdentifier()));
+
+				int quantity = line.getQuantity().getAmount().intValue();
+				productQuantities.merge(product, quantity, Integer::sum);
+			}
+		}
+
+		return productQuantities;
+	}
+
+
+
 }
 
