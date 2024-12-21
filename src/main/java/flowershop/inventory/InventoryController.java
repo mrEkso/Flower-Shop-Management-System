@@ -140,12 +140,10 @@ public class InventoryController {
 	 * @return the price per unit as a double
 	 */
 	private double computePricePerUnit(Product product) {
-		if (product instanceof Bouquet bouquet) {
-			if (bouquet.getPricing() != null && bouquet.getPricing().getSellPrice() != null) {
-				return bouquet.getPricing().getSellPrice().getNumber().doubleValue();
-			}
-			return 1;
+		if (product instanceof Bouquet) {
+			return ((Bouquet)product).getPrice().getNumber().doubleValue();
 		}
+
 
 		if (product instanceof Flower flower) {
 			if (flower.getPricing() != null && flower.getPricing().getSellPrice() != null) {
@@ -458,7 +456,6 @@ public class InventoryController {
 
 		if (productOpt.isPresent()) {
 			productService.updateSellPrice(productOpt.get(), newSellPrice);
-			System.out.println("-------------- name: " + productOpt.get().getName() );
 		}
 
 		return "redirect:/inventory";
