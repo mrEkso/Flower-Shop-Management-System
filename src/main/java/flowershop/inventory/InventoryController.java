@@ -448,16 +448,7 @@ public class InventoryController {
 		Optional<Product> productOpt = productService.getProductById(productID);
 
 		if (productOpt.isPresent()) {
-			Product product = productOpt.get();
-			if (product instanceof Flower) {
-				((Flower) product).getPricing().setSellPrice(Money.of(newSellPrice, "EUR"));
-				System.out.println("------------------- change the sell price to "+ newSellPrice);
-				System.out.println("-------------- the flower is "+ product.getName());
-			} else if (product instanceof Bouquet) {
-				((Bouquet) product).getPricing().setSellPrice(Money.of(newSellPrice, "EUR"));
-			}
-		} else {
-			model.addAttribute("error", "Product not found.");
+			productService.updateSellPrice(productOpt.get(), newSellPrice);
 		}
 
 		return "redirect:/inventory";
