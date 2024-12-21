@@ -230,7 +230,7 @@ public class SalesController {
 		Product product = productService.getProductById(productId).get();
 
 		if(sellCart.getQuantity(product).getAmount().intValue() <
-			(product instanceof Flower ? ((Flower)product).getQuantity().intValue() : 
+			(product instanceof Flower ? ((Flower)product).getQuantity() :
 				((Bouquet)product).getQuantity())){
 			sellCart.addOrUpdateItem(product, 1);
 

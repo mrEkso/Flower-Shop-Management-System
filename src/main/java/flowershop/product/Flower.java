@@ -2,7 +2,6 @@ package flowershop.product;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 
 @Entity
@@ -12,10 +11,10 @@ public class Flower extends Product {
 	private Pricing pricing;
 
 	private String color;
-	private Integer quantity;
-	private Integer deletedQuantity;
+	private int quantity;
+	private int deletedQuantity;
 
-	public Flower(String name, Pricing pricing, String color, Integer quantity) {
+	public Flower(String name, Pricing pricing, String color, int quantity) {
 		super(name, pricing.getSellPrice());
 		this.pricing = pricing;
 		this.color = color;
@@ -39,23 +38,32 @@ public class Flower extends Product {
 		return color;
 	}
 
-	public void setColor(String color) {
-		this.color = color;
+	protected void addQuantity(int quantity) {
+		if (quantity < 0) {
+			throw new IllegalArgumentException("Quantity to add cannot be negative");
+		}
+		this.quantity += quantity;
 	}
 
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
+	protected void reduceQuantity(int quantity) {
+		if (quantity < 0) {
+			throw new IllegalArgumentException("Quantity to reduce cannot be negative");
+		}
+		if (this.quantity < quantity) {
+			throw new IllegalArgumentException("Insufficient quantity to reduce");
+		}
+		this.quantity -= quantity;
 	}
 
-	public Integer getQuantity() {
+	public int getQuantity() {
 		return quantity;
 	}
 
-	public Integer getDeletedQuantity() {
+	public int getDeletedQuantity() {
 		return deletedQuantity;
 	}
 
-	public void setDeletedQuantity(Integer deletedQuantity) {
+	public void setDeletedQuantity(int deletedQuantity) {
 		this.deletedQuantity = deletedQuantity;
 	}
 }
