@@ -168,16 +168,15 @@ public class InventoryController {
 			.map(this::enrichProductData) // Enrich only Flower products
 			.collect(Collectors.toList());
 
-
 		model.addAttribute("products", flowersOnly);
 		model.addAttribute("createBouquetMode", true);
+		//model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
 		model.addAttribute("showModal", false);
 		model.addAttribute("showDeletedModal", false);
 		model.addAttribute("selectedFlower", productService.findAllFlowers().getFirst());
-		//model.addAttribute("showChooseModal", true);
+		model.addAttribute("showChooseModal", true);
 		return "inventory";
 	}
-
 
 	/**
 	 * Shows a modal for choosing a flower to add to a bouquet.
@@ -195,24 +194,20 @@ public class InventoryController {
 			.map(this::enrichProductData)
 			.collect(Collectors.toList());
 
-		if (selectedFlowerOpt.isPresent()) {
-			Product product = selectedFlowerOpt.get();
+		selectedFlowerOpt.ifPresent(product -> {
 			if (product instanceof Flower) {
 				model.addAttribute("selectedFlower", (Flower) product);
 				model.addAttribute("showChooseModal", true);
 			} else {
 				model.addAttribute("error", "Selected product is not a flower.");
 			}
-		} else {
-			model.addAttribute("error", "Product not found.");
-		}
+		});
 
 		model.addAttribute("createBouquetMode", true);
 		model.addAttribute("products", enrichedProducts);
 
 		return "inventory";
 	}
-
 
 
 	/**
@@ -223,25 +218,23 @@ public class InventoryController {
 	 * @param model          the model to hold attributes for the view
 	 * @return the inventory view name
 	 */
+	@PostMapping("/inventory/add-flower")
 	public String addFlowerToBouquet(@RequestParam UUID flowerID,
 									 @RequestParam int chooseQuantity,
 									 Model model) {
 
 		Optional<Product> productOpt = productService.getProductById(flowerID);
-
 		if (productOpt.isPresent()) {
 			Product product = productOpt.get();
-
 			if (product instanceof Flower selectedFlower) {
-				System.out.println("--------------"+"Selected flower: " + selectedFlower+"--------------------------------");
-				selectedFlowersForBouquet.add(selectedFlower);
 
-				/*if (selectedFlower.getQuantity() >= chooseQuantity) {
+				if (selectedFlower.getQuantity() >= chooseQuantity) {
 					selectedFlower.setDeletedQuantity(chooseQuantity);
 					if (!selectedFlowersForBouquet.contains(selectedFlower)) {
 						selectedFlowersForBouquet.add(selectedFlower);
 					}
-				}*/
+					//productService.removeFlowers(selectedFlower, chooseQuantity);
+				}
 			}
 		}
 
