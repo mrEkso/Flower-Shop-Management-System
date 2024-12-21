@@ -51,7 +51,7 @@
                 <th>Icon</th>
                 <th>Name</th>
                 <th>Type</th>
-                <th>Quantity</th>
+                <th>Quantity / Reserved</th>
                 <th>Price per Unit</th>
                 <th>Actions</th>
             </tr>
@@ -64,27 +64,20 @@
                 <td th:text="${product['type'] == 'Flower' ? '🌸' : '💐'}"></td>
                 <td th:text="${product['name']}"></td>
                 <td th:text="${product['type']}"></td>
-                <td th:text="${product['quantity']}"></td>
+                <td th:text="${'         '+product['quantity'] + ' / ' + product['quantityReserved']}"></td>
                 <td th:text="${product['pricePerUnit']}"></td>
-                <td>
-                    <a
-                            th:if="${createBouquetMode}"
-                            th:href="@{/inventory/choose-flower(flowerID=${product['id']})}"
-                    >
-                        <button type="button">Choose</button>
-                    </a>
-
-                <td>
-                    <a
-                            th:href="@{/inventory/change-price(productID=${product['id']})}"
-                    >
+                <td th:if="${!createBouquetMode}">
+                    <a th:href="@{/inventory/change-price(productID=${product['id']})}">
                         <button type="button">Change Price</button>
                     </a>
 
-                    <a
-                            th:href="@{/inventory/delete(productID=${product['id']})}"
-                    >
+                    <a th:href="@{/inventory/delete(productID=${product['id']})}">
                         <button type="button">Delete</button>
+                    </a>
+                </td>
+                <td th:if="${createBouquetMode}">
+                    <a th:href="@{/inventory/choose-flower(flowerID=${product['id']})}">
+                        <button type="button">Choose</button>
                     </a>
                 </td>
 
