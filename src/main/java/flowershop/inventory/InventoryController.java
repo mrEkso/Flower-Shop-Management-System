@@ -199,11 +199,12 @@ public class InventoryController {
 
 		model.addAttribute("products", flowersOnly);
 		model.addAttribute("createBouquetMode", true);
-		//model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
 		model.addAttribute("showModal", false);
 		model.addAttribute("showDeletedModal", false);
 		model.addAttribute("selectedFlower", productService.findAllFlowers().getFirst());
 		model.addAttribute("showChooseModal", true);
+		model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
+
 		return "inventory";
 	}
 
@@ -234,6 +235,8 @@ public class InventoryController {
 
 		model.addAttribute("createBouquetMode", true);
 		model.addAttribute("products", enrichedProducts);
+		model.addAttribute("showChooseModal", true);
+		model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
 
 		return "inventory";
 	}
@@ -251,18 +254,24 @@ public class InventoryController {
 	public String addFlowerToBouquet(@RequestParam UUID flowerID,
 									 @RequestParam int chooseQuantity,
 									 Model model) {
-
 		Optional<Product> productOpt = productService.getProductById(flowerID);
 		if (productOpt.isPresent()) {
 			Product product = productOpt.get();
 			if (product instanceof Flower selectedFlower) {
+				int reservedQuantity = getReservedQuantity(selectedFlower.getName());
+				int availableQuantity = selectedFlower.getQuantity() - reservedQuantity;
 
-				if (selectedFlower.getQuantity() >= chooseQuantity) {
+				if (chooseQuantity > availableQuantity) {
+					model.addAttribute("quantityProblemLabel2", true);
+					model.addAttribute("quantityProblemMessage", "You chose more quantity than the available stock.");
+				} else if (chooseQuantity > 0) {
 					selectedFlower.setDeletedQuantity(chooseQuantity);
 					if (!selectedFlowersForBouquet.contains(selectedFlower)) {
 						selectedFlowersForBouquet.add(selectedFlower);
+					} else {
+						model.addAttribute("quantityProblemLabel2", true);
+						model.addAttribute("quantityProblemMessage", "You can t choose the same flower type more than once.");
 					}
-					//productService.removeFlowers(selectedFlower, chooseQuantity);
 				}
 			}
 		}
@@ -272,12 +281,13 @@ public class InventoryController {
 			.collect(Collectors.toList());
 
 		model.addAttribute("createBouquetMode", true);
-		model.addAttribute("selectedFlower", productService.findAllFlowers().getFirst());
-		model.addAttribute("showChooseModal", true);
 		model.addAttribute("products", enrichedProducts);
 		model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
 		return "inventory";
 	}
+
+
+
 
 	/**
 	 * Creates a custom bouquet using the selected flowers.
@@ -309,6 +319,9 @@ public class InventoryController {
 				customBouquet.setPricing(bouquetPricing);
 
 				productService.addBouquet(customBouquet);
+			} else {
+				model.addAttribute("quantityProblemLabel2", true);
+				model.addAttribute("quantityProblemMessage", "You can t create a bouquet with only one flower");
 			}
 		}
 		selectedFlowersForBouquet.clear();
@@ -320,6 +333,8 @@ public class InventoryController {
 		model.addAttribute("products", enrichedProducts);
 		model.addAttribute("selectedProduct", productService.findAllFlowers().getFirst());
 		model.addAttribute("showModal", true);
+		model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
+
 		return "inventory";
 	}
 
@@ -405,12 +420,18 @@ public class InventoryController {
 	 * @return the redirect path to the inventory view
 	 */
 	@PostMapping("/delete-product")
-	public String deleteProduct(@RequestParam String productName, @RequestParam int deleteQuantity, Model model) {
+	public String deleteProduct(@RequestParam String productName,
+								@RequestParam int deleteQuantity,
+								Model model) {
 		List<Flower> flowers = productService.findAllFlowers();
 		List<Bouquet> bouquets = productService.findAllBouquets();
+
 		for (Flower flower : flowers) {
 			if (flower.getName().equals(productName)) {
-				if (flower.getQuantity() >= deleteQuantity) {
+				int reservedQuantity = getReservedQuantity(flower.getName());
+				int availableQuantity = flower.getQuantity() - reservedQuantity;
+
+				if (deleteQuantity <= availableQuantity) {
 					productService.removeFlowers(flower, deleteQuantity);
 					DeletedProduct deletedProduct = new DeletedProduct(
 						flower.getName(),
@@ -419,20 +440,21 @@ public class InventoryController {
 						flower.getPrice().multiply(deleteQuantity),
 						clockService.getCurrentDate()
 					);
-					//deletedProducts.add(deletedProduct);
 					productService.addDeletedProduct(deletedProduct);
 					return "redirect:/inventory";
-				}
-				else {
+				} else {
 					model.addAttribute("quantityProblemLabel", true);
 					return "redirect:/inventory?quantityProblemLabel=true";
 				}
 			}
-
 		}
+
 		for (Bouquet bouquet : bouquets) {
 			if (bouquet.getName().equals(productName)) {
-				if (bouquet.getQuantity() >= deleteQuantity) {
+				int reservedQuantity = getReservedQuantity(bouquet.getName());
+				int availableQuantity = bouquet.getQuantity() - reservedQuantity;
+
+				if (deleteQuantity <= availableQuantity) {
 					productService.removeBouquet(bouquet, deleteQuantity);
 					DeletedProduct deletedProduct = new DeletedProduct(
 						bouquet.getName(),
@@ -441,11 +463,9 @@ public class InventoryController {
 						bouquet.getPrice().multiply(deleteQuantity),
 						clockService.getCurrentDate()
 					);
-					//deletedProducts.add(deletedProduct);
 					productService.addDeletedProduct(deletedProduct);
 					return "redirect:/inventory";
-				}
-				else {
+				} else {
 					model.addAttribute("quantityProblemLabel", true);
 					return "redirect:/inventory?quantityProblemLabel=true";
 				}
@@ -454,6 +474,7 @@ public class InventoryController {
 
 		return "redirect:/inventory";
 	}
+
 
 	/**
 	 * Updates the price of a product.
@@ -522,8 +543,6 @@ public class InventoryController {
 
 		return productQuantities;
 	}
-
-
 
 }
 

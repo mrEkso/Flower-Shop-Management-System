@@ -189,26 +189,24 @@
 
           <button type="submit">Add to Bouquet</button>
         </form>
-        <!--<button th:href="@{/inventory}">Cancel</button>-->
       </div>
     </div>
 
     <div th:if="${createBouquetMode}" class="modal2">
-      <h3>Selected Flowers for Bouquet:</h3>
-      <ul>
-        <li th:each="flower : ${selectedFlowersForBouquet}">
-          <span
-            th:text="${flower['deletedQuantity']} +' of ' +${flower['name']}"
-          ></span>
-        </li>
-      </ul>
+        <h3>Selected Flowers for Bouquet:</h3>
+        <ul>
+            <li th:each="flower : ${selectedFlowersForBouquet}">
+                <span th:text="${flower['deletedQuantity']} + ' of ' + ${flower['name']}"></span>
+            </li>
+        </ul>
 
-      <form action="/create-custom-bouquet" method="post">
-        <label for="bouquetName">Bouquet Name:</label>
-        <input type="text" id="bouquetName" name="bouquetName" required />
-        <button type="submit">Create Bouquet</button>
-      </form>
+        <form action="/create-custom-bouquet" method="post">
+            <label for="bouquetName">Bouquet Name:</label>
+            <input type="text" id="bouquetName" name="bouquetName" required />
+            <button type="submit">Create Bouquet</button>
+        </form>
     </div>
+
 
     <div th:if="${showChangePriceModal}" class="modal2">
         <div class="modal-content">
@@ -236,6 +234,14 @@
         </div>
     </div>
 
+    <div th:if="${quantityProblemLabel2}" class="modal4">
+        <div class="modal-content">
+            <h2 th:text="${quantityProblemMessage}"></h2>
+            <form action="/inventory/create-bouquet" method="get">
+                <button type="submit">Close</button>
+            </form>
+        </div>
+    </div>
 
   </body>
 </html>

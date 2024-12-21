@@ -187,7 +187,7 @@ th {
 .modal4 {
     position: fixed;
     left: calc(100% - 525px);
-    top: calc(250px);
+    top: calc(450px);
     width: 475px;
     padding: 20px;
     background-color: #fff;
