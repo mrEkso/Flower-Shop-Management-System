@@ -1,5 +1,7 @@
 package flowershop.services;
 
+import flowershop.calendar.CalendarService;
+import flowershop.calendar.Event;
 import flowershop.sales.SimpleOrder;
 import flowershop.sales.WholesalerOrder;
 import org.salespointframework.useraccount.UserAccount;
@@ -7,17 +9,19 @@ import org.salespointframework.useraccount.UserAccountManagement;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
  * This class is needed to create all orders of type {@link AbstractOrder}.
+ * Creating any type of order will also add it to the calendar
  * It encapsulates the workaround of assigning a default {@link UserAccount}
  * to every {@link org.salespointframework.order.Order}, without which the framework seems not to work.
  */
 @Service
 @DependsOn("userInitializer")
 public class OrderFactory {
+
+	private final CalendarService calendarService;
 	private final UserAccountManagement userAccountManagement;
 
 	/**
@@ -25,8 +29,10 @@ public class OrderFactory {
 	 *
 	 * @param userAccountManagement the user account management system
 	 */
-	public OrderFactory(UserAccountManagement userAccountManagement) {
+
+	public OrderFactory(UserAccountManagement userAccountManagement, CalendarService calendarService) {
 		this.userAccountManagement = userAccountManagement;
+		this.calendarService = calendarService;
 	}
 
 	/**
@@ -47,7 +53,12 @@ public class OrderFactory {
 	 * @param notes           additional notes for the order
 	 * @return a new `EventOrder`
 	 */
-	public EventOrder createEventOrder(LocalDate eventDate, String deliveryAddress, Client client, String notes) {
+	public EventOrder createEventOrder(LocalDateTime eventDate, String deliveryAddress, Client client, String notes) {
+		Event e = new Event();
+		e.setName(client.getName() + "'s Event");
+		e.setDate(eventDate);
+		e.setDescription(notes);
+		calendarService.save(e);
 		return new EventOrder(getDefaultUserAccount(), eventDate, deliveryAddress, client, notes);
 	}
 
@@ -59,7 +70,12 @@ public class OrderFactory {
 	 * @param client          the client associated with the order
 	 * @return a new `EventOrder`
 	 */
-	public EventOrder createEventOrder(LocalDate eventDate, String deliveryAddress, Client client) {
+	public EventOrder createEventOrder(LocalDateTime eventDate, String deliveryAddress, Client client) {
+		Event e = new Event();
+		e.setName(client.getName() + "'s Event");
+		e.setDate(eventDate);
+		e.setDescription("notes");
+		calendarService.save(e);
 		return new EventOrder(getDefaultUserAccount(), eventDate, deliveryAddress, client, "");
 	}
 
@@ -74,7 +90,12 @@ public class OrderFactory {
 	 * @param notes        additional notes for the order
 	 * @return a new `ContractOrder`
 	 */
-	public ContractOrder createContractOrder(String contractType, String frequency, LocalDate startDate, LocalDate endDate, String address, Client client, String notes) {
+	public ContractOrder createContractOrder(String contractType, String frequency, LocalDateTime startDate, LocalDateTime endDate, String address, Client client, String notes) {
+		Event e = new Event();
+		e.setName(client.getName() + "'s Contract");
+		e.setDate(startDate);
+		e.setDescription(notes);
+		calendarService.save(e);
 		return new ContractOrder(getDefaultUserAccount(), contractType, frequency, startDate, endDate, address, client, notes);
 	}
 
@@ -88,8 +109,8 @@ public class OrderFactory {
 	 * @param client       the client associated with the order
 	 * @return a new `ContractOrder`
 	 */
-	public ContractOrder createContractOrder(String contractType, String frequency, LocalDate startDate, LocalDate endDate, String address, Client client) {
-		return new ContractOrder(getDefaultUserAccount(), contractType, frequency, startDate, endDate, address, client, "");
+	public ContractOrder createContractOrder(String contractType, String frequency, LocalDateTime startDate, LocalDateTime endDate, Client client) {
+		return new ContractOrder(getDefaultUserAccount(), frequency, contractType, startDate, endDate, frequency, client, "");
 	}
 
 	/**
@@ -101,6 +122,11 @@ public class OrderFactory {
 	 * @return a new `ReservationOrder`
 	 */
 	public ReservationOrder createReservationOrder(LocalDateTime dateTime, Client client, String notes) {
+		Event e = new Event();
+		e.setName(client.getName() + "'s Reservation");
+		e.setDate(dateTime);
+		e.setDescription(notes);
+		calendarService.save(e);
 		return new ReservationOrder(getDefaultUserAccount(), dateTime, client, notes);
 	}
 
@@ -112,6 +138,11 @@ public class OrderFactory {
 	 * @return a new `ReservationOrder`
 	 */
 	public ReservationOrder createReservationOrder(LocalDateTime dateTime, Client client) {
+		Event e = new Event();
+		e.setName(client.getName() + "'s Reservation");
+		e.setDate(dateTime);
+		e.setDescription("notes");
+		calendarService.save(e);
 		return new ReservationOrder(getDefaultUserAccount(), dateTime, client, "");
 	}
 

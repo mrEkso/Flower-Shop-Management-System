@@ -1,6 +1,7 @@
 package flowershop.finances;
 
 import flowershop.clock.ClockService;
+import flowershop.inventory.DeletedProduct;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.time.Interval;
@@ -20,6 +21,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Controller
@@ -38,6 +40,7 @@ public class FinancesController {
 	private boolean isFilteredByDates;
 	private boolean isFilteredByCategory;
 	private String category;
+	private List<DeletedProduct> deletedProducts = new ArrayList<>();
 
 	public FinancesController(CashRegisterService cashRegisterService, ClockService clockService) {
 		this.cashRegisterService = cashRegisterService;
@@ -55,7 +58,7 @@ public class FinancesController {
 	@GetMapping("/filterDates")
 	@PreAuthorize("hasRole('BOSS')")
 	public String filterDates(@RequestParam("date1") LocalDate date1, @RequestParam("date2") LocalDate date2, Model model) {
-		if(date1.isAfter(date2)) {
+		if (date1.isAfter(date2)) {
 			return "finances";
 		}
 		this.date1 = date1;
@@ -63,31 +66,36 @@ public class FinancesController {
 		Interval interval = Interval.from(LocalDateTime.of(
 			date1.getYear(),
 			date1.getMonth(),
-			date1.getDayOfMonth(),0,0)
-			).to(LocalDateTime.of(
-				date2.getYear(),
-				date2.getMonth(),
-				date2.getDayOfMonth(),0,0
-		));
+			date1.getDayOfMonth(), 0, 0)
+		).to(date2.plusDays(1).atStartOfDay());
+			/*
+			.to(LocalDateTime.of(
+			date2.getYear(),
+			date2.getMonth(),
+			date2.getDayOfMonth()+, 0, 0
+			 */
 		HashSet<AccountancyEntryWrapper> filteredList = new HashSet<>();
-		for(AccountancyEntry i: cashRegisterService.find(interval).toList()){
-			filteredList.add((AccountancyEntryWrapper)i);
+		for (AccountancyEntry i : cashRegisterService.find(interval).toList()) {
+			filteredList.add((AccountancyEntryWrapper) i);
 		}
 		this.filteredByDates = filteredList;
-		if(!this.filteredByCategory.isEmpty()) {
-			setFilteredOrdersList(intersection(filteredList,this.filteredByCategory).stream().toList(),100);
-		}
-		else {
+		if (!this.filteredByCategory.isEmpty()) {
+			setFilteredOrdersList(intersection(filteredList, this.filteredByCategory).stream().toList(), 100);
+		} else {
 			setFilteredOrdersList(filteredList.stream().toList(), 100);
 		}
-		this.isFilteredByDates=true;
-		prepareFinancesModel(model,filteredAndCutOrdersList);
+		this.isFilteredByDates = true;
+		List<DeletedProduct> tempList = new ArrayList<>(cashRegisterService.getAllDeletedProducts(date1,date2));
+		tempList.sort(Comparator.comparing(DeletedProduct::getDateWhenDeleted).reversed());
+		this.deletedProducts = tempList;
+		prepareFinancesModel(model, filteredAndCutOrdersList);
 		return "finances";
 	}
 
 
 	/**
 	 * Drops the date filter and adds all the other entries back to the table
+	 *
 	 * @param model
 	 * @return
 	 */
@@ -96,18 +104,22 @@ public class FinancesController {
 	public String resetDates(Model model) {
 		this.filteredByDates = new HashSet<>();
 		this.isFilteredByDates = false;
-		this.date1=LocalDate.of(1970,1,1);
-		this.date2=LocalDate.now();
+		this.date1 = LocalDate.of(1970, 1, 1);
+		this.date2 = LocalDate.now();
 		getTransactionPage(model);
-		if(this.isFilteredByCategory) {
-			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByCategory).stream().toList(),100);
+		if (this.isFilteredByCategory) {
+			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByCategory).stream().toList(), 100);
 		}
-		prepareFinancesModel(model,filteredAndCutOrdersList);
+		List<DeletedProduct> tempList = new ArrayList<>(cashRegisterService.getAllDeletedProducts());
+		tempList.sort(Comparator.comparing(DeletedProduct::getDateWhenDeleted).reversed());
+		this.deletedProducts = tempList;
+		prepareFinancesModel(model, filteredAndCutOrdersList);
 		return "finances";
 	}
 
 	/**
 	 * Drops the category filter and returns all entries back to the table
+	 *
 	 * @param model
 	 * @return
 	 */
@@ -116,10 +128,10 @@ public class FinancesController {
 	public String resetCategory(Model model) {
 		this.filteredByCategory = new HashSet<>();
 		this.isFilteredByCategory = false;
-		this.category="all";
+		this.category = "all";
 		getTransactionPage(model);
-		if(this.isFilteredByDates) {
-			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByDates).stream().toList(),100);
+		if (this.isFilteredByDates) {
+			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByDates).stream().toList(), 100);
 		}
 		/*
 		else{
@@ -127,12 +139,13 @@ public class FinancesController {
 		}
 
 		 */
-		prepareFinancesModel(model,filteredAndCutOrdersList);
+		prepareFinancesModel(model, filteredAndCutOrdersList);
 		return "finances";
 	}
 
 	/**
 	 * Connects needed data to HTML
+	 *
 	 * @param model
 	 * @param transactions
 	 */
@@ -142,29 +155,32 @@ public class FinancesController {
 		model.addAttribute("date1", date1);
 		model.addAttribute("date2", date2);
 		model.addAttribute("category", category);
-		model.addAttribute("todayDate",clockService.getCurrentDate());
+		model.addAttribute("todayDate", clockService.getCurrentDate());
 		model.addAttribute("shopOpened", clockService.isOpen());
-		LocalDateTime startOfDay = clockService.getCurrentDate().atTime(9,0,0);
+		model.addAttribute("deletedProducts", this.deletedProducts);
+		model.addAttribute("deletedProductsNotEmpty", !this.deletedProducts.isEmpty());
+		LocalDateTime startOfDay = clockService.getCurrentDate().atTime(9, 0, 0);
 		LocalDateTime endOfInterval = startOfDay.plusDays(1);
 		model.addAttribute("dayProfit", cashRegisterService.salesVolume(Interval.from(startOfDay).to(endOfInterval), Duration.ofDays(1)).get(Interval.from(startOfDay).to(endOfInterval)));
+		model.addAttribute("transactionsNotEmpty", !transactions.isEmpty());
 	}
 
 	/**
 	 * Will sort this list and show a cut version of it in the table
+	 *
 	 * @param filteredOrdersList name speaks for itself
-	 * @param size max number of entries which are shown in the table at a time
+	 * @param size               max number of entries which are shown in the table at a time
 	 */
 	private void setFilteredOrdersList(List<AccountancyEntryWrapper> filteredOrdersList, int size) {
 		List<AccountancyEntryWrapper> tempList = new ArrayList<>(filteredOrdersList);
 		Collections.sort(tempList, new Comparator<AccountancyEntry>() {
 			@Override
 			public int compare(AccountancyEntry first, AccountancyEntry second) {
-				LocalDateTime ldt1 = ((AccountancyEntryWrapper)first).getTimestamp();
-				LocalDateTime ldt2 = ((AccountancyEntryWrapper)second).getTimestamp();
+				LocalDateTime ldt1 = ((AccountancyEntryWrapper) first).getTimestamp();
+				LocalDateTime ldt2 = ((AccountancyEntryWrapper) second).getTimestamp();
 				if (ldt1 != null && ldt2 != null) {
 					return ldt2.compareTo(ldt1);
-				}
-				else{
+				} else {
 					throw new IllegalStateException("Some entries dont have date assigned");
 				}
 			}
@@ -174,7 +190,6 @@ public class FinancesController {
 	}
 
 	/**
-	 *
 	 * @param model
 	 * @return The main finances page
 	 */
@@ -185,22 +200,29 @@ public class FinancesController {
 		for (AccountancyEntry i : this.cashRegisterService.findAll().toList()) {
 			this.filteredOrdersList.add((AccountancyEntryWrapper) i);
 		}
+		List<DeletedProduct> tempList = new ArrayList<>(cashRegisterService.getAllDeletedProducts());
+		tempList.sort(Comparator.comparing(DeletedProduct::getDateWhenDeleted).reversed());
+		this.deletedProducts = tempList;
 
 		setFilteredOrdersList(filteredOrdersList, 100);
 		model.addAttribute("transactions", filteredAndCutOrdersList);
 		model.addAttribute("currentBalance", cashRegisterService.getBalance());
-		model.addAttribute("todayDate",clockService.getCurrentDate());
+		model.addAttribute("todayDate", clockService.getCurrentDate());
 		System.out.println(clockService.isOpen());
 		model.addAttribute("shopOpened", clockService.isOpen());
-		LocalDateTime startOfDay = clockService.getCurrentDate().atTime(9,0,0);
+		LocalDateTime startOfDay = clockService.getCurrentDate().atTime(9, 0, 0);
 		LocalDateTime endOfInterval = startOfDay.plusDays(1);
 		model.addAttribute("dayProfit", cashRegisterService.salesVolume(Interval.from(startOfDay).to(endOfInterval), Duration.ofDays(1)).get(Interval.from(startOfDay).to(endOfInterval)));
+		model.addAttribute("deletedProducts", this.deletedProducts);
+		model.addAttribute("deletedProductsNotEmpty", !this.deletedProducts.isEmpty());
+		model.addAttribute("transactionsNotEmpty", !filteredOrdersList.isEmpty());
 		return "finances";
 	}
 
 
 	/**
 	 * Will open the page, where the day for the report will be asked
+	 *
 	 * @param model
 	 * @return
 	 */
@@ -212,6 +234,7 @@ public class FinancesController {
 
 	/**
 	 * Will open the page, where the month for the report will be asked
+	 *
 	 * @param model
 	 * @return
 	 */
@@ -223,26 +246,38 @@ public class FinancesController {
 
 	/**
 	 * Uploads a generated day-report
+	 *
 	 * @param date
 	 * @param model
 	 * @return PDF-File
 	 */
 	@GetMapping("/dayReport")
 	@PreAuthorize("hasRole('BOSS')")
-	public ResponseEntity<byte[]> dayReport(@RequestParam("day") LocalDate date, Model model) {
-		if(date.isAfter(clockService.getCurrentDate())){
+	public ResponseEntity<byte[]> dayReport(@RequestParam("day") String date, Model model) {
+		String[] dateArray = date.split("-");
+		if (dateArray.length != 3) {
+			return ResponseEntity.badRequest()
+				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM-DD".getBytes(StandardCharsets.UTF_8));
+		}
+		//if (dateArray[0].length() != 4 || !dateArray[0].matches("19[0-9][0-9]|2[0-9][0-9][0-9]"))
+		LocalDate actualDate;
+		try{
+			actualDate = LocalDate.parse(date);
+		} catch (DateTimeParseException e){
+			return ResponseEntity.badRequest()
+				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM-DD".getBytes(StandardCharsets.UTF_8));
+		}
+		if (actualDate.isAfter(clockService.getCurrentDate())) {
 			return ResponseEntity.badRequest()
 				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
 		}
-		DailyFinancialReport report = cashRegisterService.createFinancialReportDay(date.atStartOfDay());
-		if(report == null)
-		{
+		DailyFinancialReport report = cashRegisterService.createFinancialReportDay(actualDate.atStartOfDay());
+		if (report == null) {
 			return ResponseEntity.badRequest()
 				.body("No Transactions saved in the system.".getBytes(StandardCharsets.UTF_8));
 
 		}
-		if(report.isBeforeBeginning())
-		{
+		if (report.isBeforeBeginning()) {
 			return ResponseEntity.badRequest()
 				.body("The given date is before the accounting process started. No Data.".getBytes(StandardCharsets.UTF_8));
 		}
@@ -255,6 +290,7 @@ public class FinancesController {
 
 	/**
 	 * Uploads a generated month-report
+	 *
 	 * @param year_month String of the form YYYY-MM.
 	 * @param model
 	 * @return PDF-File
@@ -263,13 +299,12 @@ public class FinancesController {
 	@PreAuthorize("hasRole('BOSS')")
 	public ResponseEntity<byte[]> monthReport(@RequestParam("month") String year_month, Model model) {
 		String[] date = year_month.split("-");
-		if(date.length != 2) {
+		if (date.length != 2) {
 			return ResponseEntity.badRequest()
 				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM".getBytes(StandardCharsets.UTF_8));
 		}
-		if(date[0].length() != 4 ||
-			!date[1].matches("0[1-9]|1[1-2]") || !date[0].matches("19[0-9][0-9]|2[0-9][0-9][0-9]"))
-		{
+		if (date[0].length() != 4 ||
+			!date[1].matches("0[1-9]|1[1-2]") || !date[0].matches("19[0-9][0-9]|2[0-9][0-9][0-9]")) {
 			return ResponseEntity.badRequest()
 				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM".getBytes(StandardCharsets.UTF_8));
 		}
@@ -280,14 +315,12 @@ public class FinancesController {
 				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
 		}
 		MonthlyFinancialReport report = cashRegisterService.createFinancialReportMonth(firstOfMonth.atStartOfDay());
-		if(report == null)
-		{
+		if (report == null) {
 			return ResponseEntity.badRequest()
 				.body("No Transactions saved in the system.".getBytes(StandardCharsets.UTF_8));
 
 		}
-		if(report.isBeforeBeginning())
-		{
+		if (report.isBeforeBeginning()) {
 			return ResponseEntity.badRequest()
 				.body("The given month is before the accounting process started. No Data.".getBytes(StandardCharsets.UTF_8));
 		}
@@ -303,12 +336,11 @@ public class FinancesController {
 	public String toggleState(Model model) {
 		//TODO everything dissapears
 		clockService.openOrClose();
-		prepareFinancesModel(model,filteredAndCutOrdersList);
+		prepareFinancesModel(model, filteredAndCutOrdersList);
 		return "finances";
 	}
 
 	/**
-	 *
 	 * @param category chosen category
 	 * @param model
 	 * @return The page, where only chosen category of orders is shown
@@ -317,10 +349,9 @@ public class FinancesController {
 	@PreAuthorize("hasRole('BOSS')")
 	public String filterCategories(@RequestParam("filter") String category, Model model) {
 		//this.categorySet = category;
-		if(category.equals("all")){
+		if (category.equals("all")) {
 			return this.resetCategory(model);
-		}
-		else {
+		} else {
 			List<AccountancyEntry> lst;
 			if (category.equals("income")) {
 				lst = this.cashRegisterService.filterIncomeOrSpending(true);
@@ -342,32 +373,29 @@ public class FinancesController {
 				this.filteredByCategory.add((AccountancyEntryWrapper) i);
 			}
 			if (!this.filteredByDates.isEmpty()) {
-				setFilteredOrdersList(this.intersection(this.filteredByCategory,this.filteredByDates).stream().toList(), 100);
-			}
-			else{
-				setFilteredOrdersList(this.filteredByCategory.stream().toList(),100);
+				setFilteredOrdersList(this.intersection(this.filteredByCategory, this.filteredByDates).stream().toList(), 100);
+			} else {
+				setFilteredOrdersList(this.filteredByCategory.stream().toList(), 100);
 			}
 		}
-		prepareFinancesModel(model,filteredAndCutOrdersList);
-		this.isFilteredByCategory=true;
+		prepareFinancesModel(model, filteredAndCutOrdersList);
+		this.isFilteredByCategory = true;
 		return "finances";
 	}
 
 	/**
-	 *
 	 * @param size maximal number of entries to be shown in the table
 	 */
-	private void limitListSize(int size){
-		if(this.filteredOrdersList.size() > size){
+	private void limitListSize(int size) {
+		if (this.filteredOrdersList.size() > size) {
 			this.filteredAndCutOrdersList = this.filteredOrdersList.subList(0, size);
-		}
-		else{
+		} else {
 			this.filteredAndCutOrdersList = this.filteredOrdersList;
 		}
+
 	}
 
 	/**
-	 *
 	 * @param set1
 	 * @param set2
 	 * @return the intersection of these two sets (in mathematical terms)

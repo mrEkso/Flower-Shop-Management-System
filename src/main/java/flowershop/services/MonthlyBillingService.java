@@ -45,7 +45,7 @@ public class MonthlyBillingService {
 	public void addMonthlyCharges() {
 		for (ContractOrder contract : contractOrderService.findAllActiveLastMonth()) {
 			// If the contract's end date has passed, mark it as paid
-			if (contract.getEndDate().isBefore(LocalDate.now())) orderManagement.payOrder(contract);
+			if (contract.getEndDate().isBefore(LocalDateTime.now())) orderManagement.payOrder(contract);
 			else {
 				// Publish an event indicating the order in last month has been paid
 				var event = OrderEvents.OrderPaid.of(contract);

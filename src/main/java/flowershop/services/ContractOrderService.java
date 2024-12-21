@@ -1,7 +1,9 @@
 package flowershop.services;
 
 import flowershop.product.ProductCatalog;
+import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
+import org.salespointframework.order.ChargeLine;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderManagement;
 import org.salespointframework.order.OrderStatus;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.*;
 
@@ -48,7 +51,25 @@ public class ContractOrderService {
 	 * @return a list of all contract orders
 	 */
 	public List<ContractOrder> findAll() {
-		return contractOrderRepository.findAll(Pageable.unpaged()).toList();
+		List<ContractOrder> orders = (List<ContractOrder>) contractOrderRepository.findAll();
+		orders.sort(Comparator.comparingInt(this::getOrderStatusPriority));
+		return orders;
+	}
+
+	/**
+	 * Assigns a priority to each order status for sorting purposes.
+	 *
+	 * @param order the contract order
+	 * @return the priority of the order status
+	 */
+	private int getOrderStatusPriority(ContractOrder order) {
+		return switch (order.getOrderStatus()) {
+			case OPEN -> 1;
+			case PAID -> 2;
+			case COMPLETED -> 3;
+			case CANCELED -> 4;
+			default -> 5;
+		};
 	}
 
 	/**
@@ -68,8 +89,8 @@ public class ContractOrderService {
 	 */
 	public List<ContractOrder> findAllActiveLastMonth() {
 		YearMonth lastMonth = YearMonth.now().minusMonths(1);
-		LocalDate startOfLastMonth = lastMonth.atDay(1);
-		LocalDate endOfLastMonth = lastMonth.atEndOfMonth();
+		LocalDateTime startOfLastMonth = lastMonth.atDay(1).atStartOfDay();
+		LocalDateTime endOfLastMonth = lastMonth.atEndOfMonth().atStartOfDay();
 		return contractOrderRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanEqualAndOrderStatus(endOfLastMonth, startOfLastMonth, OrderStatus.OPEN);
 	}
 
@@ -109,7 +130,7 @@ public class ContractOrderService {
 	 * @return the updated contract order
 	 * @throws IllegalArgumentException if the order is already canceled, not paid yet, or cannot be canceled
 	 */
-	public ContractOrder update(ContractOrder order, Map<String, String> products, String orderStatus, String cancelReason) {
+	public ContractOrder update(ContractOrder order, Map<String, String> products, int servicePrice, String orderStatus, String cancelReason) {
 		if (order.getOrderStatus().equals(OrderStatus.CANCELED))
 			throw new IllegalArgumentException("Order is already canceled!");
 		if (order.getOrderStatus().equals(OrderStatus.OPEN)) {
@@ -119,6 +140,11 @@ public class ContractOrderService {
 				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
 				return contractOrderRepository.save(order);
 			}
+			List<ChargeLine> chargeLinesToRemove = order.getChargeLines().stream()
+				.filter(chargeLine -> chargeLine.getDescription().equals("Service Price"))
+				.toList();
+			chargeLinesToRemove.forEach(order::remove);
+			order.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
 			Map<UUID, Integer> incoming = extractProducts(products);
 			order.getOrderLines().toList().forEach(line -> {
 				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) order.remove(line);

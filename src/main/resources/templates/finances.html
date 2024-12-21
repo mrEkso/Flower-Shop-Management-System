@@ -12,9 +12,12 @@
 <body>
 <div class="container-fluid">
     <div class="row ">
+        <!-- Navbar -->
         <div class="col" th:replace="~{navbar}"></div>
 
-        <div class="col d-flex flex-column align-items-center justify-items-center p-5">
+        <!-- Main Content -->
+        <div class="col d-flex flex-column align-items-center justify-items-center p-4" style="position: relative;">
+            <!-- Isolated Absolute Element -->
             <div class="position-absolute" style="top: 10px; right: 20px;">
                 <div class="d-flex align-items-center">
                     <label class="mr-2" th:text="${todayDate}"></label>
@@ -22,85 +25,93 @@
                         <button type="submit" class="btn btn-primary btn-sm"
                                 th:if="${shopOpened}" th:text="#{finances.day.end}"></button>
                         <button type="submit" class="btn btn-primary btn-sm"
-                                th:if="${shopOpened == null ? true : !shopOpened}" th:text="#{finances.day.start}"></button>
+                                th:if="${shopOpened == null ? true : !shopOpened}"
+                                th:text="#{finances.day.start}"></button>
                     </form>
                 </div>
             </div>
-            <div class="row"><h2 th:text="#{finances.title}">Transactions History</h2></div>
+
+            <!-- Main Title -->
+            <div class="row">
+                <h2 th:text="#{finances.title}">Transactions History</h2>
+            </div>
+
             <div class="row d-flex flex-column justify-content-center mb-4">
                 <div class="row d-flex">
-                <form class="row d-flex flex-row align items-center mx-2" th:method="get" th:action="@{/filterDates}">
-                    <p class="mb-0 mx-2" th:text="#{finances.from}"></p>
-                    <input type="date" name="date1" th:value="${date1}" required/>
-                    <p class="mb-0 mx-2" th:text="#{finances.until}"></p>
-                    <input type="date" name="date2" th:value="${date2}" required/>
-                    <button class="btn btn-primary mb-0 mx-2" th:text="#{finances.filter.button.set}"></button>
-                </form>
+                    <form class="row d-flex flex-row align items-center mx-2" th:method="get"
+                          th:action="@{/filterDates}">
+                        <p class="mb-0 mx-2" th:text="#{finances.from}"></p>
+                        <input type="date" name="date1" th:value="${date1}" required/>
+                        <p class="mb-0 mx-2" th:text="#{finances.until}"></p>
+                        <input type="date" name="date2" th:value="${date2}" required/>
+                        <button class="btn btn-primary mb-0 mx-2" th:text="#{finances.filter.button.set}"></button>
+                    </form>
 
-                <form th:method="get" th:action="@{/resetDates}">
-                    <button class="btn btn-secondary" th:text="#{finances.filter.button.reset}"></button>
-                </form>
+                    <form th:method="get" th:action="@{/resetDates}">
+                        <button class="btn btn-secondary" th:text="#{finances.filter.button.reset}"></button>
+                    </form>
                 </div>
                 <div class="row d-flex gap-3">
-                <form class="row d-flex flex-row align items-center mx-2" th:method="get" th:action="@{/filterCategories}">
-                    <select name="filter" id="filter" th:value="${category}">
-                        <option
-                                value="all"
-                                th:text="#{finances.filter.everything}"
-                                th:selected="${category}=='all'"
-                        />
-                        <option
-                                value="income"
-                                th:text="#{finances.filter.income}"
-                                th:selected="${category}=='income'"
-                        />
-                        <option
-                                value="spendings"
-                                th:text="#{finances.filter.spendings}"
-                                th:selected="${category}=='spendings'"
-                        />
-                        <option
-                                value="simple order"
-                                th:text="#{finances.filter.simple}"
-                                th:selected="${category}=='simple order'"
-                        />
-                        <option
-                                value="reserved order"
-                                th:text="#{finances.filter.reserved}"
-                                th:selected="${category}=='reserved order'"
-                        />
-                        <option
-                                value="event order"
-                                th:text="#{finances.filter.event}"
-                                th:selected="${category}=='event order'"
-                        />
-                        <option
-                                value="contract order"
-                                th:text="#{finances.filter.contract}"
-                                th:selected="${category}=='contract order'"
-                        />
-                        <option
-                                value="wholesaler"
-                                th:text="#{finances.filter.wholesaler}"
-                                th:selected="${category}=='wholesaler'"
-                        />
-                    </select>
-                    <button class="btn btn-primary mb-0 mx-2" th:text="#{finances.filter.button.set}"></button>
-                </form>
-                <form th:method="get" th:action="@{/resetCategory}">
-                    <button class="btn btn-secondary" th:text="#{finances.filter.button.reset}"></button>
-                </form>
+                    <form class="row d-flex flex-row align items-center mx-2" th:method="get"
+                          th:action="@{/filterCategories}">
+                        <select name="filter" id="filter" th:value="${category}">
+                            <option
+                                    value="all"
+                                    th:text="#{finances.filter.everything}"
+                                    th:selected="${category}=='all'"
+                            />
+                            <option
+                                    value="income"
+                                    th:text="#{finances.filter.income}"
+                                    th:selected="${category}=='income'"
+                            />
+                            <option
+                                    value="spendings"
+                                    th:text="#{finances.filter.spendings}"
+                                    th:selected="${category}=='spendings'"
+                            />
+                            <option
+                                    value="simple order"
+                                    th:text="#{finances.filter.simple}"
+                                    th:selected="${category}=='simple order'"
+                            />
+                            <option
+                                    value="reserved order"
+                                    th:text="#{finances.filter.reserved}"
+                                    th:selected="${category}=='reserved order'"
+                            />
+                            <option
+                                    value="event order"
+                                    th:text="#{finances.filter.event}"
+                                    th:selected="${category}=='event order'"
+                            />
+                            <option
+                                    value="contract order"
+                                    th:text="#{finances.filter.contract}"
+                                    th:selected="${category}=='contract order'"
+                            />
+                            <option
+                                    value="wholesaler"
+                                    th:text="#{finances.filter.wholesaler}"
+                                    th:selected="${category}=='wholesaler'"
+                            />
+                        </select>
+                        <button class="btn btn-primary mb-0 mx-2" th:text="#{finances.filter.button.set}"></button>
+                    </form>
+                    <form th:method="get" th:action="@{/resetCategory}">
+                        <button class="btn btn-secondary" th:text="#{finances.filter.button.reset}"></button>
+                    </form>
                 </div>
             </div>
-                <div class="row w-100 mt-4">
-<!--                    To do: Make h variable-->
-                    <div class="table-responsive" style="max-height: 300px; overflow-y:auto; ">
+            <div class="row w-100 mt-4">
+                <!--                    To do: Make h variable-->
+                <div class="table-responsive" style="max-height: calc(60vh); overflow-y: auto;">
                     <table class="table table-striped w-100 text-center" id="finances-table">
                         <thead>
                         <div class="table-header">
                             <tr>
                                 <th
-                                        colspan="4"
+                                        colspan="5"
                                         style="text-align: left"
                                         th:text="#{finances.table.head.balance}"
                                 >
@@ -110,7 +121,7 @@
                             </tr>
                             <tr>
                                 <th
-                                        colspan="4"
+                                        colspan="5"
                                         style="text-align: left"
                                         th:text="#{finances.table.head.saldo} + ' ' + ${todayDate}"
                                 >
@@ -118,24 +129,26 @@
                                 </th>
                                 <th th:text="${dayProfit}"></th>
                             </tr>
-                            <tr>
+                            <tr th:if="${transactionsNotEmpty}">
                                 <th th:text="#{finances.table.head.timestamp}"></th>
                                 <th th:text="#{finances.table.head.category}"></th>
+                                <th th:text="#{finances.table.head.client}"></th>
                                 <th th:text="#{finances.table.head.item}"></th>
                                 <th th:text="#{finances.table.head.quantity}"></th>
                                 <th th:text="#{finances.table.head.value}"></th>
                             </tr>
                         </div>
                         </thead>
-                        <tbody >
+                        <tbody>
                         <tr></tr>
                         <tr th:each="order : ${transactions}">
-                            <td th:text="${order.timestamp}"></td>
+                            <td th:text="${order.timestampStr}"></td>
 
                             <td
                                     th:text="${order.category}"
                                     th:classappend="${order.category.equals('Einkauf') ? 'text-danger' : 'text-success'}"
                             ></td>
+                            <td th:text="${order.clientName}"></td>
                             <td>
                                 <ul>
                                     <li
@@ -156,14 +169,43 @@
                         </tr>
                         </tbody>
                     </table>
-                    </div>
                 </div>
+            </div>
+
+            <div class="row w-100 mt-4">
+                <!--                    To do: Make h variable-->
+                <div class="table-responsive" style="max-height: calc(60vh); overflow-y: auto;">
+                    <h3 th:text="#{finances.anotherTable.title}"></h3>
+                    <table class="table table-striped w-100 text-center" id="deleted-table">
+                        <thead>
+                            <tr th:if="${deletedProductsNotEmpty}">
+                                <th th:text="#{finances.anotherTable.head.date}"></th>
+                                <th th:text="#{finances.anotherTable.head.name}">Name</th>
+                                <th th:text="#{finances.anotherTable.head.price}">Price per Unit</th>
+                                <th th:text="#{finances.anotherTable.head.quantity}">Quantity Deleted</th>
+                                <th th:text="#{finances.anotherTable.head.loss}">Total Loss</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="deletedProduct : ${deletedProducts}">
+                                <td th:text="${deletedProduct.dateWhenDeleted}"></td>
+                                <td th:text="${deletedProduct.name}"></td>
+                                <td th:text="${deletedProduct.pricePerUnit}"></td>
+                                <td th:text="${deletedProduct.quantityDeleted}"></td>
+                                <td th:text="${deletedProduct.totalLoss}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="table-header">
                 <div class="row w-100 d-flex justify-content-center mt-3">
 
                     <a class="btn btn-primary" th:href="@{/askForDay}" th:text="#{finances.dailyReport}"></a>
                     <a class="btn btn-primary" th:href="@{/askForMonth}" th:text="#{finances.monthlyReport}"></a>
                 </div>
 
+            </div>
         </div>
     </div>
 </div>

@@ -142,10 +142,84 @@
                                     <span class="font-weight-bold" th:text="#{order.totalPrice}">Total price</span>:
                                     <span th:text="${event.getTotal()}">Not found</span>
                                 </div>
-                                <div class="card-footer d-flex justify-content-between"><a
-                                        th:href="@{/services/events/edit/{id}(id=${event.id})}"
-                                        class="btn btn-secondary"
-                                        th:text="#{action.edit}">Edit</a>
+                                <div class="card-footer d-flex justify-content-between">
+                                    <a th:href="@{/services/events/edit/{id}(id=${event.id})}" class="btn btn-secondary"
+                                       th:text="#{action.edit}">Edit</a>
+                                    <form th:action="@{'/services/events/edit/' + ${event.id}}" method="post"
+                                          th:if="${event.orderStatus.name() == 'OPEN'}">
+                                        <input type="hidden" name="_method" value="put"/>
+                                        <input type="hidden" name="clientName" th:value="${event.client.name}"/>
+                                        <input type="hidden" name="eventDate" th:value="${event.eventDate}"/>
+                                        <input type="hidden" name="deliveryAddress"
+                                               th:value="${event.deliveryAddress}"/>
+                                        <input type="hidden" name="phone" th:value="${event.client.phone}"/>
+                                        <input type="hidden" name="paymentMethod" th:value="${event.paymentMethod}"/>
+                                        <input type="hidden" name="orderStatus" value="PAID"/>
+                                        <input type="hidden" name="notes" th:value="${event.notes}"/>
+                                        <input type="hidden" name="deliveryPrice"
+                                               th:value="${event.getChargeLines().getTotal().getNumber()}"/>
+                                        <div th:each="orderLine : ${event.orderLines}">
+                                            <input type="hidden"
+                                                   th:name="'products[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.productIdentifier}"/>
+                                            <input type="hidden"
+                                                   th:name="'quantities[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.quantity}"/>
+                                        </div>
+                                        <button type="submit" class="btn btn-success" th:text="#{order.status.paid}">
+                                            Paid
+                                        </button>
+                                    </form>
+                                    <form th:action="@{'/services/events/edit/' + ${event.id}}" method="post"
+                                          th:if="${event.orderStatus.name() == 'PAID'}">
+                                        <input type="hidden" name="_method" value="put"/>
+                                        <input type="hidden" name="clientName" th:value="${event.client.name}"/>
+                                        <input type="hidden" name="eventDate" th:value="${event.eventDate}"/>
+                                        <input type="hidden" name="deliveryAddress"
+                                               th:value="${event.deliveryAddress}"/>
+                                        <input type="hidden" name="phone" th:value="${event.client.phone}"/>
+                                        <input type="hidden" name="paymentMethod" th:value="${event.paymentMethod}"/>
+                                        <input type="hidden" name="orderStatus" value="COMPLETED"/>
+                                        <input type="hidden" name="notes" th:value="${event.notes}"/>
+                                        <input type="hidden" name="deliveryPrice"
+                                               th:value="${event.getChargeLines().getTotal().getNumber()}"/>
+                                        <div th:each="orderLine : ${event.orderLines}">
+                                            <input type="hidden"
+                                                   th:name="'products[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.productIdentifier}"/>
+                                            <input type="hidden"
+                                                   th:name="'quantities[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.quantity}"/>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary"
+                                                th:text="#{order.status.completed}">
+                                            Completed
+                                        </button>
+                                    </form>
+                                    <form th:action="@{'/services/events/edit/' + ${event.id}}" method="post"
+                                          th:if="${event.orderStatus.name() == 'OPEN'}">
+                                        <input type="hidden" name="_method" value="put"/>
+                                        <input type="hidden" name="clientName" th:value="${event.client.name}"/>
+                                        <input type="hidden" name="eventDate" th:value="${event.eventDate}"/>
+                                        <input type="hidden" name="deliveryAddress"
+                                               th:value="${event.deliveryAddress}"/>
+                                        <input type="hidden" name="phone" th:value="${event.client.phone}"/>
+                                        <input type="hidden" name="paymentMethod" th:value="${event.paymentMethod}"/>
+                                        <input type="hidden" name="orderStatus" value="CANCELED"/>
+                                        <input type="hidden" name="notes" th:value="${event.notes}"/>
+                                        <input type="hidden" name="deliveryPrice"
+                                               th:value="${event.getChargeLines().getTotal().getNumber()}"/>
+                                        <div th:each="orderLine : ${event.orderLines}">
+                                            <input type="hidden"
+                                                   th:name="'products[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.productIdentifier}"/>
+                                            <input type="hidden"
+                                                   th:name="'quantities[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.quantity}"/>
+                                        </div>
+                                        <button type="submit" class="btn btn-danger" th:text="#{action.cancel}">Cancel
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -163,7 +237,8 @@
                                     <p class="card-text"><span th:text="#{reservation.time}">Reservation Time</span>:
                                         <span
                                                 th:text="${reservation.reservationDateTime}">Not found</span></p>
-                                    <p class="card-text"><span th:text="#{reservation.orderStatus}">Order Status</span>:
+                                    <p class="card-text"><span
+                                            th:text="#{reservation.orderStatus}">Order Status</span>:
                                         <span th:switch="${reservation.orderStatus.name()}">
                                         <span th:case="OPEN" th:text="#{order.status.open}">Open</span>
                                         <span th:case="PAID" th:text="#{order.status.paid}">Paid</span>
@@ -182,7 +257,8 @@
                                     <span th:case="*">Not found</span>
                                     </span>
                                     </p>
-                                    <p class="card-text"><span th:text="#{order.paymentMethod}">Payment Method</span>:
+                                    <p class="card-text"><span
+                                            th:text="#{order.paymentMethod}">Payment Method</span>:
                                         <span th:if="${reservation.paymentMethod.toString().contains('Cash')}"
                                               th:text="#{order.payment.cash}">Cash</span>
                                         <span th:if="${reservation.paymentMethod.toString().contains('Card')}"
@@ -204,6 +280,134 @@
                                 <div class="card-footer d-flex justify-content-between">
                                     <a th:href="@{/services/reservations/edit/{id}(id=${reservation.id})}"
                                        class="btn btn-secondary" th:text="#{action.edit}">Edit</a>
+                                    <form th:action="@{'/services/reservations/edit/' + ${reservation.id}}"
+                                          method="post"
+                                          th:if="${reservation.orderStatus.name() == 'OPEN'}">
+                                        <input type="hidden" name="_method" value="put"/>
+                                        <input type="hidden" name="clientName" th:value="${reservation.client.name}"/>
+                                        <input type="hidden" name="reservationDateTime"
+                                               th:value="${reservation.reservationDateTime}"/>
+                                        <input type="hidden" name="phone" th:value="${reservation.client.phone}"/>
+                                        <input type="hidden" name="paymentMethod"
+                                               th:value="${reservation.paymentMethod}"/>
+                                        <input type="hidden" name="orderStatus" value="PAID"/>
+                                        <input type="hidden" name="notes" th:value="${reservation.notes}"/>
+                                        <input type="hidden" name="reservationStatus"
+                                               th:value="${reservation.reservationStatus}"/>
+                                        <div th:each="orderLine : ${reservation.orderLines}">
+                                            <input type="hidden"
+                                                   th:name="'products[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.productIdentifier}"/>
+                                            <input type="hidden"
+                                                   th:name="'quantities[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.quantity}"/>
+                                        </div>
+                                        <button type="submit" class="btn btn-success" th:text="#{order.status.paid}">
+                                            Paid
+                                        </button>
+                                    </form>
+                                    <form th:action="@{'/services/reservations/edit/' + ${reservation.id}}"
+                                          method="post"
+                                          th:if="${reservation.orderStatus.name() == 'PAID'}">
+                                        <input type="hidden" name="_method" value="put"/>
+                                        <input type="hidden" name="clientName" th:value="${reservation.client.name}"/>
+                                        <input type="hidden" name="reservationDateTime"
+                                               th:value="${reservation.reservationDateTime}"/>
+                                        <input type="hidden" name="phone" th:value="${reservation.client.phone}"/>
+                                        <input type="hidden" name="paymentMethod"
+                                               th:value="${reservation.paymentMethod}"/>
+                                        <input type="hidden" name="orderStatus" value="COMPLETED"/>
+                                        <input type="hidden" name="notes" th:value="${reservation.notes}"/>
+                                        <input type="hidden" name="reservationStatus"
+                                               th:value="${reservation.reservationStatus}"/>
+                                        <div th:each="orderLine : ${reservation.orderLines}">
+                                            <input type="hidden"
+                                                   th:name="'products[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.productIdentifier}"/>
+                                            <input type="hidden"
+                                                   th:name="'quantities[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.quantity}"/>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary"
+                                                th:text="#{order.status.completed}">
+                                            Completed
+                                        </button>
+                                    </form>
+                                    <form th:action="@{'/services/reservations/edit/' + ${reservation.id}}"
+                                          method="post"
+                                          th:if="${reservation.reservationStatus.name() == 'IN_PROCESS'}">
+                                        <input type="hidden" name="_method" value="put"/>
+                                        <input type="hidden" name="clientName" th:value="${reservation.client.name}"/>
+                                        <input type="hidden" name="reservationDateTime"
+                                               th:value="${reservation.reservationDateTime}"/>
+                                        <input type="hidden" name="phone" th:value="${reservation.client.phone}"/>
+                                        <input type="hidden" name="paymentMethod"
+                                               th:value="${reservation.paymentMethod}"/>
+                                        <input type="hidden" name="reservationStatus" value="READY_FOR_PICKUP"/>
+                                        <input type="hidden" name="notes" th:value="${reservation.notes}"/>
+                                        <input type="hidden" name="orderStatus" th:value="${reservation.orderStatus}"/>
+                                        <div th:each="orderLine : ${reservation.orderLines}">
+                                            <input type="hidden"
+                                                   th:name="'products[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.productIdentifier}"/>
+                                            <input type="hidden"
+                                                   th:name="'quantities[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.quantity}"/>
+                                        </div>
+                                        <button type="submit" class="btn btn-warning"
+                                                th:text="#{order.status.readyForPickup}">Ready For Pick-up
+                                        </button>
+                                    </form>
+                                    <form th:action="@{'/services/reservations/edit/' + ${reservation.id}}"
+                                          method="post"
+                                          th:if="${reservation.reservationStatus.name() == 'READY_FOR_PICKUP'}">
+                                        <input type="hidden" name="_method" value="put"/>
+                                        <input type="hidden" name="clientName" th:value="${reservation.client.name}"/>
+                                        <input type="hidden" name="reservationDateTime"
+                                               th:value="${reservation.reservationDateTime}"/>
+                                        <input type="hidden" name="phone" th:value="${reservation.client.phone}"/>
+                                        <input type="hidden" name="paymentMethod"
+                                               th:value="${reservation.paymentMethod}"/>
+                                        <input type="hidden" name="reservationStatus" value="PICKED_UP"/>
+                                        <input type="hidden" name="notes" th:value="${reservation.notes}"/>
+                                        <input type="hidden" name="orderStatus" th:value="${reservation.orderStatus}"/>
+                                        <div th:each="orderLine : ${reservation.orderLines}">
+                                            <input type="hidden"
+                                                   th:name="'products[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.productIdentifier}"/>
+                                            <input type="hidden"
+                                                   th:name="'quantities[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.quantity}"/>
+                                        </div>
+                                        <button type="submit" class="btn btn-info" th:text="#{order.status.pickedUp}">
+                                            Picked Up
+                                        </button>
+                                    </form>
+                                    <form th:action="@{'/services/reservations/edit/' + ${reservation.id}}"
+                                          method="post"
+                                          th:if="${reservation.orderStatus.name() == 'OPEN'}">
+                                        <input type="hidden" name="_method" value="put"/>
+                                        <input type="hidden" name="clientName" th:value="${reservation.client.name}"/>
+                                        <input type="hidden" name="reservationDateTime"
+                                               th:value="${reservation.reservationDateTime}"/>
+                                        <input type="hidden" name="phone" th:value="${reservation.client.phone}"/>
+                                        <input type="hidden" name="paymentMethod"
+                                               th:value="${reservation.paymentMethod}"/>
+                                        <input type="hidden" name="orderStatus" value="CANCELED"/>
+                                        <input type="hidden" name="notes" th:value="${reservation.notes}"/>
+                                        <input type="hidden" name="reservationStatus"
+                                               th:value="${reservation.reservationStatus}"/>
+                                        <div th:each="orderLine : ${reservation.orderLines}">
+                                            <input type="hidden"
+                                                   th:name="'products[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.productIdentifier}"/>
+                                            <input type="hidden"
+                                                   th:name="'quantities[' + ${orderLine.productIdentifier} + ']'"
+                                                   th:value="${orderLine.quantity}"/>
+                                        </div>
+                                        <button type="submit" class="btn btn-danger" th:text="#{action.cancel}">Cancel
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

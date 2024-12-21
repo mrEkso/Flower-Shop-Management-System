@@ -1,5 +1,6 @@
 package flowershop.product;
 
+import flowershop.inventory.DeletedProduct;
 import org.jetbrains.annotations.NotNull;
 import org.salespointframework.catalog.Product;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,8 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class ProductService {
+
+	public final List<DeletedProduct> deletedProducts = new ArrayList<>();
 
 	private final ProductCatalog productCatalog;
 
@@ -196,6 +199,20 @@ public class ProductService {
 		return bouquets.stream()
 			.filter(bouquet -> bouquet.getQuantity() > 0)
 			.collect(toList());
+	}
+
+	public List<DeletedProduct> getDeletedProducts(){
+		return deletedProducts;
+	}
+
+	public void addDeletedProduct(DeletedProduct deletedProduct){
+		deletedProducts.add(deletedProduct);
+	}
+
+	public void addDeliveredFlowersFromWholesaler(Map<Flower, Integer> flowersBought) {
+		for (Map.Entry<Flower, Integer> flowerBought : flowersBought.entrySet()) {
+			this.addFlowers(flowerBought.getKey(), flowerBought.getValue());
+		}
 	}
 
 }

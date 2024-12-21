@@ -139,6 +139,13 @@ public class CalendarController {
 		return "calendar/edit_event";
 	}
 
+	@GetMapping("/calendar/view")
+	public String viewEvent(Model model, @RequestParam Long id) {
+		Event event = service.findById(id);
+		model.addAttribute("event", event);
+		return "calendar/view_event";
+	}
+
 	//Updates a given event on click
 	@PostMapping("/calendar/update")
 	public String updateEvent(@ModelAttribute Event event) {

@@ -16,23 +16,34 @@
       ></h1>
       <p class="edit-inventory" th:if="${!createBouquetMode}">Edit inventory</p>
 
-      <form action="/inventory" method="get" th:if="${!createBouquetMode}">
-        <label for="search">Search by name:</label>
-        <input
-          type="text"
-          id="search"
-          name="search"
-          placeholder="Enter flower name..."
-        />
+        <div class="form-group">
+            <form action="/inventory" method="get" th:if="${!createBouquetMode}">
+                <label for="search">Search by name:</label>
+                <input
+                        type="text"
+                        id="search"
+                        name="search"
+                        placeholder="Enter flower name..."
+                />
 
-        <label for="filter">Filter:</label>
-        <select id="filter" name="filter">
-          <option value="all">All</option>
-          <option value="flower">Flower</option>
-          <option value="bouquet">Bouquet</option>
-        </select>
-        <button type="submit">Apply Filter</button>
-      </form>
+                <label for="filter">Filter:</label>
+                <select id="filter" name="filter">
+                    <option value="all">All</option>
+                    <option value="flower">Flower</option>
+                    <option value="bouquet">Bouquet</option>
+                </select>
+                <button type="submit">Apply Filter</button>
+            </form>
+
+            <form
+                    action="/inventory/deleted-products"
+                    method="get"
+                    th:if="${!createBouquetMode}"
+            >
+                <button type="submit">Show Deleted Products</button>
+            </form>
+        </div>
+
 
       <table>
         <thead>
@@ -76,14 +87,6 @@
           </tr>
         </tbody>
       </table>
-
-      <form
-        action="/inventory/deleted-products"
-        method="get"
-        th:if="${!createBouquetMode}"
-      >
-        <button type="submit">Show Deleted Products</button>
-      </form>
     </div>
 
     <a

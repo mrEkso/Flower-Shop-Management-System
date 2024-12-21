@@ -491,9 +491,9 @@ Was das zu erstellende Programm auf alle Fälle leisten muss.
 | Das System soll eine Filterfunktion für Rechnungen bieten, damit Benutzer spezifische Transaktionen basierend auf bestimmten Kriterien schnell finden können. Die Filterfunktion soll es ermöglichen, nach Datum, Betrag, Kundenname und Transaktionstyp zu suchen, um gezielt Rechnungen anzuzeigen.
 
 | [[F0008]]<<F0008>> 
-| v0.1 
+| v0.2  
 | Zahlungsarten 
-| Das System soll beim Kauf und Verkauf verschiedene Zahlungsarten anbieten, wie beispielsweise die Bezahlung in bar oder mit Karte, um eine flexible Zahlungsabwicklung zu gewährleisten.
+| Das System soll beim Verkauf verschiedene Zahlungsarten anbieten, wie beispielsweise die Bezahlung in bar oder mit Karte, um eine flexible Zahlungsabwicklung zu gewährleisten.
 
 | [[F0101]]<<F0101>>
 | v0.1
@@ -576,9 +576,9 @@ Was das zu erstellende Programm auf alle Fälle leisten muss.
 | Das System soll die Möglichkeit bieten, verschiedene Termine im Kalender hinzuzufügen und anzuzeigen. Dies umfasst Funktionen wie das Eintragen und Anzeigen von arbeitsbezogenen Terminen, sowie das Hinzufügen von weniger arbeitsrelevanten Ereignissen, wie Feiertage oder Geburtstage, die zur besseren Arbeitsorganisation beitragen können.
 
 | [[F0501]]<<F0501>> 
-| v0.1 
+| v0.2
 | Zugriffskontrolle und Berechtigungen 
-| Das System soll Login- und Logout-Funktionen sowie die Verwaltung der Zugriffsrechte für verschiedene Benutzerrollen bieten, um die Sicherheit zu gewährleisten.
+| Das System soll Login- und Logout-Funktionen bieten, um die Sicherheit zu gewährleisten.
 
 |===
 

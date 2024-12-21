@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -107,8 +108,8 @@ class ServiceControllerIntegrationTests {
 		mvc.perform(post("/services/contracts/create")
 				.param("clientName", "Test Client")
 				.param("contractType", "Standard")
-				.param("startDate", "2024-01-01")
-				.param("endDate", "2024-12-31")
+				.param("startDate", "2024-05-01T12:00")
+				.param("endDate", "2024-12-01T12:00")
 				.param("address", "123 Test Street")
 				.param("phone", "123456789")
 				.param("notes", "Test notes")
@@ -122,8 +123,8 @@ class ServiceControllerIntegrationTests {
 		mvc.perform(post("/services/contracts/create")
 				.param("clientName", "Test Client")
 				.param("contractType", "Standard")
-				.param("startDate", "2024-01-01")
-				.param("endDate", "2024-12-31")
+				.param("startDate", "2024-05-01T12:00")
+				.param("endDate", "2024-12-01T12:00")
 				.param("address", "123 Test Street")
 				.param("phone", "invalid-phone")
 				.param("notes", "Test notes")
@@ -136,7 +137,7 @@ class ServiceControllerIntegrationTests {
 		mvc.perform(post("/services/events/create")
 				.param("clientName", "Test Client Name")
 				.param("eventName", "Birthday Party")
-				.param("eventDate", "2024-05-01")
+				.param("eventDate", "2024-05-01T12:00")
 				.param("address", "Test Event Address")
 				.param("phone", "123456789")
 				.param("deliveryAddress", "Test Delivery Address")
@@ -151,7 +152,7 @@ class ServiceControllerIntegrationTests {
 		mvc.perform(post("/services/events/create")
 				.param("clientName", "Test Client Name")
 				.param("eventName", "Birthday Party")
-				.param("eventDate", "2024-05-01")
+				.param("eventDate", "2024-05-01T12:00")
 				.param("address", "Test Event Address")
 				.param("phone", "invalid-phone")
 				.param("deliveryAddress", "Test Delivery Address")
@@ -195,8 +196,8 @@ class ServiceControllerIntegrationTests {
 		mvc.perform(put("/services/contracts/edit/{id}", getFirstValidContractId())
 				.param("clientName", "Test Client Name")
 				.param("contractType", "Standard")
-				.param("startDate", "2024-01-01")
-				.param("endDate", "2024-12-31")
+				.param("startDate", "2024-01-01T12:30")
+				.param("endDate", "2024-12-01T12:30")
 				.param("address", "123 Test Street")
 				.param("phone", "123456789")
 				.param("paymentMethod", "CASH")
@@ -212,8 +213,8 @@ class ServiceControllerIntegrationTests {
 		mvc.perform(put("/services/contracts/edit/{id}", UUID.randomUUID())
 				.param("clientName", "Test Client Name")
 				.param("contractType", "Standard")
-				.param("startDate", "2024-01-01")
-				.param("endDate", "2024-12-31")
+				.param("startDate", "2024-01-01T12:30")
+				.param("endDate", "2024-12-01T12:30")
 				.param("address", "123 Test Street")
 				.param("phone", "123456789")
 				.param("paymentMethod", "CASH")
@@ -228,8 +229,8 @@ class ServiceControllerIntegrationTests {
 		mvc.perform(put("/services/contracts/edit/{id}", getFirstValidContractId())
 				.param("clientName", "Updated Client")
 				.param("contractType", "one-time")
-				.param("startDate", "2024-01-01")
-				.param("endDate", "2024-12-31")
+				.param("startDate", "2024-01-01T12:30")
+				.param("endDate", "2025-01-01T12:30")
 				.param("address", "Updated Address")
 				.param("phone", "invalid-phone")
 				.param("paymentMethod", "Cash")
@@ -253,7 +254,7 @@ class ServiceControllerIntegrationTests {
 	void editEventOrderShouldUpdateDetails() throws Exception {
 		mvc.perform(put("/services/events/edit/{id}", getFirstValidEventId())
 				.param("clientName", "Updated Client")
-				.param("eventDate", "2024-05-01")
+				.param("eventDate", "2024-01-01T12:30")
 				.param("phone", "123456789")
 				.param("deliveryAddress", "Updated Address")
 				.param("paymentMethod", "Cash")
@@ -268,7 +269,7 @@ class ServiceControllerIntegrationTests {
 	void editEventOrderShouldReturnErrorForNonExistingOrder() throws Exception {
 		mvc.perform(put("/services/events/edit/{id}", UUID.randomUUID())
 				.param("clientName", "Updated Client")
-				.param("eventDate", "2024-05-01")
+				.param("eventDate", "2024-01-01T12:30")
 				.param("phone", "123456789")
 				.param("deliveryAddress", "Updated Address")
 				.param("paymentMethod", "Cash")
@@ -282,7 +283,7 @@ class ServiceControllerIntegrationTests {
 	void editEventOrderShouldReturnErrorForInvalidPhoneNumber() throws Exception {
 		mvc.perform(put("/services/events/edit/{id}", getFirstValidEventId())
 				.param("clientName", "Updated Client")
-				.param("eventDate", "2024-05-01")
+				.param("eventDate", "2024-05-01T12:30")
 				.param("phone", "invalid-phone")
 				.param("deliveryAddress", "Updated Address")
 				.param("paymentMethod", "Cash")

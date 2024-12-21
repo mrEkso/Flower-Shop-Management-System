@@ -6,6 +6,7 @@ import flowershop.inventory.InventoryController;
 import flowershop.product.Flower;
 import flowershop.product.ProductService;
 import flowershop.services.MonthlyBillingService;
+import org.salespointframework.catalog.Product;
 import org.salespointframework.time.Interval;
 import org.springframework.stereotype.Service;
 
@@ -23,16 +24,14 @@ public class ClockService {
 	private final CashRegisterRepository cashRegisterRepository;
 
 	private final MonthlyBillingService monthlyBillingService;
-	private final InventoryController inventoryController;
+
 	private final ProductService productService;
 
 	public ClockService(CashRegisterRepository cashRegisterRepository,
 						MonthlyBillingService monthlyBillingService,
-						InventoryController inventoryController,
 						ProductService productService) {
 		this.cashRegisterRepository = cashRegisterRepository;
 		this.monthlyBillingService = monthlyBillingService;
-		this.inventoryController = inventoryController;
 		this.productService = productService;
 	}
 
@@ -41,7 +40,6 @@ public class ClockService {
 	 * @return the instance of CashRegister, stored in the repository
 	 */
 	public CashRegister getCashRegister() {
-		Optional<CashRegister> cashRegister = cashRegisterRepository.findFirstByOrderById();
 		return cashRegisterRepository.findFirstByOrderById()
 			.orElseThrow(() -> new IllegalStateException("CashRegister instance not found"));
 	}
@@ -98,20 +96,22 @@ public class ClockService {
 			cashRegister.setInGameDate(this.nextWorkingDay());
 			cashRegister.setNewDayStarted(LocalDateTime.now());
 			Set<PendingOrder> newPendingOrdersSet = new HashSet<>();
+			Map<Flower,Integer> todaysGoods = new HashMap<>();
 			for (PendingOrder i : cashRegister.getPendingOrders()) {
 				if(i.getDueDate().equals(getCurrentDate())){
-					Map<Flower,Integer> todaysGoods = new HashMap<>();
-					for(String flowerName: i.getItemQuantityMap().keySet())
+					for(Product flower: i.getItemQuantityMap().keySet())
 					{
-						todaysGoods.put(productService.findFlowersByName(flowerName).getFirst(), //TODO what if several instances with the same name
-									i.getItemQuantityMap().get(flowerName).getAmount().intValue());
+						// The ones that will be delivered today
+						todaysGoods.put((Flower) flower, i.getItemQuantityMap().get(flower).getAmount().intValue());
 					}
 				}
 				else{
+						// The ones, that will be later
 					newPendingOrdersSet.add(i);
 				}
 			}
-			cashRegister.setPendingOrders(newPendingOrdersSet);
+			productService.addDeliveredFlowersFromWholesaler(todaysGoods);
+			cashRegister.setPendingOrders(newPendingOrdersSet); // Only the ones that are later are added to the waiting list
 		}
 		cashRegisterRepository.save(cashRegister);
 	}

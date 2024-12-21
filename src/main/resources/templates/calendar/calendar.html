@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendar</title>
+    <title th:text="#{calendar.title}"></title>
     <link th:href="@{/resources/css/calendar.css}" rel="stylesheet" />
     <link th:href="@{/resources/css/navbar.css}" rel="stylesheet" />
 
@@ -12,47 +12,53 @@
 </head>
 <body>
 
-<div class="d-flex flex-row">
+<div class="d-flex flex-row vh-100">
     <div th:replace="~{navbar}"></div>
-    <div class="container-fluid d-flex flex-column justify-content-center">
+    <div class="container-fluid d-flex flex-column justify-content-center m-5 ">
 
 
-    <div class="d-flex flex-row align-content-center justify-content-left font-weight-bold">
+    <div class="d-flex flex-row align-content-center justify-content-center font-weight-bold  ">
 
-                <a th:href="@{/calendar/previous(month=${currentMonth}, year=${currentYear})}">&lt; Previous</a>
-                <div class="me-3">Calendar - <span th:text="${currentYear}"></span> - <span th:text="${currentMonth}"></span></div>
-                <a th:href="@{/calendar/next(month=${currentMonth}, year=${currentYear})}">Next &gt;</a>
+                <a class="m-3" th:href="@{/calendar/previous(month=${currentMonth}, year=${currentYear})}" th:text="'&lt ' + #{calendar.previous} "></a>
+                <div class="m-3" th:text="#{calendar.title} +' '+ ${currentMonth} + '/' + ${currentYear}"></div>
+                <a class="m-3" th:href="@{/calendar/next(month=${currentMonth}, year=${currentYear})}" th:text="#{calendar.next} + '&gt' "></a>
 
     </div>
 
-        <div class="calendar row w-100">
-                <div class="calendar-header">
-                    <div>Sun</div>
-                    <div>Mon</div>
-                    <div>Tue</div>
-                    <div>Wed</div>
-                    <div>Thu</div>
-                    <div>Fri</div>
-                    <div>Sat</div>
+        <div class="flex-grow-1 overflow-auto flex flex-column align-items-center">
+                <div class="row calendar-header">
+                    <div th:text="#{calendar.Sun}"></div>
+                    <div th:text="#{calendar.Mon}"></div>
+                    <div th:text="#{calendar.Tue}"></div>
+                    <div th:text="#{calendar.Wed}"></div>
+                    <div th:text="#{calendar.Thu}"></div>
+                    <div th:text="#{calendar.Fri}"></div>
+                    <div th:text="#{calendar.Sat}"></div>
+
+
                 </div>
-                <div class="calendar-grid">
+                <div class="row calendar-grid p-2 m-2">
                     <div th:each="day:${calendarDays}" class="day"
                     th:classappend="${day.getState()} ? 'current-month' : 'other-month'">
                         <div class="date" th:text="${day.getDate().dayOfMonth}"></div>
-                        <div th:each="event : ${day.events}" class="event">
+                        <div th:each="event : ${day.events}"  class="event">
+
                             <div class="font-weight-bold" th:text="${event.name}"></div>
                             <div class="font-italic" th:text="${event.description}"></div>
                             <form th:action="@{/calendar/delete}" method="post" class="d-inline">
                                 <input type="hidden" name="id" th:value="${event.id}" />
 
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                <button type="submit" class="btn btn-danger btn-sm" th:text="#{calendar.delete}"></button>
 
                             </form>
                             <form th:action="@{/calendar/edit}" method="get" class="d-inline">
                                 <input type="hidden" name="id" th:value="${event.id}" />
-                                <button type="submit" class="btn btn-primary btn-sm">Edit</button>
+                                <button type="submit" class="btn btn-primary btn-sm" th:text="#{calendar.edit}"></button>
                             </form>
-
+                            <form th:action="@{/calendar/view}" method="get" class="d-inline">
+                                <input type="hidden" name="id" th:value="${event.id}" />
+                                <button type="submit" class="btn btn-primary btn-sm" th:text="#{calendar.view.title}"></button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -60,7 +66,7 @@
 
 
         <div class="row justify-content-center">
-            <a class="btn btn-primary" th:href="@{/calendar/new}">
+            <a class="btn btn-primary" th:href="@{/calendar/new}" th:text="#{calendar.create}">
                 Create Event
             </a>
         </div>

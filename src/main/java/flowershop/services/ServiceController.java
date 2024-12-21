@@ -4,7 +4,9 @@ import flowershop.calendar.CalendarService;
 import flowershop.calendar.Event;
 import flowershop.product.ProductService;
 import javassist.NotFoundException;
+import org.hibernate.validator.internal.constraintvalidators.bv.notempty.NotEmptyValidatorForArray;
 import org.javamoney.moneta.Money;
+import org.salespointframework.order.ChargeLine;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -231,8 +232,8 @@ public class ServiceController {
 									  @RequestParam(value = "frequency", required = false) String frequency,
 									  @RequestParam(value = "customFrequency", required = false) Integer customFrequency,
 									  @RequestParam(value = "customUnit", required = false) String customUnit,
-									  @RequestParam("startDate") LocalDate startDate,
-									  @RequestParam("endDate") LocalDate endDate,
+									  @RequestParam("startDate") LocalDateTime startDate,
+									  @RequestParam("endDate") LocalDateTime endDate,
 									  @RequestParam("address") String address,
 									  @RequestParam("phone") String phone,
 									  @RequestParam Map<String, String> products,
@@ -254,7 +255,7 @@ public class ServiceController {
 			contractOrderService.save(contractOrder, products);
 			Event e = new Event();
 			e.setName("Contract for" + clientName);
-			e.setDate(startDate.atStartOfDay());
+			e.setDate(startDate);
 			e.setDescription(notes);
 			calendarService.save(e);
 			return "redirect:/services";
@@ -278,7 +279,7 @@ public class ServiceController {
 	 */
 	@PostMapping("/events/create")
 	public String createEventOrder(@RequestParam String clientName,
-								   @RequestParam("eventDate") LocalDate eventDate,
+								   @RequestParam("eventDate") LocalDateTime eventDate,
 								   @RequestParam("phone") String phone,
 								   @RequestParam("deliveryAddress") String deliveryAddress,
 								   @RequestParam Map<String, String> products,
@@ -294,7 +295,7 @@ public class ServiceController {
 			eventOrderService.save(eventOrder, products);
 			Event e = new Event();
 			e.setName("Event for" + clientName);
-			e.setDate(eventDate.atStartOfDay());
+			e.setDate(eventDate);
 			e.setDescription(notes);
 			calendarService.save(e);
 			return "redirect:/services";
@@ -387,8 +388,8 @@ public class ServiceController {
 									@RequestParam(value = "frequency", required = false) String frequency,
 									@RequestParam(value = "customFrequency", required = false) Integer customFrequency,
 									@RequestParam(value = "customUnit", required = false) String customUnit,
-									@RequestParam("startDate") LocalDate startDate,
-									@RequestParam("endDate") LocalDate endDate,
+									@RequestParam("startDate") LocalDateTime startDate,
+									@RequestParam("endDate") LocalDateTime endDate,
 									@RequestParam("address") String address,
 									@RequestParam("phone") String phone,
 									@RequestParam Map<String, String> products,
@@ -403,6 +404,8 @@ public class ServiceController {
 				.orElseThrow(() -> new NotFoundException("Contract order not found"));
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
+			if (startDate.isAfter(endDate))
+				throw new IllegalArgumentException("Start date cannot be later than end date");
 			contractOrder.setClient(getOrCreateClient(clientName, phone));
 			contractOrder.setContractType(contractType);
 			contractOrder.setStartDate(startDate);
@@ -410,16 +413,16 @@ public class ServiceController {
 			contractOrder.setAddress(address);
 			contractOrder.setNotes(notes);
 			contractOrder.setPaymentMethod(paymentMethod);
-			contractOrder.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
 			if ("recurring".equals(frequency)) {
 				contractOrder.setFrequency(frequency);
 			} else if ("custom".equals(frequency)) {
 				contractOrder.setCustomFrequency(customFrequency);
 				contractOrder.setCustomUnit(customUnit);
 			}
-			contractOrderService.update(contractOrder, products, orderStatus, cancelReason);
+			contractOrderService.update(contractOrder, products, servicePrice, orderStatus, cancelReason);
 			return "redirect:/services";
 		} catch (Exception e) {
+			System.out.println(Arrays.toString(e.getStackTrace()));
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/contracts/edit/" + id;
 		}
@@ -460,7 +463,7 @@ public class ServiceController {
 	@PutMapping("/events/edit/{id}")
 	public String editEventOrder(@PathVariable UUID id,
 								 @RequestParam String clientName,
-								 @RequestParam("eventDate") LocalDate eventDate,
+								 @RequestParam("eventDate") LocalDateTime eventDate,
 								 @RequestParam("phone") String phone,
 								 @RequestParam("deliveryAddress") String deliveryAddress,
 								 @RequestParam Map<String, String> products,
@@ -480,10 +483,10 @@ public class ServiceController {
 			eventOrder.setDeliveryAddress(deliveryAddress);
 			eventOrder.setNotes(notes);
 			eventOrder.setPaymentMethod(paymentMethod);
-			eventOrder.addChargeLine(Money.of(deliveryPrice, "EUR"), "Delivery Price");
-			eventOrderService.update(eventOrder, products, orderStatus, cancelReason);
+			eventOrderService.update(eventOrder, products, deliveryPrice, orderStatus, cancelReason);
 			return "redirect:/services";
 		} catch (Exception e) {
+			System.out.println(Arrays.toString(e.getStackTrace()));
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/events/edit/" + id;
 		}

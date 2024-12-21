@@ -81,7 +81,7 @@ public class OrderCatalogInitializer implements DataInitializer {
 		// Create and save orders using OrderFactory
 		// ContractOrders
 		ContractOrder contractOrder = orderFactory.createContractOrder(
-			"one-time", "weekly", LocalDate.of(2024, 11, 12), LocalDate.of(2026, 1, 1),
+			"once a week", "weekly", LocalDate.now().atStartOfDay(), LocalDate.of(2026, 1, 1).atStartOfDay(),
 			"Nöthnitzer Str. 46, 01187 Dresden", client1, "Weekly flower delivery + flower arrangement + watering");
 		contractOrder.setPaymentMethod(Cash.CASH);
 		contractOrder.addOrderLine(rose, Quantity.of(8));
@@ -91,14 +91,14 @@ public class OrderCatalogInitializer implements DataInitializer {
 
 		// EventOrders
 		EventOrder eventOrder1 = orderFactory.createEventOrder(
-			LocalDate.now(), "Nöthnitzer Str. 46, 01187 Dresden", client1);
+			LocalDate.now().atStartOfDay(), "Nöthnitzer Str. 46, 01187 Dresden", client1);
 		eventOrder1.addOrderLine(rose, Quantity.of(2));
 		eventOrder1.setPaymentMethod(Cash.CASH);
 		eventOrder1.addChargeLine(Money.of(20, "EUR"), "Delivery Price");
 		eventOrderRepository.save(eventOrder1);
 
 		EventOrder eventOrder2 = orderFactory.createEventOrder(
-			LocalDate.now(), "Nöthnitzer Str. 46, 01187 Dresden", client2);
+			LocalDate.now().atStartOfDay(), "Nöthnitzer Str. 46, 01187 Dresden", client2);
 		eventOrder2.addOrderLine(roseLilyBouquet, Quantity.of(1));
 		eventOrder2.setPaymentMethod(Cash.CASH);
 		eventOrder2.addChargeLine(Money.of(20, "EUR"), "Delivery Price");

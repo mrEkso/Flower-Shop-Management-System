@@ -1,5 +1,6 @@
 package flowershop.service;
 
+import flowershop.calendar.CalendarService;
 import flowershop.services.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,7 @@ class MonthlyBillingServiceTest {
 	@Test
 	void testAddMonthlyCharges() {
 		// Mock the UserAccountManagement
+		CalendarService calendarService = mock(CalendarService.class);
 		UserAccountManagement userAccountManagement = mock(UserAccountManagement.class);
 		UserAccount userAccount = mock(UserAccount.class);
 		when(userAccount.getId()).thenReturn(UserAccount.UserAccountIdentifier.of("user-id")); // Ensure getId() returns a non-null value
@@ -41,14 +43,14 @@ class MonthlyBillingServiceTest {
 			.thenReturn(java.util.Optional.of(userAccount));
 
 		// Create an instance of OrderFactory
-		OrderFactory orderFactory = new OrderFactory(userAccountManagement);
+		OrderFactory orderFactory = new OrderFactory(userAccountManagement, calendarService);
 
 		// Use OrderFactory to create ContractOrder
 		ContractOrder contractOrder = orderFactory.createContractOrder(
 			"one-time",
 			"weekly",
-			LocalDate.of(2024, 11, 12),
-			LocalDate.of(2026, 1, 1),
+			LocalDate.of(2024, 11, 12).atStartOfDay(),
+			LocalDate.of(2026, 1, 1).atStartOfDay(),
 			"test address",
 			new Client(),
 			"test notes"

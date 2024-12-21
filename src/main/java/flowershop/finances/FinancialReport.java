@@ -1,6 +1,7 @@
 package flowershop.finances;
 
 import flowershop.clock.ClockService;
+import flowershop.inventory.DeletedProduct;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -11,14 +12,17 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.salespointframework.time.Interval;
 import org.vandeseer.easytable.TableDrawer;
 import org.vandeseer.easytable.settings.HorizontalAlignment;
+import org.vandeseer.easytable.settings.VerticalAlignment;
 import org.vandeseer.easytable.structure.Row;
 import org.vandeseer.easytable.structure.Table;
 import org.vandeseer.easytable.structure.cell.TextCell;
 
 import javax.money.MonetaryAmount;
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,6 +38,7 @@ public abstract class FinancialReport {
 	protected LocalDateTime startDate;
 	protected Interval interval;
 	protected ClockService clockService;
+	protected List<DeletedProduct> deletedProducts;
 
 	public FinancialReport(Interval period,
 						   MonetaryAmount balanceEndOfThePeriod,
@@ -54,7 +59,10 @@ public abstract class FinancialReport {
 	 */
 	public byte[] generatePDF() {
 		try (PDDocument document = new PDDocument()) {
-			PDType0Font customFont = PDType0Font.load(document, new File("src/main/resources/fonts/josefin-sans.semibold.ttf"));
+			InputStream inFont = getClass().getResourceAsStream("/fonts/josefin-sans.semibold.ttf");
+			System.out.println(inFont.toString());
+      		PDType0Font customFont = PDType0Font.load(document, inFont);
+
 			TableDrawer.builder()
 				.startX(50)
 				.endY(50)
@@ -132,13 +140,13 @@ public abstract class FinancialReport {
 		// Add the header and "Finanzuebersicht fuer ... here
 		List<Row> rows = getNeededRows(font);
 		Table.TableBuilder builder = Table.builder()
-			.addColumnsOfWidth(110, 115, 100, 105, 55);
+			.addColumnsOfWidth(110, 115, 110, 50, 45, 55);
 		Row shapka1 = Row.builder()
 			.add(TextCell.builder()
 				.text(" ").fontSize(16).colSpan(2)
 				.build())
 			.add(TextCell.builder()
-				.text("Floris Blumenladen Dresden").fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text("Floris Blumenladen Dresden").fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
 		builder.addRow(shapka1);
@@ -147,7 +155,7 @@ public abstract class FinancialReport {
 				.text(" ").fontSize(16).colSpan(2)
 				.build())
 			.add(TextCell.builder()
-				.text("Wiener Platz 4, 01069 Dresden").fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text("Wiener Platz 4, 01069 Dresden").fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
 		builder.addRow(adress);
@@ -160,7 +168,7 @@ public abstract class FinancialReport {
 				.text(" ").fontSize(16).colSpan(2)
 				.build())
 			.add(TextCell.builder()
-				.text("Am " + dateRepr).fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text("Am " + dateRepr).fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
 		builder.addRow(datum);
@@ -168,7 +176,7 @@ public abstract class FinancialReport {
 		//builder.addRow(emptyRow());
 		Row title = Row.builder()
 			.add(TextCell.builder()
-				.text("Finanzübersicht für " + intervalToString()).font(font).fontSize(24).colSpan(5).horizontalAlignment(HorizontalAlignment.CENTER)
+				.text("Finanzübersicht für " + intervalToString()).font(font).fontSize(24).colSpan(6).horizontalAlignment(HorizontalAlignment.CENTER)
 				.build())
 			.build();
 		builder.addRow(title);
@@ -179,12 +187,80 @@ public abstract class FinancialReport {
 		return builder.build();
 	}
 
+	public List<Row> getDeletedProductRows(PDFont font){
+		List<Row> neededRows = new java.util.ArrayList<>();
+		if(!this.deletedProducts.isEmpty()){
+			Row title = Row.builder()
+				.add(TextCell.builder()
+					.text(this instanceof DailyFinancialReport ? "Verwelkte Blumen an diesem Tag:" : "Verwelkte Blumen in diesem Monat:")
+					.font(font).fontSize(14).colSpan(6).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.CENTER)
+					.build())
+				.build();
+			neededRows.add(title);
+			Row headerDeleted = Row.builder()
+				.add(TextCell.builder()
+					.text("Produkt").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+					.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+					.build())
+				.add(TextCell.builder()
+					.text("Preis pro Stück").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+					.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+					.build())
+				.add(TextCell.builder()
+					.text("Anzahl").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+					.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+					.build())
+				.add(TextCell.builder()
+					.text("Einnahmen verloren").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
+					.fontSize(14).colSpan(3).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+					.build())
+				.build();
+			neededRows.add(headerDeleted);
+			for (DeletedProduct deletedProduct : this.deletedProducts) {
+				Row deleted = Row.builder()
+					.add(TextCell.builder()
+						.text(deletedProduct.getName()).verticalAlignment(VerticalAlignment.TOP)
+						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
+						.build())
+					.add(TextCell.builder()
+						.text(deletedProduct.getPricePerUnit().toString()).verticalAlignment(VerticalAlignment.TOP)
+						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
+						.build())
+					.add(TextCell.builder()
+						.text(String.valueOf(deletedProduct.getQuantityDeleted())).verticalAlignment(VerticalAlignment.TOP)
+						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
+						.build())
+					.add(TextCell.builder()
+						.text(String.valueOf(deletedProduct.getTotalLoss())).verticalAlignment(VerticalAlignment.TOP)
+						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT).colSpan(3)
+						.build())
+					.build();
+				neededRows.add(deleted);
+			}
+			MonetaryAmount total = this.deletedProducts.stream()
+				.map(DeletedProduct::getTotalLoss)
+				.reduce(MonetaryAmount::add).get();
+			Row totalLosses = Row.builder()
+				.add(TextCell.builder()
+					.text("Gesamte Verluste:").verticalAlignment(VerticalAlignment.TOP).colSpan(3)
+					.font(font).fontSize(14).horizontalAlignment(HorizontalAlignment.LEFT)
+					.build())
+				.add(TextCell.builder()
+					.text(total.toString()).verticalAlignment(VerticalAlignment.TOP).colSpan(3)
+					.font(font).fontSize(14).horizontalAlignment(HorizontalAlignment.LEFT)
+					.build()).borderWidth(1).borderColor(Color.BLACK).verticalAlignment(VerticalAlignment.MIDDLE)
+				.build();
+			neededRows.add(totalLosses);
+		}
+		return neededRows;
+	}
+
 	/**
 	 *
 	 * @return the instance of an empty row (just to add distance between rows)
 	 */
 	protected Row emptyRow() {
-		return Row.builder().add(TextCell.builder().text("  ").colSpan(5).fontSize(10).build())
+		return Row.builder().add(TextCell.builder().text("  ").colSpan(6).fontSize(10).build())
 			.build();
 	}
 

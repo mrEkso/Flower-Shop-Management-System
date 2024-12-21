@@ -5,7 +5,6 @@ import jakarta.persistence.MappedSuperclass;
 import org.salespointframework.order.Order;
 import org.salespointframework.payment.Cash;
 import org.salespointframework.useraccount.UserAccount;
-
 import java.util.Objects;
 
 /**
@@ -27,6 +26,7 @@ public abstract class AbstractOrder extends Order {
 	public AbstractOrder(UserAccount user, String notes) {
 		super(Objects.requireNonNull(user.getId()));
 		this.notes = notes;
+
 	}
 
 	/**
