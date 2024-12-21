@@ -450,6 +450,7 @@ public class InventoryController {
 			if (product instanceof Flower) {
 				((Flower) product).getPricing().setSellPrice(Money.of(newSellPrice, "EUR"));
 				System.out.println("------------------- change the sell price to "+ newSellPrice);
+				System.out.println("-------------- the flower is "+ product.getName());
 			} else if (product instanceof Bouquet) {
 				((Bouquet) product).getPricing().setSellPrice(Money.of(newSellPrice, "EUR"));
 			}
