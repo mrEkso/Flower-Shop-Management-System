@@ -392,7 +392,7 @@ public class InventoryController {
 					productService.removeFlowers(flower, deleteQuantity);
 					DeletedProduct deletedProduct = new DeletedProduct(
 						flower.getName(),
-						flower.getPrice(),
+						flower.getPricing().getSellPrice(),
 						deleteQuantity,
 						flower.getPrice().multiply(deleteQuantity),
 						clockService.getCurrentDate()
