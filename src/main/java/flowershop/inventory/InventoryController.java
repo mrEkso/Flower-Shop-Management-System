@@ -92,7 +92,7 @@ public class InventoryController {
 		model.addAttribute("selectedProduct", productService.findAllFlowers().getFirst());
 		model.addAttribute("showModal", true);
 		model.addAttribute("showDeletedModal", false);
-		model.addAttribute("showChangePriceModal", true);
+		model.addAttribute("showChangePriceModal", false);
 
 		if (quantityProblemLabel != null && quantityProblemLabel) {
 			model.addAttribute("quantityProblemLabel", true);
@@ -427,15 +427,15 @@ public class InventoryController {
 	/**
 	 * Updates the price of a product.
 	 *
-	 * @param productID   the ID of the product to update
+	 * @param productID   the id of the product to update
 	 * @param model       the model to hold attributes for the view
 	 * @return the redirect path to the inventory view
 	 */
 	@PostMapping("/inventory/update-price")
 	@PreAuthorize("hasRole('BOSS')")
 	public String updateProductPrice(
-		@RequestParam("productID") UUID productID,
-		@RequestParam double newSellPrice,
+		@RequestParam("productID") UUID productID, // Use productID
+		@RequestParam("newSellPrice") double newSellPrice,
 		Model model
 	) {
 		if (newSellPrice <= 0) {
@@ -449,16 +449,17 @@ public class InventoryController {
 			Product product = productOpt.get();
 			if (product instanceof Flower) {
 				((Flower) product).getPricing().setSellPrice(Money.of(newSellPrice, "EUR"));
-			} /*else if (product instanceof Bouquet) {
-				product.setPrice(newSellPrice); // Assuming Bouquets do not have Pricing.
-			}*/
-			model.addAttribute("success", "Price updated successfully.");
+				System.out.println("------------------- change the sell price to "+ newSellPrice);
+			} else if (product instanceof Bouquet) {
+				((Bouquet) product).getPricing().setSellPrice(Money.of(newSellPrice, "EUR"));
+			}
 		} else {
 			model.addAttribute("error", "Product not found.");
 		}
 
 		return "redirect:/inventory";
 	}
+
 
 
 	@GetMapping("/inventory/change-price")

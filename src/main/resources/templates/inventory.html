@@ -217,7 +217,7 @@
       </form>
     </div>
 
-    <div th:if="${showChangePriceModal}" class="modal4">
+    <div th:if="${showChangePriceModal}" class="modal2">
         <div class="modal-content">
             <h2 th:text="'Change Sell Price for: ' + ${selectedProduct.name}"></h2>
             <form action="/inventory/update-price" method="post">
