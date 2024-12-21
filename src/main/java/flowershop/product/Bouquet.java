@@ -1,6 +1,8 @@
 package flowershop.product;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Transient;
 import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 

@@ -1,8 +1,6 @@
 package flowershop.services;
 
-import flowershop.calendar.Event;
 import flowershop.product.ProductCatalog;
-import flowershop.calendar.CalendarService;
 import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.ChargeLine;
@@ -11,7 +9,6 @@ import org.salespointframework.order.OrderManagement;
 import org.salespointframework.order.OrderStatus;
 import org.salespointframework.payment.Cash;
 import org.salespointframework.quantity.Quantity;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 

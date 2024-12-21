@@ -4,7 +4,6 @@ import flowershop.clock.ClockService;
 import flowershop.product.*;
 import flowershop.services.ContractOrder;
 import flowershop.services.ContractOrderService;
-import flowershop.services.ReservationOrder;
 import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.OrderLine;
@@ -15,13 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
-
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.antlr.v4.runtime.tree.xpath.XPath.findAll;
-import static org.salespointframework.order.QOrder.order;
 
 @Controller
 public class InventoryController {

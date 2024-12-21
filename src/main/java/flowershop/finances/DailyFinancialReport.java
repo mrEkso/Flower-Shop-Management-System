@@ -1,9 +1,7 @@
 package flowershop.finances;
 
 import flowershop.clock.ClockService;
-import flowershop.inventory.DeletedProduct;
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.time.Interval;
 import org.springframework.data.util.Streamable;
@@ -15,7 +13,9 @@ import org.vandeseer.easytable.structure.cell.TextCell;
 import javax.money.MonetaryAmount;
 import java.awt.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**

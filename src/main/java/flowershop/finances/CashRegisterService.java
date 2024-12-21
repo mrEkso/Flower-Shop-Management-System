@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.money.MonetaryAmount;
 import java.time.LocalDate;
@@ -27,8 +26,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static flowershop.finances.Category.Einkauf;
 
 @Service
 @Primary

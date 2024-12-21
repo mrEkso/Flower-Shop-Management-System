@@ -2,7 +2,6 @@ package flowershop.inventory;
 
 import javax.money.MonetaryAmount;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class DeletedProduct {
 	private String name;

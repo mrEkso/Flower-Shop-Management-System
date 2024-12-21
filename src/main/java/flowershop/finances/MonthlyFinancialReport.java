@@ -15,8 +15,8 @@ import javax.money.MonetaryAmount;
 import java.awt.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * Is used to create financial PDF-reports for a given month

@@ -1,9 +1,5 @@
 package flowershop.services;
 
-import java.util.List;
-
-import java.util.List;
-
 import org.salespointframework.core.DataInitializer;
 import org.salespointframework.useraccount.Password.UnencryptedPassword;
 import org.salespointframework.useraccount.Role;
@@ -11,6 +7,8 @@ import org.salespointframework.useraccount.UserAccountManagement;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
+import java.util.List;
 
 /**
  * The `UserInitializer` class is responsible for initializing user accounts in the system.
