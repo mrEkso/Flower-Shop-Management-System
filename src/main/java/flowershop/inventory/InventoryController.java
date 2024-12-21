@@ -92,6 +92,7 @@ public class InventoryController {
 		model.addAttribute("selectedProduct", productService.findAllFlowers().getFirst());
 		model.addAttribute("showModal", true);
 		model.addAttribute("showDeletedModal", false);
+		model.addAttribute("showChangePriceModal", true);
 
 		if (quantityProblemLabel != null && quantityProblemLabel) {
 			model.addAttribute("quantityProblemLabel", true);
@@ -342,6 +343,7 @@ public class InventoryController {
 		model.addAttribute("deletedProducts", productService.getDeletedProducts());
 		model.addAttribute("showModal", true);
 		model.addAttribute("createBouquetMode", false);
+		model.addAttribute("showChangePriceModal", false);
 		model.addAttribute("products", enrichedProducts);
 
 		return "inventory";
@@ -420,6 +422,63 @@ public class InventoryController {
 		}
 
 		return "redirect:/inventory";
+	}
+
+	/**
+	 * Updates the price of a product.
+	 *
+	 * @param productID   the ID of the product to update
+	 * @param model       the model to hold attributes for the view
+	 * @return the redirect path to the inventory view
+	 */
+	@PostMapping("/inventory/update-price")
+	@PreAuthorize("hasRole('BOSS')")
+	public String updateProductPrice(
+		@RequestParam("productID") UUID productID,
+		@RequestParam double newSellPrice,
+		Model model
+	) {
+		if (newSellPrice <= 0) {
+			model.addAttribute("error", "Price must be greater than zero.");
+			return "redirect:/inventory";
+		}
+
+		Optional<Product> productOpt = productService.getProductById(productID);
+
+		if (productOpt.isPresent()) {
+			Product product = productOpt.get();
+			if (product instanceof Flower) {
+				((Flower) product).getPricing().setSellPrice(Money.of(newSellPrice, "EUR"));
+			} /*else if (product instanceof Bouquet) {
+				product.setPrice(newSellPrice); // Assuming Bouquets do not have Pricing.
+			}*/
+			model.addAttribute("success", "Price updated successfully.");
+		} else {
+			model.addAttribute("error", "Product not found.");
+		}
+
+		return "redirect:/inventory";
+	}
+
+
+	@GetMapping("/inventory/change-price")
+	@PreAuthorize("hasRole('BOSS')")
+	public String showChangePriceModal(@RequestParam("productID") UUID productID, Model model) {
+		Optional<Product> selectedProductOpt = productService.getProductById(productID);
+
+		selectedProductOpt.ifPresent(product -> model.addAttribute("selectedProduct", product));
+
+		List<Map<String, Object>> enrichedProducts = productService.getAllProducts().stream()
+			.map(this::enrichProductData)
+			.collect(Collectors.toList());
+
+		model.addAttribute("deletedProducts", productService.getDeletedProducts());
+		model.addAttribute("showModal", true);
+		model.addAttribute("createBouquetMode", false);
+		model.addAttribute("showChangePriceModal", true);
+		model.addAttribute("products", enrichedProducts);
+
+		return "inventory";
 	}
 	/*
 	public void addDeliveredFlowersFromWholesaler(Map<Flower, Integer> flowersBought) {
