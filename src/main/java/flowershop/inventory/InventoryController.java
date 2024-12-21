@@ -262,9 +262,17 @@ public class InventoryController {
 				int availableQuantity = selectedFlower.getQuantity() - reservedQuantity;
 
 				if (chooseQuantity > availableQuantity) {
-					model.addAttribute("quantityProblemLabel2", true);
-					model.addAttribute("quantityProblemMessage", "You chose more quantity than the available stock.");
-				} else if (chooseQuantity > 0) {
+					if (chooseQuantity > selectedFlower.getQuantity()) {
+						model.addAttribute("quantityProblemLabel2", true);
+						model.addAttribute("quantityProblemMessage", "We don t have that quantity");
+					}
+
+					if (chooseQuantity < selectedFlower.getQuantity()) {
+						model.addAttribute("quantityProblemLabel2", true);
+						model.addAttribute("quantityProblemMessage", "You chose more quantity than the available stock. because "+reservedQuantity+ " are reserved");
+					}
+				}
+				else if (chooseQuantity > 0) {
 					selectedFlower.setDeletedQuantity(chooseQuantity);
 					if (!selectedFlowersForBouquet.contains(selectedFlower)) {
 						selectedFlowersForBouquet.add(selectedFlower);

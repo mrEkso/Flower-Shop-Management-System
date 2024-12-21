@@ -204,8 +204,13 @@
             <label for="bouquetName">Bouquet Name:</label>
             <input type="text" id="bouquetName" name="bouquetName" required />
             <button type="submit">Create Bouquet</button>
+            <small th:if="${!#lists.isEmpty(selectedFlowersForBouquet)}">
+                (After submitting, the selected quantities will be deducted from inventory.)
+            </small>
         </form>
     </div>
+
+
 
 
     <div th:if="${showChangePriceModal}" class="modal2">
