@@ -92,6 +92,7 @@ public class InventoryController {
 		model.addAttribute("selectedProduct", productService.findAllFlowers().getFirst());
 		model.addAttribute("showModal", true);
 		model.addAttribute("showDeletedModal", false);
+		model.addAttribute("showChangePriceModal", false);
 
 		if (quantityProblemLabel != null && quantityProblemLabel) {
 			model.addAttribute("quantityProblemLabel", true);
@@ -143,7 +144,14 @@ public class InventoryController {
 			return ((Bouquet)product).getPrice().getNumber().doubleValue();
 		}
 
-		return product.getPrice().getNumber().doubleValue();
+
+		if (product instanceof Flower flower) {
+			if (flower.getPricing() != null && flower.getPricing().getSellPrice() != null) {
+				return flower.getPricing().getSellPrice().getNumber().doubleValue();
+			}
+		}
+
+		return 0;
 	}
 
 	/**
@@ -160,16 +168,15 @@ public class InventoryController {
 			.map(this::enrichProductData) // Enrich only Flower products
 			.collect(Collectors.toList());
 
-
 		model.addAttribute("products", flowersOnly);
 		model.addAttribute("createBouquetMode", true);
+		//model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
 		model.addAttribute("showModal", false);
 		model.addAttribute("showDeletedModal", false);
 		model.addAttribute("selectedFlower", productService.findAllFlowers().getFirst());
-		//model.addAttribute("showChooseModal", true);
+		model.addAttribute("showChooseModal", true);
 		return "inventory";
 	}
-
 
 	/**
 	 * Shows a modal for choosing a flower to add to a bouquet.
@@ -187,24 +194,20 @@ public class InventoryController {
 			.map(this::enrichProductData)
 			.collect(Collectors.toList());
 
-		if (selectedFlowerOpt.isPresent()) {
-			Product product = selectedFlowerOpt.get();
+		selectedFlowerOpt.ifPresent(product -> {
 			if (product instanceof Flower) {
 				model.addAttribute("selectedFlower", (Flower) product);
 				model.addAttribute("showChooseModal", true);
 			} else {
 				model.addAttribute("error", "Selected product is not a flower.");
 			}
-		} else {
-			model.addAttribute("error", "Product not found.");
-		}
+		});
 
 		model.addAttribute("createBouquetMode", true);
 		model.addAttribute("products", enrichedProducts);
 
 		return "inventory";
 	}
-
 
 
 	/**
@@ -215,15 +218,14 @@ public class InventoryController {
 	 * @param model          the model to hold attributes for the view
 	 * @return the inventory view name
 	 */
+	@PostMapping("/inventory/add-flower")
 	public String addFlowerToBouquet(@RequestParam UUID flowerID,
 									 @RequestParam int chooseQuantity,
 									 Model model) {
 
 		Optional<Product> productOpt = productService.getProductById(flowerID);
-
 		if (productOpt.isPresent()) {
 			Product product = productOpt.get();
-
 			if (product instanceof Flower selectedFlower) {
 
 				if (selectedFlower.getQuantity() >= chooseQuantity) {
@@ -231,6 +233,7 @@ public class InventoryController {
 					if (!selectedFlowersForBouquet.contains(selectedFlower)) {
 						selectedFlowersForBouquet.add(selectedFlower);
 					}
+					//productService.removeFlowers(selectedFlower, chooseQuantity);
 				}
 			}
 		}
@@ -342,6 +345,7 @@ public class InventoryController {
 		model.addAttribute("deletedProducts", productService.getDeletedProducts());
 		model.addAttribute("showModal", true);
 		model.addAttribute("createBouquetMode", false);
+		model.addAttribute("showChangePriceModal", false);
 		model.addAttribute("products", enrichedProducts);
 
 		return "inventory";
@@ -381,7 +385,7 @@ public class InventoryController {
 					productService.removeFlowers(flower, deleteQuantity);
 					DeletedProduct deletedProduct = new DeletedProduct(
 						flower.getName(),
-						flower.getPrice(),
+						flower.getPricing().getSellPrice(),
 						deleteQuantity,
 						flower.getPrice().multiply(deleteQuantity),
 						clockService.getCurrentDate()
@@ -420,6 +424,56 @@ public class InventoryController {
 		}
 
 		return "redirect:/inventory";
+	}
+
+	/**
+	 * Updates the price of a product.
+	 *
+	 * @param productID   the id of the product to update
+	 * @param model       the model to hold attributes for the view
+	 * @return the redirect path to the inventory view
+	 */
+	@PostMapping("/inventory/update-price")
+	@PreAuthorize("hasRole('BOSS')")
+	public String updateProductPrice(
+		@RequestParam("productID") UUID productID, // Use productID
+		@RequestParam("newSellPrice") double newSellPrice,
+		Model model
+	) {
+		if (newSellPrice <= 0) {
+			model.addAttribute("error", "Price must be greater than zero.");
+			return "redirect:/inventory";
+		}
+
+		Optional<Product> productOpt = productService.getProductById(productID);
+
+		if (productOpt.isPresent()) {
+			productService.updateSellPrice(productOpt.get(), newSellPrice);
+		}
+
+		return "redirect:/inventory";
+	}
+
+
+
+	@GetMapping("/inventory/change-price")
+	@PreAuthorize("hasRole('BOSS')")
+	public String showChangePriceModal(@RequestParam("productID") UUID productID, Model model) {
+		Optional<Product> selectedProductOpt = productService.getProductById(productID);
+
+		selectedProductOpt.ifPresent(product -> model.addAttribute("selectedProduct", product));
+
+		List<Map<String, Object>> enrichedProducts = productService.getAllProducts().stream()
+			.map(this::enrichProductData)
+			.collect(Collectors.toList());
+
+		model.addAttribute("deletedProducts", productService.getDeletedProducts());
+		model.addAttribute("showModal", true);
+		model.addAttribute("createBouquetMode", false);
+		model.addAttribute("showChangePriceModal", true);
+		model.addAttribute("products", enrichedProducts);
+
+		return "inventory";
 	}
 	/*
 	public void addDeliveredFlowersFromWholesaler(Map<Flower, Integer> flowersBought) {

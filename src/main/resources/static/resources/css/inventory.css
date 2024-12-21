@@ -184,6 +184,21 @@ th {
     border: 1px solid #ccc;
 }
 
+.modal4 {
+    position: fixed;
+    left: calc(100% - 525px);
+    top: calc(250px);
+    width: 475px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 5px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+}
+
 .form-group {
     display: flex;
     align-items: center;
