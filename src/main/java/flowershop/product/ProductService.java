@@ -54,7 +54,7 @@ public class ProductService {
 				removeFlowers(flower, quant);
 			}
 		}
-		bouquet.addQuantity(bouquetQuantity);
+		//bouquet.addQuantity(bouquetQuantity); //this make the quantity of the created bouquet in the inventory 2 instead of 1
 		return productCatalog.save(bouquet);
 	}
 
