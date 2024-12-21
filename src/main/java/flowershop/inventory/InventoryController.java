@@ -99,6 +99,9 @@ public class InventoryController {
 			.map(this::enrichProductData)
 			.collect(Collectors.toList());
 
+		selectedFlowersForBouquet.clear();
+
+
 		model.addAttribute("products", enrichedProducts);
 		model.addAttribute("createBouquetMode", false);
 		model.addAttribute("selectedProduct", productService.findAllFlowers().getFirst());
