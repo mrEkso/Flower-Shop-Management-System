@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{services.event.edit}">Edit Event Form</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-2">
+    <div class="text-center mb-4">
+        <h1 th:text="#{services.event.edit}">Edit Event Form</h1>
+    </div>
+    <div class="container mt-5">
+        <form class="p-4 border rounded shadow-sm">
+
+            <!-- Company Name -->
+            <div class="mb-3">
+                <label for="clientName" class="form-label" th:text="#{client.name}">Client Name</label>
+                <input type="text" class="form-control" th:value="${eventOrder.client.name}" id="clientName" name="clientName" disabled>
+            </div>
+
+            <!-- Event Date and Time -->
+            <div class="mb-3">
+                <label for="eventDate" class="form-label" th:text="#{event.eventDate}">Event Date and Time</label>
+                <input type="datetime-local" class="form-control" th:value="${eventOrder.eventDate}" id="eventDate" name="eventDate" value="2025-01-T12:30" disabled>
+            </div>
+
+            <!-- Delivery Address -->
+            <div class="mb-3">
+                <label for="deliveryAddress" class="form-label" th:text="#{event.deliveryAddress}">Delivery Address</label>
+                <input class="form-control" th:value="${eventOrder.deliveryAddress}" id="deliveryAddress" name="deliveryAddress" rows="3" placeholder="Please enter address" disabled></input>
+            </div>
+
+            <!-- Contact Phone -->
+            <div class="mb-3">
+                <label for="phone" class="form-label" th:text="#{contract.phone}">Phone</label>
+                <input type="tel" class="form-control" th:value="${eventOrder.client.phone}" id="phone" name="phone" placeholder="+1 xxx xxx xxx" disabled>
+            </div>
+
+            <!-- Products Section -->
+            <div class="mb-3">
+                <label class="form-label" th:text="#{order.selectProducts}">Select Products</label>
+                <div id="product-container" data-index="0">
+                    <div th:each="orderLine : ${eventOrder.orderLines}" class="input-group mb-2">
+                        <select th:name="'products[' + ${orderLine.productIdentifier} + ']'" class="form-select" disabled>
+                            <option th:each="product : ${products}"
+                                    th:value="${product.id}"
+                                    th:selected="${product.id == orderLine.productIdentifier}"
+                                    th:text="${product.name}">
+                            </option>
+                        </select>
+                        <input th:name="'quantities[' + ${orderLine.productIdentifier} + ']'"
+                               class="form-control"
+                               type="number"
+                               th:value="${orderLine.quantity}"
+                               placeholder="Quantity"
+                               min="1"
+                               disabled>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="mb-3">
+                <label for="paymentMethod" class="form-label" th:text="#{order.paymentMethod}">Payment Method</label>
+                <select th:value="${eventOrder.paymentMethod}" id="paymentMethod" class="form-control" name="paymentMethod" disabled>
+                    <option value="Cash" th:selected="${eventOrder.paymentMethod.toString() == 'Cash()'}" th:text="#{order.payment.cash}">Cash</option>
+                    <option value="Card" th:selected="${eventOrder.paymentMethod.toString() == 'Card()'}" th:text="#{order.payment.card}">Card</option>
+                </select>
+            </div>
+
+            <!-- Order Status -->
+            <div class="mb-3">
+                <label class="form-label" th:text="#{order.status}">Order Status</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="orderStatus" id="statusOpen" value="OPEN" th:checked="${eventOrder.orderStatus.name() == 'OPEN'}" disabled>
+                    <label class="form-check-label" for="statusOpen" th:text="#{order.status.open}">Open</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="orderStatus" id="statusPaid" value="PAID" th:checked="${eventOrder.orderStatus.name() == 'PAID'}" disabled>
+                    <label class="form-check-label" for="statusPaid" th:text="#{order.status.paid}">Paid</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="orderStatus" id="statusCompleted" value="COMPLETED" th:checked="${eventOrder.orderStatus.name() == 'COMPLETED'}" disabled>
+                    <label class="form-check-label" for="statusCompleted" th:text="#{order.status.completed}">Completed</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="orderStatus" id="statusCanceled" value="CANCELED" th:checked="${eventOrder.orderStatus.name() == 'CANCELED'}" disabled>
+                    <label class="form-check-label" for="statusCanceled" th:text="#{order.status.canceled}">Canceled</label>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="mb-3">
+                <label for="notes" class="form-label" th:text="#{event.notes}">Notes</label>
+                <textarea class="form-control" th:text="${eventOrder.notes}" id="notes" name="notes" rows="3" placeholder="Enter any additional notes here" disabled></textarea>
+            </div>
+
+            <!-- Delivery price -->
+            <div class="mb-3">
+                <label for="deliveryPrice" class="form-label" th:text="#{event.deliveryPrice}">Delivery price</label>
+                <input class="form-control" th:value="${eventOrder.getChargeLines().getTotal().getNumber()}" id="deliveryPrice" name="deliveryPrice" placeholder="0" disabled>
+            </div>
+
+            <!-- Error Message -->
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Return Button -->
+            <div class="text-center">
+                <a href="/services" class="btn btn-secondary" th:text="#{action.cancel}">Return</a>
+            </div>
+        </form>
+    </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
+</body>
+</html>

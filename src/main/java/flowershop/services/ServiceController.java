@@ -564,4 +564,27 @@ public class ServiceController {
 	private Client getOrCreateClient(String name, String phone) {
 		return clientService.getOrCreateClient(name, phone);
 	}
+
+
+	@GetMapping("/contracts/view/{id}")
+	public String getContractOrderViewPage(@PathVariable UUID id,
+										Model model) {
+		model.addAttribute("contractOrder", contractOrderService.getById(id).get());
+		model.addAttribute("products", productService.getAllProducts());
+		return "services/view/contractOrderViewForm";
+	}
+	@GetMapping("/events/view/{id}")
+	public String getEventOrderViewPage(@PathVariable UUID id,
+										Model model) {
+		model.addAttribute("eventOrder", eventOrderService.getById(id).get());
+		model.addAttribute("products", productService.getAllProducts());
+		return "services/view/eventOrderViewForm";
+	}
+	@GetMapping("/reservation/view/{id}")
+	public String getReservationOrderViewPage(@PathVariable UUID id,
+										Model model) {
+		model.addAttribute("reservationOrder", reservationOrderService.getById(id).get());
+		model.addAttribute("products", productService.getAllProducts());
+		return "services/view/reservationOrderViewForm";
+	}
 }

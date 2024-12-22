@@ -92,6 +92,10 @@
                                     <a th:href="@{/services/contracts/edit/{id}(id=${contract.getId()})}"
                                        class="btn btn-secondary"
                                        th:text="#{action.edit}">Edit</a>
+
+                                    <a th:href="@{/services/contracts/view/{id}(id=${contract.getId()})}"
+                                       class="btn btn-secondary"
+                                       th:text="#{action.view}">View</a>
                                 </div>
                             </div>
                         </div>
@@ -145,6 +149,9 @@
                                 <div class="card-footer d-flex justify-content-between">
                                     <a th:href="@{/services/events/edit/{id}(id=${event.id})}" class="btn btn-secondary"
                                        th:text="#{action.edit}">Edit</a>
+                                    <a th:href="@{/services/events/view/{id}(id=${event.getId()})}"
+                                       class="btn btn-secondary"
+                                       th:text="#{action.view}">View</a>
                                     <form th:action="@{'/services/events/edit/' + ${event.id}}" method="post"
                                           th:if="${event.orderStatus.name() == 'OPEN'}">
                                         <input type="hidden" name="_method" value="put"/>
@@ -280,6 +287,9 @@
                                 <div class="card-footer d-flex justify-content-between">
                                     <a th:href="@{/services/reservations/edit/{id}(id=${reservation.id})}"
                                        class="btn btn-secondary" th:text="#{action.edit}">Edit</a>
+                                    <a th:href="@{/services/reservation/view/{id}(id=${reservation.getId()})}"
+                                       class="btn btn-secondary"
+                                       th:text="#{action.view}">View</a>
                                     <form th:action="@{'/services/reservations/edit/' + ${reservation.id}}"
                                           method="post"
                                           th:if="${reservation.orderStatus.name() == 'OPEN'}">

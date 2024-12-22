@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{services.reservation.edit}">Edit Reservation Form</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-2">
+    <div class="text-center mb-4">
+        <h1 th:text="#{services.reservation.edit}">Edit Reservation Form</h1>
+    </div>
+    <div class="container mt-5">
+        <form class="p-4 border rounded shadow-sm">
+            <!-- Company Name -->
+            <div class="mb-3">
+                <label for="clientName" class="form-label" th:text="#{client.name}">Client Name</label>
+                <input type="text" class="form-control" th:value="${reservationOrder.client.name}" id="clientName" readonly>
+            </div>
+
+            <!-- Service Date and Time -->
+            <div class="mb-3">
+                <label for="reservationDateTime" class="form-label" th:text="#{reservation.dateTime}">Reservation Date and Time</label>
+                <input type="datetime-local" class="form-control" th:value="${reservationOrder.reservationDateTime}" id="reservationDateTime" readonly>
+            </div>
+
+            <!-- Contact Phone -->
+            <div class="mb-3">
+                <label for="phone" class="form-label" th:text="#{contract.phone}">Phone</label>
+                <input type="tel" class="form-control" th:value="${reservationOrder.client.phone}" id="phone" readonly>
+            </div>
+
+            <!-- Products Section -->
+            <div class="mb-3">
+                <label class="form-label" th:text="#{order.selectProducts}">Selected Products</label>
+                <div id="product-container">
+                    <div th:each="orderLine : ${reservationOrder.orderLines}" class="input-group mb-2">
+                        <input class="form-control" type="text" th:value="${orderLine.productIdentifier}" readonly>
+                        <input class="form-control" type="number" th:value="${orderLine.quantity}" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="mb-3">
+                <label for="paymentMethod" class="form-label" th:text="#{order.paymentMethod}">Payment Method</label>
+                <input type="text" class="form-control" th:value="${reservationOrder.paymentMethod}" id="paymentMethod" readonly>
+            </div>
+
+            <!-- Order Status -->
+            <div class="mb-3">
+                <label class="form-label" th:text="#{order.status}">Order Status</label>
+                <input type="text" class="form-control" th:value="${reservationOrder.orderStatus.name()}" readonly>
+            </div>
+
+            <!-- Reservation Status -->
+            <div class="mb-3">
+                <label class="form-label" th:text="#{reservationOrder.reservationStatus}">Reservation Status</label>
+                <input type="text" class="form-control" th:value="${reservationOrder.reservationStatus.name()}" readonly>
+            </div>
+
+            <!-- Notes -->
+            <div class="mb-3">
+                <label for="notes" class="form-label" th:text="#{reservation.notes}">Notes</label>
+                <textarea class="form-control" id="notes" rows="3" th:text="${reservationOrder.notes}" readonly></textarea>
+            </div>
+
+            <!-- Error Message -->
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Back Button -->
+            <div class="text-center">
+                <a href="/services" class="btn btn-secondary" th:text="#{action.cancel}">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://unpkg.com/htmx.org"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
