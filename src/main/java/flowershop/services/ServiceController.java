@@ -130,12 +130,24 @@ public class ServiceController {
 		return "fragments/product-row :: productRow";
 	}
 
+	/**
+	 * Handles GET requests to return an empty response.
+	 *
+	 * @return an empty string
+	 */
 	@GetMapping("/empty-response")
 	@ResponseBody
 	public String emptyResponse() {
 		return "";
 	}
 
+	/**
+	 * Handles GET requests to choose frequency options for a contract.
+	 *
+	 * @param model        the model to add attributes to
+	 * @param contractType the type of the contract (One-Time or Recurring)
+	 * @return the fragment name for the frequency options container
+	 */
 	@GetMapping("/contracts/choose-frequency-options")
 	public String chooseFrequencyOptions(Model model,
 										 @RequestParam(value = "contractType", required = false) String contractType) {
@@ -143,6 +155,15 @@ public class ServiceController {
 		return "Recurring".equals(contractType) ? "fragments/frequency-options :: frequencyOptionsContainer" : "fragments/empty-frequency-options :: empty-frequency-options";
 	}
 
+	/**
+	 * Handles GET requests to choose custom frequency options for a contract.
+	 *
+	 * @param model           the model to add attributes to
+	 * @param frequency       the frequency of the contract
+	 * @param customFrequency the custom frequency of the contract
+	 * @param customUnit      the custom unit of the contract
+	 * @return the fragment name for the custom options container
+	 */
 	@GetMapping("/contracts/choose-custom-frequency-options")
 	public String chooseCustomFrequencyOptions(Model model,
 											   @RequestParam(value = "frequency", required = false) String frequency,

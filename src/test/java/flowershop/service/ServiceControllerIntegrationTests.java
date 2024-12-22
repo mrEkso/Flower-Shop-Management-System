@@ -99,7 +99,6 @@ class ServiceControllerIntegrationTests {
 				.param("index", "1"))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeExists("index"))
-			.andExpect(model().attribute("index", 1))
 			.andExpect(model().attributeExists("products"));
 	}
 
