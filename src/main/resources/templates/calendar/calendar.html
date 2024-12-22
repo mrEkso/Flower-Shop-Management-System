@@ -45,20 +45,39 @@
 
                             <div class="font-weight-bold" th:text="${event.name}"></div>
                             <div class="font-italic" th:text="${event.description}"></div>
-                            <form th:action="@{/calendar/delete}" method="post" class="d-inline">
-                                <input type="hidden" name="id" th:value="${event.id}" />
+                                <div th:if="${event.type} != 'contract'">
+                                <form th:action="@{/calendar/delete}" method="post" class="d-inline">
+                                    <input type="hidden" name="id" th:value="${event.id}" />
+                                    <button type="submit" class="btn btn-danger btn-sm" th:text="#{calendar.delete}"></button>
 
-                                <button type="submit" class="btn btn-danger btn-sm" th:text="#{calendar.delete}"></button>
+                                </form>
+                                </div>
 
-                            </form>
-                            <form th:action="@{/calendar/edit}" method="get" class="d-inline">
-                                <input type="hidden" name="id" th:value="${event.id}" />
-                                <button type="submit" class="btn btn-primary btn-sm" th:text="#{calendar.edit}"></button>
-                            </form>
-                            <form th:action="@{/calendar/view}" method="get" class="d-inline">
-                                <input type="hidden" name="id" th:value="${event.id}" />
-                                <button type="submit" class="btn btn-primary btn-sm" th:text="#{calendar.view.title}"></button>
-                            </form>
+                            <a th:if="${event.type} == 'contract'"
+                               th:href="@{/services/contracts/edit/{id}(id=${event.getOrderId()})}"
+                               class="btn btn-secondary"
+                               th:text="#{action.edit}">Edit</a>
+                            <a th:if="${event.type} == 'event'"
+                               th:href="@{/services/events/edit/{id}(id=${event.getOrderId()})}"
+                               class="btn btn-secondary"
+                               th:text="#{action.edit}">Edit</a>
+                            <a th:if="${event.type} == 'reservation'"
+                               th:href="@{/services/reservations/edit/{id}(id=${event.getOrderId()})}"
+                               class="btn btn-secondary"
+                               th:text="#{action.edit}">Edit</a>
+
+                            <a th:if="${event.type} == 'contract'"
+                               th:href="@{/services/contracts/view/{id}(id=${event.getOrderId()})}"
+                               class="btn btn-primary btn-sm"
+                               th:text="#{calendar.view.title}"></a>
+                            <a th:if="${event.type} == 'event'"
+                               th:href="@{/services/events/view/{id}(id=${event.getOrderId()})}"
+                               class="btn btn-primary btn-sm"
+                               th:text="#{calendar.view.title}"></a>
+                            <a th:if="${event.type} == 'reservation'"
+                               th:href="@{/services/reservations/view/{id}(id=${event.getOrderId()})}"
+                               class="btn btn-primary btn-sm"
+                               th:text="#{calendar.view.title}"></a>
                         </div>
                     </div>
                 </div>

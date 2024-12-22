@@ -4,12 +4,14 @@ import flowershop.calendar.CalendarService;
 import flowershop.calendar.Event;
 import flowershop.sales.SimpleOrder;
 import flowershop.sales.WholesalerOrder;
+import org.hibernate.event.spi.EventManager;
 import org.salespointframework.useraccount.UserAccount;
 import org.salespointframework.useraccount.UserAccountManagement;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * This class is needed to create all orders of type {@link AbstractOrder}.
@@ -54,14 +56,11 @@ public class OrderFactory {
 	 * @return a new `EventOrder`
 	 */
 	public EventOrder createEventOrder(LocalDateTime eventDate, String deliveryAddress, Client client, String notes) {
-		Event e = new Event();
-		e.setName(client.getName() + "'s Event");
-		e.setDate(eventDate);
-		e.setDescription(notes);
+		EventOrder order = new EventOrder(getDefaultUserAccount(), eventDate, deliveryAddress, client, notes);
+		Event e = new Event(client.getName() + "'s Event", eventDate, notes, "event", UUID.fromString(order.getId().toString()));
 		calendarService.save(e);
-		return new EventOrder(getDefaultUserAccount(), eventDate, deliveryAddress, client, notes);
+		return order;
 	}
-
 	/**
 	 * Creates a new `EventOrder` with the specified event date, delivery address, and client.
 	 *
@@ -71,12 +70,10 @@ public class OrderFactory {
 	 * @return a new `EventOrder`
 	 */
 	public EventOrder createEventOrder(LocalDateTime eventDate, String deliveryAddress, Client client) {
-		Event e = new Event();
-		e.setName(client.getName() + "'s Event");
-		e.setDate(eventDate);
-		e.setDescription("notes");
+		EventOrder order = new EventOrder(getDefaultUserAccount(), eventDate, deliveryAddress, client, "");
+		Event e = new Event(client.getName() + "'s Event", eventDate, "", "event", UUID.fromString(order.getId().toString()));
 		calendarService.save(e);
-		return new EventOrder(getDefaultUserAccount(), eventDate, deliveryAddress, client, "");
+		return order;
 	}
 
 	/**
@@ -91,12 +88,9 @@ public class OrderFactory {
 	 * @return a new `ContractOrder`
 	 */
 	public ContractOrder createContractOrder(String contractType, String frequency, LocalDateTime startDate, LocalDateTime endDate, String address, Client client, String notes) {
-		Event e = new Event();
-		e.setName(client.getName() + "'s Contract");
-		e.setDate(startDate);
-		e.setDescription(notes);
-		calendarService.save(e);
-		return new ContractOrder(getDefaultUserAccount(), contractType, frequency, startDate, endDate, address, client, notes);
+		ContractOrder order = new ContractOrder(getDefaultUserAccount(), contractType, frequency, startDate, endDate, address, client, notes);
+		calendarService.createReccuringEvent(client.getName() + "'s Contract", startDate, endDate, notes, frequency, "contract", UUID.fromString(order.getId().toString()));
+		return order;
 	}
 
 	/**
@@ -122,12 +116,10 @@ public class OrderFactory {
 	 * @return a new `ReservationOrder`
 	 */
 	public ReservationOrder createReservationOrder(LocalDateTime dateTime, Client client, String notes) {
-		Event e = new Event();
-		e.setName(client.getName() + "'s Reservation");
-		e.setDate(dateTime);
-		e.setDescription(notes);
+		ReservationOrder order = new ReservationOrder(getDefaultUserAccount(), dateTime, client, notes);
+		Event e = new Event(client.getName() + "'s Reservation", dateTime, notes, "reservation", UUID.fromString(order.getId().toString()));
 		calendarService.save(e);
-		return new ReservationOrder(getDefaultUserAccount(), dateTime, client, notes);
+		return order;
 	}
 
 	/**
@@ -138,12 +130,10 @@ public class OrderFactory {
 	 * @return a new `ReservationOrder`
 	 */
 	public ReservationOrder createReservationOrder(LocalDateTime dateTime, Client client) {
-		Event e = new Event();
-		e.setName(client.getName() + "'s Reservation");
-		e.setDate(dateTime);
-		e.setDescription("notes");
+		ReservationOrder order = new ReservationOrder(getDefaultUserAccount(), dateTime, client, "");
+		Event e = new Event(client.getName() + "'s Reservation", dateTime, "", "reservation", UUID.fromString(order.getId().toString()));
 		calendarService.save(e);
-		return new ReservationOrder(getDefaultUserAccount(), dateTime, client, "");
+		return order;
 	}
 
 	/**

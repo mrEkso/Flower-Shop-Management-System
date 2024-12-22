@@ -4,8 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * The {@code Event} class represents an event in the calendar system.
@@ -36,27 +36,42 @@ public class Event {
 	/**
 	 * A description providing more details about the event.
 	 */
+	/**
+	 * The type of the event.
+	 */
+	private String type;
+
 	private String description;
+	private UUID orderId;
 
 	/**
 	 * Default constructor for {@code Event}.
 	 * Required by JPA.
 	 */
+
 	public Event() {
 	}
 
 	/**
-	 * Constructs a new {@code Event} with the specified details.
-	 *
-	 * @param id          The unique identifier for the event.
-	 * @param name        The name/title of the event.
-	 * @param date        The date and time of the event.
-	 * @param description A description providing more details about the event.
+	 * Constructs an {@code Event} with the specified name, date, description, type, and order ID.
+	 * @param name
+	 * @param date
+	 * @param description
+	 * @param type
+	 * @param orderId
 	 */
-	public Event(Long id, String name, LocalDateTime date, String description) {
-		this.id = id;
+	public Event(String name, LocalDateTime date, String description, String type, UUID orderId) {
 		this.name = name;
 		this.date = date;
+		this.description = description;
+		this.type = type;
+		this.orderId = orderId;
+	}
+
+	public Event(long l, String test, LocalDateTime localDateTime, String description) {
+		this.id = l;
+		this.name = test;
+		this.date = localDateTime;
 		this.description = description;
 	}
 
@@ -130,5 +145,19 @@ public class Event {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	public UUID getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(UUID orderId) {
+		this.orderId = orderId;
 	}
 }

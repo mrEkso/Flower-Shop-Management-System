@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CalendarService {
@@ -110,5 +111,36 @@ public class CalendarService {
 		}
 
 		return calendarDays;
+	}
+		public void createReccuringEvent(String name, LocalDateTime startDate, LocalDateTime endDate, String description, String frequency, String type, UUID orderId) {
+		LocalDateTime current = startDate;
+		while (!current.isAfter(endDate)) {
+			Event event = new Event(name, current, description, type, orderId);
+			save(event);
+			current = current.plusDays(7);
+
+		}
+	}
+	public void removeReccuringEvent(UUID orderId) {
+		for(Event event : eventRepository.findAll()){
+			if(event.getOrderId().equals(orderId)){
+				delete(event.getId());
+			}
+		}
+	}
+
+	/**
+	 * Finds and retrieves an {@link Event} by its UUID.
+	 * @param orderId The UUID of the event to be retrieved.
+	 * @return The {@link Event} with the specified UUID, or {null} if not found.
+	 */
+
+	public Event findEventByUUID(UUID orderId) {
+		for(Event event : eventRepository.findAll()){
+			if(event.getOrderId().equals(orderId)){
+				return event;
+			}
+		}
+		return null;
 	}
 }

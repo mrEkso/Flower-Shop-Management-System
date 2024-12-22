@@ -222,6 +222,7 @@ public class ServiceController {
 				contractOrder.setCustomFrequency(customFrequency);
 				contractOrder.setCustomUnit(customUnit);
 			}
+
 			contractOrder.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
 			contractOrderService.save(contractOrder, products);
 			Event e = new Event();
@@ -266,6 +267,7 @@ public class ServiceController {
 				deliveryAddress, getOrCreateClient(clientName, phone), notes);
 			eventOrder.addChargeLine(Money.of(deliveryPrice, "EUR"), "Delivery Price");
 			eventOrderService.save(eventOrder, products);
+
 			Event e = new Event();
 			e.setName("Event for" + clientName);
 			e.setDate(eventDate);
@@ -304,11 +306,7 @@ public class ServiceController {
 			ReservationOrder reservationOrder = orderFactory.createReservationOrder(reservationDateTime,
 				getOrCreateClient(clientName, phone), notes);
 			reservationOrderService.save(reservationOrder, products);
-			Event e = new Event();
-			e.setName("Reservation for" + clientName);
-			e.setDate(reservationDateTime.toLocalDate().atStartOfDay());
-			e.setDescription(notes);
-			calendarService.save(e);
+
 			return "redirect:/services";
 		} catch (Exception e) {
 			redirectAttribute.addFlashAttribute("error", e.getMessage());
@@ -398,6 +396,13 @@ public class ServiceController {
 				contractOrder.setCustomFrequency(customFrequency);
 				contractOrder.setCustomUnit(customUnit);
 			}
+
+			Event event = calendarService.findEventByUUID(id);
+			if(calendarService.findEventByUUID(id) != null) {
+				calendarService.removeReccuringEvent(id);
+				calendarService.createReccuringEvent("Contract for " + clientName, startDate, endDate, notes, frequency, "contract", id);
+
+			}
 			contractOrderService.update(contractOrder, products, servicePrice, orderStatus, cancelReason);
 			return "redirect:/services";
 		} catch (Exception e) {
@@ -464,6 +469,14 @@ public class ServiceController {
 			eventOrder.setNotes(notes);
 			eventOrder.setPaymentMethod(paymentMethod);
 			eventOrderService.update(eventOrder, products, deliveryPrice, orderStatus, cancelReason);
+			Event event = calendarService.findEventByUUID(id);
+			if(calendarService.findEventByUUID(id) != null) {
+				event.setName("Contract for " + clientName);
+				event.setDate(eventDate);
+				event.setDescription(notes);
+				calendarService.save(event);
+			}
+
 			return "redirect:/services";
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -526,6 +539,14 @@ public class ServiceController {
 			reservationOrder.setNotes(notes);
 			reservationOrder.setPaymentMethod(paymentMethod);
 			reservationOrderService.update(reservationOrder, products, orderStatus, cancelReason, reservationStatus);
+			Event event = calendarService.findEventByUUID(id);
+			if(calendarService.findEventByUUID(id) != null) {
+				event.setName("Contract for " + clientName);
+				event.setDate(reservationDateTime);
+				event.setDescription(notes);
+				calendarService.save(event);
+			}
+
 			return "redirect:/services";
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());

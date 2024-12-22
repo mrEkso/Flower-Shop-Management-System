@@ -89,7 +89,7 @@
                                     <span th:text="${contract.getTotal()}">Not found</span>
                                 </div>
                                 <div class="card-footer d-flex justify-content-between">
-                                    <a th:href="@{/services/contracts/edit/{id}(id=${contract.id})}"
+                                    <a th:href="@{/services/contracts/edit/{id}(id=${contract.getId()})}"
                                        class="btn btn-secondary"
                                        th:text="#{action.edit}">Edit</a>
                                 </div>
