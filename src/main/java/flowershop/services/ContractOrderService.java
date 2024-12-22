@@ -192,18 +192,4 @@ public class ContractOrderService {
 		});
 		return productQuantities;
 	}
-
-	public void removeProductFromOrder(UUID orderId, UUID productId) {
-		ContractOrder order = getById(orderId)
-			.orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderId));
-
-		// Remove the product
-		order.getOrderLines().stream()
-			.filter(line -> line.getProductIdentifier().equals(productId))
-			.findFirst()
-			.ifPresent(order::remove);
-
-		save(order, new HashMap<>());
-	}
-
 }

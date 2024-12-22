@@ -100,10 +100,10 @@
                 <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
 
                 <!-- Products -->
-                <div id="productsContainer" hx-swap="outerHTML">
+                <div id="productsContainerContracts" hx-swap="outerHTML">
                     <button type="submit" class="btn btn-outline-primary"
                             hx-get="/services/add-product-row"
-                            hx-target="#productsContainer"
+                            hx-target="#productsContainerContracts"
                             hx-swap="beforeend">
                         Add Product
                     </button>
@@ -171,6 +171,16 @@
                 <!-- Products Section -->
                 <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
 
+                <!-- Products -->
+                <div id="productsContainerEvents" hx-swap="outerHTML">
+                    <button type="submit" class="btn btn-outline-primary"
+                            hx-get="/services/add-product-row"
+                            hx-target="#productsContainerEvents"
+                            hx-swap="beforeend">
+                        Add Product
+                    </button>
+                </div>
+
                 <!-- Notes -->
                 <div class="mb-3">
                     <label for="eventNotes" class="form-label" th:text="#{event.notes}">Notes</label>
@@ -225,6 +235,16 @@
 
                 <!-- Products Section -->
                 <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
+
+                <!-- Products -->
+                <div id="productsContainerReservations" hx-swap="outerHTML">
+                    <button type="submit" class="btn btn-outline-primary"
+                            hx-get="/services/add-product-row"
+                            hx-target="#productsContainerReservations"
+                            hx-swap="beforeend">
+                        Add Product
+                    </button>
+                </div>
 
                 <!-- Notes -->
                 <div class="mb-3">

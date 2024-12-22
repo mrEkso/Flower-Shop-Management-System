@@ -256,7 +256,7 @@ public class ServiceController {
 								   @RequestParam("deliveryAddress") String deliveryAddress,
 								   @RequestParam Map<String, String> products,
 								   @RequestParam("notes") String notes,
-								   @RequestParam("deliveryPrice") int deliveryPrice,
+								   @RequestParam(value = "deliveryPrice", defaultValue = "0") int deliveryPrice,
 								   RedirectAttributes redirectAttribute) {
 		try {
 			if (!clockService.isOpen())
@@ -560,6 +560,30 @@ public class ServiceController {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/reservations/edit/" + id;
 		}
+	}
+
+	@GetMapping("/contracts/view-details/{id}")
+	public String getViewContractDetails(@PathVariable UUID id,
+										 Model model) {
+		model.addAttribute("contractOrder", contractOrderService.getById(id).get());
+		model.addAttribute("products", productService.getAllProducts());
+		return "services/view/viewContractDetails";
+	}
+
+	@GetMapping("/events/view-details/{id}")
+	public String getViewEventDetails(@PathVariable UUID id,
+										 Model model) {
+		model.addAttribute("eventOrder", eventOrderService.getById(id).get());
+		model.addAttribute("products", productService.getAllProducts());
+		return "services/view/viewEventDetails";
+	}
+
+	@GetMapping("/reservations/view-details/{id}")
+	public String getViewReservationDetails(@PathVariable UUID id,
+										 Model model) {
+		model.addAttribute("reservationOrder", reservationOrderService.getById(id).get());
+		model.addAttribute("products", productService.getAllProducts());
+		return "services/view/viewReservationDetails";
 	}
 
 	/**
