@@ -1,0 +1,26 @@
+<div id="frequencyOptionsContainer" th:fragment="frequencyOptionsContainer" class="form-group"
+     th:if="${contractType == 'Recurring'}">
+    <label for="frequency" th:text="#{contract.frequency}">Frequency</label>
+    <select
+            id="frequency"
+            name="frequency"
+            class="form-control"
+            hx-get="/services/contracts/choose-custom-frequency-options"
+            hx-target="#customOptionsContainer"
+            hx-include="[name='frequency']"
+            hx-swap="outerHTML"
+    >
+        <option value="daily" th:selected="${frequency == 'daily'}"
+                th:text="#{frequency.daily}">Daily
+        </option>
+        <option value="weekly" th:selected="${frequency == 'weekly'}"
+                th:text="#{frequency.weekly}">Weekly
+        </option>
+        <option value="monthly" th:selected="${frequency == 'monthly'}"
+                th:text="#{frequency.monthly}">Monthly
+        </option>
+        <option value="custom" th:selected="${frequency == 'custom'}"
+                th:text="#{frequency.custom}">Custom
+        </option>
+    </select>
+</div>

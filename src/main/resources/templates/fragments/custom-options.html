@@ -1,0 +1,16 @@
+<div id="customOptionsContainer" th:fragment="customOptionsContainer" class="form-group">
+    <label>Customize Frequency</label>
+    <input
+            type="number"
+            class="form-control"
+            name="customFrequency"
+            placeholder="Every X days/weeks/etc."
+            th:value="${customFrequency}"
+    >
+    <select name="customUnit" class="form-control">
+        <option value="day" th:selected="${customUnit == 'day'}">Day</option>
+        <option value="week" th:selected="${customUnit == 'week'}">Week</option>
+        <option value="month" th:selected="${customUnit == 'month'}">Month</option>
+        <option value="year" th:selected="${customUnit == 'year'}">Year</option>
+    </select>
+</div>

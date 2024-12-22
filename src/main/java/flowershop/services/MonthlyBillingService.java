@@ -3,12 +3,10 @@ package flowershop.services;
 import org.salespointframework.order.OrderEvents;
 import org.salespointframework.order.OrderManagement;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**

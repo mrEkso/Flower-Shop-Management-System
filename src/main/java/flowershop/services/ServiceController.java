@@ -2,11 +2,11 @@ package flowershop.services;
 
 import flowershop.calendar.CalendarService;
 import flowershop.calendar.Event;
+import flowershop.clock.ClockService;
 import flowershop.product.ProductService;
 import javassist.NotFoundException;
-import org.hibernate.validator.internal.constraintvalidators.bv.notempty.NotEmptyValidatorForArray;
 import org.javamoney.moneta.Money;
-import org.salespointframework.order.ChargeLine;
+import org.salespointframework.order.OrderStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -32,7 +32,7 @@ public class ServiceController {
 	private final ProductService productService;
 	private final ClientService clientService;
 	private final OrderFactory orderFactory;
-	private final MonthlyBillingService monthlyBillingService;
+	private final ClockService clockService;
 
 	/**
 	 * Constructs a `ServiceController` with the specified services and order factory.
@@ -43,10 +43,10 @@ public class ServiceController {
 	 * @param productService          the service for managing products
 	 * @param clientService           the service for managing clients
 	 * @param orderFactory            the factory for creating orders
-	 * @param monthlyBillingService   the service for managing monthly billing
+	 * @param clockService            the service for managing work hours
 	 */
 	public ServiceController(EventOrderService eventOrderService, ContractOrderService contractOrderService, ReservationOrderService reservationOrderService,
-							 ProductService productService, ClientService clientService, OrderFactory orderFactory, CalendarService calendarService, MonthlyBillingService monthlyBillingService) {
+							 ProductService productService, ClientService clientService, OrderFactory orderFactory, CalendarService calendarService, ClockService clockService) {
 		this.eventOrderService = eventOrderService;
 		this.contractOrderService = contractOrderService;
 		this.reservationOrderService = reservationOrderService;
@@ -54,7 +54,8 @@ public class ServiceController {
 		this.clientService = clientService;
 		this.orderFactory = orderFactory;
 		this.calendarService = calendarService;
-		this.monthlyBillingService = monthlyBillingService;
+		this.clockService = clockService;
+
 	}
 
 	/**
@@ -110,103 +111,69 @@ public class ServiceController {
 	 */
 	@GetMapping("/create")
 	public String getNewOrderPage(Model model) {
-		monthlyBillingService.addMonthlyCharges(); // #TODO: Remove this line
-		model.addAttribute("productRows", new ArrayList<>());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/create_service";
 	}
 
 	/**
 	 * Handles GET requests to add a new product row in the order creation form.
+	 * <p>
+	 * //@param index the index of the new product row
 	 *
-	 * @param index the index of the new product row
 	 * @param model the model to add attributes to
 	 * @return the fragment name for the product row
 	 */
 	@GetMapping("/add-product-row")
-	public String addProductRow(@RequestParam("index") int index, Model model) {
-		model.addAttribute("index", index);
+	public String addProductRow(Model model) {
+		model.addAttribute("index", UUID.randomUUID());
 		model.addAttribute("products", productService.getAllProducts());
 		return "fragments/product-row :: productRow";
 	}
 
-	// Adding a product during creation
-	@PostMapping("/{type}/create/add-product")
-	public String addProductDuringCreation(@PathVariable String type,
-										   @RequestParam int index,
-										   Model model) {
-		model.addAttribute("index", index);
-		model.addAttribute("products", productService.getAllProducts());
-		model.addAttribute("type", type);
-		return "fragments/product-row :: productRow";
+	/**
+	 * Handles GET requests to return an empty response.
+	 *
+	 * @return an empty string
+	 */
+	@GetMapping("/empty-response")
+	@ResponseBody
+	public String emptyResponse() {
+		return "";
 	}
 
-	// Removing a product during creation
-	@PostMapping("/{type}/create/remove-product")
-	public String removeProductDuringCreation(@PathVariable String type,
-											  @RequestParam int index,
-											  Model model) {
-		model.addAttribute("type", type);
-		return "redirect:/services/" + type + "/create";
+	/**
+	 * Handles GET requests to choose frequency options for a contract.
+	 *
+	 * @param model        the model to add attributes to
+	 * @param contractType the type of the contract (One-Time or Recurring)
+	 * @return the fragment name for the frequency options container
+	 */
+	@GetMapping("/contracts/choose-frequency-options")
+	public String chooseFrequencyOptions(Model model,
+										 @RequestParam(value = "contractType", required = false) String contractType) {
+		model.addAttribute("contractType", contractType != null ? contractType : "One-Time");
+		return "Recurring".equals(contractType) ? "fragments/frequency-options :: frequencyOptionsContainer" : "fragments/empty-frequency-options :: empty-frequency-options";
 	}
 
-	// Adding a product during editing
-	@PostMapping("/{type}/edit/{id}/add-product")
-	public String addProductDuringEdit(@PathVariable String type,
-									   @PathVariable UUID id,
-									   @RequestParam int index,
-									   Model model) {
-		model.addAttribute("index", index);
-		model.addAttribute("products", productService.getAllProducts());
-		model.addAttribute("type", type);
-		model.addAttribute("orderId", id);
-		return "fragments/product-row :: productRow";
-	}
-
-	// Removing a product during editing
-	@PostMapping("/{type}/edit/{id}/remove-product")
-	public String removeProductDuringEdit(@PathVariable String type,
-										  @PathVariable UUID id,
-										  @RequestParam UUID productId,
-										  Model model) {
-		switch (type) {
-			case "contracts" -> contractOrderService.removeProductFromOrder(id, productId);
-			case "events" -> eventOrderService.removeProductFromOrder(id, productId);
-			case "reservations" -> reservationOrderService.removeProductFromOrder(id, productId);
-			default -> throw new IllegalArgumentException("Invalid order type: " + type);
-		}
-		return "redirect:/services/" + type + "/edit/" + id;
-	}
-
-
-	@PostMapping("/create")
-	public String handleFormSubmission(
-		@RequestParam Map<String, String> allParams,
-		@RequestParam(name = "action", required = false) String action,
-		@RequestParam(name = "removeIndex", required = false) Integer removeIndex,
-		Model model) {
-
-		List<Map<String, String>> productRows = extractProductRows(allParams);
-
-		// Handle "Add Product" action
-		if ("add".equals(action)) {
-			productRows.add(new HashMap<>());
-		}
-
-		// Handle "Remove Product" action
-		if ("remove".equals(action) && removeIndex != null) {
-			productRows.remove((int) removeIndex);
-		}
-
-		// Re-render the form with updated rows
-		model.addAttribute("productRows", productRows);
-		model.addAttribute("products", productService.getAllProducts());
-		return "services/create";
-	}
-
-	private List<Map<String, String>> extractProductRows(Map<String, String> allParams) {
-		List<Map<String, String>> rows = new ArrayList<>();
-		return rows;
+	/**
+	 * Handles GET requests to choose custom frequency options for a contract.
+	 *
+	 * @param model           the model to add attributes to
+	 * @param frequency       the frequency of the contract
+	 * @param customFrequency the custom frequency of the contract
+	 * @param customUnit      the custom unit of the contract
+	 * @return the fragment name for the custom options container
+	 */
+	@GetMapping("/contracts/choose-custom-frequency-options")
+	public String chooseCustomFrequencyOptions(Model model,
+											   @RequestParam(value = "frequency", required = false) String frequency,
+											   @RequestParam(value = "customFrequency", required = false) Integer customFrequency,
+											   @RequestParam(value = "customUnit", required = false) String customUnit
+	) {
+		model.addAttribute("frequency", frequency != null ? frequency : "");
+		model.addAttribute("customFrequency", customFrequency);
+		model.addAttribute("customUnit", customUnit);
+		return "custom".equals(frequency) ? "fragments/custom-options :: customOptionsContainer" : "fragments/empty-custom-options :: empty-custom-options";
 	}
 
 	/**
@@ -237,15 +204,19 @@ public class ServiceController {
 									  @RequestParam("address") String address,
 									  @RequestParam("phone") String phone,
 									  @RequestParam Map<String, String> products,
-									  @RequestParam("notes") String notes,
-									  @RequestParam("servicePrice") int servicePrice,
+									  @RequestParam(value = "notes", required = false) String notes,
+									  @RequestParam(value = "servicePrice", defaultValue = "0") int servicePrice,
 									  RedirectAttributes redirectAttribute) {
 		try {
+			System.out.println("sochna dupa");
+			System.out.println(products);
+			if (!clockService.isOpen())
+				throw new IllegalArgumentException("The shop is closed");
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
 			ContractOrder contractOrder = orderFactory.createContractOrder(contractType, frequency,
 				startDate, endDate, address, getOrCreateClient(clientName, phone), notes);
-			if ("recurring".equals(frequency)) {
+			if ("Recurring".equals(contractType)) {
 				contractOrder.setFrequency(frequency);
 			} else if ("custom".equals(frequency)) {
 				contractOrder.setCustomFrequency(customFrequency);
@@ -287,6 +258,8 @@ public class ServiceController {
 								   @RequestParam("deliveryPrice") int deliveryPrice,
 								   RedirectAttributes redirectAttribute) {
 		try {
+			if (!clockService.isOpen())
+				throw new IllegalArgumentException("The shop is closed");
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
 			EventOrder eventOrder = orderFactory.createEventOrder(eventDate,
@@ -324,6 +297,8 @@ public class ServiceController {
 										 @RequestParam("notes") String notes,
 										 RedirectAttributes redirectAttribute) {
 		try {
+			if (!clockService.isOpen())
+				throw new IllegalArgumentException("The shop is closed");
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
 			ReservationOrder reservationOrder = orderFactory.createReservationOrder(reservationDateTime,
@@ -396,10 +371,12 @@ public class ServiceController {
 									@RequestParam("paymentMethod") String paymentMethod,
 									@RequestParam("orderStatus") String orderStatus,
 									@RequestParam(value = "cancelReason", required = false) String cancelReason,
-									@RequestParam("notes") String notes,
+									@RequestParam(value = "notes", required = false) String notes,
 									@RequestParam("servicePrice") int servicePrice,
 									RedirectAttributes redirectAttributes) {
 		try {
+			if (!clockService.isOpen())
+				throw new IllegalArgumentException("The shop is closed");
 			ContractOrder contractOrder = contractOrderService.getById(id)
 				.orElseThrow(() -> new NotFoundException("Contract order not found"));
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
@@ -407,9 +384,11 @@ public class ServiceController {
 			if (startDate.isAfter(endDate))
 				throw new IllegalArgumentException("Start date cannot be later than end date");
 			contractOrder.setClient(getOrCreateClient(clientName, phone));
-			contractOrder.setContractType(contractType);
-			contractOrder.setStartDate(startDate);
-			contractOrder.setEndDate(endDate);
+			if (contractOrder.getOrderStatus().equals(OrderStatus.OPEN)) {
+				contractOrder.setContractType(contractType);
+				contractOrder.setStartDate(startDate);
+				contractOrder.setEndDate(endDate);
+			}
 			contractOrder.setAddress(address);
 			contractOrder.setNotes(notes);
 			contractOrder.setPaymentMethod(paymentMethod);
@@ -422,7 +401,6 @@ public class ServiceController {
 			contractOrderService.update(contractOrder, products, servicePrice, orderStatus, cancelReason);
 			return "redirect:/services";
 		} catch (Exception e) {
-			System.out.println(Arrays.toString(e.getStackTrace()));
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/contracts/edit/" + id;
 		}
@@ -474,6 +452,8 @@ public class ServiceController {
 								 @RequestParam("deliveryPrice") int deliveryPrice,
 								 RedirectAttributes redirectAttributes) {
 		try {
+			if (!clockService.isOpen())
+				throw new IllegalArgumentException("The shop is closed");
 			EventOrder eventOrder = eventOrderService.getById(id)
 				.orElseThrow(() -> new NotFoundException("Event order not found"));
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
@@ -486,7 +466,6 @@ public class ServiceController {
 			eventOrderService.update(eventOrder, products, deliveryPrice, orderStatus, cancelReason);
 			return "redirect:/services";
 		} catch (Exception e) {
-			System.out.println(Arrays.toString(e.getStackTrace()));
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/events/edit/" + id;
 		}
@@ -536,6 +515,8 @@ public class ServiceController {
 									   @RequestParam("notes") String notes,
 									   RedirectAttributes redirectAttributes) {
 		try {
+			if (!clockService.isOpen())
+				throw new IllegalArgumentException("The shop is closed");
 			ReservationOrder reservationOrder = reservationOrderService.getById(id)
 				.orElseThrow(() -> new NotFoundException("Reservation order not found"));
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))

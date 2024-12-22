@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * The `OrderCatalogInitializer` class initializes the order catalog with predefined data.
@@ -81,7 +82,7 @@ public class OrderCatalogInitializer implements DataInitializer {
 		// Create and save orders using OrderFactory
 		// ContractOrders
 		ContractOrder contractOrder = orderFactory.createContractOrder(
-			"once a week", "weekly", LocalDate.now().atStartOfDay(), LocalDate.of(2026, 1, 1).atStartOfDay(),
+			"once a week", "weekly", LocalDateTime.now(), LocalDateTime.of(2026, 1, 1, 12, 0),
 			"Nöthnitzer Str. 46, 01187 Dresden", client1, "Weekly flower delivery + flower arrangement + watering");
 		contractOrder.setPaymentMethod(Cash.CASH);
 		contractOrder.addOrderLine(rose, Quantity.of(8));
@@ -91,14 +92,14 @@ public class OrderCatalogInitializer implements DataInitializer {
 
 		// EventOrders
 		EventOrder eventOrder1 = orderFactory.createEventOrder(
-			LocalDate.now().atStartOfDay(), "Nöthnitzer Str. 46, 01187 Dresden", client1);
+			LocalDateTime.now(), "Nöthnitzer Str. 46, 01187 Dresden", client1);
 		eventOrder1.addOrderLine(rose, Quantity.of(2));
 		eventOrder1.setPaymentMethod(Cash.CASH);
 		eventOrder1.addChargeLine(Money.of(20, "EUR"), "Delivery Price");
 		eventOrderRepository.save(eventOrder1);
 
 		EventOrder eventOrder2 = orderFactory.createEventOrder(
-			LocalDate.now().atStartOfDay(), "Nöthnitzer Str. 46, 01187 Dresden", client2);
+			LocalDateTime.now(), "Nöthnitzer Str. 46, 01187 Dresden", client2);
 		eventOrder2.addOrderLine(roseLilyBouquet, Quantity.of(1));
 		eventOrder2.setPaymentMethod(Cash.CASH);
 		eventOrder2.addChargeLine(Money.of(20, "EUR"), "Delivery Price");
@@ -106,7 +107,7 @@ public class OrderCatalogInitializer implements DataInitializer {
 
 		// ReservationOrders
 		ReservationOrder reservationOrder = orderFactory.createReservationOrder(
-			LocalDate.of(2025, 1, 1).atStartOfDay(), client2);
+			LocalDateTime.of(2025, 1, 1, 12, 0), client2);
 		reservationOrder.addOrderLine(roseLilyBouquet, Quantity.of(5));
 		reservationOrder.setPaymentMethod(new CardPayment());
 		reservationOrderRepository.save(reservationOrder);

@@ -4,22 +4,18 @@ import flowershop.clock.ClockService;
 import flowershop.product.Bouquet;
 import flowershop.product.Flower;
 import flowershop.product.ProductService;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.salespointframework.order.Cart;
-
 import org.salespointframework.catalog.Product;
-
-import java.util.*;
-
+import org.salespointframework.order.Cart;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 
 @SessionAttributes({"fullSellPrice", "fullBuyPrice",
@@ -76,7 +72,7 @@ public class SalesController {
 		List<Bouquet> bouquets = productService.findAllBouquets();
 
 		//List<Product> products = productService.getAllProducts(); // -------------- Please use me <3
-		
+
 		// Search by name
 		if (searchInput != null && !searchInput.isEmpty()) {
 			flowers = productService.findFlowersByName(searchInput);
@@ -124,7 +120,7 @@ public class SalesController {
 
 		// Shouldn't allow to work with bouquets because wholesalers sell only flowers.
 		List<Flower> flowers = productService.findAllFlowers();
-		
+
 		if (searchInput != null && !searchInput.isEmpty()) {
 			flowers = productService.findFlowersByName(searchInput);
 		}
@@ -142,7 +138,7 @@ public class SalesController {
 		model.addAttribute("flowers", flowers);
 
 		return "sales/buy";
-	} 
+	}
 
 	/**
 	 * Processes the sale of products from the sell cart.
@@ -159,12 +155,12 @@ public class SalesController {
 	) {
 
 		// Alert when shop is closed
-		if(!clockService.isOpen()){
+		if (!clockService.isOpen()) {
 			sellCart.clear();
 			redirAttrs.addFlashAttribute("error", "The day is closed, go home");
 			return "redirect:sell";
 		}
-		
+
 		if (sellCart == null || sellCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:sell";
@@ -193,7 +189,7 @@ public class SalesController {
 		RedirectAttributes redirAttrs
 	) {
 		// Alert when shop is closed
-		if(!clockService.isOpen()){
+		if (!clockService.isOpen()) {
 			buyCart.clear();
 			redirAttrs.addFlashAttribute("error", "The day is closed, go home");
 			return "redirect:buy";
@@ -229,9 +225,9 @@ public class SalesController {
 	) {
 		Product product = productService.getProductById(productId).get();
 
-		if(sellCart.getQuantity(product).getAmount().intValue() <
-			(product instanceof Flower ? ((Flower)product).getQuantity() :
-				((Bouquet)product).getQuantity())){
+		if (sellCart.getQuantity(product).getAmount().intValue() <
+			(product instanceof Flower ? ((Flower) product).getQuantity() :
+				((Bouquet) product).getQuantity())) {
 			sellCart.addOrUpdateItem(product, 1);
 
 			double fp = salesService.calculateFullCartPrice(model, sellCart, true);
@@ -299,11 +295,9 @@ public class SalesController {
 	 * @return the redirect URL to the selling catalog
 	 */
 	@PostMapping("add-to-buy-cart")
-	public String addToBuyCart(
-		Model model,
-		@RequestParam UUID productId,
-		@ModelAttribute("buyCart") Cart buyCart
-	) {
+	public String addToBuyCart(Model model,
+							   @RequestParam UUID productId,
+							   @ModelAttribute("buyCart") Cart buyCart) {
 		Product product = productService.getProductById(productId).get();
 		buyCart.addOrUpdateItem(product, 1);
 

@@ -41,37 +41,32 @@
                            value="Test client name" required>
                 </div>
 
-                <!-- Frequency -->
-                <!-- Step 1: Choose between One-Time or Recurring -->
+                <!-- Contract Type (Frequency) -->
                 <div class="mb-3">
                     <label for="contractType" class="form-label" th:text="#{contract.type}">Contract Type</label>
-                    <select id="contractType" class="form-control" name="contractType" required>
-                        <option value="One-Time" th:text="#{contract.type.oneTime}">One-Time</option>
-                        <option value="Recurring" th:text="#{contract.type.recurring}">Recurring</option>
+                    <select
+                            id="contractType"
+                            name="contractType"
+                            class="form-control"
+                            hx-get="/services/contracts/choose-frequency-options"
+                            hx-target="#frequencyOptionsContainer"
+                            hx-include="[name='contractType']"
+                            hx-swap="outerHTML"
+                    >
+                        <option value="One-Time" th:selected="${contractType == 'One-Time'}"
+                                th:text="#{contract.type.oneTime}">One-Time
+                        </option>
+                        <option value="Recurring" th:selected="${contractType == 'Recurring'}"
+                                th:text="#{contract.type.recurring}">Recurring
+                        </option>
                     </select>
                 </div>
-                <!-- Step 2: Frequency options -->
-                <div id="frequencyOptions" class="form-group d-none">
-                    <label for="frequency" th:text="#{contract.frequency}">Frequency</label>
-                    <select id="frequency" name="frequency" class="form-control">
-                        <option value="daily" th:text="#{frequency.daily}">Daily</option>
-                        <option value="weekly" th:text="#{frequency.weekly}">Weekly</option>
-                        <option value="monthly" th:text="#{frequency.monthly}">Monthly</option>
-                        <option value="custom" th:text="#{frequency.custom}">Custom</option>
-                    </select>
-                </div>
-                <!-- Step 3: Custom options -->
-                <div id="customOptions" class="form-group d-none">
-                    <label>Customize Frequency</label>
-                    <input type="number" class="form-control" name="customFrequency"
-                           placeholder="Every X days/weeks/etc.">
-                    <select name="customUnit" class="form-control">
-                        <option value="day">Day</option>
-                        <option value="week">Week</option>
-                        <option value="month">Month</option>
-                        <option value="year">Year</option>
-                    </select>
-                </div>
+
+                <!-- Frequency Options (Only shown for Recurring) -->
+                <div id="frequencyOptionsContainer"></div>
+
+                <!-- Custom Options (Only shown for Custom Frequency) -->
+                <div id="customOptionsContainer"></div>
 
                 <!-- Contract start and end date -->
                 <div class="mb-3">
@@ -104,20 +99,15 @@
                 <!-- Products Section -->
                 <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
 
-                <!-- Product Rows -->
-                <div id="product-container">
-                    <!-- Loop through existing rows -->
-                    <div th:each="row, iterStat : ${productRows}">
-                        <div th:replace="fragments/product-row :: productRow(index=${iterStat.index}, product=row)"></div>
-                    </div>
+                <!-- Products -->
+                <div id="productsContainer" hx-swap="outerHTML">
+                    <button type="submit" class="btn btn-outline-primary"
+                            hx-get="/services/add-product-row"
+                            hx-target="#productsContainer"
+                            hx-swap="beforeend">
+                        Add Product
+                    </button>
                 </div>
-
-                <!-- Add Product Button -->
-                <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
-                      method="post" class="mt-2">
-                    <input type="hidden" name="index" th:value="${productRows.size()}"/>
-                    <button type="submit" class="btn btn-outline-primary">Add Product</button>
-                </form>
 
                 <!-- Notes -->
                 <div class="mb-3">
@@ -181,21 +171,6 @@
                 <!-- Products Section -->
                 <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
 
-                <!-- Product Rows -->
-                <div id="product-container2">
-                    <!-- Loop through existing rows -->
-                    <div th:each="row, iterStat : ${productRows}">
-                        <div th:replace="fragments/product-row :: productRow(index=${iterStat.index}, product=row)"></div>
-                    </div>
-                </div>
-
-                <!-- Add Product Button -->
-                <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
-                      method="post" class="mt-2">
-                    <input type="hidden" name="index" th:value="${productRows.size()}"/>
-                    <button type="button" class="btn btn-outline-primary">Add Product</button>
-                </form>
-
                 <!-- Notes -->
                 <div class="mb-3">
                     <label for="eventNotes" class="form-label" th:text="#{event.notes}">Notes</label>
@@ -250,21 +225,6 @@
 
                 <!-- Products Section -->
                 <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
-
-                <!-- Product Rows -->
-                <div id="product-container3">
-                    <!-- Loop through existing rows -->
-                    <div th:each="row, iterStat : ${productRows}">
-                        <div th:replace="fragments/product-row :: productRow(index=${iterStat.index}, product=row)"></div>
-                    </div>
-                </div>
-
-                <!-- Add Product Button -->
-                <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
-                      method="post" class="mt-2">
-                    <input type="hidden" name="index" th:value="${productRows.size()}"/>
-                    <button type="button" class="btn btn-outline-primary">Add Product</button>
-                </form>
 
                 <!-- Notes -->
                 <div class="mb-3">
