@@ -32,7 +32,6 @@ public class ServiceController {
 	private final ProductService productService;
 	private final ClientService clientService;
 	private final OrderFactory orderFactory;
-	private final MonthlyBillingService monthlyBillingService;
 	private final ClockService clockService;
 
 	/**
@@ -44,11 +43,10 @@ public class ServiceController {
 	 * @param productService          the service for managing products
 	 * @param clientService           the service for managing clients
 	 * @param orderFactory            the factory for creating orders
-	 * @param monthlyBillingService   the service for managing monthly billing
+	 * @param clockService            the service for managing work hours
 	 */
 	public ServiceController(EventOrderService eventOrderService, ContractOrderService contractOrderService, ReservationOrderService reservationOrderService,
-							 ProductService productService, ClientService clientService, OrderFactory orderFactory, CalendarService calendarService,
-							 MonthlyBillingService monthlyBillingService, ClockService clockService) {
+							 ProductService productService, ClientService clientService, OrderFactory orderFactory, CalendarService calendarService, ClockService clockService) {
 		this.eventOrderService = eventOrderService;
 		this.contractOrderService = contractOrderService;
 		this.reservationOrderService = reservationOrderService;
@@ -56,7 +54,6 @@ public class ServiceController {
 		this.clientService = clientService;
 		this.orderFactory = orderFactory;
 		this.calendarService = calendarService;
-		this.monthlyBillingService = monthlyBillingService;
 		this.clockService = clockService;
 
 	}
@@ -114,112 +111,29 @@ public class ServiceController {
 	 */
 	@GetMapping("/create")
 	public String getNewOrderPage(Model model) {
-		monthlyBillingService.addMonthlyCharges(); // #TODO: Remove this line
-		model.addAttribute("productRows", new ArrayList<>());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/create_service";
 	}
 
 	/**
 	 * Handles GET requests to add a new product row in the order creation form.
+	 * <p>
+	 * //@param index the index of the new product row
 	 *
-	 * @param index the index of the new product row
 	 * @param model the model to add attributes to
 	 * @return the fragment name for the product row
 	 */
 	@GetMapping("/add-product-row")
-	public String addProductRow(@RequestParam("index") int index, Model model) {
-		model.addAttribute("index", index);
+	public String addProductRow(Model model) {
+		model.addAttribute("index", UUID.randomUUID());
 		model.addAttribute("products", productService.getAllProducts());
 		return "fragments/product-row :: productRow";
 	}
 
-	// Adding a product during creation
-	@PostMapping("/{type}/create/add-product")
-	public String addProductDuringCreation(@PathVariable String type,
-										   @RequestParam int index,
-										   Model model) {
-		// Retrieve  the current list of product rows
-		List<Map<String, String>> productRows = (List<Map<String, String>>) model.getAttribute("productRows");
-		if (productRows == null) {
-			productRows = new ArrayList<>();
-		}
-
-		// Add a new product row (you can customize this with default values if needed)
-		productRows.add(new HashMap<>());
-
-		// Update the model with the new product rows and product options
-		model.addAttribute("productRows", productRows);
-		model.addAttribute("products", productService.getAllProducts());
-		return "services/create";  // Re-render the form with updated rows
-	}
-
-	// Removing a product during creation
-	@PostMapping("/{type}/create/remove-product")
-	public String removeProductDuringCreation(@PathVariable String type,
-											  @RequestParam int index,
-											  Model model) {
-		model.addAttribute("type", type);
-		return "redirect:/services/" + type + "/create";
-	}
-
-	// Adding a product during editing
-	@PostMapping("/{type}/edit/{id}/add-product")
-	public String addProductDuringEdit(@PathVariable String type,
-									   @PathVariable UUID id,
-									   @RequestParam int index,
-									   Model model) {
-		model.addAttribute("index", index);
-		model.addAttribute("products", productService.getAllProducts());
-		model.addAttribute("type", type);
-		model.addAttribute("orderId", id);
-		return "fragments/product-row :: productRow";
-	}
-
-	// Removing a product during editing
-	@PostMapping("/{type}/edit/{id}/remove-product")
-	public String removeProductDuringEdit(@PathVariable String type,
-										  @PathVariable UUID id,
-										  @RequestParam UUID productId,
-										  Model model) {
-		switch (type) {
-			case "contracts" -> contractOrderService.removeProductFromOrder(id, productId);
-			case "events" -> eventOrderService.removeProductFromOrder(id, productId);
-			case "reservations" -> reservationOrderService.removeProductFromOrder(id, productId);
-			default -> throw new IllegalArgumentException("Invalid order type: " + type);
-		}
-		return "redirect:/services/" + type + "/edit/" + id;
-	}
-
-
-	@PostMapping("/create")
-	public String handleFormSubmission(
-		@RequestParam Map<String, String> allParams,
-		@RequestParam(name = "action", required = false) String action,
-		@RequestParam(name = "removeIndex", required = false) Integer removeIndex,
-		Model model) {
-
-		List<Map<String, String>> productRows = extractProductRows(allParams);
-
-		// Handle "Add Product" action
-		if ("add".equals(action)) {
-			productRows.add(new HashMap<>());
-		}
-
-		// Handle "Remove Product" action
-		if ("remove".equals(action) && removeIndex != null) {
-			productRows.remove((int) removeIndex);
-		}
-
-		// Re-render the form with updated rows
-		model.addAttribute("productRows", productRows);
-		model.addAttribute("products", productService.getAllProducts());
-		return "services/create";
-	}
-
-	private List<Map<String, String>> extractProductRows(Map<String, String> allParams) {
-		List<Map<String, String>> rows = new ArrayList<>();
-		return rows;
+	@GetMapping("/empty-response")
+	@ResponseBody
+	public String emptyResponse() {
+		return "";
 	}
 
 	@GetMapping("/contracts/choose-frequency-options")
@@ -270,9 +184,11 @@ public class ServiceController {
 									  @RequestParam("phone") String phone,
 									  @RequestParam Map<String, String> products,
 									  @RequestParam(value = "notes", required = false) String notes,
-									  @RequestParam("servicePrice") int servicePrice,
+									  @RequestParam(value = "servicePrice", defaultValue = "0") int servicePrice,
 									  RedirectAttributes redirectAttribute) {
 		try {
+			System.out.println("sochna dupa");
+			System.out.println(products);
 			if (!clockService.isOpen())
 				throw new IllegalArgumentException("The shop is closed");
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))

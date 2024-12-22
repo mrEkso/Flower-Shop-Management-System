@@ -63,12 +63,10 @@
                 </div>
 
                 <!-- Frequency Options (Only shown for Recurring) -->
-                <div id="frequencyOptionsContainer">
-                </div>
+                <div id="frequencyOptionsContainer"></div>
 
                 <!-- Custom Options (Only shown for Custom Frequency) -->
-                <div id="customOptionsContainer">
-                </div>
+                <div id="customOptionsContainer"></div>
 
                 <!-- Contract start and end date -->
                 <div class="mb-3">
@@ -101,22 +99,15 @@
                 <!-- Products Section -->
                 <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
 
-                <!-- Product Rows -->
-                <div id="product-container">
-                    <div th:each="row, iterStat : ${productRows}">
-                        <div th:replace="fragments/product-row :: productRow(index=${iterStat.index}, product=row)"></div>
-                    </div>
-                </div>
-
-                <!-- Add Product Button -->
-                <form th:action="@{/services/add-product-row(index=${index})}"
-                      method="post" class="mt-2">
-                    <input type="hidden" name="index" th:value="${productRows.size()}"/>
+                <!-- Products -->
+                <div id="productsContainer" hx-swap="outerHTML">
                     <button type="submit" class="btn btn-outline-primary"
-                            hx-get="/services/create/add-product-row">
+                            hx-get="/services/add-product-row"
+                            hx-target="#productsContainer"
+                            hx-swap="beforeend">
                         Add Product
                     </button>
-                </form>
+                </div>
 
                 <!-- Notes -->
                 <div class="mb-3">
@@ -180,21 +171,6 @@
                 <!-- Products Section -->
                 <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
 
-                <!-- Product Rows -->
-                <div id="mb-3">
-                    <!-- Loop through existing rows -->
-                    <div th:each="row, iterStat : ${productRows}">
-                        <div th:replace="fragments/product-row :: productRow(index=${iterStat.index}, product=row)"></div>
-                    </div>
-                </div>
-
-                <!-- Add Product Button -->
-                <form th:action="@{/services/{type}/edit/{id}/add-product(type='contract', id=${orderId})}"
-                      method="post" class="mt-2">
-                    <input type="hidden" name="index" th:value="${productRows.size()}"/>
-                    <button type="button" class="btn btn-outline-primary">Add Product</button>
-                </form>
-
                 <!-- Notes -->
                 <div class="mb-3">
                     <label for="eventNotes" class="form-label" th:text="#{event.notes}">Notes</label>
@@ -249,21 +225,6 @@
 
                 <!-- Products Section -->
                 <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
-
-                <!-- Product Rows -->
-                <div id="product-container3">
-                    <!-- Loop through existing rows -->
-                    <div th:each="row, iterStat : ${productRows}">
-                        <div th:replace="fragments/product-row :: productRow(index=${iterStat.index}, product=row)"></div>
-                    </div>
-                </div>
-
-                <!-- Add Product Button -->
-                <form th:action="@{/services/{type}/edit/{id}/add-product(type=${type}, id=${orderId})}"
-                      method="post" class="mt-2">
-                    <input type="hidden" name="index" th:value="${productRows.size()}"/>
-                    <button type="button" class="btn btn-outline-primary">Add Product</button>
-                </form>
 
                 <!-- Notes -->
                 <div class="mb-3">
