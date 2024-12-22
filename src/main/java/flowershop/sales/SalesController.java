@@ -72,7 +72,7 @@ public class SalesController {
 		List<Bouquet> bouquets = productService.findAllBouquets();
 
 		//List<Product> products = productService.getAllProducts(); // -------------- Please use me <3
-		
+
 		// Search by name
 		if (searchInput != null && !searchInput.isEmpty()) {
 			flowers = productService.findFlowersByName(searchInput);
@@ -120,7 +120,7 @@ public class SalesController {
 
 		// Shouldn't allow to work with bouquets because wholesalers sell only flowers.
 		List<Flower> flowers = productService.findAllFlowers();
-		
+
 		if (searchInput != null && !searchInput.isEmpty()) {
 			flowers = productService.findFlowersByName(searchInput);
 		}
@@ -138,7 +138,7 @@ public class SalesController {
 		model.addAttribute("flowers", flowers);
 
 		return "sales/buy";
-	} 
+	}
 
 	/**
 	 * Processes the sale of products from the sell cart.
@@ -155,12 +155,12 @@ public class SalesController {
 	) {
 
 		// Alert when shop is closed
-		if(!clockService.isOpen()){
+		if (!clockService.isOpen()) {
 			sellCart.clear();
 			redirAttrs.addFlashAttribute("error", "The day is closed, go home");
 			return "redirect:sell";
 		}
-		
+
 		if (sellCart == null || sellCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:sell";
@@ -189,7 +189,7 @@ public class SalesController {
 		RedirectAttributes redirAttrs
 	) {
 		// Alert when shop is closed
-		if(!clockService.isOpen()){
+		if (!clockService.isOpen()) {
 			buyCart.clear();
 			redirAttrs.addFlashAttribute("error", "The day is closed, go home");
 			return "redirect:buy";
@@ -225,9 +225,9 @@ public class SalesController {
 	) {
 		Product product = productService.getProductById(productId).get();
 
-		if(sellCart.getQuantity(product).getAmount().intValue() <
-			(product instanceof Flower ? ((Flower)product).getQuantity() :
-				((Bouquet)product).getQuantity())){
+		if (sellCart.getQuantity(product).getAmount().intValue() <
+			(product instanceof Flower ? ((Flower) product).getQuantity() :
+				((Bouquet) product).getQuantity())) {
 			sellCart.addOrUpdateItem(product, 1);
 
 			double fp = salesService.calculateFullCartPrice(model, sellCart, true);
@@ -295,11 +295,9 @@ public class SalesController {
 	 * @return the redirect URL to the selling catalog
 	 */
 	@PostMapping("add-to-buy-cart")
-	public String addToBuyCart(
-		Model model,
-		@RequestParam UUID productId,
-		@ModelAttribute("buyCart") Cart buyCart
-	) {
+	public String addToBuyCart(Model model,
+							   @RequestParam UUID productId,
+							   @ModelAttribute("buyCart") Cart buyCart) {
 		Product product = productService.getProductById(productId).get();
 		buyCart.addOrUpdateItem(product, 1);
 

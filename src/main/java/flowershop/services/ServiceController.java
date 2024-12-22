@@ -222,6 +222,25 @@ public class ServiceController {
 		return rows;
 	}
 
+	@GetMapping("/contracts/choose-frequency-options")
+	public String chooseFrequencyOptions(Model model,
+										 @RequestParam(value = "contractType", required = false) String contractType) {
+		model.addAttribute("contractType", contractType != null ? contractType : "One-Time");
+		return "Recurring".equals(contractType) ? "fragments/frequency-options :: frequencyOptionsContainer" : "fragments/empty-frequency-options :: empty-frequency-options";
+	}
+
+	@GetMapping("/contracts/choose-custom-frequency-options")
+	public String chooseCustomFrequencyOptions(Model model,
+											   @RequestParam(value = "frequency", required = false) String frequency,
+											   @RequestParam(value = "customFrequency", required = false) Integer customFrequency,
+											   @RequestParam(value = "customUnit", required = false) String customUnit
+	) {
+		model.addAttribute("frequency", frequency != null ? frequency : "");
+		model.addAttribute("customFrequency", customFrequency);
+		model.addAttribute("customUnit", customUnit);
+		return "custom".equals(frequency) ? "fragments/custom-options :: customOptionsContainer" : "fragments/empty-custom-options :: empty-custom-options";
+	}
+
 	/**
 	 * Handles POST requests to create a new contract order.
 	 *
@@ -260,7 +279,7 @@ public class ServiceController {
 				throw new IllegalArgumentException("Invalid phone number format");
 			ContractOrder contractOrder = orderFactory.createContractOrder(contractType, frequency,
 				startDate, endDate, address, getOrCreateClient(clientName, phone), notes);
-			if ("recurring".equals(frequency)) {
+			if ("Recurring".equals(contractType)) {
 				contractOrder.setFrequency(frequency);
 			} else if ("custom".equals(frequency)) {
 				contractOrder.setCustomFrequency(customFrequency);
@@ -278,22 +297,6 @@ public class ServiceController {
 			redirectAttribute.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/create";
 		}
-	}
-
-	@GetMapping("/contracts/create")
-	public String showCreateForm(
-		Model model,
-		@RequestParam(value = "contractType", required = false) String contractType,
-		@RequestParam(value = "frequency", required = false) String frequency,
-		@RequestParam(value = "customFrequency", required = false) Integer customFrequency,
-		@RequestParam(value = "customUnit", required = false) String customUnit
-	) {
-		model.addAttribute("contractType", contractType != null ? contractType : "One-Time");
-		model.addAttribute("frequency", frequency != null ? frequency : "");
-		model.addAttribute("customFrequency", customFrequency);
-		model.addAttribute("customUnit", customUnit);
-
-		return "redirect:/services/create";
 	}
 
 	/**
@@ -461,7 +464,6 @@ public class ServiceController {
 			contractOrderService.update(contractOrder, products, servicePrice, orderStatus, cancelReason);
 			return "redirect:/services";
 		} catch (Exception e) {
-			System.out.println(Arrays.toString(e.getStackTrace()));
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/contracts/edit/" + id;
 		}
@@ -527,7 +529,6 @@ public class ServiceController {
 			eventOrderService.update(eventOrder, products, deliveryPrice, orderStatus, cancelReason);
 			return "redirect:/services";
 		} catch (Exception e) {
-			System.out.println(Arrays.toString(e.getStackTrace()));
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/events/edit/" + id;
 		}
