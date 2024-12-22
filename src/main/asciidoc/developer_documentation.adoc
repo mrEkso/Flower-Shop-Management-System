@@ -199,7 +199,7 @@ mostly _UI_ and/or _Communication_.
 === Package-Diagramm
 
 [[package_diagram]]
-image::./models/images/package_diagram_e.svg[package diagram, 100%, 100%, pdfwidth=100%, title= "Paketdiagramm in UML", align=center]
+image::./models/images/package_diagram_f.svg[package diagram, 100%, 100%, pdfwidth=100%, title= "Paketdiagramm in UML", align=center]
 
 
 * Entwurfsklassendiagramme der einzelnen Packages
@@ -210,7 +210,7 @@ image::./models/images/product_package_a.svg[class diagram, 100%, 100%, pdfwidth
 
 === Sales
 [[class_diagram_sales]]
-image::./models/images/sales_package_b.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für sales package in UML", align=center]
+image::./models/images/sales_package_c.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für sales package in UML", align=center]
 
 === Calendar
 [[class_diagram_calendar]]
@@ -222,11 +222,15 @@ image::./models/images/InventoryPackage.svg[class diagram, 100%, 100%, pdfwidth=
 
 === Finances
 [[class_diagram_finances]]
-image::./models/images/Finances_uml.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für finances package in UML", align=center]
+image::./models/images/Finances_uml_b.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für finances package in UML", align=center]
 
 === Services
 [[class_diagram_services]]
 image::./models/images/services_package.jpg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für services package in UML", align=center]
+
+=== Clock
+[[class_diagram_clock]]
+image::./models/images/clock_uml_a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für clock package in UML", align=center]
 
 [options="header"]
 |=== 
@@ -264,6 +268,8 @@ image::./models/images/services_package.jpg[class diagram, 100%, 100%, pdfwidth=
 |AcountancyEntryWrapper | Eine Klasse, die die Grundfunktionalität von AccountancyEntry um Kategorien, Zeitstempel und eine detaillierte Ansicht der Artikel und Mengen für verschiedene Auftragsarten erweitert
 |Category | Enumeration, die für den Auftragstyp verantwortlich ist
 |FinancesController | Eine Klasse, die die Benutzeroberfläche über Dienste mit der Geschäftslogik verbindet und die angezeigten Daten von Finances Paket verwaltet
+|ClockService | Eine Klasse, die für die Operationen, die etwas mit Zeit und Tag Speichern zu tun haben
+|PendingOperations | Eine Klasse, die eine Lieferung vom Großhändler darstellt, zusammen mit der Datum, wann die Lieferung ankommen soll 
 |===
 
 === Rückverfolgbarkeit zwischen Analyse- und Entwurfsmodell
