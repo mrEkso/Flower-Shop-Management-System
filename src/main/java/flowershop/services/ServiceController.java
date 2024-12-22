@@ -222,14 +222,18 @@ public class ServiceController {
 				contractOrder.setCustomFrequency(customFrequency);
 				contractOrder.setCustomUnit(customUnit);
 			}
+			else{
+				contractOrder.setFrequency("One-Time");
+			}
 
 			contractOrder.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
 			contractOrderService.save(contractOrder, products);
-			Event e = new Event();
-			e.setName("Contract for" + clientName);
-			e.setDate(startDate);
-			e.setDescription(notes);
-			calendarService.save(e);
+			if(contractOrder.getContractType().equals("Recurring")){
+				calendarService.createReccuringEvent("Contract for " + clientName, startDate, endDate, notes, frequency, "contract", UUID.fromString(contractOrder.getId().toString()));
+			}
+			else {
+				calendarService.save(new Event("Contract for " + clientName, startDate, notes,"contract", UUID.fromString(contractOrder.getId().toString())));
+			}
 			return "redirect:/services";
 		} catch (Exception e) {
 			redirectAttribute.addFlashAttribute("error", e.getMessage());
@@ -267,12 +271,7 @@ public class ServiceController {
 				deliveryAddress, getOrCreateClient(clientName, phone), notes);
 			eventOrder.addChargeLine(Money.of(deliveryPrice, "EUR"), "Delivery Price");
 			eventOrderService.save(eventOrder, products);
-
-			Event e = new Event();
-			e.setName("Event for" + clientName);
-			e.setDate(eventDate);
-			e.setDescription(notes);
-			calendarService.save(e);
+			calendarService.save(new Event("Event for " + clientName, eventDate, notes,"event", UUID.fromString(eventOrder.getId().toString())));
 			return "redirect:/services";
 		} catch (Exception e) {
 			redirectAttribute.addFlashAttribute("error", e.getMessage());
@@ -306,7 +305,7 @@ public class ServiceController {
 			ReservationOrder reservationOrder = orderFactory.createReservationOrder(reservationDateTime,
 				getOrCreateClient(clientName, phone), notes);
 			reservationOrderService.save(reservationOrder, products);
-
+			calendarService.save(new Event("Reservation for " + clientName, reservationDateTime, notes,"reservation", UUID.fromString(reservationOrder.getId().toString())));
 			return "redirect:/services";
 		} catch (Exception e) {
 			redirectAttribute.addFlashAttribute("error", e.getMessage());
@@ -483,6 +482,7 @@ public class ServiceController {
 			eventOrder.setNotes(notes);
 			eventOrder.setPaymentMethod(paymentMethod);
 			eventOrderService.update(eventOrder, products, deliveryPrice, orderStatus, cancelReason);
+
 			Event event = calendarService.findEventByUUID(id);
 			if(calendarService.findEventByUUID(id) != null) {
 				if(eventOrder.getOrderStatus().name().equals("CANCELED") || eventOrder.getOrderStatus().name().equals("COMPLETED")){
