@@ -222,7 +222,7 @@ image::./models/images/InventoryPackage.svg[class diagram, 100%, 100%, pdfwidth=
 
 === Finances
 [[class_diagram_finances]]
-image::./models/images/Finances_uml.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für finances package in UML", align=center]
+image::./models/images/Finances_uml_b.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für finances package in UML", align=center]
 
 === Services
 [[class_diagram_services]]
