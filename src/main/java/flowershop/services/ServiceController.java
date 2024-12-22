@@ -580,7 +580,7 @@ public class ServiceController {
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/view/eventOrderViewForm";
 	}
-	@GetMapping("/reservation/view/{id}")
+	@GetMapping("/reservations/view/{id}")
 	public String getReservationOrderViewPage(@PathVariable UUID id,
 										Model model) {
 		model.addAttribute("reservationOrder", reservationOrderService.getById(id).get());

@@ -287,7 +287,7 @@
                                 <div class="card-footer d-flex justify-content-between">
                                     <a th:href="@{/services/reservations/edit/{id}(id=${reservation.id})}"
                                        class="btn btn-secondary" th:text="#{action.edit}">Edit</a>
-                                    <a th:href="@{/services/reservation/view/{id}(id=${reservation.getId()})}"
+                                    <a th:href="@{/services/reservations/view/{id}(id=${reservation.getId()})}"
                                        class="btn btn-secondary"
                                        th:text="#{action.view}">View</a>
                                     <form th:action="@{'/services/reservations/edit/' + ${reservation.id}}"
