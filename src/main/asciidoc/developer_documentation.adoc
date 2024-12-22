@@ -228,6 +228,10 @@ image::./models/images/Finances_uml_b.svg[class diagram, 100%, 100%, pdfwidth=10
 [[class_diagram_services]]
 image::./models/images/services_package.jpg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für services package in UML", align=center]
 
+=== Clock
+[[class_diagram_clock]]
+image::./models/images/clock_uml_a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für clock package in UML", align=center]
+
 [options="header"]
 |=== 
 |Klasse/Enumeration |Description
@@ -264,6 +268,8 @@ image::./models/images/services_package.jpg[class diagram, 100%, 100%, pdfwidth=
 |AcountancyEntryWrapper | Eine Klasse, die die Grundfunktionalität von AccountancyEntry um Kategorien, Zeitstempel und eine detaillierte Ansicht der Artikel und Mengen für verschiedene Auftragsarten erweitert
 |Category | Enumeration, die für den Auftragstyp verantwortlich ist
 |FinancesController | Eine Klasse, die die Benutzeroberfläche über Dienste mit der Geschäftslogik verbindet und die angezeigten Daten von Finances Paket verwaltet
+|ClockService | Eine Klasse, die für die Operationen, die etwas mit Zeit und Tag Speichern zu tun haben
+|PendingOperations | Eine Klasse, die eine Lieferung vom Großhändler darstellt, zusammen mit der Datum, wann die Lieferung ankommen soll 
 |===
 
 === Rückverfolgbarkeit zwischen Analyse- und Entwurfsmodell
