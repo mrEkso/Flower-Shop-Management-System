@@ -121,7 +121,22 @@ public class CalendarService {
 
 		}
 	}
+	/**
+	 * Removes all {@link Event} instances with the specified UUID.
+	 * @param orderId The UUID of the events to be removed.
+	 */
 	public void removeReccuringEvent(UUID orderId) {
+		for(Event event : eventRepository.findAll()){
+			if(event.getOrderId().equals(orderId)){
+				delete(event.getId());
+			}
+		}
+	}
+	/**
+	 * Removes all {@link Event} instances with the specified UUID.
+	 * @param orderId The UUID of the events to be removed.
+	 */
+	public void removeEvent(UUID orderId) {
 		for(Event event : eventRepository.findAll()){
 			if(event.getOrderId().equals(orderId)){
 				delete(event.getId());

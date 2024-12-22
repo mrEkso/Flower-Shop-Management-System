@@ -397,11 +397,14 @@ public class ServiceController {
 				contractOrder.setCustomUnit(customUnit);
 			}
 
-			Event event = calendarService.findEventByUUID(id);
 			if(calendarService.findEventByUUID(id) != null) {
-				calendarService.removeReccuringEvent(id);
-				calendarService.createReccuringEvent("Contract for " + clientName, startDate, endDate, notes, frequency, "contract", id);
-
+				if(contractOrder.getOrderStatus().name().equals("CANCELED")){
+					calendarService.removeReccuringEvent(id);
+				}
+				else {
+					calendarService.removeReccuringEvent(id);
+					calendarService.createReccuringEvent("Contract for " + clientName, startDate, endDate, notes, frequency, "contract", id);
+				}
 			}
 			contractOrderService.update(contractOrder, products, servicePrice, orderStatus, cancelReason);
 			return "redirect:/services";
@@ -471,10 +474,12 @@ public class ServiceController {
 			eventOrderService.update(eventOrder, products, deliveryPrice, orderStatus, cancelReason);
 			Event event = calendarService.findEventByUUID(id);
 			if(calendarService.findEventByUUID(id) != null) {
-				event.setName("Contract for " + clientName);
-				event.setDate(eventDate);
-				event.setDescription(notes);
-				calendarService.save(event);
+				if(eventOrder.getOrderStatus().name().equals("CANCELED")){
+					calendarService.removeEvent(id);
+				}
+				else {
+					event.setDate(eventDate);
+				}
 			}
 
 			return "redirect:/services";
@@ -541,10 +546,13 @@ public class ServiceController {
 			reservationOrderService.update(reservationOrder, products, orderStatus, cancelReason, reservationStatus);
 			Event event = calendarService.findEventByUUID(id);
 			if(calendarService.findEventByUUID(id) != null) {
-				event.setName("Contract for " + clientName);
-				event.setDate(reservationDateTime);
-				event.setDescription(notes);
-				calendarService.save(event);
+				if(reservationOrder.getOrderStatus().name().equals("CANCELED")){
+					calendarService.removeEvent(id);
+				}
+				else {
+					event.setDate(reservationDateTime);
+				}
+
 			}
 
 			return "redirect:/services";
