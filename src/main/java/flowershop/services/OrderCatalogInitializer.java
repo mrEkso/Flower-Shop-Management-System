@@ -82,7 +82,7 @@ public class OrderCatalogInitializer implements DataInitializer {
 		// Create and save orders using OrderFactory
 		// ContractOrders
 		ContractOrder contractOrder = orderFactory.createContractOrder(
-			"once a week", "weekly", LocalDateTime.now(), LocalDateTime.of(2026, 1, 1, 12, 0),
+			"Recurring", "weekly", LocalDateTime.now(), LocalDateTime.of(2026, 1, 1, 12, 0),
 			"Nöthnitzer Str. 46, 01187 Dresden", client1, "Weekly flower delivery + flower arrangement + watering");
 		contractOrder.setPaymentMethod(Cash.CASH);
 		contractOrder.addOrderLine(rose, Quantity.of(8));

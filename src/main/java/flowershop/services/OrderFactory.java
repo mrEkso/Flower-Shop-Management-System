@@ -89,7 +89,7 @@ public class OrderFactory {
 	 */
 	public ContractOrder createContractOrder(String contractType, String frequency, LocalDateTime startDate, LocalDateTime endDate, String address, Client client, String notes) {
 		ContractOrder order = new ContractOrder(getDefaultUserAccount(), contractType, frequency, startDate, endDate, address, client, notes);
-		if(order.getFrequency().equals("weekly")){
+		if(order.getContractType().equalsIgnoreCase("recurring")){
 			calendarService.createReccuringEvent(client.getName() + "'s Contract", startDate, endDate, notes, frequency, "contract", UUID.fromString(order.getId().toString()));
 		}
 		else

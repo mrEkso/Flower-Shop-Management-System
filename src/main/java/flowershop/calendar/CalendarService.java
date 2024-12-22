@@ -145,7 +145,20 @@ public class CalendarService {
 		while (!current.isAfter(endDate)) {
 			Event event = new Event(name, current, description, type, orderId);
 			save(event);
-			current = current.plusDays(7);
+			switch (frequency) {
+				case "daily":
+					current = current.plusDays(1);
+					break;
+				case "weekly":
+					current = current.plusWeeks(1);
+					break;
+				case "monthly":
+					current = current.plusMonths(1);
+					break;
+				default:
+					current = current.plusDays(1);
+					break;
+			}
 
 		}
 	}
