@@ -210,7 +210,7 @@ image::./models/images/product_package_a.svg[class diagram, 100%, 100%, pdfwidth
 
 === Sales
 [[class_diagram_sales]]
-image::./models/images/sales_package_b.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für sales package in UML", align=center]
+image::./models/images/sales_package_c.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für sales package in UML", align=center]
 
 === Calendar
 [[class_diagram_calendar]]
