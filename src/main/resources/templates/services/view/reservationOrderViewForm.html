@@ -37,7 +37,7 @@
                 <label class="form-label" th:text="#{order.selectProducts}">Selected Products</label>
                 <div id="product-container">
                     <div th:each="orderLine : ${reservationOrder.orderLines}" class="input-group mb-2">
-                        <input class="form-control" type="text" th:value="${orderLine.productIdentifier}" readonly>
+                        <input class="form-control" type="text" th:value="${orderLine.getProductName()}" readonly>
                         <input class="form-control" type="number" th:value="${orderLine.quantity}" readonly>
                     </div>
                 </div>

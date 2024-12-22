@@ -1,5 +1,8 @@
 package flowershop.calendar;
 
+import flowershop.services.ContractOrderService;
+import flowershop.services.EventOrderService;
+import flowershop.services.ReservationOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,13 @@ public class CalendarService {
 	 */
 	@Autowired
 	private EventRepository eventRepository;
+	@Autowired
+	private ContractOrderService contractOrderService;
+	@Autowired
+	private ReservationOrderService reservationOrderService;
+	@Autowired
+	private EventOrderService eventOrderService;
+
 	public CalendarService(EventRepository eventRepository) {
 		this.eventRepository = eventRepository;
 	}
@@ -102,7 +112,25 @@ public class CalendarService {
 			CalendarDay calendarDay = new CalendarDay(currentDay);
 			for (Event event : events) {
 				if (event.getDate().toLocalDate().equals(currentDay)) {
-					calendarDay.addEvent(event);
+
+					switch (event.getType()) {
+						case "event":
+							event.setName(eventOrderService.getById(event.getOrderId()).get().getClient().getName() + "'s Event");
+							calendarDay.addEvent(event);
+							break;
+						case "contract":
+							event.setName(contractOrderService.getById(event.getOrderId()).get().getClient().getName() + "'s Contract");
+							calendarDay.addEvent(event);
+							break;
+						case "reservation":
+							event.setName(reservationOrderService.getById(event.getOrderId()).get().getClient().getName() + "'s Reservation");
+							calendarDay.addEvent(event);
+							break;
+						default:
+							calendarDay.addEvent(event);
+							break;
+					}
+
 				}
 			}
 			calendarDay.setState(currentDay.getMonth() == firstDayOfMonth.getMonth());

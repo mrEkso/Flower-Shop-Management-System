@@ -396,15 +396,26 @@ public class ServiceController {
 				contractOrder.setCustomFrequency(customFrequency);
 				contractOrder.setCustomUnit(customUnit);
 			}
-
-			if(calendarService.findEventByUUID(id) != null) {
-				if(contractOrder.getOrderStatus().name().equals("CANCELED")){
-					calendarService.removeReccuringEvent(id);
+			Event event = calendarService.findEventByUUID(id);
+			if(event != null) {
+				if(contractOrder.getFrequency().equals("weekly")){
+					if(contractOrder.getOrderStatus().name().equals("CANCELED") || contractOrder.getOrderStatus().name().equals("COMPLETED")){
+						calendarService.removeReccuringEvent(id);
+					}
+					else {
+						calendarService.removeReccuringEvent(id);
+						calendarService.createReccuringEvent("Contract for " + clientName, startDate, endDate, notes, frequency, "contract", id);
+					}
 				}
 				else {
-					calendarService.removeReccuringEvent(id);
-					calendarService.createReccuringEvent("Contract for " + clientName, startDate, endDate, notes, frequency, "contract", id);
+					if(contractOrder.getOrderStatus().name().equals("CANCELED") || contractOrder.getOrderStatus().name().equals("COMPLETED")){
+						calendarService.removeEvent(id);
+					}
+					else {
+						event.setDate(startDate);
+					}
 				}
+
 			}
 			contractOrderService.update(contractOrder, products, servicePrice, orderStatus, cancelReason);
 			return "redirect:/services";
@@ -474,7 +485,7 @@ public class ServiceController {
 			eventOrderService.update(eventOrder, products, deliveryPrice, orderStatus, cancelReason);
 			Event event = calendarService.findEventByUUID(id);
 			if(calendarService.findEventByUUID(id) != null) {
-				if(eventOrder.getOrderStatus().name().equals("CANCELED")){
+				if(eventOrder.getOrderStatus().name().equals("CANCELED") || eventOrder.getOrderStatus().name().equals("COMPLETED")){
 					calendarService.removeEvent(id);
 				}
 				else {
@@ -546,7 +557,7 @@ public class ServiceController {
 			reservationOrderService.update(reservationOrder, products, orderStatus, cancelReason, reservationStatus);
 			Event event = calendarService.findEventByUUID(id);
 			if(calendarService.findEventByUUID(id) != null) {
-				if(reservationOrder.getOrderStatus().name().equals("CANCELED")){
+				if(reservationOrder.getOrderStatus().name().equals("CANCELED") || reservationOrder.getOrderStatus().name().equals("COMPLETED")){
 					calendarService.removeEvent(id);
 				}
 				else {

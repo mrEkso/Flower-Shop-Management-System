@@ -112,6 +112,7 @@ public class CalendarController {
 	//Sends the request to add a new Event
 	@PostMapping("/calendar/add")
 	public String addEvent(@ModelAttribute Event event) {
+		event.setType("regular");
 		service.save(event);
 		return "redirect:/calendar";
 	}
