@@ -16,78 +16,81 @@
       ></h1>
       <p class="edit-inventory" th:if="${!createBouquetMode}">Edit inventory</p>
 
-        <div class="form-group">
-            <form action="/inventory" method="get" th:if="${!createBouquetMode}">
-                <label for="search">Search by name:</label>
-                <input
-                        type="text"
-                        id="search"
-                        name="search"
-                        placeholder="Enter flower name..."
-                />
+      <div class="form-group">
+        <form action="/inventory" method="get" th:if="${!createBouquetMode}">
+          <label for="search">Search by name:</label>
+          <input
+            type="text"
+            id="search"
+            name="search"
+            placeholder="Enter flower name..."
+          />
 
-                <label for="filter">Filter:</label>
-                <select id="filter" name="filter">
-                    <option value="all">All</option>
-                    <option value="flower">Flower</option>
-                    <option value="bouquet">Bouquet</option>
-                </select>
-                <button type="submit">Apply Filter</button>
-            </form>
+          <label for="filter">Filter:</label>
+          <select id="filter" name="filter">
+            <option value="all">All</option>
+            <option value="flower">Flower</option>
+            <option value="bouquet">Bouquet</option>
+          </select>
+          <button type="submit">Apply Filter</button>
+        </form>
 
-            <form
-                    action="/inventory/deleted-products"
-                    method="get"
-                    th:if="${!createBouquetMode}"
-            >
-                <button type="submit">Show Deleted Products</button>
-            </form>
-        </div>
+        <form
+          action="/inventory/deleted-products"
+          method="get"
+          th:if="${!createBouquetMode}"
+        >
+          <button type="submit">Show Deleted Products</button>
+        </form>
+      </div>
 
+      <table>
+        <thead>
+          <tr>
+            <th>Icon</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Quantity / Reserved</th>
+            <th>Price per Unit</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            th:each="product : ${products}"
+            th:if="${!createBouquetMode || product['type'] != 'Bouquet'}"
+          >
+            <td th:text="${product['type'] == 'Flower' ? '🌸' : '💐'}"></td>
+            <td th:text="${product['name']}"></td>
+            <td th:text="${product['type']}"></td>
+            <td
+              th:text="${'         '+product['quantity'] + ' / ' + product['quantityReserved']}"
+            ></td>
+            <td th:text="${product['pricePerUnit']}"></td>
+            <td th:if="${!createBouquetMode}">
+              <a
+                th:href="@{/inventory/change-price(productID=${product['id']})}"
+              >
+                <button type="button">Change Price</button>
+              </a>
 
-        <table>
-            <thead>
-            <tr>
-                <th>Icon</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Quantity / Reserved</th>
-                <th>Price per Unit</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr
-                    th:each="product : ${products}"
-                    th:if="${!createBouquetMode || product['type'] != 'Bouquet'}"
-            >
-                <td th:text="${product['type'] == 'Flower' ? '🌸' : '💐'}"></td>
-                <td th:text="${product['name']}"></td>
-                <td th:text="${product['type']}"></td>
-                <td th:text="${'         '+product['quantity'] + ' / ' + product['quantityReserved']}"></td>
-                <td th:text="${product['pricePerUnit']}"></td>
-                <td th:if="${!createBouquetMode}">
-                    <a th:href="@{/inventory/change-price(productID=${product['id']})}">
-                        <button type="button">Change Price</button>
-                    </a>
-
-                    <a th:href="@{/inventory/delete(productID=${product['id']})}">
-                        <button type="button">Delete</button>
-                    </a>
-                </td>
-                <td th:if="${createBouquetMode}">
-                    <a th:href="@{/inventory/choose-flower(flowerID=${product['id']})}">
-                        <button type="button">Choose</button>
-                    </a>
-                </td>
-
-            </tr>
-            <tr th:if="${#lists.isEmpty(products)}">
-                <td colspan="6">No products found.</td>
-            </tr>
-            </tbody>
-        </table>
-
+              <a th:href="@{/inventory/delete(productID=${product['id']})}">
+                <button type="button">Withered</button>
+              </a>
+            </td>
+            <td th:if="${createBouquetMode}">
+              <a
+                th:href="@{/inventory/choose-flower(flowerID=${product['id']})}"
+              >
+                <button type="button">Choose</button>
+              </a>
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(products)}">
+            <td colspan="6">No products found.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <a
@@ -124,14 +127,13 @@
     </div>
 
     <div th:if="${quantityProblemLabel}" class="modal3">
-        <div class="modal-content">
-            <h2 th:text="'You chosed more quantity than the existing'"></h2>
-            <form action="/inventory" method="get">
-                <button type="submit">Close</button>
-            </form>
-        </div>
+      <div class="modal-content">
+        <h2 th:text="'You chosed more quantity than the existing'"></h2>
+        <form action="/inventory" method="get">
+          <button type="submit">Close</button>
+        </form>
+      </div>
     </div>
-
 
     <div th:if="${showDeletedModal}" class="modal2">
       <div class="modal-content">
@@ -193,60 +195,59 @@
     </div>
 
     <div th:if="${createBouquetMode}" class="modal2">
-        <h3>Selected Flowers for Bouquet:</h3>
-        <ul>
-            <li th:each="flower : ${selectedFlowersForBouquet}">
-                <span th:text="${flower['deletedQuantity']} + ' of ' + ${flower['name']}"></span>
-            </li>
-        </ul>
+      <h3>Selected Flowers for Bouquet:</h3>
+      <ul>
+        <li th:each="flower : ${selectedFlowersForBouquet}">
+          <span
+            th:text="${flower['deletedQuantity']} + ' of ' + ${flower['name']}"
+          ></span>
+        </li>
+      </ul>
 
-        <form action="/create-custom-bouquet" method="post">
-            <label for="bouquetName">Bouquet Name:</label>
-            <input type="text" id="bouquetName" name="bouquetName" required />
-            <button type="submit">Create Bouquet</button>
-            <small th:if="${!#lists.isEmpty(selectedFlowersForBouquet)}">
-                (After submitting, the selected quantities will be deducted from inventory.)
-            </small>
-        </form>
+      <form action="/create-custom-bouquet" method="post">
+        <label for="bouquetName">Bouquet Name:</label>
+        <input type="text" id="bouquetName" name="bouquetName" required />
+        <button type="submit">Create Bouquet</button>
+        <small th:if="${!#lists.isEmpty(selectedFlowersForBouquet)}">
+          (After submitting, the selected quantities will be deducted from
+          inventory.)
+        </small>
+      </form>
     </div>
 
-
-
-
     <div th:if="${showChangePriceModal}" class="modal2">
-        <div class="modal-content">
-            <h2 th:text="'Change Sell Price for: ' + ${selectedProduct.name}"></h2>
-            <form action="/inventory/update-price" method="post">
-                <input
-                        type="hidden"
-                        th:value="${selectedProduct.id}"
-                        name="productID"
-                />
-                <label for="newSellPrice">New Sell Price:</label>
-                <input
-                        type="number"
-                        id="newSellPrice"
-                        name="newSellPrice"
-                        step="0.01"
-                        min="0.01"
-                        required
-                />
-                <button type="submit">Confirm</button>
-            </form>
-            <form action="/inventory" method="get">
-                <button type="submit">Cancel</button>
-            </form>
-        </div>
+      <div class="modal-content">
+        <h2 th:text="'Change Sell Price for: ' + ${selectedProduct.name}"></h2>
+        <form action="/inventory/update-price" method="post">
+          <input
+            type="hidden"
+            th:value="${selectedProduct.id}"
+            name="productID"
+          />
+          <label for="newSellPrice">New Sell Price:</label>
+          <input
+            type="number"
+            id="newSellPrice"
+            name="newSellPrice"
+            step="0.01"
+            min="0.01"
+            required
+          />
+          <button type="submit">Confirm</button>
+        </form>
+        <form action="/inventory" method="get">
+          <button type="submit">Cancel</button>
+        </form>
+      </div>
     </div>
 
     <div th:if="${quantityProblemLabel2}" class="modal4">
-        <div class="modal-content">
-            <h2 th:text="${quantityProblemMessage}"></h2>
-            <form action="/inventory/create-bouquet" method="get">
-                <button type="submit">Close</button>
-            </form>
-        </div>
+      <div class="modal-content">
+        <h2 th:text="${quantityProblemMessage}"></h2>
+        <form action="/inventory/create-bouquet" method="get">
+          <button type="submit">Close</button>
+        </form>
+      </div>
     </div>
-
   </body>
 </html>
