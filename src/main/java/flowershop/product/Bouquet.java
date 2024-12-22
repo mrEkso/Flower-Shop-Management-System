@@ -1,5 +1,6 @@
 package flowershop.product;
 
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Transient;
@@ -11,7 +12,7 @@ import java.util.Map;
 
 @Entity
 public class Bouquet extends Product {
-	@Transient
+	@ElementCollection
 	private Map<Flower, Integer> flowers = new HashMap<>();
 
 	@Embedded

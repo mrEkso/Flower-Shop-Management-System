@@ -43,6 +43,3 @@ The repository follows the standard Maven project layout. Nearly all artifacts a
 
 * Run `./mvnw clean package`. The packaged application (a JAR in `target/`) can be run with `java -jar $jarName`.
 
-== Missing requirements
-
-* Must-Criteria F0304 from Pflichtenheft is not implemented 

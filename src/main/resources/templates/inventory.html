@@ -40,7 +40,7 @@
           method="get"
           th:if="${!createBouquetMode}"
         >
-          <button type="submit">Show Deleted Products</button>
+          <button type="submit">Show Withered Products</button>
         </form>
       </div>
 
@@ -107,7 +107,7 @@
       <div class="modal-content">
         <h2 th:text="'Delete Product: ' + ${selectedProduct['name']}"></h2>
         <form action="/delete-product" method="post">
-          <label for="deleteQuantity">Quantity to delete:</label>
+          <label for="deleteQuantity">Quantity to withered:</label>
           <input
             type="number"
             id="deleteQuantity"
@@ -120,7 +120,7 @@
             th:value="${selectedProduct['name']}"
             name="productName"
           />
-          <button type="submit">Confirm Delete</button>
+          <button type="submit">Confirm wither</button>
         </form>
         <!--<button type="button" th:href="@{/inventory}">cancel</button>-->
       </div>
@@ -137,13 +137,13 @@
 
     <div th:if="${showDeletedModal}" class="modal2">
       <div class="modal-content">
-        <h2>Deleted Products</h2>
+        <h2>Withered Products</h2>
         <table>
           <thead>
             <tr>
               <th>Name</th>
               <th>Price per Unit</th>
-              <th>Quantity Deleted</th>
+              <th>Quantity Withered</th>
               <th>Total Loss</th>
             </tr>
           </thead>
