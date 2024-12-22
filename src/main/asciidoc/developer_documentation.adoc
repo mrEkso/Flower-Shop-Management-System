@@ -214,7 +214,7 @@ image::./models/images/sales_package_b.svg[class diagram, 100%, 100%, pdfwidth=1
 
 === Calendar
 [[class_diagram_calendar]]
-image::./models/images/CalendarPackageDiagram.jpg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für calendar package in UML", align=center]
+image::./models/images/CalendarPackageDiagram.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für calendar package in UML", align=center]
 
 === Inventory
 [[class_diagram_inventory]]
