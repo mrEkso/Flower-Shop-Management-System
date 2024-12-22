@@ -136,9 +136,10 @@ public abstract class FinancialReport {
 	 * @param font to be used in the document
 	 * @return ready Table for being wrapped into the document
 	 */
-	protected Table buildTheTable(PDType0Font font) {
+	protected Table buildTheTable(PDFont font) {
 		// Add the header and "Finanzuebersicht fuer ... here
 		List<Row> rows = getNeededRows(font);
+		System.out.println(rows.size());
 		Table.TableBuilder builder = Table.builder()
 			.addColumnsOfWidth(110, 115, 110, 50, 45, 55);
 		Row shapka1 = Row.builder()

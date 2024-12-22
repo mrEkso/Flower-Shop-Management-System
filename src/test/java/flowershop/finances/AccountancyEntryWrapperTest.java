@@ -52,7 +52,9 @@ public class AccountancyEntryWrapperTest {
 		when(mockedTotalable.stream()).thenReturn(mockedOrderLines.stream());
 		when(mockedTotalable.toList()).thenReturn(mockedOrderLines);
 		when(orderLine1.getProductName()).thenReturn("Rose");
+		when(orderLine1.getQuantity()).thenReturn(Quantity.of(1));
 		when(orderLine2.getProductName()).thenReturn("Lily");
+		when(orderLine2.getQuantity()).thenReturn(Quantity.of(2));
 
 		Totalable<ChargeLine> extraFees = mock(Totalable.class);
 		List<ChargeLine> mockedExtraFees = new ArrayList<>();
@@ -127,10 +129,34 @@ public class AccountancyEntryWrapperTest {
 		assertEquals("Vertraglicher Verkauf", wrapper.getCategory());
 	}
 
+
+	@Test
+	public void testGetClientName_EmptyClientName() {
+		Client vasya = mock(Client.class);
+		when(vasya.getName()).thenReturn("");
+		when(((ContractOrder)contractOrder).getClient()).thenReturn(vasya);
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(contractOrder,LocalDateTime.now(), productService);
+		// Test when clientName is an empty string
+		//when(wrapper.getClientName()).thenReturn(""); // Assume you have a setter for clientName
+		assertEquals("", wrapper.getClientName(), "Client name should be an empty string when set to an empty value");
+	}
+
+	@Test
+	public void testGetClientName_ValidClientName() {
+		Client vasya = mock(Client.class);
+		when(vasya.getName()).thenReturn("Floris Blumenladen");
+		when(((ContractOrder)contractOrder).getClient()).thenReturn(vasya);
+		AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(contractOrder,LocalDateTime.now(), productService);
+		// Test when clientName is a valid non-empty string
+		//when(wrapper.getClientName()).thenReturn("Floris Blumenladen");
+		assertEquals("Floris Blumenladen", wrapper.getClientName(), "Client name should return the correct value");
+	}
+
 	@Test
 	void testGetCategoryForEventOrder() {
 		Client client = mock(Client.class);
 		when(((EventOrder)(eventOrder)).getClient()).thenReturn(client);
+		when(((EventOrder)(eventOrder)).getEventDate()).thenReturn(LocalDateTime.now());
 		when(client.getName()).thenReturn("Habibi");
 		// TODO: fix this
 		// AccountancyEntryWrapper wrapper = new AccountancyEntryWrapper(eventOrder,LocalDateTime.now(), productService);
