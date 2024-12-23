@@ -4,8 +4,13 @@ import flowershop.clock.ClockService;
 import flowershop.product.Bouquet;
 import flowershop.product.Flower;
 import flowershop.product.ProductService;
+import flowershop.services.ContractOrder;
+import flowershop.services.ContractOrderService;
+
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.Cart;
+import org.salespointframework.order.CartItem;
+import org.salespointframework.order.OrderLine;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,11 +33,13 @@ public class SalesController {
 	private final ProductService productService;
 	private final SalesService salesService;
 	private final ClockService clockService;
+	private final ContractOrderService contractOrderService;
 
-	SalesController(ProductService productService, SalesService salesService, ClockService clockService) {
+	SalesController(ProductService productService, SalesService salesService, ClockService clockService, ContractOrderService contractOrderService) {
 		this.productService = productService;
 		this.salesService = salesService;
 		this.clockService = clockService;
+		this.contractOrderService = contractOrderService;
 	}
 
 	@ModelAttribute("buyCart")
@@ -141,6 +150,33 @@ public class SalesController {
 	}
 
 	/**
+	* @param productName the name of the product
+ 	* @return the reserved quantity
+ 	*/
+	 private int getReservedQuantity(String productName) {
+		
+		Map<Product, Integer> productQuantities = new HashMap<>();
+
+		List<ContractOrder> orders = contractOrderService.findAll();
+
+		for (ContractOrder order : orders) {
+			for (OrderLine line : order.getOrderLines()) {
+				Product product = productService.getProductById(line.getProductIdentifier())
+					.orElseThrow(() -> new IllegalArgumentException("Product not found: " + line.getProductIdentifier()));
+
+				int quantity = line.getQuantity().getAmount().intValue();
+				productQuantities.merge(product, quantity, Integer::sum);
+			}
+		}		
+
+		return productQuantities.entrySet().stream()
+			.filter(entry -> entry.getKey().getName().equalsIgnoreCase(productName))
+			.map(Map.Entry::getValue)
+			.findFirst()
+			.orElse(0);
+	}
+
+	/**
 	 * Processes the sale of products from the sell cart.
 	 *
 	 * @param sellCart the cart containing products to sell
@@ -160,6 +196,23 @@ public class SalesController {
 			redirAttrs.addFlashAttribute("error", "The day is closed, go home");
 			return "redirect:sell";
 		}
+
+		boolean isInvalid = sellCart.get().anyMatch(ci -> {
+			if (productService.findProductsByName(ci.getProduct().getName()).get(0) instanceof Flower) {
+				return !(((Flower) productService.findProductsByName(ci.getProduct().getName()).get(0)).getQuantity()
+						- getReservedQuantity(ci.getProduct().getName()) >= ci.getQuantity().getAmount().intValue());
+			} else {
+				return !(((Bouquet) productService.findProductsByName(ci.getProduct().getName()).get(0)).getQuantity()
+						- getReservedQuantity(ci.getProduct().getName()) >= ci.getQuantity().getAmount().intValue());
+			}
+		});
+		
+		if (isInvalid) {
+			sellCart.clear();
+			redirAttrs.addFlashAttribute("error", "There are not enough product in sorage!");
+			return "redirect:sell";
+		}
+		
 
 		if (sellCart == null || sellCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
