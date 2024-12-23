@@ -148,6 +148,11 @@
                                     <span th:text="${event.getTotal()}">Not found</span>
                                 </div>
                                 <div class="card-footer d-flex justify-content-between">
+                                    <a th:href="@{/services/events/view-details/{id}(id=${event.id})}"
+                                       class="btn btn-secondary"
+                                       th:text="#{action.view}">View Details</a>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between">
                                     <a th:href="@{/services/events/edit/{id}(id=${event.id})}" class="btn btn-secondary"
                                        th:text="#{action.edit}">Edit</a>
                                     <form th:action="@{'/services/events/edit/' + ${event.id}}" method="post"
@@ -281,6 +286,11 @@
                                     <br>
                                     <span class="font-weight-bold" th:text="#{order.totalPrice}">Total price</span>:
                                     <span th:text="${reservation.getTotal()}">Not found</span>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between">
+                                    <a th:href="@{/services/reservations/view-details/{id}(id=${reservation.id})}"
+                                       class="btn btn-secondary"
+                                       th:text="#{action.view}">View Details</a>
                                 </div>
                                 <div class="card-footer d-flex justify-content-between">
                                     <a th:href="@{/services/reservations/edit/{id}(id=${reservation.id})}"
