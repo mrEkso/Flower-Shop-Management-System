@@ -2,9 +2,105 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{services.reservation.view}">View Reservation Details</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+<div class="container mt-2">
+    <div class="text-center mb-4">
+        <h1 th:text="#{services.reservation.view}">View Reservation Details</h1>
+    </div>
 
+    <!-- Return Button -->
+    <div class="text-left mb-3">
+        <a href="/services" class="btn btn-secondary" th:text="#{action.return}">Return</a>
+    </div>
+
+    <div class="container mt-5">
+        <form class="p-4 border rounded shadow-sm">
+
+            <!-- Client Name -->
+            <div class="mb-3">
+                <label for="clientName" class="form-label" th:text="#{client.name}">Client Name</label>
+                <input disabled type="text" class="form-control" th:value="${reservationOrder.client.name}" id="clientName">
+            </div>
+
+            <!-- Reservation Date and Time -->
+            <div class="mb-3">
+                <label for="reservationDateTime" class="form-label" th:text="#{reservation.dateTime}">Reservation Date and Time</label>
+                <input disabled type="datetime-local" class="form-control" th:value="${reservationOrder.reservationDateTime}" id="reservationDateTime">
+            </div>
+
+            <!-- Contact Phone -->
+            <div class="mb-3">
+                <label for="phone" class="form-label" th:text="#{contract.phone}">Phone</label>
+                <input disabled type="tel" class="form-control" th:value="${reservationOrder.client.phone}" id="phone">
+            </div>
+
+            <!-- Payment Method -->
+            <div class="mb-3">
+                <label for="paymentMethod" class="form-label" th:text="#{order.paymentMethod}">Payment Method</label>
+                <select disabled class="form-control" th:value="${reservationOrder.paymentMethod}" id="paymentMethod">
+                    <option value="Cash" th:text="#{order.payment.cash}">Cash</option>
+                    <option value="Card" th:text="#{order.payment.card}">Card</option>
+                </select>
+            </div>
+
+            <!-- Order Status -->
+            <div class="mb-3">
+                <label class="form-label" th:text="#{order.status}">Order Status</label>
+                <div class="form-check">
+                    <input disabled class="form-check-input" type="radio" name="orderStatus" id="statusOpen" value="OPEN"
+                           th:checked="${reservationOrder.orderStatus.name() == 'OPEN'}">
+                    <label class="form-check-label" for="statusOpen" th:text="#{order.status.open}">Open</label>
+                </div>
+                <div class="form-check">
+                    <input disabled class="form-check-input" type="radio" name="orderStatus" id="statusPaid" value="PAID"
+                           th:checked="${reservationOrder.orderStatus.name() == 'PAID'}">
+                    <label class="form-check-label" for="statusPaid" th:text="#{order.status.paid}">Paid</label>
+                </div>
+                <div class="form-check">
+                    <input disabled class="form-check-input" type="radio" name="orderStatus" id="statusCompleted"
+                           value="COMPLETED" th:checked="${reservationOrder.orderStatus.name() == 'COMPLETED'}">
+                    <label class="form-check-label" for="statusCompleted" th:text="#{order.status.completed}">Completed</label>
+                </div>
+                <div class="form-check">
+                    <input disabled class="form-check-input" type="radio" name="orderStatus" id="statusCanceled" value="CANCELED"
+                           th:checked="${reservationOrder.orderStatus.name() == 'CANCELED'}">
+                    <label class="form-check-label" for="statusCanceled" th:text="#{order.status.canceled}">Canceled</label>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <label class="form-label" th:text="#{order.listOfProducts}">List of Products</label>
+
+            <!-- Products -->
+            <div id="productsContainerReservations" hx-swap="outerHTML">
+                <div class="input-group mb-2" th:each="orderLine : ${reservationOrder.orderLines}">
+                    <select disabled th:name="'products[' + ${orderLine.productIdentifier} + ']'" class="form-select">
+                        <option th:each="product : ${products}" th:value="${product.id}"
+                                th:selected="${product.id == orderLine.productIdentifier}" th:text="${product.name}">
+                        </option>
+                    </select>
+                    <input disabled th:name="'quantities[' + ${orderLine.productIdentifier} + ']'" class="form-control"
+                           type="number" th:value="${orderLine.quantity}" placeholder="Quantity">
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="mb-3">
+                <label for="notes" class="form-label" th:text="#{reservation.notes}">Notes</label>
+                <textarea disabled class="form-control" id="notes" rows="3" th:text="${reservationOrder.notes}"></textarea>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://unpkg.com/htmx.org"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

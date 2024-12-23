@@ -12,6 +12,12 @@
     <div class="text-center mb-4">
         <h1 th:text="#{services.contract.view}">View Contract Details</h1>
     </div>
+
+    <!-- Return Button -->
+    <div class="text-left mb-3">
+        <a href="/services" class="btn btn-secondary" th:text="#{action.return}">Return</a>
+    </div>
+
     <div class="container mt-5">
         <form class="p-4 border rounded shadow-sm">
             <!-- Company Name -->
@@ -23,8 +29,7 @@
             <!-- Contract Type (Frequency) -->
             <div class="mb-3">
                 <label for="contractType" class="form-label" th:text="#{contract.type}">Contract Type</label>
-                <select
-                        id="contractType"
+                <select disabled id="contractType"
                         name="contractType"
                         class="form-control"
                         th:field="*{contractOrder.contractType}"
@@ -32,19 +37,57 @@
                         hx-target="#frequencyOptionsContainer"
                         hx-include="[name='contractType']"
                         hx-swap="outerHTML">
-                    <option value="One-Time" th:text="#{contract.type.oneTime}">One-Time</option>
-                    <option value="Recurring" th:text="#{contract.type.recurring}">Recurring</option>
+                    <option value="One-Time" th:selected="${contractOrder.contractType == 'One-Time'}"
+                            th:text="#{contract.type.oneTime}">One-Time
+                    </option>
+                    <option value="Recurring" th:selected="${contractOrder.contractType == 'Recurring'}"
+                            th:text="#{contract.type.recurring}">Recurring
+                    </option>
                 </select>
             </div>
 
             <!-- Frequency Options (Only shown for Recurring) -->
-            <div id="frequencyOptionsContainer"
-                 th:if="${contractOrder.contractType == 'Recurring'}"
-                 th:replace="fragments/frequency-options :: frequencyOptionsContainer"
-                 th:with="frequency=${contractOrder.frequency}"></div>
+            <div id="frequencyOptionsContainer" class="form-group"
+                 th:if="${contractOrder.contractType == 'Recurring' or contractType == 'Recurring'}">
+                <label for="frequency" th:text="#{contract.frequency}">Frequency</label>
+                <select disabled id="frequency"
+                        name="frequency"
+                        class="form-control"
+                        hx-get="/services/contracts/choose-custom-frequency-options"
+                        hx-target="#customOptionsContainer"
+                        hx-include="[name='frequency']"
+                        hx-swap="outerHTML">
+                    <option value="daily" th:selected="${contractOrder.frequency == 'daily'}"
+                            th:text="#{frequency.daily}">Daily
+                    </option>
+                    <option value="weekly" th:selected="${contractOrder.frequency == 'weekly'}"
+                            th:text="#{frequency.weekly}">Weekly
+                    </option>
+                    <option value="monthly" th:selected="${contractOrder.frequency == 'monthly'}"
+                            th:text="#{frequency.monthly}">Monthly
+                    </option>
+                    <option value="custom" th:selected="${contractOrder.frequency == 'custom'}"
+                            th:text="#{frequency.custom}">Custom
+                    </option>
+                </select>
+            </div>
 
             <!-- Custom Options (Only shown for Custom Frequency) -->
-            <div id="customOptionsContainer"></div>
+            <div id="customOptionsContainer" class="form-group"
+                 th:if="${contractOrder.frequency == 'custom' or frequency == 'custom'}">
+                <label>Customize Frequency</label>
+                <input disabled type="number"
+                       class="form-control"
+                       name="customFrequency"
+                       placeholder="Every X days/weeks/etc."
+                       th:value="${contractOrder.customFrequency}">
+                <select disabled name="customUnit" class="form-control">
+                    <option value="day" th:selected="${contractOrder.customUnit == 'day'}">Day</option>
+                    <option value="week" th:selected="${contractOrder.customUnit == 'week'}">Week</option>
+                    <option value="month" th:selected="${contractOrder.customUnit == 'month'}">Month</option>
+                    <option value="year" th:selected="${contractOrder.customUnit == 'year'}">Year</option>
+                </select>
+            </div>
 
             <!-- Start and End Dates -->
             <div class="mb-3">
@@ -69,13 +112,26 @@
             </div>
 
             <!-- Products Section -->
-            <div class="mb-3">
-                <label class="form-label" th:text="#{order.selectProducts}">Selected Products</label>
-                <div th:each="orderLine : ${contractOrder.orderLines}" class="input-group mb-2">
-                    <select disabled class="form-select" th:value="${orderLine.productIdentifier}">
-                        <option th:each="product : ${products}" th:value="${product.id}" th:text="${product.name}"></option>
+            <label class="form-label" th:text="#{order.listOfProducts}">List of Products</label>
+
+            <!-- Products -->
+            <div id="productsContainerContracts" hx-swap="outerHTML">
+                <div class="input-group mb-2" th:each="orderLine : ${contractOrder.orderLines}">
+                    <select disabled th:name="'products[' + ${orderLine.productIdentifier} + ']'" class="form-select"
+                            required>
+                        <option th:each="product : ${products}"
+                                th:value="${product.id}"
+                                th:selected="${product.id == orderLine.productIdentifier}"
+                                th:text="${product.name}">
+                        </option>
                     </select>
-                    <input disabled class="form-control" type="number" th:value="${orderLine.quantity}">
+                    <input disabled th:name="'quantities[' + ${orderLine.productIdentifier} + ']'"
+                           class="form-control"
+                           type="number"
+                           th:value="${orderLine.quantity}"
+                           placeholder="Quantity"
+                           min="1"
+                           required>
                 </div>
             </div>
 
@@ -121,10 +177,6 @@
                 <input disabled class="form-control" th:value="${contractOrder.getChargeLines().getTotal().getNumber()}" id="servicePrice">
             </div>
 
-            <!-- Cancel Button -->
-            <div class="text-center">
-                <a href="/services" class="btn btn-secondary" th:text="#{action.cancel}">Cancel</a>
-            </div>
         </form>
     </div>
 </div>

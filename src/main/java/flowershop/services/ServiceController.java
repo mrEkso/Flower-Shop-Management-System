@@ -170,10 +170,11 @@ public class ServiceController {
 											   @RequestParam(value = "customFrequency", required = false) Integer customFrequency,
 											   @RequestParam(value = "customUnit", required = false) String customUnit
 	) {
+		model.addAttribute("contractType", "Recurring");
 		model.addAttribute("frequency", frequency != null ? frequency : "");
 		model.addAttribute("customFrequency", customFrequency);
 		model.addAttribute("customUnit", customUnit);
-		return "custom".equals(frequency) ? "fragments/custom-options :: customOptionsContainer" : "fragments/empty-custom-options :: empty-custom-options";
+		return "custom".equals(frequency) ? "fragments/frequency-options :: customOptionsContainer" : "fragments/empty-frequency-options :: empty-custom-options";
 	}
 
 	/**
@@ -208,8 +209,6 @@ public class ServiceController {
 									  @RequestParam(value = "servicePrice", defaultValue = "0") int servicePrice,
 									  RedirectAttributes redirectAttribute) {
 		try {
-			System.out.println("sochna dupa");
-			System.out.println(products);
 			if (!clockService.isOpen())
 				throw new IllegalArgumentException("The shop is closed");
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
@@ -368,6 +367,8 @@ public class ServiceController {
 				throw new IllegalArgumentException("The shop is closed");
 			ContractOrder contractOrder = contractOrderService.getById(id)
 				.orElseThrow(() -> new NotFoundException("Contract order not found"));
+			System.out.println(contractOrder);
+			System.out.println(customUnit);
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
 			if (startDate.isAfter(endDate))
@@ -575,7 +576,7 @@ public class ServiceController {
 
 	@GetMapping("/events/view-details/{id}")
 	public String getViewEventDetails(@PathVariable UUID id,
-										 Model model) {
+									  Model model) {
 		model.addAttribute("eventOrder", eventOrderService.getById(id).get());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/view/viewEventDetails";
@@ -583,7 +584,7 @@ public class ServiceController {
 
 	@GetMapping("/reservations/view-details/{id}")
 	public String getViewReservationDetails(@PathVariable UUID id,
-										 Model model) {
+											Model model) {
 		model.addAttribute("reservationOrder", reservationOrderService.getById(id).get());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/view/viewReservationDetails";
