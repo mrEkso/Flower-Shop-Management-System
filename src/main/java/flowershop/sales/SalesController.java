@@ -209,7 +209,7 @@ public class SalesController {
 		
 		if (isInvalid) {
 			sellCart.clear();
-			redirAttrs.addFlashAttribute("error", "There are not enough product in sorage!");
+			redirAttrs.addFlashAttribute("error", "There are not enough products in the storage!");
 			return "redirect:sell";
 		}
 		
