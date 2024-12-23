@@ -302,7 +302,7 @@ public class InventoryController {
 	 * @return the inventory view name
 	 */
 	@PostMapping("/create-custom-bouquet")
-	public String createCustomBouquet(@RequestParam String bouquetName, Model model) {
+	public String createCustomBouquet(@RequestParam String bouquetName, @RequestParam Double addPrice, Model model) {
 		if (!selectedFlowersForBouquet.isEmpty() && bouquetName != null && !bouquetName.isEmpty()) {
 			if (selectedFlowersForBouquet.size() > 1 || selectedFlowersForBouquet.getFirst().getDeletedQuantity()> 1) {
 				Map<Flower, Integer> flowerMap = selectedFlowersForBouquet.stream()
@@ -312,7 +312,7 @@ public class InventoryController {
 						flower -> ((Flower) flower).getDeletedQuantity()
 					));
 
-				Money additionalPrice = Money.of(5, "EUR");
+				Money additionalPrice = Money.of(addPrice, "EUR");
 				Pricing bouquetPricing = Bouquet.calculateTotalPricing(flowerMap, additionalPrice);
 
 				Bouquet customBouquet = new Bouquet(

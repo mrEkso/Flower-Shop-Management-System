@@ -110,6 +110,7 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
   public void testCreateCustomBouquet() {
     Model model = new ExtendedModelMap();
     String bouquetName = "Spring Mix";
+    Double addPric =11.0;
 
     UUID roseId = UUID.randomUUID();
     UUID tulipId = UUID.randomUUID();
@@ -117,7 +118,7 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
     inventoryController.addFlowerToBouquet(roseId, 5, model);
     inventoryController.addFlowerToBouquet(tulipId, 7, model);
 
-    String viewName = inventoryController.createCustomBouquet(bouquetName, model);
+    String viewName = inventoryController.createCustomBouquet(bouquetName, addPric, model);
 
     assertThat(viewName).isEqualTo("inventory");
   }
@@ -162,8 +163,9 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
   public void testCreateCustomBouquetWithoutFlowers() {
     Model model = new ExtendedModelMap();
     String bouquetName = "Empty Bouquet";
+    Double addPric =11.0;
 
-    String viewName = inventoryController.createCustomBouquet(bouquetName, model);
+    String viewName = inventoryController.createCustomBouquet(bouquetName,addPric, model);
 
     assertThat(viewName).isEqualTo("inventory");
   }

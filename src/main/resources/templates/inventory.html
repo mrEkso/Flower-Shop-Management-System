@@ -207,6 +207,14 @@
       <form action="/create-custom-bouquet" method="post">
         <label for="bouquetName">Bouquet Name:</label>
         <input type="text" id="bouquetName" name="bouquetName" required />
+        <label for="bouquetName">Additional Price:</label>
+        <input
+          type="number"
+          step="0.01"
+          id="addPrice"
+          name="addPrice"
+          required
+        />
         <button type="submit">Create Bouquet</button>
         <small th:if="${!#lists.isEmpty(selectedFlowersForBouquet)}">
           (After submitting, the selected quantities will be deducted from
