@@ -11,7 +11,7 @@ Welche Aufgabe/Problemstellung löst die Anwendung.
 [options="header"]
 |===
 |Pfad |Parameter |Beschreibung |Rückgabe
-| … | … | … | … |
+| PaulPlant32 -> Lager -> Ein Lagerobjekt editiren -> Seite zur Bearbeitung | Objekt: "Stage 1", Gemietet von: 24-12-2024, Gemietet bis: 25-12-2024 |  Gemietet von und bis angeben, sodass das Objekt schon in dem Zeitfenster vermietet sein soll. Da das Inputfeld beim Öffnen immer leer ist und es keine Infos über bestehenden Vermietungen des Objektes gibt, kann es durchaus passieren. | "Whops, there was an Error!" |
 |===
 
 == Sonstiges
@@ -20,6 +20,7 @@ Welche Aufgabe/Problemstellung löst die Anwendung.
 * Fehlende Features
 * Interaktion mit der Anwendung (Usability)
 - Zu grobe Fehlermeldung bei den unpassenden Daten (beim Erstellen von einer neuen Lokation).
+- Die Seite, auf die der Button "Edit" für Mietobjekte führt, heißt "Neues Mietobjekt", obwohl es kein an sich "neues" Objekt ist.
 
 image::./models/images/Cockandballshire.jpg[Zu grobe Fehlermeldung bei den unpassenden Daten.]
 
