@@ -4,7 +4,9 @@ __Durchführende Gruppe: 07__ +
 __Anwendung von Gruppe: 04__
 
 == Getestetes System
-Welche Aufgabe/Problemstellung löst die Anwendung.
+Die Software soll als zentrale Hilfsanwendung für die Planung, Organisation, Durchführung und Auswertung von Festivals dienen. Ziel ist es, den zeitlichen Aufwand, die Planungskosten sowie die Fehlerquote bei der Organisation solcher Veranstaltungen signifikant zu reduzieren. Die Anwendung richtet sich an Veranstalter, die durch eine verständliche und übersichtliche Benutzeroberfläche effizient arbeiten möchten.
+
+Konkret ermöglicht die Software den Nutzern, geeignete Locations für Festivals auszuwählen und die Veranstaltungen auf eine strukturierte und benutzerfreundliche Weise zu planen. Dies schafft eine optimale Basis für den Austausch mit Kunden, die detaillierte Entwicklung des Produkts und eine erfolgreiche Abnahme.
 
 == Fehler-Report
 // See http://asciidoctor.org/docs/user-manual/#tables
