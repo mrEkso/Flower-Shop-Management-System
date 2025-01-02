@@ -28,7 +28,6 @@ Welche Aufgabe/Problemstellung löst die Anwendung.
 * Interaktion mit der Anwendung (Usability)
 - Zu grobe Fehlermeldung bei den unpassenden Daten (beim Erstellen von einer neuen Lokation).
 
-
 image::./models/images/Cockandballshire.jpg[Zu grobe Fehlermeldung bei den unpassenden Daten.]
 
 - Die Seite, auf die der Button "Edit" für Mietobjekte führt, heißt "Neues Mietobjekt", obwohl es kein an sich "neues" Objekt ist.
