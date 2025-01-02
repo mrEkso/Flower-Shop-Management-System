@@ -1,7 +1,7 @@
 = Cross-Testing Feedback
 
-__Durchführende Gruppe:__
-__Anwendung von Gruppe:__
+__Durchführende Gruppe: 07__
+__Anwendung von Gruppe: 04__
 
 == Getestetes System
 Welche Aufgabe/Problemstellung löst die Anwendung.
@@ -18,6 +18,7 @@ Welche Aufgabe/Problemstellung löst die Anwendung.
 * Optik der Anwendung
 * Fehlende Features
 * Interaktion mit der Anwendung (Usability)
+image::./models/images/Cockandballshire.jpg[Zu grobe Fehlermeldung bei den unpassenden Daten.]
 
 == Verbesserungsvorschläge
 * Was kann noch weiter verbessert werden?
