@@ -24,6 +24,18 @@ Konkret ermöglicht die Software den Nutzern, geeignete Locations für Festivals
 |Datum von und bis angeben, sodass die Location an den Tagen besetzt ist. 
 |"Whops, there was an Error!"
 
+|PaulPlant32 -> Lager -> Ein Lagerobjekt editieren -> Seite zur Bearbeitung 
+|Vertrag hochladen: eine .PNG Datei
+|Wenn der Vertrag in Form von .PNG ist, bekommt man einen Fehler. Sollte es nur PDFs zur Auswahl erlauben?
+|"Whops, there was an Error!"
+
+|PaulPlant32 -> Lager -> Ein Lagerobjekt editieren -> Seite zur Bearbeitung 
+|Vertrag hochladen: eine .PDF Datei
+|Wenn der Vertrag in Form von .PDF ist, bekommt man einen Browser-Fehler (in Edge und Brave).
+|"Die Website ist nicht erreichbar. Verbindung wurde zurückgesetzt. Versuche Folgendes:
+Verbindung prüfen, Proxy und Firewall prüfen +
+ERR_CONNECTION_RESET"
+
 |===
 
 == Optik der Anwendung
