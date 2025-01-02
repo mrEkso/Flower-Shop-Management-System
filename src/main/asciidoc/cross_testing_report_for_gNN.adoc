@@ -24,7 +24,6 @@ Welche Aufgabe/Problemstellung löst die Anwendung.
 
 |===
 
-== Sonstiges
 == Optik der Anwendung
 - Der Header der Webseite ist nicht bündig mit der oberen Fensterkante. Es wird empfohlen, das Top-Padding des Headers zu entfernen, um ein einheitliches und vertrautes Erscheinungsbild zu gewährleisten. Darüber hinaus finden wir, dass der Header kleiner gemacht werden soll, um mehr Platz für Content-Body zu schaffen. 
 
@@ -38,6 +37,8 @@ Welche Aufgabe/Problemstellung löst die Anwendung.
 image::./models/images/Cockandballshire.jpg[Zu grobe Fehlermeldung bei den unpassenden Daten.]
 
 - Die Seite, auf die der Button "Edit" für Mietobjekte führt, heißt "Neues Mietobjekt", obwohl es kein an sich "neues" Objekt ist.
+
+- In derselben Seite wird nicht ausgeführt, wo das Objekt bereits verwendet wird (auf welchem Festival/Bereich). Sonst wäre es nutzerfreundlicher.
 
 - Man bekommt diese Meldungen, wenn man ein Festival überarbeitet. Um es zu erfahren, muss man die Nachrichten nachschauen.
 
