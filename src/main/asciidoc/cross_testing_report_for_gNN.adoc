@@ -11,7 +11,14 @@ Welche Aufgabe/Problemstellung löst die Anwendung.
 [options="header"]
 |===
 |Pfad |Parameter |Beschreibung |Rückgabe
-| PaulPlant32 -> Lager -> Ein Lagerobjekt editiren -> Seite zur Bearbeitung | Objekt: "Stage 1", Gemietet von: 24-12-2024, Gemietet bis: 25-12-2024 |  Gemietet von und bis angeben, sodass das Objekt schon in dem Zeitfenster vermietet sein soll. Da das Inputfeld beim Öffnen immer leer ist und es keine Infos über bestehenden Vermietungen des Objektes gibt, kann es durchaus passieren. | "Whops, there was an Error!" |
+
+|PaulPlant32 -> Lager -> Ein Lagerobjekt editieren -> Seite zur Bearbeitung 
+|Objekt: "Stage 1", Gemietet von: 24-12-2024, Gemietet bis: 25-12-2024 
+|Gemietet von und bis angeben, sodass das Objekt schon in dem Zeitfenster vermietet sein soll. Da das Inputfeld beim Öffnen immer leer ist und es keine Infos über bestehende Vermietungen des Objektes gibt, kann es durchaus passieren.
+|"Whops, there was an Error!"
+
+
+
 |===
 
 == Sonstiges
