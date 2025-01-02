@@ -18,6 +18,7 @@ Welche Aufgabe/Problemstellung löst die Anwendung.
 * Optik der Anwendung
 * Fehlende Features
 * Interaktion mit der Anwendung (Usability)
+- Zu grobe Fehlermeldung bei den unpassenden Daten (beim Erstellen von einer neuen Lokation).
 
 image::./models/images/Cockandballshire.jpg[Zu grobe Fehlermeldung bei den unpassenden Daten.]
 
