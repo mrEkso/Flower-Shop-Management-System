@@ -25,15 +25,28 @@ Welche Aufgabe/Problemstellung löst die Anwendung.
 |===
 
 == Sonstiges
-* Optik der Anwendung
+== Optik der Anwendung
 - Der Header der Webseite ist nicht bündig mit der oberen Fensterkante. Es wird empfohlen, das Top-Padding des Headers zu entfernen, um ein einheitliches und vertrautes Erscheinungsbild zu gewährleisten. Darüber hinaus finden wir, dass der Header kleiner gemacht werden soll, um mehr Platz für Content-Body zu schaffen. 
-* Fehlende Features
-* Interaktion mit der Anwendung (Usability)
+
+== Fehlende Features
+- Aus Beglietheft: +
+"Aufgrund der nicht rechtzeitigen Fertigstellung beziehungsweise möglicherweise entstandener Bugs wird die Zuordnung von des Stundenlohnes und der Arbeitsstunden pro Festival für Personen, also die Zuordnung der Bezahlung zu Festivals, vorenthalten."
+
+== Interaktion mit der Anwendung (Usability)
 - Zu grobe Fehlermeldung bei den unpassenden Daten (beim Erstellen von einer neuen Lokation).
 
 image::./models/images/Cockandballshire.jpg[Zu grobe Fehlermeldung bei den unpassenden Daten.]
 
 - Die Seite, auf die der Button "Edit" für Mietobjekte führt, heißt "Neues Mietobjekt", obwohl es kein an sich "neues" Objekt ist.
+
+- Man bekommt diese Meldungen, wenn man ein Festival überarbeitet. Um es zu erfahren, muss man die Nachrichten nachschauen.
+
+image::./models/images/crosstesting_weirdmail.png[Man bekommt diese Meldungen, wenn man ein Festival überarbeitet. Um es zu erfahren, muss man die Nachrichten nachschauen]
+
+- Die Lagerobjektbeschreibung ist reiner Text, also sehr unübersichtlich.
+
+image::./models/images/crosstesting_weirdtext.png[Die Lagerobjektbeschreibung ist reiner Text, also sehr unübersichtlich.]
+
 
 == Verbesserungsvorschläge
 * Was kann noch weiter verbessert werden?
