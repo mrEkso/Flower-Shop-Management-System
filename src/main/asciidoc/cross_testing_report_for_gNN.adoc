@@ -17,7 +17,10 @@ Welche Aufgabe/Problemstellung löst die Anwendung.
 |Gemietet von und bis angeben, sodass das Objekt schon in dem Zeitfenster vermietet sein soll. Da das Inputfeld beim Öffnen immer leer ist und es keine Infos über bestehende Vermietungen des Objektes gibt, kann es durchaus passieren.
 |"Whops, there was an Error!"
 
-
+|PaulPlant32 -> Neues Festival erstellen 
+| Location: Wald, von: 13.12.2024, bis: 14.12.2024 
+|Datum von und bis angeben, sodass die Location an den Tagen besetzt ist. 
+|"Whops, there was an Error!"
 
 |===
 
