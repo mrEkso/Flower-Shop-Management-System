@@ -66,7 +66,12 @@ image::./models/images/crosstesting_weirdtext.png[Die Lagerobjektbeschreibung is
 
 - Die Seite "Location bearbeiten" hat keine Beschreibung von Feldern, die man bearbeiten kann. Somit sind die Daten schwer ablesbar.
 
-image::./models/images/crosstesting_nofielddescription.png[Die Seite "Location bearbeiten" hat keine Beschreibung von Feldern, die man bearbeiten kann. Somit sind die Daten schwer ablesbar]
+image::./models/images/crosstesting_nofielddescription.png[Die Seite "Location bearbeiten" hat keine Beschreibung von Feldern, die man bearbeiten kann. Somit sind die Daten schwer ablesbar.]
+
+- Die Spalte "Bereiche" in Festivaldetailübersicht trägt keine (offensichtliche) Information.
+
+image::./models/images/crosstesting_weirdcollumn.png[Die Spalte "Bereiche" in Festivaldetailübersicht trägt keine (offensichtliche) Information.]
+
 
 == Verbesserungsvorschläge
 * Was kann noch weiter verbessert werden?
