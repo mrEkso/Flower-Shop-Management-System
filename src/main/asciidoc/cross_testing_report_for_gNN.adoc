@@ -85,6 +85,9 @@ image::./models/images/crosstesting_nofielddescription.png[Die Seite "Location b
 
 image::./models/images/crosstesting_weirdcollumn.png[Die Spalte "Bereiche" in Festivaldetailübersicht trägt keine (offensichtliche) Information.]
 
+- Der Text hier lädt sich nicht korrekt in der Tabelle in Mietobjekten der Festival.
+
+image::./models/images/kaZantip_lagerobj_isEmpty.jpg[??lager_objects.isEmpty_en??]
 
 
 
