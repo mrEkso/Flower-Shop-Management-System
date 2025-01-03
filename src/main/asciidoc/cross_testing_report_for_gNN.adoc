@@ -47,6 +47,10 @@ ERR_CONNECTION_RESET"
 - Aus Beglietheft: +
 "Aufgrund der nicht rechtzeitigen Fertigstellung beziehungsweise möglicherweise entstandener Bugs wird die Zuordnung von des Stundenlohnes und der Arbeitsstunden pro Festival für Personen, also die Zuordnung der Bezahlung zu Festivals, vorenthalten."
 
+- Artist-Name ist hardcoded zu "Name". Er kann nicht festgelegt werden.
+
+image::./models/images/crosstesting_name.png[Die Spalte "Bereiche" in Festivaldetailübersicht trägt keine (offensichtliche) Information.]
+
 == Interaktion mit der Anwendung (Usability)
 - Zu grobe Fehlermeldung bei den unpassenden Daten (beim Erstellen von einer neuen Lokation).
 
@@ -71,6 +75,9 @@ image::./models/images/crosstesting_nofielddescription.png[Die Seite "Location b
 - Die Spalte "Bereiche" in Festivaldetailübersicht trägt keine (offensichtliche) Information.
 
 image::./models/images/crosstesting_weirdcollumn.png[Die Spalte "Bereiche" in Festivaldetailübersicht trägt keine (offensichtliche) Information.]
+
+
+
 
 
 == Verbesserungsvorschläge
