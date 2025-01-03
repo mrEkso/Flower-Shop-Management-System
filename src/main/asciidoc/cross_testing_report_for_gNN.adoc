@@ -58,7 +58,7 @@ src\main\resources\static\resources\uploadFiles\ +
 - Aus Beglietheft: +
 "Aufgrund der nicht rechtzeitigen Fertigstellung beziehungsweise möglicherweise entstandener Bugs wird die Zuordnung von des Stundenlohnes und der Arbeitsstunden pro Festival für Personen, also die Zuordnung der Bezahlung zu Festivals, vorenthalten."
 
-- Lageplan zum Festival kann nicht hochgeladen werden (s. Fehlerreport No.6) 
+- Lageplan zum Festival kann nicht hochgeladen werden (s. Fehlerreport No.6).
 
 == Interaktion mit der Anwendung (Usability)
 - Zu grobe Fehlermeldung bei den unpassenden Daten (beim Erstellen von einer neuen Lokation).
