@@ -36,6 +36,17 @@ Konkret ermöglicht die Software den Nutzern, geeignete Locations für Festivals
 Verbindung prüfen, Proxy und Firewall prüfen +
 ERR_CONNECTION_RESET"
 
+|ManManager -> Festivals -> Waldrave -> Lageplan hochladen
+|Datei: eine .PNG Datei
+|Die Funktionalität geht nicht.
+|Zurück zu http://localhost:8080/map/UUID +
+In der Konsole: +
+java.io.IOException: java.io.FileNotFoundException: +
+C:\Users\myusr\Desktop\crosstesting\ + 
+src\main\resources\static\resources\uploadFiles\ +
+54c5394e-57c5-4559-b996-f252d2c973b8.png +
+(Das System kann den angegebenen Pfad nicht finden)
+
 |===
 
 == Optik der Anwendung
@@ -47,6 +58,7 @@ ERR_CONNECTION_RESET"
 - Aus Beglietheft: +
 "Aufgrund der nicht rechtzeitigen Fertigstellung beziehungsweise möglicherweise entstandener Bugs wird die Zuordnung von des Stundenlohnes und der Arbeitsstunden pro Festival für Personen, also die Zuordnung der Bezahlung zu Festivals, vorenthalten."
 
+- Lageplan zum Festival kann nicht hochgeladen werden (s. Fehlerreport No.6) 
 
 == Interaktion mit der Anwendung (Usability)
 - Zu grobe Fehlermeldung bei den unpassenden Daten (beim Erstellen von einer neuen Lokation).
