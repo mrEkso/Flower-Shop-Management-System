@@ -39,7 +39,9 @@ ERR_CONNECTION_RESET"
 |===
 
 == Optik der Anwendung
-- Der Header der Webseite ist nicht bündig mit der oberen Fensterkante. Es wird empfohlen, das Top-Padding des Headers zu entfernen, um ein einheitliches und vertrautes Erscheinungsbild zu gewährleisten. Darüber hinaus finden wir, dass der Header kleiner gemacht werden soll, um mehr Platz für Content-Body zu schaffen. 
+- Der Header der Webseite ist nicht bündig mit der oberen Fensterkante. Es wird empfohlen, das Top-Padding des Headers zu entfernen, um ein einheitliches und vertrautes Erscheinungsbild zu gewährleisten. 
+- Darüber hinaus finden wir, dass der Header kleiner gemacht werden soll, um mehr Platz für Content-Body zu schaffen. 
+
 
 == Fehlende Features
 - Aus Beglietheft: +
@@ -62,6 +64,9 @@ image::./models/images/crosstesting_weirdmail.png[Man bekommt diese Meldungen, w
 
 image::./models/images/crosstesting_weirdtext.png[Die Lagerobjektbeschreibung ist reiner Text, also sehr unübersichtlich.]
 
+- Die Seite "Location bearbeiten" hat keine Beschreibung von Feldern, die man bearbeiten kann. Somit sind die Daten schwer ablesbar.
+
+image::./models/images/crosstesting_nofielddescription.png[Die Lagerobjektbeschreibung ist reiner Text, also sehr unübersichtlich.]
 
 == Verbesserungsvorschläge
 * Was kann noch weiter verbessert werden?
