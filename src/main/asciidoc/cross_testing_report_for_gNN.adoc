@@ -47,6 +47,11 @@ src\main\resources\static\resources\uploadFiles\ +
 54c5394e-57c5-4559-b996-f252d2c973b8.png +
 (Das System kann den angegebenen Pfad nicht finden)
 
+|Cat6 -> Ein Produkt hinzufuegen -> Verkaufen 
+|Produkt: 1 "Pizza"
+|Wenn etwas verkauft wird, passiert nichts
+|-
+
 |===
 
 == Optik der Anwendung
