@@ -52,6 +52,11 @@ src\main\resources\static\resources\uploadFiles\ +
 |Wenn etwas verkauft wird, passiert nichts
 |-
 
+|Verkaufsmitarbeiter -> Ticket erstellen, Sicherheitspersonal -> Gültigkeit prüfen
+|
+|Verkaufsstatus: GESCHLOSSEN und kann nicht ein Ticket erstellen oder Gültigkeit prüfen
+|
+
 |===
 
 == Optik der Anwendung
