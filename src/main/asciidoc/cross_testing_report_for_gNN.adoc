@@ -80,11 +80,23 @@ src\main\resources\static\resources\uploadFiles\ +
 
 - Lageplan zum Festival kann nicht hochgeladen werden (s. Fehlerreport No.5).
 
-- Muss-Kriterien 2.2: kann nicht getestet werden, da es unmöglich ist, ein Festival freizugeben. 
+- Muss-Kriterien 2.2: kann nicht getestet werden, da es unmöglich ist, ein Festival freizugeben (s. Fehlerreport No.2) 
 
-- Muss-Kriterien 2.4.2: kann nicht getestet werden, da es unmöglich ist, ein Festival freizugeben
+- Muss-Kriterien 2.4.2: kann nicht getestet werden, da es unmöglich ist, ein Festival freizugeben (s. Fehlerreport No.2)
 
-- Muss-Kriterien 3.4: kann nicht getestet werden, da es unmöglich ist, ein Festival freizugeben
+- Muss-Kriterien 3.4: kann nicht getestet werden, da es unmöglich ist, ein Festival freizugeben (s. Fehlerreport No.2)
+
+- Muss-Kriterien 4.1: wenn das Produkt verkauft ist, passiert nichts. Es ist nicht möglich, die Verkaufsmengenbegrenzung vom Lager auszutesten (s. Fehlerreport No.6)
+
+- Muss-Kriterien 5.1: verkaufsstatus: GESCHLOSSEN und kann nicht ein Ticket erstellen oder andere Features mit Tickets austesten (s. Fehlerreport No.7)
+
+- Muss-Kriterien 5.2: kann nicht ein Ticket erstellen und daher kann die Gültigkeit des Tickets nicht überprüft werden (s. Fehlerreport No.7)
+
+- Muss-Kriterien 5.3: kann die Funktion "Am Eingang (fast) überbelegter Bereiche sollen Tickets temporäre üngültig werden" nicht überprüft werden, da keine Tickets erstellt werden können (s. Fehlerreport No.7)
+
+- Muss-Kriterien 6.1: kann nicht getestet werden, da es unmöglich ist, ein Festival freizugeben (s. Fehlerreport No.2)
+
+- Muss-Kriterien 6.2: kann nicht getestet werden, da es unmöglich ist, ein Festival freizugeben (s. Fehlerreport No.2)
 
 == Interaktion mit der Anwendung (Usability)
 - Zu grobe Fehlermeldung bei den unpassenden Daten (beim Erstellen von einer neuen Lokation).
