@@ -64,7 +64,7 @@ src\main\resources\static\resources\uploadFiles\ +
 
 |PaulPlant32 -> Meerfest -> Location ändern
 |Parametr: Wald
-|Muss-kriterien N.2.1.2: "...Hierbei soll keine Doppelbelegung einerLocation möglich sein...". Es gibt shoen "Waldrave" mit Location "Wald".
+|Muss-kriterien N.2.1.2: "...Hierbei soll keine Doppelbelegung einer Location möglich sein...". Es gibt shön "Waldrave" mit Location "Wald".
 |-
 
 |===
@@ -79,6 +79,8 @@ src\main\resources\static\resources\uploadFiles\ +
 "Aufgrund der nicht rechtzeitigen Fertigstellung beziehungsweise möglicherweise entstandener Bugs wird die Zuordnung von des Stundenlohnes und der Arbeitsstunden pro Festival für Personen, also die Zuordnung der Bezahlung zu Festivals, vorenthalten."
 
 - Lageplan zum Festival kann nicht hochgeladen werden (s. Fehlerreport No.5).
+
+- Muss-Kriterien 2.2: kann nicht getestet werden, da es unmöglich ist, ein Festival freizugeben. 
 
 == Interaktion mit der Anwendung (Usability)
 - Zu grobe Fehlermeldung bei den unpassenden Daten (beim Erstellen von einer neuen Lokation).
