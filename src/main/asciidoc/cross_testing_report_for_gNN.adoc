@@ -82,6 +82,10 @@ src\main\resources\static\resources\uploadFiles\ +
 
 - Muss-Kriterien 2.2: kann nicht getestet werden, da es unmöglich ist, ein Festival freizugeben. 
 
+- Muss-Kriterien 2.4.2: kann nicht getestet werden, da es unmöglich ist, ein Festival freizugeben
+
+- Muss-Kriterien 3.4: kann nicht getestet werden, da es unmöglich ist, ein Festival freizugeben
+
 == Interaktion mit der Anwendung (Usability)
 - Zu grobe Fehlermeldung bei den unpassenden Daten (beim Erstellen von einer neuen Lokation).
 
