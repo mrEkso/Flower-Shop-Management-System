@@ -57,6 +57,11 @@ src\main\resources\static\resources\uploadFiles\ +
 |Verkaufsstatus: GESCHLOSSEN und kann nicht ein Ticket erstellen oder Gültigkeit prüfen
 |
 
+|Festivalbesucher -> Festivalgelände, Spielplan
+|
+|Es gibt keine Fistivals um zu testen
+|
+
 |===
 
 == Optik der Anwendung
