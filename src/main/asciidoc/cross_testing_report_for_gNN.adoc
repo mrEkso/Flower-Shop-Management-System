@@ -155,3 +155,5 @@ image::./models/images/kaZantip_lagerobj_isEmpty.jpg[??lager_objects.isEmpty_en?
 == Verbesserungsvorschläge
 * Was kann noch weiter verbessert werden?
 
+- Siehe oben. 
+
