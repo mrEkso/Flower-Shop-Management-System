@@ -67,11 +67,25 @@ src\main\resources\static\resources\uploadFiles\ +
 |Muss-kriterien N.2.1.2: "...Hierbei soll keine Doppelbelegung einer Location möglich sein...". Es gibt shön "Waldrave" mit Location "Wald".
 |-
 
+|Manager -> Lager -> Ein Lagerobjekt(Stage 1) löschen -> Error Seite
+|
+|Das Stageobjekt(Default Value) kann in Lager nicht gelöscht werden, da dies zu einem Fehler führt.
+|"Whops, there was an Error!"
+
+|Manager -> Lager -> Ein Neuses Mietobjekt eintragen -> Hinzufugen Seite -> Save
+|Parameter: Null Datum, Negativ Preis
+|Das Stageobjekt soll nicht erstellt werden, da es fehlende/falsche Infos hat. Aber es wird trotzdem erstellt
+|
+
+
+
+
 |===
 
 == Optik der Anwendung
 - Der Header der Webseite ist nicht bündig mit der oberen Fensterkante. Es wird empfohlen, das Top-Padding des Headers zu entfernen, um ein einheitliches und vertrautes Erscheinungsbild zu gewährleisten. 
 - Darüber hinaus finden wir, dass der Header kleiner gemacht werden soll, um mehr Platz für Content-Body zu schaffen. 
+- Viele Seiten sind inkonsistent mit der Sprache, einige Texte sind auf Englisch und einige auf Deutsch.
 
 
 == Fehlende Features
