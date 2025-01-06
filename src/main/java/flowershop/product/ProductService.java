@@ -220,7 +220,7 @@ public class ProductService {
 		if (product instanceof Flower flower) {
 			flower.getPricing().setSellPrice(Money.of(newSellPrice, "EUR"));
 		} else if (product instanceof Bouquet bouquet) {
-			bouquet.getPricing().setSellPrice(Money.of(newSellPrice, "EUR"));
+			bouquet.setAdditionalPrice(Money.of(newSellPrice, "EUR"));
 		} else {
 			throw new IllegalStateException("Unsupported product type: " + product.getClass().getSimpleName());
 		}

@@ -26,7 +26,7 @@ public class CashRegisterInitializer implements DataInitializer {
 		if (cashRegisterRepository.findAll().iterator().hasNext()) {
 			return; // Skip initialization if products already exist
 		}
-		CashRegister cashRegister = new CashRegister(Set.of(), Money.of(5000, EURO));
+		CashRegister cashRegister = new CashRegister(Set.of(), Money.of(50, EURO));
 		cashRegisterRepository.save(cashRegister);
 
 	}
