@@ -80,6 +80,14 @@ src\main\resources\static\resources\uploadFiles\ +
 
 - Lageplan zum Festival kann nicht hochgeladen werden (s. Fehlerreport No.5).
 
+- Muss-Kriterien 1.1: Es ist möglich, die Name und Nachname von einer Personalie als Zahl oder Sonderzeichen angeben.
+
+- Muss-Kriterien 1.3.2: es fehlt die Option für Auswählen aller Festivals, mehrerer Festivals oder eines einzelnen Festivals
+
+- Muss-Kriterien 2.1.1: es soll stehen, dass Manger auch Zugang hat
+
+- Muss-Kriterien 2.1.2: bei Doppelbuchung soll nicht einfach ein Fehlermeldung auftauchen, der Benutzer soll informiert werden, dass diese Location schon für ein anderes Fest verwendet wird
+ 
 - Muss-Kriterien 2.2: kann nicht getestet werden, da es unmöglich ist, ein Festival freizugeben (s. Fehlerreport No.2) 
 
 - Muss-Kriterien 2.4.2: kann nicht getestet werden, da es unmöglich ist, ein Festival freizugeben (s. Fehlerreport No.2)
