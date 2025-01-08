@@ -311,15 +311,36 @@ public class CashRegisterService implements Accountancy {
 			.sorted(Comparator.comparing(AccountancyEntryWrapper::getTimestamp))
 			.toList();
 
-		if (allEntries.isEmpty()) {
+		if (allEntries.isEmpty() && getAllDeletedProducts().isEmpty()) {
 			return null;
 		}
-		return new DailyFinancialReport(
-			interval,
-			moneyThen,
-			this,
-			allEntries.getFirst().getTimestamp(),
-			clockService);
+		if(allEntries.isEmpty()) {
+			return new DailyFinancialReport(
+				interval,
+				moneyThen,
+				this,
+				getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9,0),
+				clockService);
+		}
+		else if(getAllDeletedProducts().isEmpty()) {
+			return new DailyFinancialReport(
+				interval,
+				moneyThen,
+				this,
+				allEntries.getFirst().getTimestamp(),
+				clockService);
+		}
+		else{
+			LocalDateTime earlier = allEntries.getFirst().getTimestamp()
+				.isBefore(getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9,0)) ?
+				allEntries.getFirst().getTimestamp() : getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9,0);
+			return new DailyFinancialReport(
+				interval,
+				moneyThen,
+				this,
+				earlier,
+				clockService);
+		}
 	}
 
 	/**
@@ -344,15 +365,36 @@ public class CashRegisterService implements Accountancy {
 			.map(entry -> (AccountancyEntryWrapper) entry)
 			.sorted(Comparator.comparing(AccountancyEntryWrapper::getTimestamp))
 			.toList();
-		if (allEntries.isEmpty()) {
+		if (allEntries.isEmpty() && getAllDeletedProducts().isEmpty()) {
 			return null;
 		}
-		return new MonthlyFinancialReport(
-			interval,
-			moneyThen,
-			this,
-			allEntries.getFirst().getTimestamp(),
-			clockService);
+		if(allEntries.isEmpty()) {
+			return new MonthlyFinancialReport(
+				interval,
+				moneyThen,
+				this,
+				getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9,0),
+				clockService);
+		}
+		else if(getAllDeletedProducts().isEmpty()) {
+			return new MonthlyFinancialReport(
+				interval,
+				moneyThen,
+				this,
+				allEntries.getFirst().getTimestamp(),
+				clockService);
+		}
+		else{
+			LocalDateTime earlier = allEntries.getFirst().getTimestamp()
+				.isBefore(getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9,0)) ?
+				allEntries.getFirst().getTimestamp() : getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9,0);
+			return new MonthlyFinancialReport(
+				interval,
+				moneyThen,
+				this,
+				earlier,
+				clockService);
+		}
 	}
 
 	/**
