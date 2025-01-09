@@ -405,5 +405,11 @@ public class SalesController {
 		model.addAttribute("fullBuyPrice", fp);
 		return "redirect:/buy";
 	}
+
+	@GetMapping("/giftcard")
+	@PreAuthorize("hasRole('BOSS')")
+	public String giftCard(Model model) {
+		return "sales/giftcard";
+	}
 }
  
