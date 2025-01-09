@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{services.contract.edit}">Edit Contract Form</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-2">
+    <div class="text-center mb-4">
+        <h1 th:text="#{services.contract.edit}">Edit Contract Form</h1>
+    </div>
+    <div class="container mt-5">
+        <form th:action="@{/services/contracts/edit/{id}(id=${contractOrder.id})}" method="post"
+              class="p-4 border rounded shadow-sm">
+            <input type="hidden" name="_method" value="PUT">
+
+            <!-- Company Name -->
+            <div class="mb-3">
+                <label for="clientName" class="form-label" th:text="#{client.name}">Client Name</label>
+                <input type="text" class="form-control" th:value="${contractOrder.client.name}" id="clientName"
+                       name="clientName" required>
+            </div>
+
+            <!-- Contract Type (Frequency) -->
+            <div class="mb-3">
+                <label for="contractType" class="form-label" th:text="#{contract.type}">Contract Type</label>
+                <select id="contractType"
+                        name="contractType"
+                        class="form-control"
+                        th:field="*{contractOrder.contractType}"
+                        hx-get="/services/contracts/choose-frequency-options"
+                        hx-target="#frequencyOptionsContainer"
+                        hx-include="[name='contractType']"
+                        hx-swap="outerHTML">
+                    <option value="One-Time" th:selected="${contractOrder.contractType == 'One-Time'}"
+                            th:text="#{contract.type.oneTime}">One-Time
+                    </option>
+                    <option value="Recurring" th:selected="${contractOrder.contractType == 'Recurring'}"
+                            th:text="#{contract.type.recurring}">Recurring
+                    </option>
+                </select>
+            </div>
+
+            <!-- Frequency Options (Only shown for Recurring) -->
+            <div id="frequencyOptionsContainer" class="form-group"
+                 th:if="${contractOrder.contractType == 'Recurring' or contractType == 'Recurring'}">
+                <label for="frequency" th:text="#{contract.frequency}">Frequency</label>
+                <select id="frequency"
+                        name="frequency"
+                        class="form-control"
+                        hx-get="/services/contracts/choose-custom-frequency-options"
+                        hx-target="#customOptionsContainer"
+                        hx-include="[name='frequency']"
+                        hx-swap="outerHTML">
+                    <option value="daily" th:selected="${contractOrder.frequency == 'daily'}"
+                            th:text="#{frequency.daily}">Daily
+                    </option>
+                    <option value="weekly" th:selected="${contractOrder.frequency == 'weekly'}"
+                            th:text="#{frequency.weekly}">Weekly
+                    </option>
+                    <option value="monthly" th:selected="${contractOrder.frequency == 'monthly'}"
+                            th:text="#{frequency.monthly}">Monthly
+                    </option>
+                    <option value="custom" th:selected="${contractOrder.frequency == 'custom'}"
+                            th:text="#{frequency.custom}">Custom
+                    </option>
+                </select>
+            </div>
+
+            <!-- Custom Options (Only shown for Custom Frequency) -->
+            <div id="customOptionsContainer" class="form-group"
+                 th:if="${contractOrder.frequency == 'custom' or frequency == 'custom'}">
+                <label>Customize Frequency</label>
+                <input type="number"
+                       class="form-control"
+                       name="customFrequency"
+                       placeholder="Every X days/weeks/etc."
+                       th:value="${contractOrder.customFrequency}">
+                <select name="customUnit" class="form-control">
+                    <option value="day" th:selected="${contractOrder.customUnit == 'day'}">Day</option>
+                    <option value="week" th:selected="${contractOrder.customUnit == 'week'}">Week</option>
+                    <option value="month" th:selected="${contractOrder.customUnit == 'month'}">Month</option>
+                    <option value="year" th:selected="${contractOrder.customUnit == 'year'}">Year</option>
+                </select>
+            </div>
+
+            <!-- Contract start and end date -->
+            <div class="mb-3">
+                <label for="startDate" class="form-label" th:text="#{contract.startDate}">Start Date and Time</label>
+                <input type="datetime-local" class="form-control" th:value="${contractOrder.getStartDate()}" id="startDate"
+                       name="startDate" required>
+            </div>
+            <div class="mb-3">
+                <label for="endDate" class="form-label" th:text="#{contract.endDate}">End Date and Time</label>
+                <input type="datetime-local" class="form-control" th:value="${contractOrder.getEndDate()}" id="endDate"
+                       name="endDate"  required>
+            </div>
+
+            <!-- Address -->
+            <div class="mb-3">
+                <label for="address" class="form-label" th:text="#{contract.deliveryAddress}">Delivery
+                    Address</label>
+                <input type="text" class="form-control" th:value="${contractOrder.address}" id="address" name="address"
+                       placeholder="Street, House number, PLC, City" required>
+            </div>
+
+            <!-- Contact Phone -->
+            <div class="mb-3">
+                <label for="phone" class="form-label" th:text="#{contract.phone}">Phone</label>
+                <input type="tel" class="form-control" th:value="${contractOrder.client.phone}" id="phone" name="phone"
+                       placeholder="+1 xxx xxx xxx" required>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="mb-3">
+                <label for="paymentMethod" class="form-label" th:text="#{order.paymentMethod}">Payment Method</label>
+                <select th:value="${contractOrder.paymentMethod}" id="paymentMethod" class="form-control"
+                        name="paymentMethod"
+                        required>
+                    <option value="Cash" th:selected="${contractOrder.paymentMethod.toString() == 'Cash()'}"
+                            th:text="#{order.payment.cash}">Cash
+                    </option>
+                    <option value="Card" th:selected="${contractOrder.paymentMethod.toString() == 'Card()'}"
+                            th:text="#{order.payment.card}">Card
+                    </option>
+                </select>
+            </div>
+
+            <!-- Order Status -->
+            <div class="mb-3">
+                <label class="form-label" th:text="#{order.status}">Order Status</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="orderStatus" id="statusOpen" value="OPEN"
+                           th:checked="${contractOrder.orderStatus.name() == 'OPEN'}">
+                    <label class="form-check-label" for="statusOpen" th:text="#{order.status.open}">Open</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="orderStatus" id="statusPaid" value="PAID"
+                           th:checked="${contractOrder.orderStatus.name() == 'PAID'}">
+                    <label class="form-check-label" for="statusPaid" th:text="#{order.status.paid}">Paid</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="orderStatus" id="statusCompleted"
+                           value="COMPLETED"
+                           th:checked="${contractOrder.orderStatus.name() == 'COMPLETED'}">
+                    <label class="form-check-label" for="statusCompleted"
+                           th:text="#{order.status.completed}">Completed</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="orderStatus" id="statusCanceled" value="CANCELED"
+                           th:checked="${contractOrder.orderStatus.name() == 'CANCELED'}">
+                    <label class="form-check-label" for="statusCanceled"
+                           th:text="#{order.status.canceled}">Canceled</label>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <label class="form-label" th:text="#{order.selectProducts}">Choose Products</label>
+
+            <!-- Products -->
+            <div id="productsContainerContracts" hx-swap="outerHTML">
+                <div class="input-group mb-2" th:each="orderLine : ${contractOrder.orderLines}">
+                    <select th:name="'products[' + ${orderLine.productIdentifier} + ']'" class="form-select"
+                            required>
+                        <option th:each="product : ${products}"
+                                th:value="${product.id}"
+                                th:selected="${product.id == orderLine.productIdentifier}"
+                                th:text="${product.name}">
+                        </option>
+                    </select>
+                    <input th:name="'quantities[' + ${orderLine.productIdentifier} + ']'"
+                           class="form-control"
+                           type="number"
+                           th:value="${orderLine.quantity}"
+                           placeholder="Quantity"
+                           min="1"
+                           required>
+                    <!-- Delete Button -->
+                    <button type="button" class="btn btn-danger ml-2"
+                            hx-get="/services/empty-response"
+                            hx-target="closest .input-group"
+                            hx-swap="delete">
+                        Delete
+                    </button>
+                </div>
+                <button type="submit" class="btn btn-outline-primary"
+                        hx-get="/services/add-product-row"
+                        hx-target="#productsContainerContracts"
+                        hx-swap="beforeend">
+                    Add Product
+                </button>
+            </div>
+
+            <!-- Notes -->
+            <div class="mb-3">
+                <label for="notes" class="form-label" th:text="#{contract.notes}">Notes</label>
+                <textarea class="form-control" id="notes" name="notes" rows="3"
+                          placeholder="Enter any additional notes here" th:text="${contractOrder.notes}"></textarea>
+            </div>
+
+            <!-- Service price -->
+            <div class="mb-3">
+                <label for="servicePrice" class="form-label" th:text="#{contract.servicePrice}">Service price</label>
+                <input class="form-control" th:value="${contractOrder.getChargeLines().getTotal().getNumber()}"
+                       id="servicePrice" name="servicePrice" placeholder="0">
+            </div>
+
+            <!-- Error Message -->
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary" th:text="#{action.submit}">Submit</button>
+                <a href="/calendar" class="btn btn-secondary" th:text="#{action.cancel}">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://unpkg.com/htmx.org"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

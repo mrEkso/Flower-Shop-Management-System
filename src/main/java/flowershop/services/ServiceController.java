@@ -548,6 +548,8 @@ public class ServiceController {
 			reservationOrder.setNotes(notes);
 			reservationOrder.setPaymentMethod(paymentMethod);
 			reservationOrderService.update(reservationOrder, products, orderStatus, cancelReason, reservationStatus);
+
+
 			Event event = calendarService.findEventByUUID(id);
 			if(calendarService.findEventByUUID(id) != null) {
 				if(reservationOrder.getOrderStatus().name().equals("CANCELED") || reservationOrder.getOrderStatus().name().equals("COMPLETED")){
