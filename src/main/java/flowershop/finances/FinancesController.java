@@ -269,6 +269,7 @@ public class FinancesController {
 			return ResponseEntity.badRequest()
 				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
 		}
+
 		DailyFinancialReport report = cashRegisterService.createFinancialReportDay(actualDate.atStartOfDay());
 		if (report == null) {
 			return ResponseEntity.badRequest()
@@ -279,6 +280,8 @@ public class FinancesController {
 			return ResponseEntity.badRequest()
 				.body("The given date is before the accounting process started. No Data.".getBytes(StandardCharsets.UTF_8));
 		}
+
+
 		byte[] docu = report.generatePDF();
 		return ResponseEntity.ok()
 			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report_day.pdf")
@@ -289,13 +292,17 @@ public class FinancesController {
 	/**
 	 * Uploads a generated month-report
 	 *
-	 * @param year_month String of the form YYYY-MM.
+	 * @param month number of the needed month (1-12)
+	 * @param year the needed year
 	 * @param model
 	 * @return PDF-File
 	 */
 	@GetMapping("/monthReport")
 	@PreAuthorize("hasRole('BOSS')")
-	public ResponseEntity<byte[]> monthReport(@RequestParam("month") String year_month, Model model) {
+	public ResponseEntity<byte[]> monthReport(@RequestParam("month") int month,
+											  @RequestParam("year") int year,
+											  Model model) {
+		/*
 		String[] date = year_month.split("-");
 		if (date.length != 2) {
 			return ResponseEntity.badRequest()
@@ -306,7 +313,13 @@ public class FinancesController {
 			return ResponseEntity.badRequest()
 				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM".getBytes(StandardCharsets.UTF_8));
 		}
-		YearMonth monthParsed = YearMonth.parse(year_month);
+		*/
+		if(month < 1 || month > 12) {
+			return ResponseEntity.badRequest()
+				.body("No such month exists, dummy ;)".getBytes(StandardCharsets.UTF_8));
+		}
+
+		YearMonth monthParsed = YearMonth.of(year, month);
 		LocalDate firstOfMonth = monthParsed.atDay(1);
 		if (firstOfMonth.isAfter(clockService.getCurrentDate())) {
 			return ResponseEntity.badRequest()

@@ -19,7 +19,11 @@
     <div class="row justify-content-center">
 
         <form class="d-flex flex-column" action="/monthReport" method="get">
-            <input type="month" name="month" class="form-control mb-2" required>
+            <!--<input type="month" name="month" class="form-control mb-2" required> -->
+            <label for="month" th:text="#{finances.monthlyReport.month}"></label>
+            <input type="number" name="month" id="month" class="form-control mb-2" min="1" max="12" step="1" required>
+            <label for="year" th:text="#{finances.monthlyReport.year}"></label>
+            <input type="number" name="year" id="year" class="form-control mb-2" min="2024" step="1" required>
 
             <button type="submit" class="btn btn-primary mt-2">Create Report</button>
         </form>
