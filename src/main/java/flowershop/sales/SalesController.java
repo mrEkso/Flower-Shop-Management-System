@@ -405,5 +405,27 @@ public class SalesController {
 		model.addAttribute("fullBuyPrice", fp);
 		return "redirect:/buy";
 	}
+
+	@GetMapping("/giftcard")
+	@PreAuthorize("hasRole('BOSS')")
+	public String giftCard(Model model) {
+		return "sales/giftcard";
+	}
+
+	@PostMapping("create-giftcard")
+	@PreAuthorize("hasRole('BOSS')")
+	public String createGiftCard(Model model){
+		model.addAttribute("giftCardId", "TEST-ID");
+		return "sales/giftcard"; 
+	}
+
+	@GetMapping("/check-balance")
+	@PreAuthorize("hasRole('BOSS')")
+	public String checkGiftCardBalance(Model model,
+		@RequestParam String giftCardId
+	) {
+		model.addAttribute("giftCardBalance", "TEST EUR");
+		return "sales/giftcard";
+	}
 }
  
