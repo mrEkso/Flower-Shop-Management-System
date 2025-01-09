@@ -19,7 +19,7 @@
           <div
             class="col-6 d-flex flex-column align-items-center justify-content-center border-right"
           >
-            <h2 th:text="#{giftcard.create.title}">Create Gift Card</h2>
+            <h2 th:text="#{giftcard.create.title}"></h2>
             <form method="post" action="/create-giftcard" class="text-center">
               <div class="form-check">
                 <input
@@ -30,7 +30,11 @@
                   value="20"
                   checked
                 />
-                <label class="form-check-label" for="amount20">20 EUR</label>
+                <label
+                  class="form-check-label"
+                  for="amount20"
+                  th:text="#{giftcard.balance.20}"
+                ></label>
               </div>
               <div class="form-check">
                 <input
@@ -40,7 +44,11 @@
                   id="amount40"
                   value="40"
                 />
-                <label class="form-check-label" for="amount40">40 EUR</label>
+                <label
+                  class="form-check-label"
+                  for="amount40"
+                  th:text="#{giftcard.balance.40}"
+                ></label>
               </div>
               <div class="form-check">
                 <input
@@ -50,21 +58,30 @@
                   id="amount60"
                   value="60"
                 />
-                <label class="form-check-label" for="amount60">60 EUR</label>
+                <label
+                  class="form-check-label"
+                  for="amount60"
+                  th:text="#{giftcard.balance.20}"
+                ></label>
               </div>
-              <button type="submit" class="btn btn-primary mt-3">Buy</button>
+              <button
+                type="submit"
+                class="btn btn-primary mt-3"
+                th:text="#{giftcard.buy}"
+              ></button>
             </form>
             <div class="mt-4">
-              <h4 th:text="#{giftcard.id.title}">Gift Card ID:</h4>
-              <p class="text-success font-weight-bold" th:text="${giftCardId}">
-                ID will appear here
-              </p>
+              <h4 th:text="#{giftcard.id.title}"></h4>
+              <p
+                class="text-success font-weight-bold"
+                th:text="${giftCardId}"
+              ></p>
             </div>
           </div>
           <div
             class="col-6 d-flex flex-column align-items-center justify-content-center"
           >
-            <h2 th:text="#{giftcard.check.title}">Check Gift Card Balance</h2>
+            <h2 th:text="#{giftcard.check.title}"></h2>
             <form method="get" action="/check-balance" class="text-center">
               <div class="form-group">
                 <input
@@ -74,18 +91,18 @@
                   placeholder="Enter Gift Card ID"
                 />
               </div>
-              <button type="submit" class="btn btn-primary">
-                Check Balance
-              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                th:text="#{giftcard.check.balance}"
+              ></button>
             </form>
             <div class="mt-4">
-              <h4 th:text="#{giftcard.balance.title}">Balance:</h4>
+              <h4 th:text="#{giftcard.balance.title}"></h4>
               <p
                 class="text-success font-weight-bold"
                 th:text="${giftCardBalance}"
-              >
-                Balance will appear here
-              </p>
+              ></p>
             </div>
           </div>
         </div>
