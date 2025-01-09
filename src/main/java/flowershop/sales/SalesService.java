@@ -19,6 +19,7 @@ public class SalesService {
 	private final OrderFactory orderFactory;
 	private final WholesalerOrderService wholesalerOrderService;
 	private final ApplicationEventPublisher eventPublisher;
+	//private final CashRegisterService cashRegisterService;
 
 	public SalesService(ProductService productService, SimpleOrderService simpleOrderService, OrderFactory orderFactory, WholesalerOrderService wholesalerOrderService, ApplicationEventPublisher eventPublisher) {
 		this.productService = productService;
@@ -26,6 +27,7 @@ public class SalesService {
 		this.orderFactory = orderFactory;
 		this.wholesalerOrderService = wholesalerOrderService;
 		this.eventPublisher = eventPublisher;
+		//this.cashRegisterService = cashRegisterService;
 	}
 
 	/**
@@ -81,6 +83,7 @@ public class SalesService {
 		cart.clear();
 		var event = OrderEvents.OrderPaid.of(wholesalerOrder);
 		eventPublisher.publishEvent(event); // Needed for Finances
+		//cashRegisterService.onOrderPaid(event);
 	}
 	/**
 	 * Processes the purchase of products from a cart and creates a corresponding wholesaler order.

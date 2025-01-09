@@ -91,7 +91,8 @@ public class CashRegisterService implements Accountancy {
 			pendingOrders.add(newOrder);
 			cashRegister.setPendingOrders(pendingOrders);
 		}
-		else if(((AccountancyEntryWrapper)entry).getCategory().equals("Veranstaltung Verkauf"))
+		else if(((AccountancyEntryWrapper)entry).getCategory().equals("Veranstaltung Verkauf") ||
+			((AccountancyEntryWrapper)entry).getCategory().equals("Reservierter Verkauf"))
 		{
 			if(((AccountancyEntryWrapper) entry).getDeliveryDate().isAfter(clockService.getCurrentDate())) {
 				Cart cart = new Cart();
