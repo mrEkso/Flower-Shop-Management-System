@@ -4,7 +4,6 @@ import flowershop.calendar.CalendarService;
 import flowershop.calendar.Event;
 import flowershop.sales.SimpleOrder;
 import flowershop.sales.WholesalerOrder;
-import org.hibernate.event.spi.EventManager;
 import org.salespointframework.useraccount.UserAccount;
 import org.salespointframework.useraccount.UserAccountManagement;
 import org.springframework.context.annotation.DependsOn;

@@ -1,7 +1,6 @@
 package flowershop.services;
 
 import flowershop.sales.CardPayment;
-import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import org.salespointframework.order.Order;
 import org.salespointframework.payment.Cash;
