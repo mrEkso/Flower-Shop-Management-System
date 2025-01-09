@@ -25,7 +25,7 @@
 }
 
 .payment-method input[type="radio"] {
-  margin-right: 5px;
+  margin-left: 10px;
 }
 
 .basket-submit-btn {

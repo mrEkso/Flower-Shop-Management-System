@@ -74,6 +74,7 @@ public abstract class AbstractOrder extends Order {
 	 * @param paymentMethod the payment method as a string ("Cash" or "Card")
 	 */
 	public void setPaymentMethod(String paymentMethod) {
+		// TODO: Can be "Giftcard"
 		if (paymentMethod.equals("Cash")) {
 			this.setPaymentMethod(Cash.CASH);
 		} else if (paymentMethod.equals("Card")) {
