@@ -50,6 +50,7 @@
                     <form th:method="get" th:action="@{/resetDates}">
                         <button class="btn btn-secondary" th:text="#{finances.filter.button.reset}"></button>
                     </form>
+
                 </div>
                 <div class="row d-flex gap-3">
                     <form class="row d-flex flex-row align items-center mx-2" th:method="get"
@@ -99,6 +100,29 @@
                         <button class="btn btn-primary mb-0 mx-2" th:text="#{finances.filter.button.set}"></button>
                     </form>
                     <form th:method="get" th:action="@{/resetCategory}">
+                        <button class="btn btn-secondary" th:text="#{finances.filter.button.reset}"></button>
+                    </form>
+                </div>
+
+                <div class="row d-flex gap-3">
+                    <form class="row d-flex flex-row align items-center mx-2" th:method="get" th:action="@{/filterCustomerName}">
+                        <p class="mb-0 mx-2" th:text="#{finances.filter.customerName}"></p>
+                        <input type="text" name="customerName" th:value="${customerName}" placeholder="Enter customer name" required/>
+                        <button class="btn btn-primary mb-0 mx-2" th:text="#{finances.filter.button.set}"></button>
+                    </form>
+                    <form th:method="get" th:action="@{/resetCustomerName}">
+                        <button class="btn btn-secondary" th:text="#{finances.filter.button.reset}"></button>
+                    </form>
+                </div>
+
+                <!-- New Filter: Transaction Value -->
+                <div class="row d-flex gap-3">
+                    <form class="row d-flex flex-row align items-center mx-2" th:method="get" th:action="@{/filterTransactionValue}">
+                        <p class="mb-0 mx-2" th:text="#{finances.filter.transactionValue}"></p>
+                        <input type="number" name="transactionValue" th:value="${transactionValue}" step="0.01" placeholder="Enter value" required/>
+                        <button class="btn btn-primary mb-0 mx-2" th:text="#{finances.filter.button.set}"></button>
+                    </form>
+                    <form th:method="get" th:action="@{/resetTransactionValue}">
                         <button class="btn btn-secondary" th:text="#{finances.filter.button.reset}"></button>
                     </form>
                 </div>

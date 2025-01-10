@@ -33,10 +33,14 @@ public class FinancesController {
 	private List<AccountancyEntryWrapper> filteredAndCutOrdersList;
 	private HashSet<AccountancyEntryWrapper> filteredByDates = new HashSet<>();
 	private HashSet<AccountancyEntryWrapper> filteredByCategory = new HashSet<>();
+	private HashSet<AccountancyEntryWrapper> filteredByCustomerName = new HashSet<>();
+	private HashSet<AccountancyEntryWrapper> filteredBySum = new HashSet<>();
 	private LocalDate date1;
 	private LocalDate date2;
 	private boolean isFilteredByDates;
 	private boolean isFilteredByCategory;
+	private boolean isFilteredByCustomerName;
+	private boolean isFilteredBySum;
 	private String category;
 	private List<DeletedProduct> deletedProducts = new ArrayList<>();
 
@@ -166,11 +170,10 @@ public class FinancesController {
 	/**
 	 * Will sort this list and show a cut version of it in the table
 	 *
-	 * @param filteredOrdersList name speaks for itself
 	 * @param size               max number of entries which are shown in the table at a time
 	 */
-	private void setFilteredOrdersList(List<AccountancyEntryWrapper> filteredOrdersList, int size) {
-		List<AccountancyEntryWrapper> tempList = new ArrayList<>(filteredOrdersList);
+	private void setFilteredOrdersList(int size) {
+		List<AccountancyEntryWrapper> tempList = new ArrayList<>(formerArg);
 		Collections.sort(tempList, new Comparator<AccountancyEntry>() {
 			@Override
 			public int compare(AccountancyEntry first, AccountancyEntry second) {
@@ -385,13 +388,24 @@ public class FinancesController {
 			}
 			if (!this.filteredByDates.isEmpty()) {
 				setFilteredOrdersList(this.intersection(this.filteredByCategory, this.filteredByDates).stream().toList(), 100);
-			} else {
+			} else if (this.isFilteredByDates){
 				setFilteredOrdersList(this.filteredByCategory.stream().toList(), 100);
 			}
 		}
 		prepareFinancesModel(model, filteredAndCutOrdersList);
 		this.isFilteredByCategory = true;
 		return "finances";
+	}
+
+	@GetMapping("/filterCustomerName")
+	@PreAuthorize("hasRole('BOSS')")
+	public String filterCustomerName(Model model, @RequestParam("customerName") String customerName) {
+		List<AccountancyEntryWrapper> lst = this.cashRegisterService.filterByCustomer(customerName);
+		this.filteredByCustomerName = new HashSet<>();
+		for (AccountancyEntry i : lst) {
+			this.filteredByCustomerName.add((AccountancyEntryWrapper) i);
+		}
+
 	}
 
 	/**
