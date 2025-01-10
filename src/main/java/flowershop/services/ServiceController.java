@@ -214,6 +214,8 @@ public class ServiceController {
 				throw new IllegalArgumentException("The shop is closed");
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
+			if (startDate.isAfter(endDate))
+				throw new IllegalArgumentException("Start date cannot be later than end date");
 			ContractOrder contractOrder = orderFactory.createContractOrder(contractType, frequency,
 				startDate, endDate, address, getOrCreateClient(clientName, phone), notes);
 			if ("Recurring".equals(contractType)) {
@@ -221,8 +223,7 @@ public class ServiceController {
 			} else if ("custom".equals(frequency)) {
 				contractOrder.setCustomFrequency(customFrequency);
 				contractOrder.setCustomUnit(customUnit);
-			}
-			else{
+			} else {
 				contractOrder.setFrequency("One-Time");
 			}
 
@@ -261,6 +262,8 @@ public class ServiceController {
 				throw new IllegalArgumentException("The shop is closed");
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
+			if (eventDate.isBefore(LocalDateTime.now()))
+				throw new IllegalArgumentException("Event date and time cannot be in the past");
 			EventOrder eventOrder = orderFactory.createEventOrder(eventDate,
 				deliveryAddress, getOrCreateClient(clientName, phone), notes);
 			eventOrder.addChargeLine(Money.of(deliveryPrice, "EUR"), "Delivery Price");
@@ -295,6 +298,8 @@ public class ServiceController {
 				throw new IllegalArgumentException("The shop is closed");
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
+			if (reservationDateTime.isBefore(LocalDateTime.now()))
+				throw new IllegalArgumentException("Reservation date and time cannot be in the past");
 			ReservationOrder reservationOrder = orderFactory.createReservationOrder(reservationDateTime,
 				getOrCreateClient(clientName, phone), notes);
 			reservationOrderService.save(reservationOrder, products);
@@ -368,8 +373,6 @@ public class ServiceController {
 				throw new IllegalArgumentException("The shop is closed");
 			ContractOrder contractOrder = contractOrderService.getById(id)
 				.orElseThrow(() -> new NotFoundException("Contract order not found"));
-			System.out.println(contractOrder);
-			System.out.println(customUnit);
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
 				throw new IllegalArgumentException("Invalid phone number format");
 			if (startDate.isAfter(endDate))
@@ -383,32 +386,32 @@ public class ServiceController {
 			contractOrder.setAddress(address);
 			contractOrder.setNotes(notes);
 			contractOrder.setPaymentMethod(paymentMethod);
-			if ("Recurring".equals(frequency)) {
-				contractOrder.setFrequency(frequency);
-			} else if ("custom".equals(frequency)) {
+			if ("Recurring".equals(contractType)) contractOrder.setFrequency(frequency);
+			else {
+				contractOrder.setFrequency(null);
+				contractOrder.setCustomFrequency(null);
+				contractOrder.setCustomUnit(null);
+			}
+			if ("custom".equals(frequency) && customFrequency != null && customUnit != null) {
 				contractOrder.setCustomFrequency(customFrequency);
 				contractOrder.setCustomUnit(customUnit);
 			}
 			Event event = calendarService.findEventByUUID(id);
-			if(event != null) {
-				if(contractOrder.getFrequency().equals("weekly")){
-					if(contractOrder.getOrderStatus().name().equals("CANCELED") || contractOrder.getOrderStatus().name().equals("COMPLETED")){
+			if (event != null) {
+				if (frequency != null && (frequency.equals("weekly") || frequency.equals("monthly") || frequency.equals("daily") || frequency.equals("custom"))) {
+					if (orderStatus.equals("CANCELED") || orderStatus.equals("COMPLETED")) {
 						calendarService.removeReccuringEvent(id);
-					}
-					else {
+					} else {
 						calendarService.removeReccuringEvent(id);
 						calendarService.createReccuringEvent("Contract for " + clientName, startDate, endDate, notes, frequency, "contract", id);
 					}
-				}
-				else {
-					if(contractOrder.getOrderStatus().name().equals("CANCELED") || contractOrder.getOrderStatus().name().equals("COMPLETED")){
+				} else {
+					if (orderStatus.equals("CANCELED") || orderStatus.equals("COMPLETED")) {
 						calendarService.removeEvent(id);
-					}
-					else {
+					} else {
 						event.setDate(startDate);
 					}
 				}
-
 			}
 			contractOrderService.update(contractOrder, products, servicePrice, orderStatus, cancelReason);
 			return "redirect:/services";
@@ -478,11 +481,10 @@ public class ServiceController {
 			eventOrderService.update(eventOrder, products, deliveryPrice, orderStatus, cancelReason);
 
 			Event event = calendarService.findEventByUUID(id);
-			if(calendarService.findEventByUUID(id) != null) {
-				if(eventOrder.getOrderStatus().name().equals("CANCELED") || eventOrder.getOrderStatus().name().equals("COMPLETED")){
+			if (calendarService.findEventByUUID(id) != null) {
+				if (eventOrder.getOrderStatus().name().equals("CANCELED") || eventOrder.getOrderStatus().name().equals("COMPLETED")) {
 					calendarService.removeEvent(id);
-				}
-				else {
+				} else {
 					event.setDate(eventDate);
 				}
 			}
@@ -550,11 +552,10 @@ public class ServiceController {
 			reservationOrder.setPaymentMethod(paymentMethod);
 			reservationOrderService.update(reservationOrder, products, orderStatus, cancelReason, reservationStatus);
 			Event event = calendarService.findEventByUUID(id);
-			if(calendarService.findEventByUUID(id) != null) {
-				if(reservationOrder.getOrderStatus().name().equals("CANCELED") || reservationOrder.getOrderStatus().name().equals("COMPLETED")){
+			if (calendarService.findEventByUUID(id) != null) {
+				if (reservationOrder.getOrderStatus().name().equals("CANCELED") || reservationOrder.getOrderStatus().name().equals("COMPLETED")) {
 					calendarService.removeEvent(id);
-				}
-				else {
+				} else {
 					event.setDate(reservationDateTime);
 				}
 
@@ -605,11 +606,12 @@ public class ServiceController {
 
 	@GetMapping("/contracts/view/{id}")
 	public String getContractOrderViewPage(@PathVariable UUID id,
-										Model model) {
+										   Model model) {
 		model.addAttribute("contractOrder", contractOrderService.getById(id).get());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/view/contractOrderViewForm";
 	}
+
 	@GetMapping("/events/view/{id}")
 	public String getEventOrderViewPage(@PathVariable UUID id,
 										Model model) {
@@ -617,9 +619,10 @@ public class ServiceController {
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/view/eventOrderViewForm";
 	}
+
 	@GetMapping("/reservations/view/{id}")
 	public String getReservationOrderViewPage(@PathVariable UUID id,
-										Model model) {
+											  Model model) {
 		model.addAttribute("reservationOrder", reservationOrderService.getById(id).get());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/view/reservationOrderViewForm";

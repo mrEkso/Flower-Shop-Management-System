@@ -9,6 +9,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.money.MonetaryAmount;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +53,9 @@ public class ProductInventoryInitializer implements DataInitializer {
 		Flower dahlia = new Flower("Dahlia", new Pricing(Money.of(10.0, EURO), Money.of(20.0, EURO)), "Burgundy", 0);
 		Flower gladiolus = new Flower("Gladiolus", new Pricing(Money.of(6.5, EURO), Money.of(13.0, EURO)), "Orange", 0);
 
+		// Pre-defined Gift Cards
+		GiftCard giftCard1 = new GiftCard(Money.of(10, "EUR"));
+		GiftCard giftCard2 = new GiftCard(Money.of(20, "EUR"));
 
 		productCatalog.save(rose);
 		productCatalog.save(sunflower);
@@ -66,6 +70,8 @@ public class ProductInventoryInitializer implements DataInitializer {
 		productCatalog.save(dahlia);
 		productCatalog.save(gladiolus);
 
+		productCatalog.save(giftCard1);
+		productCatalog.save(giftCard2);
 
 		Map<Flower, Integer> bouquetFlowersMap1 = new HashMap<>();
 		bouquetFlowersMap1.put(rose, 3);
@@ -93,11 +99,5 @@ public class ProductInventoryInitializer implements DataInitializer {
 		productCatalog.save(roseLilyBouquet);
 		productCatalog.save(roseLilyBouquet2);
 
-		// Initialize inventory with 10 items of each product
-		productCatalog.findAll().forEach(flower -> {
-			if (inventory.findByProduct(flower).isEmpty()) {
-				inventory.save(new UniqueInventoryItem(flower, Quantity.of(10)));
-			}
-		});
 	}
 }

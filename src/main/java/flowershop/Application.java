@@ -23,6 +23,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 /**
@@ -54,8 +55,6 @@ public class Application {
 				.anyRequest().authenticated())
 				.formLogin(login -> login.loginProcessingUrl("/login"))
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/"))
-				.exceptionHandling(ex -> ex
-					.accessDeniedPage("/403"))
 				.build();
 		}
 
