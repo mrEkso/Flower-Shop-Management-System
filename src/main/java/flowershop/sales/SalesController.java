@@ -4,8 +4,8 @@ import flowershop.clock.ClockService;
 import flowershop.product.Bouquet;
 import flowershop.product.Flower;
 import flowershop.product.ProductService;
-import flowershop.services.ContractOrder;
-import flowershop.services.ContractOrderService;
+import flowershop.services.ReservationOrder;
+import flowershop.services.ReservationOrderService;
 
 import org.salespointframework.catalog.Product;
 import org.salespointframework.catalog.Product.ProductIdentifier;
@@ -34,13 +34,14 @@ public class SalesController {
 	private final ProductService productService;
 	private final SalesService salesService;
 	private final ClockService clockService;
-	private final ContractOrderService contractOrderService;
+	private final ReservationOrderService reservationOrderService;
 
-	SalesController(ProductService productService, SalesService salesService, ClockService clockService, ContractOrderService contractOrderService) {
+	SalesController(ProductService productService, SalesService salesService, 
+	ClockService clockService, ReservationOrderService reservationOrderService) {
 		this.productService = productService;
 		this.salesService = salesService;
 		this.clockService = clockService;
-		this.contractOrderService = contractOrderService;
+		this.reservationOrderService = reservationOrderService;
 	}
 
 	@ModelAttribute("buyCart")
@@ -171,9 +172,9 @@ public class SalesController {
 		
 		Map<Product, Integer> productQuantities = new HashMap<>();
 
-		List<ContractOrder> orders = contractOrderService.findAll();
+		List<ReservationOrder> orders = reservationOrderService.findAll();
 
-		for (ContractOrder order : orders) {
+		for (ReservationOrder order : orders) {
 			for (OrderLine line : order.getOrderLines()) {
 				Product product = productService.getProductById(line.getProductIdentifier())
 					.orElseThrow(() -> new IllegalArgumentException("Product not found: " + line.getProductIdentifier()));
