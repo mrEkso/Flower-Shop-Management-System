@@ -8,6 +8,7 @@ import flowershop.services.ContractOrder;
 import flowershop.services.ContractOrderService;
 
 import org.salespointframework.catalog.Product;
+import org.salespointframework.catalog.Product.ProductIdentifier;
 import org.salespointframework.order.Cart;
 import org.salespointframework.order.CartItem;
 import org.salespointframework.order.OrderLine;
@@ -98,17 +99,30 @@ public class SalesController {
 		flowers = productService.filterFlowersInStock(flowers);
 		bouquets = productService.filterBouquetsInStock(bouquets);
 
+		// Create a Map with adjusted quantities
+		Map<ProductIdentifier , Integer> productQuantities = new HashMap<>();
+		for (Flower flower : flowers) {
+			int adjustedQuantity = flower.getQuantity() - getReservedQuantity(flower.getName());
+			productQuantities.put(flower.getId(), Math.max(adjustedQuantity, 0));
+		}
+	
+		for (Bouquet bouquet : bouquets) {
+			int adjustedQuantity = bouquet.getQuantity() - getReservedQuantity(bouquet.getName());
+			productQuantities.put(bouquet.getId(), Math.max(adjustedQuantity, 0));
+		}
+		
 		// Add both flowers and bouquets together.
 		List<Product> products = new ArrayList<>();
 		products.addAll(flowers);
 		products.addAll(bouquets);
-
+		
 		Set<String> colors = productService.getAllFlowerColors();
-
+		
 		model.addAttribute("typeList", colors);
 		model.addAttribute("filterItem", filterItem);
 		model.addAttribute("searchInput", searchInput);
 		model.addAttribute("products", products);
+		model.addAttribute("quantities", productQuantities);
 
 		return "sales/sell";
 	}
