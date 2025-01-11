@@ -39,7 +39,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 	//      - Amount (parent class)
 
 
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	private Map<String, Quantity> nameQuantityMap = new HashMap<String, Quantity>();
 
 	@ElementCollection

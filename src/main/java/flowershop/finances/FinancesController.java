@@ -26,7 +26,7 @@ import java.util.*;
 //@RequestMapping("/finances")
 public class FinancesController {
 
-
+	private final int maxEntriesShown = 100;
 	private final CashRegisterService cashRegisterService;
 	private final ClockService clockService;
 	private List<AccountancyEntryWrapper> filteredOrdersList = new ArrayList<>();
@@ -42,6 +42,8 @@ public class FinancesController {
 	private boolean isFilteredByCustomerName;
 	private boolean isFilteredBySum;
 	private String category;
+	private String name = "";
+	private String sum = "";
 	private List<DeletedProduct> deletedProducts = new ArrayList<>();
 
 	public FinancesController(CashRegisterService cashRegisterService, ClockService clockService) {
@@ -81,12 +83,8 @@ public class FinancesController {
 			filteredList.add((AccountancyEntryWrapper) i);
 		}
 		this.filteredByDates = filteredList;
-		if (!this.filteredByCategory.isEmpty()) {
-			setFilteredOrdersList(intersection(filteredList, this.filteredByCategory).stream().toList(), 100);
-		} else {
-			setFilteredOrdersList(filteredList.stream().toList(), 100);
-		}
 		this.isFilteredByDates = true;
+		setFilteredOrdersList(this.maxEntriesShown);
 		List<DeletedProduct> tempList = new ArrayList<>(cashRegisterService.getAllDeletedProducts(date1,date2));
 		tempList.sort(Comparator.comparing(DeletedProduct::getDateWhenDeleted).reversed());
 		this.deletedProducts = tempList;
@@ -109,9 +107,6 @@ public class FinancesController {
 		this.date1 = LocalDate.of(1970, 1, 1);
 		this.date2 = LocalDate.now();
 		getTransactionPage(model);
-		if (this.isFilteredByCategory) {
-			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByCategory).stream().toList(), 100);
-		}
 		List<DeletedProduct> tempList = new ArrayList<>(cashRegisterService.getAllDeletedProducts());
 		tempList.sort(Comparator.comparing(DeletedProduct::getDateWhenDeleted).reversed());
 		this.deletedProducts = tempList;
@@ -132,9 +127,6 @@ public class FinancesController {
 		this.isFilteredByCategory = false;
 		this.category = "all";
 		getTransactionPage(model);
-		if (this.isFilteredByDates) {
-			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByDates).stream().toList(), 100);
-		}
 		/*
 		else{
 			getTransactionPage(model);
@@ -165,6 +157,9 @@ public class FinancesController {
 		LocalDateTime endOfInterval = startOfDay.plusDays(1);
 		model.addAttribute("dayProfit", cashRegisterService.salesVolume(Interval.from(startOfDay).to(endOfInterval), Duration.ofDays(1)).get(Interval.from(startOfDay).to(endOfInterval)));
 		model.addAttribute("transactionsNotEmpty", !transactions.isEmpty());
+		model.addAttribute("customerName", this.name);
+		model.addAttribute("transactionValue", this.sum);
+
 	}
 
 	/**
@@ -173,7 +168,7 @@ public class FinancesController {
 	 * @param size               max number of entries which are shown in the table at a time
 	 */
 	private void setFilteredOrdersList(int size) {
-		List<AccountancyEntryWrapper> tempList = new ArrayList<>(formerArg);
+		List<AccountancyEntryWrapper> tempList = new ArrayList<>(findFilteredEntries());
 		Collections.sort(tempList, new Comparator<AccountancyEntry>() {
 			@Override
 			public int compare(AccountancyEntry first, AccountancyEntry second) {
@@ -188,6 +183,40 @@ public class FinancesController {
 		});
 		this.filteredOrdersList = tempList;
 		limitListSize(size);
+	}
+
+	private Set<AccountancyEntryWrapper> findFilteredEntries(){
+		final List<Set<AccountancyEntryWrapper>> filterSets = List.of(
+			filteredByDates,
+			filteredByCategory,
+			filteredByCustomerName,
+			filteredBySum
+		);
+		final List<Boolean> filterSettings = List.of(
+			isFilteredByDates,
+			isFilteredByCategory,
+			isFilteredByCustomerName,
+			isFilteredBySum
+		);
+		Set<AccountancyEntryWrapper> filteredSet = new HashSet<>();
+		boolean firstActiveFilterFound = false;
+		int i = 0;
+		while (i < filterSets.size()) {
+			if(filterSettings.get(i) && !firstActiveFilterFound) {
+				firstActiveFilterFound = true;
+				filteredSet = filterSets.get(i);
+			}
+			else if(filterSettings.get(i)){
+				filteredSet = intersection(filteredSet, filterSets.get(i));
+			}
+			i+=1;
+		}
+		if(!firstActiveFilterFound){
+			for (AccountancyEntry j : this.cashRegisterService.findAll().toList()) {
+				filteredSet.add((AccountancyEntryWrapper) j);
+			}
+		}
+		return filteredSet;
 	}
 
 	/**
@@ -205,7 +234,7 @@ public class FinancesController {
 		tempList.sort(Comparator.comparing(DeletedProduct::getDateWhenDeleted).reversed());
 		this.deletedProducts = tempList;
 
-		setFilteredOrdersList(filteredOrdersList, 100);
+		setFilteredOrdersList(this.maxEntriesShown);
 		model.addAttribute("transactions", filteredAndCutOrdersList);
 		model.addAttribute("currentBalance", cashRegisterService.getBalance());
 		model.addAttribute("todayDate", clockService.getCurrentDate());
@@ -217,6 +246,8 @@ public class FinancesController {
 		model.addAttribute("deletedProducts", this.deletedProducts);
 		model.addAttribute("deletedProductsNotEmpty", !this.deletedProducts.isEmpty());
 		model.addAttribute("transactionsNotEmpty", !filteredOrdersList.isEmpty());
+		model.addAttribute("customerName", this.name);
+		model.addAttribute("transactionValue", this.sum);
 		return "finances";
 	}
 
@@ -363,9 +394,11 @@ public class FinancesController {
 	@PreAuthorize("hasRole('BOSS')")
 	public String filterCategories(@RequestParam("filter") String category, Model model) {
 		//this.categorySet = category;
+		this.category = category;
 		if (category.equals("all")) {
 			return this.resetCategory(model);
 		} else {
+			this.isFilteredByCategory = true;
 			List<AccountancyEntry> lst;
 			if (category.equals("income")) {
 				lst = this.cashRegisterService.filterIncomeOrSpending(true);
@@ -386,27 +419,64 @@ public class FinancesController {
 			for (AccountancyEntry i : lst) {
 				this.filteredByCategory.add((AccountancyEntryWrapper) i);
 			}
-			if (!this.filteredByDates.isEmpty()) {
-				setFilteredOrdersList(this.intersection(this.filteredByCategory, this.filteredByDates).stream().toList(), 100);
-			} else if (this.isFilteredByDates){
-				setFilteredOrdersList(this.filteredByCategory.stream().toList(), 100);
-			}
+			setFilteredOrdersList(this.maxEntriesShown);
 		}
 		prepareFinancesModel(model, filteredAndCutOrdersList);
-		this.isFilteredByCategory = true;
 		return "finances";
 	}
 
 	@GetMapping("/filterCustomerName")
 	@PreAuthorize("hasRole('BOSS')")
 	public String filterCustomerName(Model model, @RequestParam("customerName") String customerName) {
+		this.name = customerName;
 		List<AccountancyEntryWrapper> lst = this.cashRegisterService.filterByCustomer(customerName);
 		this.filteredByCustomerName = new HashSet<>();
 		for (AccountancyEntry i : lst) {
 			this.filteredByCustomerName.add((AccountancyEntryWrapper) i);
 		}
-
+		this.isFilteredByCustomerName = true;
+		setFilteredOrdersList(this.maxEntriesShown);
+		prepareFinancesModel(model, filteredAndCutOrdersList);
+		return "finances";
 	}
+
+	@GetMapping("/filterTransactionValue")
+	@PreAuthorize("hasRole('BOSS')")
+	public String filterPrice(Model model, @RequestParam("transactionValue") double price) {
+		this.sum = String.valueOf(price);
+		List<AccountancyEntryWrapper> lst = this.cashRegisterService.filterByPrice(price);
+		this.filteredBySum = new HashSet<>();
+		for (AccountancyEntry i : lst) {
+			this.filteredBySum.add((AccountancyEntryWrapper) i);
+		}
+		this.isFilteredBySum = true;
+		setFilteredOrdersList(this.maxEntriesShown);
+		prepareFinancesModel(model, filteredAndCutOrdersList);
+		return "finances";
+	}
+
+	@GetMapping("/resetCustomerName")
+	@PreAuthorize("hasRole('BOSS')")
+	public String resetCustomerName(Model model) {
+		this.name = "";
+		this.isFilteredByCustomerName = false;
+		this.filteredByCustomerName.clear();
+		setFilteredOrdersList(this.maxEntriesShown);
+		prepareFinancesModel(model, filteredAndCutOrdersList);
+		return "finances";
+	}
+
+	@GetMapping("/resetTransactionValue")
+	@PreAuthorize("hasRole('BOSS')")
+	public String resetTransactionValue(Model model) {
+		this.sum = "";
+		this.isFilteredBySum = false;
+		this.filteredBySum.clear();
+		setFilteredOrdersList(this.maxEntriesShown);
+		prepareFinancesModel(model, filteredAndCutOrdersList);
+		return "finances";
+	}
+
 
 	/**
 	 * @param size maximal number of entries to be shown in the table

@@ -452,4 +452,23 @@ public class CashRegisterService implements Accountancy {
 	}
 
 
+	public List<AccountancyEntryWrapper> filterByCustomer(String customerName) {
+		LinkedList<AccountancyEntryWrapper> filteredEntries = new LinkedList<>();
+		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
+			if (((AccountancyEntryWrapper)entry).getClientName().contains(customerName)) {
+				filteredEntries.add((AccountancyEntryWrapper) entry);
+			}
+		}
+		return filteredEntries;
+	}
+
+	public List<AccountancyEntryWrapper> filterByPrice(double price) {
+		LinkedList<AccountancyEntryWrapper> filteredEntries = new LinkedList<>();
+		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
+			if (entry.getValue().getNumber().doubleValue() == price) {
+				filteredEntries.add((AccountancyEntryWrapper) entry);
+			}
+		}
+		return filteredEntries;
+	}
 }

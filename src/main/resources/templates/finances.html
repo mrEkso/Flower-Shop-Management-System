@@ -37,96 +37,61 @@
             </div>
 
             <div class="row d-flex flex-column justify-content-center mb-4">
-                <div class="row d-flex">
-                    <form class="row d-flex flex-row align items-center mx-2" th:method="get"
-                          th:action="@{/filterDates}">
+                <div class="row d-flex align-items-center mb-3">
+                    <form class="d-flex flex-row align-items-center mx-2" th:method="get" th:action="@{/filterDates}">
                         <p class="mb-0 mx-2" th:text="#{finances.from}"></p>
-                        <input type="date" name="date1" th:value="${date1}" required/>
+                        <input type="date" name="date1" th:value="${date1}" required class="form-control mx-2" style="max-width: 150px;"/>
                         <p class="mb-0 mx-2" th:text="#{finances.until}"></p>
-                        <input type="date" name="date2" th:value="${date2}" required/>
-                        <button class="btn btn-primary mb-0 mx-2" th:text="#{finances.filter.button.set}"></button>
+                        <input type="date" name="date2" th:value="${date2}" required class="form-control mx-2" style="max-width: 150px;"/>
+                        <button class="btn btn-primary mx-2" th:text="#{finances.filter.button.set}"></button>
                     </form>
-
-                    <form th:method="get" th:action="@{/resetDates}">
+                    <form class="mx-2" th:method="get" th:action="@{/resetDates}">
                         <button class="btn btn-secondary" th:text="#{finances.filter.button.reset}"></button>
                     </form>
-
                 </div>
-                <div class="row d-flex gap-3">
-                    <form class="row d-flex flex-row align items-center mx-2" th:method="get"
-                          th:action="@{/filterCategories}">
-                        <select name="filter" id="filter" th:value="${category}">
-                            <option
-                                    value="all"
-                                    th:text="#{finances.filter.everything}"
-                                    th:selected="${category}=='all'"
-                            />
-                            <option
-                                    value="income"
-                                    th:text="#{finances.filter.income}"
-                                    th:selected="${category}=='income'"
-                            />
-                            <option
-                                    value="spendings"
-                                    th:text="#{finances.filter.spendings}"
-                                    th:selected="${category}=='spendings'"
-                            />
-                            <option
-                                    value="simple order"
-                                    th:text="#{finances.filter.simple}"
-                                    th:selected="${category}=='simple order'"
-                            />
-                            <option
-                                    value="reserved order"
-                                    th:text="#{finances.filter.reserved}"
-                                    th:selected="${category}=='reserved order'"
-                            />
-                            <option
-                                    value="event order"
-                                    th:text="#{finances.filter.event}"
-                                    th:selected="${category}=='event order'"
-                            />
-                            <option
-                                    value="contract order"
-                                    th:text="#{finances.filter.contract}"
-                                    th:selected="${category}=='contract order'"
-                            />
-                            <option
-                                    value="wholesaler"
-                                    th:text="#{finances.filter.wholesaler}"
-                                    th:selected="${category}=='wholesaler'"
-                            />
+
+                <div class="row d-flex align-items-center gap-3 mb-3">
+                    <form class="d-flex flex-row align-items-center mx-2" th:method="get" th:action="@{/filterCategories}">
+                        <select name="filter" id="filter" th:value="${category}" class="form-select mx-2" style="max-width: 200px;">
+                            <option value="all" th:text="#{finances.filter.everything}" th:selected="${category}=='all'"></option>
+                            <option value="income" th:text="#{finances.filter.income}" th:selected="${category}=='income'"></option>
+                            <option value="spendings" th:text="#{finances.filter.spendings}" th:selected="${category}=='spendings'"></option>
+                            <option value="simple order" th:text="#{finances.filter.simple}" th:selected="${category}=='simple order'"></option>
+                            <option value="reserved order" th:text="#{finances.filter.reserved}" th:selected="${category}=='reserved order'"></option>
+                            <option value="event order" th:text="#{finances.filter.event}" th:selected="${category}=='event order'"></option>
+                            <option value="contract order" th:text="#{finances.filter.contract}" th:selected="${category}=='contract order'"></option>
+                            <option value="wholesaler" th:text="#{finances.filter.wholesaler}" th:selected="${category}=='wholesaler'"></option>
                         </select>
-                        <button class="btn btn-primary mb-0 mx-2" th:text="#{finances.filter.button.set}"></button>
+                        <button class="btn btn-primary mx-2" th:text="#{finances.filter.button.set}"></button>
                     </form>
-                    <form th:method="get" th:action="@{/resetCategory}">
+                    <form class="mx-2" th:method="get" th:action="@{/resetCategory}">
                         <button class="btn btn-secondary" th:text="#{finances.filter.button.reset}"></button>
                     </form>
                 </div>
 
-                <div class="row d-flex gap-3">
-                    <form class="row d-flex flex-row align items-center mx-2" th:method="get" th:action="@{/filterCustomerName}">
+                <div class="row d-flex align-items-center gap-3 mb-3">
+                    <form class="d-flex flex-row align-items-center mx-2" th:method="get" th:action="@{/filterCustomerName}">
                         <p class="mb-0 mx-2" th:text="#{finances.filter.customerName}"></p>
-                        <input type="text" name="customerName" th:value="${customerName}" placeholder="Enter customer name" required/>
-                        <button class="btn btn-primary mb-0 mx-2" th:text="#{finances.filter.button.set}"></button>
+                        <input type="text" name="customerName" th:value="${customerName}" required class="form-control mx-2" style="max-width: 200px;"/>
+                        <button class="btn btn-primary mx-2" th:text="#{finances.filter.button.set}"></button>
                     </form>
-                    <form th:method="get" th:action="@{/resetCustomerName}">
+                    <form class="mx-2" th:method="get" th:action="@{/resetCustomerName}">
                         <button class="btn btn-secondary" th:text="#{finances.filter.button.reset}"></button>
                     </form>
                 </div>
 
-                <!-- New Filter: Transaction Value -->
-                <div class="row d-flex gap-3">
-                    <form class="row d-flex flex-row align items-center mx-2" th:method="get" th:action="@{/filterTransactionValue}">
+                <div class="row d-flex align-items-center gap-3">
+                    <form class="d-flex flex-row align-items-center mx-2" th:method="get" th:action="@{/filterTransactionValue}">
                         <p class="mb-0 mx-2" th:text="#{finances.filter.transactionValue}"></p>
-                        <input type="number" name="transactionValue" th:value="${transactionValue}" step="0.01" placeholder="Enter value" required/>
-                        <button class="btn btn-primary mb-0 mx-2" th:text="#{finances.filter.button.set}"></button>
+                        <input type="number" name="transactionValue" th:value="${transactionValue}" step="0.01" required class="form-control mx-2" style="max-width: 150px;"/>
+                        <button class="btn btn-primary mx-2" th:text="#{finances.filter.button.set}"></button>
                     </form>
-                    <form th:method="get" th:action="@{/resetTransactionValue}">
+                    <form class="mx-2" th:method="get" th:action="@{/resetTransactionValue}">
                         <button class="btn btn-secondary" th:text="#{finances.filter.button.reset}"></button>
                     </form>
                 </div>
             </div>
+
             <div class="row w-100 mt-4">
                 <!--                    To do: Make h variable-->
                 <div class="table-responsive" style="max-height: calc(60vh); overflow-y: auto;">
