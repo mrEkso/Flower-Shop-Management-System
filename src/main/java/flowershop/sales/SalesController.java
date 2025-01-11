@@ -3,10 +3,13 @@ package flowershop.sales;
 import flowershop.clock.ClockService;
 import flowershop.product.Bouquet;
 import flowershop.product.Flower;
+import flowershop.product.GiftCard;
+import flowershop.product.GiftCardRepository;
 import flowershop.product.ProductService;
 import flowershop.services.ContractOrder;
 import flowershop.services.ContractOrderService;
 
+import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.Cart;
 import org.salespointframework.order.CartItem;
@@ -31,15 +34,18 @@ import java.util.UUID;
 public class SalesController {
 
 	private final ProductService productService;
+	private final GiftCardRepository giftCardRepository;
 	private final SalesService salesService;
 	private final ClockService clockService;
 	private final ContractOrderService contractOrderService;
 
-	SalesController(ProductService productService, SalesService salesService, ClockService clockService, ContractOrderService contractOrderService) {
+	SalesController(ProductService productService, SalesService salesService, 
+	ClockService clockService, ContractOrderService contractOrderService, GiftCardRepository giftCardRepository) {
 		this.productService = productService;
 		this.salesService = salesService;
 		this.clockService = clockService;
 		this.contractOrderService = contractOrderService;
+		this.giftCardRepository = giftCardRepository;
 	}
 
 	@ModelAttribute("buyCart")
@@ -414,8 +420,15 @@ public class SalesController {
 
 	@PostMapping("create-giftcard")
 	@PreAuthorize("hasRole('BOSS')")
-	public String createGiftCard(Model model){
-		model.addAttribute("giftCardId", "TEST-ID");
+	public String createGiftCard(Model model,
+		@RequestParam(required = true) Integer amount){
+		
+			
+		GiftCard giftCard = new GiftCard(Money.of(amount, "EUR"), amount.toString());
+
+		giftCardRepository.save(giftCard);
+
+		model.addAttribute("giftCardId", giftCard.getId());
 		return "sales/giftcard"; 
 	}
 
@@ -424,7 +437,15 @@ public class SalesController {
 	public String checkGiftCardBalance(Model model,
 		@RequestParam String giftCardId
 	) {
-		model.addAttribute("giftCardBalance", "TEST EUR");
+		giftCardRepository.findAll()
+			.stream()
+			.filter(giftCard -> giftCard.getId().equals(giftCardId.trim()))
+			.findFirst()
+			.ifPresentOrElse(
+				giftCard -> model.addAttribute("giftCardBalance", giftCard.getBalance()),
+				() -> model.addAttribute("giftCardBalance", "THER IS NO CARD WITH THIS ID")
+			);
+		
 		return "sales/giftcard";
 	}
 }
