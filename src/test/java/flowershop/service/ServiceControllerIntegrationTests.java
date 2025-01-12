@@ -224,7 +224,7 @@ class ServiceControllerIntegrationTests {
 				.param("notes", "Test notes")
 				.param("deliveryPrice", "50"))
 			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl("/services/create"));
+			.andExpect(redirectedUrl("/services"));
 	}
 
 	@Test
@@ -286,7 +286,7 @@ class ServiceControllerIntegrationTests {
 				.param("phone", "123456789")
 				.param("notes", "Test notes"))
 			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl("/services/create"));
+			.andExpect(redirectedUrl("/services"));
 	}
 
 	@Test
