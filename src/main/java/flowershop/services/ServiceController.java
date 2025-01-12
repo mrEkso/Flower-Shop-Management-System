@@ -46,8 +46,10 @@ public class ServiceController {
 	 * @param orderFactory            the factory for creating orders
 	 * @param clockService            the service for managing work hours
 	 */
-	public ServiceController(EventOrderService eventOrderService, ContractOrderService contractOrderService, ReservationOrderService reservationOrderService,
-							 ProductService productService, ClientService clientService, OrderFactory orderFactory, CalendarService calendarService, ClockService clockService) {
+	public ServiceController(EventOrderService eventOrderService, ContractOrderService contractOrderService,
+							 ReservationOrderService reservationOrderService, ProductService productService,
+							 ClientService clientService, OrderFactory orderFactory, CalendarService calendarService,
+							 ClockService clockService) {
 		this.eventOrderService = eventOrderService;
 		this.contractOrderService = contractOrderService;
 		this.reservationOrderService = reservationOrderService;
@@ -56,7 +58,6 @@ public class ServiceController {
 		this.orderFactory = orderFactory;
 		this.calendarService = calendarService;
 		this.clockService = clockService;
-
 	}
 
 	/**
@@ -74,35 +75,48 @@ public class ServiceController {
 	}
 
 	/**
-	 * Handles GET requests to retrieve an order by its ID and type.
+	 * Handles GET requests to display the view page for a contract order.
 	 *
-	 * @param type the type of the order (contracts, events, or reservations)
-	 * @param id   the ID of the order
-	 * @return a `ResponseEntity` containing the order if found, or an appropriate HTTP status
+	 * @param id    the ID of the contract order
+	 * @param model the model to add attributes to
+	 * @return the view name for the contract order view page
 	 */
-	// #TODO: Refactor this method to return a view instead of a ResponseEntity
-	@GetMapping("/{type}/{id}")
-	public ResponseEntity<?> getOrderById(@PathVariable String type, @PathVariable UUID id) {
-		switch (type) {
-			case "contracts" -> {
-				return contractOrderService.getById(id)
-					.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-					.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-			}
-			case "events" -> {
-				return eventOrderService.getById(id)
-					.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-					.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-			}
-			case "reservations" -> {
-				return reservationOrderService.getById(id)
-					.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-					.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-			}
-			default -> {
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-			}
-		}
+	@GetMapping("/contracts/view/{id}")
+	public String getContractOrderViewPage(@PathVariable UUID id,
+										   Model model) {
+		model.addAttribute("contractOrder", contractOrderService.getById(id).get());
+		model.addAttribute("products", productService.getAllProducts());
+		return "services/view/contractOrderViewForm";
+	}
+
+	/**
+	 * Handles GET requests to display the view page for an event order.
+	 *
+	 * @param id    the ID of the event order
+	 * @param model the model to add attributes to
+	 * @return the view name for the event order view page
+	 */
+	@GetMapping("/events/view/{id}")
+	public String getEventOrderViewPage(@PathVariable UUID id,
+										Model model) {
+		model.addAttribute("eventOrder", eventOrderService.getById(id).get());
+		model.addAttribute("products", productService.getAllProducts());
+		return "services/view/eventOrderViewForm";
+	}
+
+	/**
+	 * Handles GET requests to display the view page for a reservation order.
+	 *
+	 * @param id    the ID of the reservation order
+	 * @param model the model to add attributes to
+	 * @return the view name for the reservation order view page
+	 */
+	@GetMapping("/reservations/view/{id}")
+	public String getReservationOrderViewPage(@PathVariable UUID id,
+											  Model model) {
+		model.addAttribute("reservationOrder", reservationOrderService.getById(id).get());
+		model.addAttribute("products", productService.getAllProducts());
+		return "services/view/reservationOrderViewForm";
 	}
 
 	/**
@@ -153,7 +167,8 @@ public class ServiceController {
 	public String chooseFrequencyOptions(Model model,
 										 @RequestParam(value = "contractType", required = false) String contractType) {
 		model.addAttribute("contractType", contractType != null ? contractType : "One-Time");
-		return "Recurring".equals(contractType) ? "fragments/frequency-options :: frequencyOptionsContainer" : "fragments/empty-frequency-options :: empty-frequency-options";
+		return "Recurring".equals(contractType) ? "fragments/frequency-options :: frequencyOptionsContainer"
+			: "fragments/empty-frequency-options :: empty-frequency-options";
 	}
 
 	/**
@@ -175,7 +190,8 @@ public class ServiceController {
 		model.addAttribute("frequency", frequency != null ? frequency : "");
 		model.addAttribute("customFrequency", customFrequency);
 		model.addAttribute("customUnit", customUnit);
-		return "custom".equals(frequency) ? "fragments/frequency-options :: customOptionsContainer" : "fragments/empty-frequency-options :: empty-custom-options";
+		return "custom".equals(frequency) ? "fragments/frequency-options :: customOptionsContainer" :
+			"fragments/empty-frequency-options :: empty-custom-options";
 	}
 
 	/**
@@ -210,12 +226,15 @@ public class ServiceController {
 									  @RequestParam(value = "servicePrice", defaultValue = "0") int servicePrice,
 									  RedirectAttributes redirectAttribute) {
 		try {
-			if (!clockService.isOpen())
+			if (!clockService.isOpen()) {
 				throw new IllegalArgumentException("The shop is closed");
-			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
+			}
+			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$")) {
 				throw new IllegalArgumentException("Invalid phone number format");
-			if (startDate.isAfter(endDate))
+			}
+			if (startDate.isAfter(endDate)) {
 				throw new IllegalArgumentException("Start date cannot be later than end date");
+			}
 			ContractOrder contractOrder = orderFactory.createContractOrder(contractType, frequency,
 				startDate, endDate, address, getOrCreateClient(clientName, phone), notes);
 			if ("Recurring".equals(contractType)) {
@@ -226,7 +245,6 @@ public class ServiceController {
 			} else {
 				contractOrder.setFrequency("One-Time");
 			}
-
 			contractOrder.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
 			contractOrderService.save(contractOrder, products);
 			return "redirect:/services";
@@ -258,12 +276,15 @@ public class ServiceController {
 								   @RequestParam(value = "deliveryPrice", defaultValue = "0") int deliveryPrice,
 								   RedirectAttributes redirectAttribute) {
 		try {
-			if (!clockService.isOpen())
+			if (!clockService.isOpen()) {
 				throw new IllegalArgumentException("The shop is closed");
-			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
+			}
+			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$")) {
 				throw new IllegalArgumentException("Invalid phone number format");
-			if (eventDate.isBefore(LocalDateTime.now()))
+			}
+			if (eventDate.isBefore(LocalDateTime.now())) {
 				throw new IllegalArgumentException("Event date and time cannot be in the past");
+			}
 			EventOrder eventOrder = orderFactory.createEventOrder(eventDate,
 				deliveryAddress, getOrCreateClient(clientName, phone), notes);
 			eventOrder.addChargeLine(Money.of(deliveryPrice, "EUR"), "Delivery Price");
@@ -294,12 +315,15 @@ public class ServiceController {
 										 @RequestParam("notes") String notes,
 										 RedirectAttributes redirectAttribute) {
 		try {
-			if (!clockService.isOpen())
+			if (!clockService.isOpen()) {
 				throw new IllegalArgumentException("The shop is closed");
-			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
+			}
+			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$")) {
 				throw new IllegalArgumentException("Invalid phone number format");
-			if (reservationDateTime.isBefore(LocalDateTime.now()))
+			}
+			if (reservationDateTime.isBefore(LocalDateTime.now())) {
 				throw new IllegalArgumentException("Reservation date and time cannot be in the past");
+			}
 			ReservationOrder reservationOrder = orderFactory.createReservationOrder(reservationDateTime,
 				getOrCreateClient(clientName, phone), notes);
 			reservationOrderService.save(reservationOrder, products);
@@ -369,14 +393,17 @@ public class ServiceController {
 									@RequestParam("servicePrice") int servicePrice,
 									RedirectAttributes redirectAttributes) {
 		try {
-			if (!clockService.isOpen())
+			if (!clockService.isOpen()) {
 				throw new IllegalArgumentException("The shop is closed");
+			}
 			ContractOrder contractOrder = contractOrderService.getById(id)
 				.orElseThrow(() -> new NotFoundException("Contract order not found"));
-			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
+			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$")) {
 				throw new IllegalArgumentException("Invalid phone number format");
-			if (startDate.isAfter(endDate))
+			}
+			if (startDate.isAfter(endDate)) {
 				throw new IllegalArgumentException("Start date cannot be later than end date");
+			}
 			contractOrder.setClient(getOrCreateClient(clientName, phone));
 			if (contractOrder.getOrderStatus().equals(OrderStatus.OPEN)) {
 				contractOrder.setContractType(contractType);
@@ -386,8 +413,9 @@ public class ServiceController {
 			contractOrder.setAddress(address);
 			contractOrder.setNotes(notes);
 			contractOrder.setPaymentMethod(paymentMethod);
-			if ("Recurring".equals(contractType)) contractOrder.setFrequency(frequency);
-			else {
+			if ("Recurring".equals(contractType)) {
+				contractOrder.setFrequency(frequency);
+			} else {
 				contractOrder.setFrequency(null);
 				contractOrder.setCustomFrequency(null);
 				contractOrder.setCustomUnit(null);
@@ -467,19 +495,20 @@ public class ServiceController {
 								 @RequestParam("deliveryPrice") int deliveryPrice,
 								 RedirectAttributes redirectAttributes) {
 		try {
-			if (!clockService.isOpen())
+			if (!clockService.isOpen()) {
 				throw new IllegalArgumentException("The shop is closed");
+			}
 			EventOrder eventOrder = eventOrderService.getById(id)
 				.orElseThrow(() -> new NotFoundException("Event order not found"));
-			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
+			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$")) {
 				throw new IllegalArgumentException("Invalid phone number format");
+			}
 			eventOrder.setClient(getOrCreateClient(clientName, phone));
 			eventOrder.setEventDate(eventDate);
 			eventOrder.setDeliveryAddress(deliveryAddress);
 			eventOrder.setNotes(notes);
 			eventOrder.setPaymentMethod(paymentMethod);
 			eventOrderService.update(eventOrder, products, deliveryPrice, orderStatus, cancelReason);
-
 			Event event = calendarService.findEventByUUID(id);
 			if (calendarService.findEventByUUID(id) != null) {
 				if (eventOrder.getOrderStatus().name().equals("CANCELED") || eventOrder.getOrderStatus().name().equals("COMPLETED")) {
@@ -488,7 +517,6 @@ public class ServiceController {
 					event.setDate(eventDate);
 				}
 			}
-
 			return "redirect:/services";
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -540,12 +568,14 @@ public class ServiceController {
 									   @RequestParam("notes") String notes,
 									   RedirectAttributes redirectAttributes) {
 		try {
-			if (!clockService.isOpen())
+			if (!clockService.isOpen()) {
 				throw new IllegalArgumentException("The shop is closed");
+			}
 			ReservationOrder reservationOrder = reservationOrderService.getById(id)
 				.orElseThrow(() -> new NotFoundException("Reservation order not found"));
-			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$"))
+			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$")) {
 				throw new IllegalArgumentException("Invalid phone number format");
+			}
 			reservationOrder.setClient(getOrCreateClient(clientName, phone));
 			reservationOrder.setReservationDateTime(reservationDateTime);
 			reservationOrder.setNotes(notes);
@@ -601,30 +631,5 @@ public class ServiceController {
 	 */
 	private Client getOrCreateClient(String name, String phone) {
 		return clientService.getOrCreateClient(name, phone);
-	}
-
-
-	@GetMapping("/contracts/view/{id}")
-	public String getContractOrderViewPage(@PathVariable UUID id,
-										   Model model) {
-		model.addAttribute("contractOrder", contractOrderService.getById(id).get());
-		model.addAttribute("products", productService.getAllProducts());
-		return "services/view/contractOrderViewForm";
-	}
-
-	@GetMapping("/events/view/{id}")
-	public String getEventOrderViewPage(@PathVariable UUID id,
-										Model model) {
-		model.addAttribute("eventOrder", eventOrderService.getById(id).get());
-		model.addAttribute("products", productService.getAllProducts());
-		return "services/view/eventOrderViewForm";
-	}
-
-	@GetMapping("/reservations/view/{id}")
-	public String getReservationOrderViewPage(@PathVariable UUID id,
-											  Model model) {
-		model.addAttribute("reservationOrder", reservationOrderService.getById(id).get());
-		model.addAttribute("products", productService.getAllProducts());
-		return "services/view/reservationOrderViewForm";
 	}
 }
