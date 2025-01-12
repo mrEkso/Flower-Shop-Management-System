@@ -41,7 +41,7 @@ public class SalesController {
 	private final ReservationOrderService reservationOrderService;
 
 	SalesController(ProductService productService, SalesService salesService, 
-	ClockService clockService, ReservationOrderService reservationOrderService) {
+	ClockService clockService, ReservationOrderService reservationOrderService, GiftCardRepository giftCardRepository) {
 		this.productService = productService;
 		this.salesService = salesService;
 		this.clockService = clockService;
