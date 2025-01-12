@@ -7,8 +7,6 @@ import flowershop.product.ProductService;
 import javassist.NotFoundException;
 import org.javamoney.moneta.Money;
 import org.salespointframework.order.OrderStatus;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -83,8 +82,14 @@ public class ServiceController {
 	 */
 	@GetMapping("/contracts/view/{id}")
 	public String getContractOrderViewPage(@PathVariable UUID id,
-										   Model model) {
-		model.addAttribute("contractOrder", contractOrderService.getById(id).get());
+										   Model model,
+										   RedirectAttributes redirectAttributes) {
+		Optional<ContractOrder> contractOrder = contractOrderService.getById(id);
+		if (contractOrder.isEmpty()) {
+			redirectAttributes.addAttribute("error", "Contract order not found");
+			return "redirect:/404";
+		}
+		model.addAttribute("contractOrder", contractOrder.get());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/view/contractOrderViewForm";
 	}
@@ -98,8 +103,14 @@ public class ServiceController {
 	 */
 	@GetMapping("/events/view/{id}")
 	public String getEventOrderViewPage(@PathVariable UUID id,
-										Model model) {
-		model.addAttribute("eventOrder", eventOrderService.getById(id).get());
+										Model model,
+										RedirectAttributes redirectAttributes) {
+		Optional<EventOrder> eventOrder = eventOrderService.getById(id);
+		if (eventOrder.isEmpty()) {
+			redirectAttributes.addAttribute("error", "Event order not found");
+			return "redirect:/404";
+		}
+		model.addAttribute("eventOrder", eventOrder.get());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/view/eventOrderViewForm";
 	}
@@ -113,8 +124,14 @@ public class ServiceController {
 	 */
 	@GetMapping("/reservations/view/{id}")
 	public String getReservationOrderViewPage(@PathVariable UUID id,
-											  Model model) {
-		model.addAttribute("reservationOrder", reservationOrderService.getById(id).get());
+											  Model model,
+											  RedirectAttributes redirectAttributes) {
+		Optional<ReservationOrder> reservationOrder = reservationOrderService.getById(id);
+		if (reservationOrder.isEmpty()) {
+			redirectAttributes.addAttribute("error", "Reservation order not found");
+			return "redirect:/404";
+		}
+		model.addAttribute("reservationOrder", reservationOrder.get());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/view/reservationOrderViewForm";
 	}
@@ -165,7 +182,8 @@ public class ServiceController {
 	 */
 	@GetMapping("/contracts/choose-frequency-options")
 	public String chooseFrequencyOptions(Model model,
-										 @RequestParam(value = "contractType", required = false) String contractType) {
+										 @RequestParam(value = "contractType", required = false) String
+											 contractType) {
 		model.addAttribute("contractType", contractType != null ? contractType : "One-Time");
 		return "Recurring".equals(contractType) ? "fragments/frequency-options :: frequencyOptionsContainer"
 			: "fragments/empty-frequency-options :: empty-frequency-options";
@@ -182,9 +200,12 @@ public class ServiceController {
 	 */
 	@GetMapping("/contracts/choose-custom-frequency-options")
 	public String chooseCustomFrequencyOptions(Model model,
-											   @RequestParam(value = "frequency", required = false) String frequency,
-											   @RequestParam(value = "customFrequency", required = false) Integer customFrequency,
-											   @RequestParam(value = "customUnit", required = false) String customUnit
+											   @RequestParam(value = "frequency", required = false)
+											   String frequency,
+											   @RequestParam(value = "customFrequency", required = false)
+												   Integer customFrequency,
+											   @RequestParam(value = "customUnit", required = false)
+												   String customUnit
 	) {
 		model.addAttribute("contractType", "Recurring");
 		model.addAttribute("frequency", frequency != null ? frequency : "");
@@ -214,16 +235,20 @@ public class ServiceController {
 	@PostMapping("/contracts/create")
 	public String createContractOrder(@RequestParam("clientName") String clientName,
 									  @RequestParam("contractType") String contractType,
-									  @RequestParam(value = "frequency", required = false) String frequency,
-									  @RequestParam(value = "customFrequency", required = false) Integer customFrequency,
-									  @RequestParam(value = "customUnit", required = false) String customUnit,
+									  @RequestParam(value = "frequency", required = false)
+										  String frequency,
+									  @RequestParam(value = "customFrequency", required = false)
+										  Integer customFrequency,
+									  @RequestParam(value = "customUnit", required = false)
+										  String customUnit,
 									  @RequestParam("startDate") LocalDateTime startDate,
 									  @RequestParam("endDate") LocalDateTime endDate,
 									  @RequestParam("address") String address,
 									  @RequestParam("phone") String phone,
 									  @RequestParam Map<String, String> products,
 									  @RequestParam(value = "notes", required = false) String notes,
-									  @RequestParam(value = "servicePrice", defaultValue = "0") int servicePrice,
+									  @RequestParam(value = "servicePrice", defaultValue = "0")
+										  int servicePrice,
 									  RedirectAttributes redirectAttribute) {
 		try {
 			if (!clockService.isOpen()) {
@@ -273,7 +298,8 @@ public class ServiceController {
 								   @RequestParam("deliveryAddress") String deliveryAddress,
 								   @RequestParam Map<String, String> products,
 								   @RequestParam("notes") String notes,
-								   @RequestParam(value = "deliveryPrice", defaultValue = "0") int deliveryPrice,
+								   @RequestParam(value = "deliveryPrice", defaultValue = "0")
+									   int deliveryPrice,
 								   RedirectAttributes redirectAttribute) {
 		try {
 			if (!clockService.isOpen()) {
@@ -343,11 +369,14 @@ public class ServiceController {
 	 */
 	@GetMapping("/contracts/edit/{id}")
 	public String getContractOrderEditPage(@PathVariable UUID id,
-										   Model model) throws NotFoundException {
-		model.addAttribute("contractOrder", contractOrderService.getById(id).get());
-		if (contractOrderService.getById(id).isEmpty()) {
-			throw new NotFoundException("Contract order not found");
+										   Model model,
+										   RedirectAttributes redirectAttributes) {
+		Optional<ContractOrder> contractOrder = contractOrderService.getById(id);
+		if (contractOrder.isEmpty()) {
+			redirectAttributes.addAttribute("error", "Contract order not found");
+			return "redirect:/404";
 		}
+		model.addAttribute("contractOrder", contractOrder.get());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/edit/contractOrderEditForm";
 	}
@@ -379,7 +408,8 @@ public class ServiceController {
 									@RequestParam("clientName") String clientName,
 									@RequestParam("contractType") String contractType,
 									@RequestParam(value = "frequency", required = false) String frequency,
-									@RequestParam(value = "customFrequency", required = false) Integer customFrequency,
+									@RequestParam(value = "customFrequency", required = false)
+										Integer customFrequency,
 									@RequestParam(value = "customUnit", required = false) String customUnit,
 									@RequestParam("startDate") LocalDateTime startDate,
 									@RequestParam("endDate") LocalDateTime endDate,
@@ -426,12 +456,15 @@ public class ServiceController {
 			}
 			Event event = calendarService.findEventByUUID(id);
 			if (event != null) {
-				if (frequency != null && (frequency.equals("weekly") || frequency.equals("monthly") || frequency.equals("daily") || frequency.equals("custom"))) {
+				if (frequency != null && (frequency.equals("weekly") ||
+					frequency.equals("monthly") || frequency.equals("daily") ||
+					frequency.equals("custom"))) {
 					if (orderStatus.equals("CANCELED") || orderStatus.equals("COMPLETED")) {
 						calendarService.removeReccuringEvent(id);
 					} else {
 						calendarService.removeReccuringEvent(id);
-						calendarService.createReccuringEvent("Contract for " + clientName, startDate, endDate, notes, frequency, "contract", id);
+						calendarService.createReccuringEvent("Contract for " +
+							clientName, startDate, endDate, notes, frequency, "contract", id);
 					}
 				} else {
 					if (orderStatus.equals("CANCELED") || orderStatus.equals("COMPLETED")) {
@@ -458,8 +491,14 @@ public class ServiceController {
 	 */
 	@GetMapping("/events/edit/{id}")
 	public String getEventOrderEditPage(@PathVariable UUID id,
-										Model model) {
-		model.addAttribute("eventOrder", eventOrderService.getById(id).get());
+										Model model,
+										RedirectAttributes redirectAttributes) {
+		Optional<EventOrder> eventOrder = eventOrderService.getById(id);
+		if (eventOrder.isEmpty()) {
+			redirectAttributes.addAttribute("error", "Event order not found");
+			return "redirect:/404";
+		}
+		model.addAttribute("eventOrder", eventOrder.get());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/edit/eventOrderEditForm";
 	}
@@ -511,7 +550,8 @@ public class ServiceController {
 			eventOrderService.update(eventOrder, products, deliveryPrice, orderStatus, cancelReason);
 			Event event = calendarService.findEventByUUID(id);
 			if (calendarService.findEventByUUID(id) != null) {
-				if (eventOrder.getOrderStatus().name().equals("CANCELED") || eventOrder.getOrderStatus().name().equals("COMPLETED")) {
+				if (eventOrder.getOrderStatus().name().equals("CANCELED") ||
+					eventOrder.getOrderStatus().name().equals("COMPLETED")) {
 					calendarService.removeEvent(id);
 				} else {
 					event.setDate(eventDate);
@@ -533,8 +573,14 @@ public class ServiceController {
 	 */
 	@GetMapping("/reservations/edit/{id}")
 	public String getReservationOrderEditPage(@PathVariable UUID id,
-											  Model model) {
-		model.addAttribute("reservationOrder", reservationOrderService.getById(id).get());
+											  Model model,
+											  RedirectAttributes redirectAttributes) {
+		Optional<ReservationOrder> reservationOrder = reservationOrderService.getById(id);
+		if (reservationOrder.isEmpty()) {
+			redirectAttributes.addAttribute("error", "Reservation order not found");
+			return "redirect:/404";
+		}
+		model.addAttribute("reservationOrder", reservationOrder.get());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/edit/reservationOrderEditForm";
 	}
@@ -563,7 +609,8 @@ public class ServiceController {
 									   @RequestParam Map<String, String> products,
 									   @RequestParam("paymentMethod") String paymentMethod,
 									   @RequestParam("orderStatus") String orderStatus,
-									   @RequestParam(value = "cancelReason", required = false) String cancelReason,
+									   @RequestParam(value = "cancelReason", required = false)
+										   String cancelReason,
 									   @RequestParam("reservationStatus") String reservationStatus,
 									   @RequestParam("notes") String notes,
 									   RedirectAttributes redirectAttributes) {
@@ -580,10 +627,12 @@ public class ServiceController {
 			reservationOrder.setReservationDateTime(reservationDateTime);
 			reservationOrder.setNotes(notes);
 			reservationOrder.setPaymentMethod(paymentMethod);
-			reservationOrderService.update(reservationOrder, products, orderStatus, cancelReason, reservationStatus);
+			reservationOrderService.update(reservationOrder, products, orderStatus,
+				cancelReason, reservationStatus);
 			Event event = calendarService.findEventByUUID(id);
 			if (calendarService.findEventByUUID(id) != null) {
-				if (reservationOrder.getOrderStatus().name().equals("CANCELED") || reservationOrder.getOrderStatus().name().equals("COMPLETED")) {
+				if (reservationOrder.getOrderStatus().name().equals("CANCELED") ||
+					reservationOrder.getOrderStatus().name().equals("COMPLETED")) {
 					calendarService.removeEvent(id);
 				} else {
 					event.setDate(reservationDateTime);
@@ -600,24 +649,42 @@ public class ServiceController {
 
 	@GetMapping("/contracts/view-details/{id}")
 	public String getViewContractDetails(@PathVariable UUID id,
-										 Model model) {
-		model.addAttribute("contractOrder", contractOrderService.getById(id).get());
+										 Model model,
+										 RedirectAttributes redirectAttributes) {
+		Optional<ContractOrder> contractOrder = contractOrderService.getById(id);
+		if (contractOrder.isEmpty()) {
+			redirectAttributes.addAttribute("error", "Contract order not found");
+			return "redirect:/404";
+		}
+		model.addAttribute("contractOrder", contractOrder.get());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/view/viewContractDetails";
 	}
 
 	@GetMapping("/events/view-details/{id}")
 	public String getViewEventDetails(@PathVariable UUID id,
-									  Model model) {
-		model.addAttribute("eventOrder", eventOrderService.getById(id).get());
+									  Model model,
+									  RedirectAttributes redirectAttributes) {
+		Optional<EventOrder> eventOrder = eventOrderService.getById(id);
+		if (eventOrder.isEmpty()) {
+			redirectAttributes.addAttribute("error", "Event order not found");
+			return "redirect:/404";
+		}
+		model.addAttribute("eventOrder", eventOrder.get());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/view/viewEventDetails";
 	}
 
 	@GetMapping("/reservations/view-details/{id}")
 	public String getViewReservationDetails(@PathVariable UUID id,
-											Model model) {
-		model.addAttribute("reservationOrder", reservationOrderService.getById(id).get());
+											Model model,
+											RedirectAttributes redirectAttributes) {
+		Optional<ReservationOrder> reservationOrder = reservationOrderService.getById(id);
+		if (reservationOrder.isEmpty()) {
+			redirectAttributes.addAttribute("error", "Reservation order not found");
+			return "redirect:/404";
+		}
+		model.addAttribute("reservationOrder", reservationOrder.get());
 		model.addAttribute("products", productService.getAllProducts());
 		return "services/view/viewReservationDetails";
 	}
