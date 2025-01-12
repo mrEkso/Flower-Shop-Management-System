@@ -33,12 +33,11 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	private SalesController controller;
 
 	@Autowired
-	private ProductService productService;    
-	
-	// @Autowired
-    // ProductService productService; 
+	private ProductService productService;
 
-	
+	// @Autowired
+	// ProductService productService;
+
 
 	@Test
 	public void testSellCatalog_DefaultView() {
@@ -154,15 +153,15 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	public void testDecreaseFromBuyCart() {
 		Model model = new ExtendedModelMap();
 		Cart buyCart = controller.initializeBuyCart();
-		
+
 		Product product = productService.findAllFlowers().iterator().next();
 		buyCart.addOrUpdateItem(product, 3);
 
 		String buyView = controller.decreaseFromBuyCart(model, UUID.fromString(product.getId().toString()), buyCart);
-				assertThat(buyView).isEqualTo("redirect:/buy");
+		assertThat(buyView).isEqualTo("redirect:/buy");
 
 		assertThat(buyCart.getQuantity(product).getAmount().intValue()).isEqualTo(2);
-		
+
 		double fullPrice = (double) model.asMap().get("fullBuyPrice");
 		assertThat(fullPrice).isGreaterThan(0);
 	}
@@ -172,15 +171,15 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	public void testDecreaseFromSellCart() {
 		Model model = new ExtendedModelMap();
 		Cart sellCart = controller.initializeSellCart();
-		
+
 		Product product = productService.findAllFlowers().iterator().next();
 		sellCart.addOrUpdateItem(product, 3);
 
 		String sellView = controller.decreaseFromSellCart(model, UUID.fromString(product.getId().toString()), sellCart);
-				assertThat(sellView).isEqualTo("redirect:/sell");
+		assertThat(sellView).isEqualTo("redirect:/sell");
 
 		assertThat(sellCart.getQuantity(product).getAmount().intValue()).isEqualTo(2);
-		
+
 		double fullPrice = (double) model.asMap().get("fullSellPrice");
 		assertThat(fullPrice).isGreaterThan(0);
 	}
@@ -266,7 +265,7 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 		String paymentMethod = "Cash";
 		RedirectAttributes redirectAttributes = new RedirectAttributesModelMap();
 
-		String viewName = controller.sellFromCart(emptyCart, model, paymentMethod, redirectAttributes);
+		String viewName = controller.sellFromCart(emptyCart, model, paymentMethod, null, redirectAttributes);
 
 		assertThat(viewName).isEqualTo("redirect:sell");
 		assertThat(model.asMap().get("message")).isEqualTo("Your basket is empty.");
