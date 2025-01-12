@@ -39,8 +39,8 @@ public class SalesController {
 	private final ClockService clockService;
 	private final ContractOrderService contractOrderService;
 
-	SalesController(ProductService productService, SalesService salesService, 
-	ClockService clockService, ContractOrderService contractOrderService, GiftCardRepository giftCardRepository) {
+	SalesController(ProductService productService, SalesService salesService,
+					ClockService clockService, ContractOrderService contractOrderService, GiftCardRepository giftCardRepository) {
 		this.productService = productService;
 		this.salesService = salesService;
 		this.clockService = clockService;
@@ -156,11 +156,11 @@ public class SalesController {
 	}
 
 	/**
-	* @param productName the name of the product
- 	* @return the reserved quantity
- 	*/
-	 private int getReservedQuantity(String productName) {
-		
+	 * @param productName the name of the product
+	 * @return the reserved quantity
+	 */
+	private int getReservedQuantity(String productName) {
+
 		Map<Product, Integer> productQuantities = new HashMap<>();
 
 		List<ContractOrder> orders = contractOrderService.findAll();
@@ -173,7 +173,7 @@ public class SalesController {
 				int quantity = line.getQuantity().getAmount().intValue();
 				productQuantities.merge(product, quantity, Integer::sum);
 			}
-		}		
+		}
 
 		return productQuantities.entrySet().stream()
 			.filter(entry -> entry.getKey().getName().equalsIgnoreCase(productName))
@@ -193,6 +193,7 @@ public class SalesController {
 	public String sellFromCart(
 		@ModelAttribute("sellCart") Cart sellCart, Model model,
 		@RequestParam(required = false) String paymentMethod,
+		@RequestParam(required = false) String giftCardId,
 		RedirectAttributes redirAttrs
 	) {
 
@@ -206,25 +207,30 @@ public class SalesController {
 		boolean isInvalid = sellCart.get().anyMatch(ci -> {
 			if (productService.findProductsByName(ci.getProduct().getName()).get(0) instanceof Flower) {
 				return !(((Flower) productService.findProductsByName(ci.getProduct().getName()).get(0)).getQuantity()
-						- getReservedQuantity(ci.getProduct().getName()) >= ci.getQuantity().getAmount().intValue());
+					- getReservedQuantity(ci.getProduct().getName()) >= ci.getQuantity().getAmount().intValue());
 			} else {
 				return !(((Bouquet) productService.findProductsByName(ci.getProduct().getName()).get(0)).getQuantity()
-						- getReservedQuantity(ci.getProduct().getName()) >= ci.getQuantity().getAmount().intValue());
+					- getReservedQuantity(ci.getProduct().getName()) >= ci.getQuantity().getAmount().intValue());
 			}
 		});
-		
+
 		if (isInvalid) {
 			sellCart.clear();
 			redirAttrs.addFlashAttribute("error", "There are not enough products in the storage!");
 			return "redirect:sell";
 		}
-		
 
 		if (sellCart == null || sellCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:sell";
 		}
-		salesService.sellProductsFromBasket(sellCart, paymentMethod);
+
+		if (paymentMethod.equals("GiftCard")) {
+			UUID cardID = UUID.fromString(giftCardId);
+			salesService.sellProductsFromBasket(sellCart, paymentMethod, cardID);
+		} else {
+			salesService.sellProductsFromBasket(sellCart, paymentMethod, null);
+		}
 
 		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
 		model.addAttribute("fullSellPrice", fp);
@@ -421,21 +427,22 @@ public class SalesController {
 	@PostMapping("create-giftcard")
 	@PreAuthorize("hasRole('BOSS')")
 	public String createGiftCard(Model model,
-		@RequestParam(required = true) Integer amount){
-		
-			
-		GiftCard giftCard = new GiftCard(Money.of(amount, "EUR"), amount.toString());
+								 @RequestParam(required = true) Integer amount) {
 
+
+		// FIXME: Send a signal to Finances about this operation ----------------------------------------------------------------------
+
+		GiftCard giftCard = new GiftCard(Money.of(amount, "EUR"), amount.toString());
 		giftCardRepository.save(giftCard);
 
 		model.addAttribute("giftCardId", giftCard.getId());
-		return "sales/giftcard"; 
+		return "sales/giftcard";
 	}
 
 	@GetMapping("/check-balance")
 	@PreAuthorize("hasRole('BOSS')")
 	public String checkGiftCardBalance(Model model,
-		@RequestParam String giftCardId
+									   @RequestParam String giftCardId
 	) {
 		giftCardRepository.findAll()
 			.stream()
@@ -443,9 +450,9 @@ public class SalesController {
 			.findFirst()
 			.ifPresentOrElse(
 				giftCard -> model.addAttribute("giftCardBalance", giftCard.getBalance()),
-				() -> model.addAttribute("giftCardBalance", "THER IS NO CARD WITH THIS ID")
+				() -> model.addAttribute("giftCardBalance", "THERE IS NO CARD WITH THIS ID")
 			);
-		
+
 		return "sales/giftcard";
 	}
 }

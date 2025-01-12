@@ -1,16 +1,20 @@
 package flowershop.sales;
 
-import flowershop.product.Bouquet;
-import flowershop.product.Flower;
-import flowershop.product.ProductService;
+import flowershop.product.*;
 import flowershop.services.OrderFactory;
+import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.Cart;
 import org.salespointframework.order.CartItem;
 import org.salespointframework.order.OrderEvents;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+
+import javax.money.MonetaryAmount;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class SalesService {
@@ -19,13 +23,15 @@ public class SalesService {
 	private final OrderFactory orderFactory;
 	private final WholesalerOrderService wholesalerOrderService;
 	private final ApplicationEventPublisher eventPublisher;
+	private final GiftCardService giftCardService;
 
-	public SalesService(ProductService productService, SimpleOrderService simpleOrderService, OrderFactory orderFactory, WholesalerOrderService wholesalerOrderService, ApplicationEventPublisher eventPublisher) {
+	public SalesService(ProductService productService, SimpleOrderService simpleOrderService, OrderFactory orderFactory, WholesalerOrderService wholesalerOrderService, ApplicationEventPublisher eventPublisher, GiftCardService giftCardService) {
 		this.productService = productService;
 		this.simpleOrderService = simpleOrderService;
 		this.orderFactory = orderFactory;
 		this.wholesalerOrderService = wholesalerOrderService;
 		this.eventPublisher = eventPublisher;
+		this.giftCardService = giftCardService;
 	}
 
 	/**
@@ -35,7 +41,7 @@ public class SalesService {
 	 * @param paymentMethod the payment method for the sale
 	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
 	 */
-	public void sellProductsFromBasket(Cart cart, String paymentMethod) throws IllegalArgumentException {
+	public void sellProductsFromBasket(Cart cart, String paymentMethod, UUID giftCardId) throws IllegalArgumentException {
 		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
 		}
@@ -54,12 +60,31 @@ public class SalesService {
 
 			simpleOrder.addOrderLine(product, cartItem.getQuantity());
 		}
+
+		if (paymentMethod.equals("GiftCard")) {
+			handleGiftCardPayment(simpleOrder, giftCardId);
+		}
+
 		simpleOrder.setPaymentMethod(paymentMethod);
 		simpleOrderService.create(simpleOrder);
 		cart.clear();
 
 		var event = OrderEvents.OrderPaid.of(simpleOrder);
 		eventPublisher.publishEvent(event); // Needed for Finances
+	}
+
+	private void handleGiftCardPayment(SimpleOrder simpleOrder, UUID giftCardId) throws IllegalArgumentException {
+		Optional<GiftCard> giftCardOptional = giftCardService.findGiftCardById(giftCardId);
+		if (giftCardOptional.isEmpty()) {
+			throw new IllegalArgumentException("Gift card not found");
+		}
+		GiftCard giftCard = giftCardOptional.get();
+		MonetaryAmount toPay = simpleOrder.getTotal();
+
+		if (giftCard.getBalance().subtract(toPay).isNegative()){
+			throw new IllegalArgumentException("Gift card balance is too small");
+		}
+		giftCard.subtractBalance(toPay);
 	}
 
 	/**
@@ -82,6 +107,7 @@ public class SalesService {
 		var event = OrderEvents.OrderPaid.of(wholesalerOrder);
 		eventPublisher.publishEvent(event); // Needed for Finances
 	}
+
 	/**
 	 * Processes the purchase of products from a cart and creates a corresponding wholesaler order.
 	 *
@@ -90,7 +116,8 @@ public class SalesService {
 	 * @param deliveryDate  the delivery date
 	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
 	 */
-	public void buyProductsFromBasket(Cart cart, String paymentMethod, String deliveryDate) throws IllegalArgumentException{
+	public void buyProductsFromBasket(Cart cart, String paymentMethod, String deliveryDate) throws
+		IllegalArgumentException {
 		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
 		}

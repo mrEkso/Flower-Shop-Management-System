@@ -25,19 +25,23 @@ public class GiftCard {
 
 	public GiftCard() {
 		this.type = "20";
-		this.balance = Money.of(5.0, "EUR");
+		this.balance = Money.of(20.0, "EUR");
 	}
 
-	public MonetaryAmount getBalance(){
+	public MonetaryAmount getBalance() {
 		return balance;
 	}
 
-	public String getType(){
+	public String getType() {
 		return type;
 	}
 
-	public void setBalance(MonetaryAmount balance){
+	public void setBalance(MonetaryAmount balance) {
 		this.balance = balance;
+	}
+
+	public void subtractBalance(MonetaryAmount amount) {
+		this.balance = balance.subtract(amount);
 	}
 
 	public String getId() {
