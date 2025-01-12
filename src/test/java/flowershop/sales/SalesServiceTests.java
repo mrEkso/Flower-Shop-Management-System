@@ -1,9 +1,6 @@
 package flowershop.sales;
 
-import flowershop.product.Bouquet;
-import flowershop.product.Flower;
-import flowershop.product.Pricing;
-import flowershop.product.ProductService;
+import flowershop.product.*;
 import flowershop.services.OrderFactory;
 import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +26,7 @@ class SalesServiceTests {
 	private WholesalerOrderService wholesalerOrderService;
 	private ApplicationEventPublisher eventPublisher;
 	private SalesService salesService;
+	private GiftCardService giftCardService;
 
 	@BeforeEach
 	void setUp() {
@@ -37,8 +35,8 @@ class SalesServiceTests {
 		orderFactory = mock(OrderFactory.class);
 		wholesalerOrderService = mock(WholesalerOrderService.class);
 		eventPublisher = mock(ApplicationEventPublisher.class);
-
-		salesService = new SalesService(productService, simpleOrderService, orderFactory, wholesalerOrderService, eventPublisher);
+		giftCardService = mock(GiftCardService.class);
+		salesService = new SalesService(productService, simpleOrderService, orderFactory, wholesalerOrderService, eventPublisher, giftCardService);
 	}
 
 	@Test
@@ -51,7 +49,7 @@ class SalesServiceTests {
 		SimpleOrder simpleOrder = mock(SimpleOrder.class);
 		when(orderFactory.createSimpleOrder()).thenReturn(simpleOrder);
 
-		salesService.sellProductsFromBasket(cart, "Cash");
+		salesService.sellProductsFromBasket(cart, "Cash", null);
 
 		verify(productService, times(1)).removeFlowers(flower, 5);
 		verify(simpleOrder, times(1)).addOrderLine(flower, Quantity.of(5));
@@ -66,7 +64,7 @@ class SalesServiceTests {
 
 		assertThrows(
 			IllegalArgumentException.class,
-			() -> salesService.sellProductsFromBasket(cart, "CASH")
+			() -> salesService.sellProductsFromBasket(cart, "CASH", null)
 		);
 
 	}

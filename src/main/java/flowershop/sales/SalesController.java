@@ -3,10 +3,13 @@ package flowershop.sales;
 import flowershop.clock.ClockService;
 import flowershop.product.Bouquet;
 import flowershop.product.Flower;
+import flowershop.product.GiftCard;
+import flowershop.product.GiftCardRepository;
 import flowershop.product.ProductService;
 import flowershop.services.ReservationOrder;
 import flowershop.services.ReservationOrderService;
 
+import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.catalog.Product.ProductIdentifier;
 import org.salespointframework.order.Cart;
@@ -32,16 +35,18 @@ import java.util.UUID;
 public class SalesController {
 
 	private final ProductService productService;
+	private final GiftCardRepository giftCardRepository;
 	private final SalesService salesService;
 	private final ClockService clockService;
 	private final ReservationOrderService reservationOrderService;
 
 	SalesController(ProductService productService, SalesService salesService, 
-	ClockService clockService, ReservationOrderService reservationOrderService) {
+	ClockService clockService, ReservationOrderService reservationOrderService, GiftCardRepository giftCardRepository) {
 		this.productService = productService;
 		this.salesService = salesService;
 		this.clockService = clockService;
 		this.reservationOrderService = reservationOrderService;
+		this.giftCardRepository = giftCardRepository;
 	}
 
 	@ModelAttribute("buyCart")
@@ -165,11 +170,11 @@ public class SalesController {
 	}
 
 	/**
-	* @param productName the name of the product
- 	* @return the reserved quantity
- 	*/
-	 private int getReservedQuantity(String productName) {
-		
+	 * @param productName the name of the product
+	 * @return the reserved quantity
+	 */
+	private int getReservedQuantity(String productName) {
+
 		Map<Product, Integer> productQuantities = new HashMap<>();
 
 		List<ReservationOrder> orders = reservationOrderService.findAll();
@@ -182,7 +187,7 @@ public class SalesController {
 				int quantity = line.getQuantity().getAmount().intValue();
 				productQuantities.merge(product, quantity, Integer::sum);
 			}
-		}		
+		}
 
 		return productQuantities.entrySet().stream()
 			.filter(entry -> entry.getKey().getName().equalsIgnoreCase(productName))
@@ -202,6 +207,7 @@ public class SalesController {
 	public String sellFromCart(
 		@ModelAttribute("sellCart") Cart sellCart, Model model,
 		@RequestParam(required = false) String paymentMethod,
+		@RequestParam(required = false) String giftCardId,
 		RedirectAttributes redirAttrs
 	) {
 
@@ -215,25 +221,30 @@ public class SalesController {
 		boolean isInvalid = sellCart.get().anyMatch(ci -> {
 			if (productService.findProductsByName(ci.getProduct().getName()).get(0) instanceof Flower) {
 				return !(((Flower) productService.findProductsByName(ci.getProduct().getName()).get(0)).getQuantity()
-						- getReservedQuantity(ci.getProduct().getName()) >= ci.getQuantity().getAmount().intValue());
+					- getReservedQuantity(ci.getProduct().getName()) >= ci.getQuantity().getAmount().intValue());
 			} else {
 				return !(((Bouquet) productService.findProductsByName(ci.getProduct().getName()).get(0)).getQuantity()
-						- getReservedQuantity(ci.getProduct().getName()) >= ci.getQuantity().getAmount().intValue());
+					- getReservedQuantity(ci.getProduct().getName()) >= ci.getQuantity().getAmount().intValue());
 			}
 		});
-		
+
 		if (isInvalid) {
 			sellCart.clear();
 			redirAttrs.addFlashAttribute("error", "There are not enough products in the storage!");
 			return "redirect:sell";
 		}
-		
 
 		if (sellCart == null || sellCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:sell";
 		}
-		salesService.sellProductsFromBasket(sellCart, paymentMethod);
+
+		if (paymentMethod.equals("GiftCard")) {
+			UUID cardID = UUID.fromString(giftCardId);
+			salesService.sellProductsFromBasket(sellCart, paymentMethod, cardID);
+		} else {
+			salesService.sellProductsFromBasket(sellCart, paymentMethod, null);
+		}
 
 		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
 		model.addAttribute("fullSellPrice", fp);
@@ -429,17 +440,33 @@ public class SalesController {
 
 	@PostMapping("create-giftcard")
 	@PreAuthorize("hasRole('BOSS')")
-	public String createGiftCard(Model model){
-		model.addAttribute("giftCardId", "TEST-ID");
-		return "sales/giftcard"; 
+	public String createGiftCard(Model model,
+								 @RequestParam(required = true) Integer amount) {
+
+
+		// FIXME: Send a signal to Finances about this operation ----------------------------------------------------------------------
+
+		GiftCard giftCard = new GiftCard(Money.of(amount, "EUR"), amount.toString());
+		giftCardRepository.save(giftCard);
+
+		model.addAttribute("giftCardId", giftCard.getId());
+		return "sales/giftcard";
 	}
 
 	@GetMapping("/check-balance")
 	@PreAuthorize("hasRole('BOSS')")
 	public String checkGiftCardBalance(Model model,
-		@RequestParam String giftCardId
+									   @RequestParam String giftCardId
 	) {
-		model.addAttribute("giftCardBalance", "TEST EUR");
+		giftCardRepository.findAll()
+			.stream()
+			.filter(giftCard -> giftCard.getId().equals(giftCardId.trim()))
+			.findFirst()
+			.ifPresentOrElse(
+				giftCard -> model.addAttribute("giftCardBalance", giftCard.getBalance()),
+				() -> model.addAttribute("giftCardBalance", "THERE IS NO CARD WITH THIS ID")
+			);
+
 		return "sales/giftcard";
 	}
 }

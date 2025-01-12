@@ -22,14 +22,17 @@ public class ProductInventoryInitializer implements DataInitializer {
 	private final UniqueInventory<UniqueInventoryItem> inventory;
 	private final ProductCatalog productCatalog;
 	private final ProductService productService;
+	private final GiftCardRepository giftCardRepository;
 
-	public ProductInventoryInitializer(UniqueInventory<UniqueInventoryItem> inventory, ProductCatalog productCatalog, ProductService productService) {
+	public ProductInventoryInitializer(UniqueInventory<UniqueInventoryItem> inventory, 
+	ProductCatalog productCatalog, ProductService productService, GiftCardRepository giftCardRepository) {
 		Assert.notNull(inventory, "Inventory must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(productService, "ProductService must not be null!");
 		this.inventory = inventory;
 		this.productCatalog = productCatalog;
 		this.productService = productService;
+		this.giftCardRepository = giftCardRepository;
 	}
 
 	@Override
@@ -54,8 +57,8 @@ public class ProductInventoryInitializer implements DataInitializer {
 		Flower gladiolus = new Flower("Gladiolus", new Pricing(Money.of(6.5, EURO), Money.of(13.0, EURO)), "Orange", 0);
 
 		// Pre-defined Gift Cards
-		GiftCard giftCard1 = new GiftCard(Money.of(10, "EUR"));
-		GiftCard giftCard2 = new GiftCard(Money.of(20, "EUR"));
+		GiftCard giftCard1 = new GiftCard(Money.of(10, "EUR"), "20");
+		GiftCard giftCard2 = new GiftCard(Money.of(20, "EUR"), "20");
 
 		productCatalog.save(rose);
 		productCatalog.save(sunflower);
@@ -70,8 +73,8 @@ public class ProductInventoryInitializer implements DataInitializer {
 		productCatalog.save(dahlia);
 		productCatalog.save(gladiolus);
 
-		productCatalog.save(giftCard1);
-		productCatalog.save(giftCard2);
+		giftCardRepository.save(giftCard1);
+		giftCardRepository.save(giftCard2);
 
 		Map<Flower, Integer> bouquetFlowersMap1 = new HashMap<>();
 		bouquetFlowersMap1.put(rose, 3);
