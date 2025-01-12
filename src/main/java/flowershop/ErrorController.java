@@ -12,7 +12,6 @@ public class ErrorController {
 
 	@GetMapping("404")
 	public String notFound() {
-		System.out.println("404 handler called");
 		return "404"; 
 	}
 }
