@@ -1,21 +1,16 @@
 package flowershop.sales;
 
-import com.sun.nio.sctp.InvalidStreamException;
 import flowershop.product.*;
 import flowershop.services.OrderFactory;
-import org.javamoney.moneta.CurrencyUnitBuilder;
 import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.Cart;
 import org.salespointframework.order.CartItem;
 import org.salespointframework.order.OrderEvents;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
-import javax.money.CurrencyUnit;
-import javax.money.MonetaryAmount;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -170,7 +165,11 @@ public class SalesService {
 	 * @return the total price of the items in the cart
 	 */
 	public double calculateFullCartPrice(Model model, Cart cart, Boolean isSellPage) {
-		double totalPrice = cart.get()
+		// Initialize a default value for the price
+		// For buy page, pricePerItem remains 0 as Bouquets are not available
+		// If it's not a Flower or Bouquet, pricePerItem remains 0
+
+		return cart.get()
 			.mapToDouble(bi -> {
 				double pricePerItem = 0; // Initialize a default value for the price
 
@@ -187,8 +186,6 @@ public class SalesService {
 				// If it's not a Flower or Bouquet, pricePerItem remains 0
 				return pricePerItem * bi.getQuantity().getAmount().doubleValue();
 			}).sum();
-
-		return totalPrice;
 	}
 
 }

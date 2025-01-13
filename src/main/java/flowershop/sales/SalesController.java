@@ -13,7 +13,6 @@ import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.catalog.Product.ProductIdentifier;
 import org.salespointframework.order.Cart;
-import org.salespointframework.order.CartItem;
 import org.salespointframework.order.OrderLine;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -220,11 +219,11 @@ public class SalesController {
 		}
 
 		boolean isInvalid = sellCart.get().anyMatch(ci -> {
-			if (productService.findProductsByName(ci.getProduct().getName()).get(0) instanceof Flower) {
-				return !(((Flower) productService.findProductsByName(ci.getProduct().getName()).get(0)).getQuantity()
+			if (productService.findProductsByName(ci.getProduct().getName()).getFirst() instanceof Flower) {
+				return !(((Flower) productService.findProductsByName(ci.getProduct().getName()).getFirst()).getQuantity()
 					- getReservedQuantity(ci.getProduct().getName()) >= ci.getQuantity().getAmount().intValue());
 			} else {
-				return !(((Bouquet) productService.findProductsByName(ci.getProduct().getName()).get(0)).getQuantity()
+				return !(((Bouquet) productService.findProductsByName(ci.getProduct().getName()).getFirst()).getQuantity()
 					- getReservedQuantity(ci.getProduct().getName()) >= ci.getQuantity().getAmount().intValue());
 			}
 		});
@@ -450,8 +449,11 @@ public class SalesController {
 
 	@PostMapping("create-giftcard")
 	@PreAuthorize("hasRole('BOSS')")
-	public String createGiftCard(Model model,
-								 @RequestParam(required = true) Integer amount) {
+	public String createGiftCard(
+		Model model,
+		@RequestParam(required = true) Integer amount
+	) {
+
 		GiftCard giftCard = new GiftCard(Money.of(amount, "EUR"), amount.toString());
 		giftCardRepository.save(giftCard);
 
@@ -461,8 +463,9 @@ public class SalesController {
 
 	@GetMapping("/check-balance")
 	@PreAuthorize("hasRole('BOSS')")
-	public String checkGiftCardBalance(Model model,
-									   @RequestParam String giftCardId
+	public String checkGiftCardBalance(
+		Model model,
+		@RequestParam String giftCardId
 	) {
 		giftCardRepository.findAll()
 			.stream()
