@@ -474,4 +474,12 @@ public class CashRegisterService implements Accountancy {
 		return filteredEntries;
 	}
 
+	public AccountancyEntryWrapper getEntry(Long orderId, List<AccountancyEntryWrapper> filteredAndCutOrdersList) {
+		for (AccountancyEntryWrapper entry : filteredAndCutOrdersList) {
+			if (entry.getId().equals(orderId)) {
+				return entry;
+			}
+		}
+		return null;
+	}
 }
