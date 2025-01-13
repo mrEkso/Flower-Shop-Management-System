@@ -7,7 +7,7 @@
   </head>
 
   <body>
-    <th:block th:fragment="productTableFragment(products, type)">
+    <th:block th:fragment="productTableBuyFragment(products, type)">
       <table id="product-table">
         <thead>
           <div class="table-header">
@@ -38,7 +38,7 @@
             <td>
               <div
                 class="text-cell quantity-cell"
-                th:text="${quantities[product.id]}"
+                th:text="${product.quantity}"
               ></div>
             </td>
             <td>

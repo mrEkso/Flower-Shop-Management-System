@@ -205,7 +205,8 @@ public class SalesController {
 	 */
 	@PostMapping("/sell-from-cart")
 	public String sellFromCart(
-		@ModelAttribute("sellCart") Cart sellCart, Model model,
+		@ModelAttribute("sellCart") Cart sellCart,
+		Model model,
 		@RequestParam(required = false) String paymentMethod,
 		@RequestParam(required = false) String giftCardId,
 		RedirectAttributes redirAttrs
@@ -234,17 +235,20 @@ public class SalesController {
 			return "redirect:sell";
 		}
 
-		if (sellCart == null || sellCart.isEmpty()) {
+		if (sellCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:sell";
 		}
 
 		if (paymentMethod.equals("GiftCard")) {
-			UUID cardID = UUID.fromString(giftCardId);
 			try {
+				UUID cardID = UUID.fromString(giftCardId);
 				salesService.sellProductsFromBasket(sellCart, paymentMethod, cardID);
-			} catch (Exception e) {
+			} catch (InsufficientFundsException e) {
 				redirAttrs.addFlashAttribute("error", e.getMessage());
+				return "redirect:sell";
+			} catch (IllegalArgumentException e) {
+				redirAttrs.addFlashAttribute("error", "Enter correct GiftCard ID!");
 				return "redirect:sell";
 			}
 
@@ -446,10 +450,11 @@ public class SalesController {
 
 	@PostMapping("create-giftcard")
 	@PreAuthorize("hasRole('BOSS')")
-	public String createGiftCard(
-		Model model,
-		@RequestParam(required = true) Integer amount
-	) {
+	public String createGiftCard(Model model,
+								 @RequestParam(required = true) Integer amount) {
+
+
+		// FIXME: Send a signal to Finances about this operation ----------------------------------------------------------------------
 
 		GiftCard giftCard = new GiftCard(Money.of(amount, "EUR"), amount.toString());
 		giftCardRepository.save(giftCard);
@@ -460,9 +465,8 @@ public class SalesController {
 
 	@GetMapping("/check-balance")
 	@PreAuthorize("hasRole('BOSS')")
-	public String checkGiftCardBalance(
-		Model model,
-		@RequestParam String giftCardId
+	public String checkGiftCardBalance(Model model,
+									   @RequestParam String giftCardId
 	) {
 		giftCardRepository.findAll()
 			.stream()

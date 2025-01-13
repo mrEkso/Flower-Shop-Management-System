@@ -74,15 +74,15 @@
                                th:text="#{action.edit}">Edit</a>
 
                             <a th:if="${event.type} == 'contract'"
-                               th:href="@{/services/contracts/view/{id}(id=${event.getOrderId()})}"
+                               th:href="@{/services/contracts/view-details/{id}(id=${event.getOrderId()})}"
                                class="btn btn-primary btn-sm"
                                th:text="#{calendar.view.title}"></a>
                             <a th:if="${event.type} == 'event'"
-                               th:href="@{/services/events/view/{id}(id=${event.getOrderId()})}"
+                               th:href="@{/services/events/view-details/{id}(id=${event.getOrderId()})}"
                                class="btn btn-primary btn-sm"
                                th:text="#{calendar.view.title}"></a>
                             <a th:if="${event.type} == 'reservation'"
-                               th:href="@{/services/reservations/view/{id}(id=${event.getOrderId()})}"
+                               th:href="@{/services/reservations/view-details/{id}(id=${event.getOrderId()})}"
                                class="btn btn-primary btn-sm"
                                th:text="#{calendar.view.title}"></a>
                         </div>

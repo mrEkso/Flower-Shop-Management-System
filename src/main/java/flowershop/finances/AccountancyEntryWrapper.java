@@ -39,7 +39,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 	//      - Amount (parent class)
 
 
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	private Map<String, Quantity> nameQuantityMap = new HashMap<String, Quantity>();
 
 	@ElementCollection
@@ -139,6 +139,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		} else if (order instanceof ReservationOrder) {
 			this.clientName = ((ReservationOrder) order).getClient().getName();
 			this.category = Category.Reservierter_Verkauf;
+			this.reservationExecution = ((ReservationOrder) order).getReservationDateTime().toLocalDate();
 		} else if (order instanceof SimpleOrder) {
 			this.category = Category.Einfacher_Verkauf;
 		} else {
@@ -148,18 +149,26 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		for (OrderLine orderLine : kindaItemQuantityMap) {
 			nameQuantityMap.put(orderLine.getProductName(), orderLine.getQuantity());
 
-			if(order instanceof WholesalerOrder || order instanceof EventOrder) {
+			if(order instanceof WholesalerOrder || order instanceof EventOrder || order instanceof ReservationOrder) {
 				String name = orderLine.getProductName();
 				List<Flower> lst = productService.findFlowersByName(name);
 				if(!lst.isEmpty()) {
-					productQuantityMap.merge(lst.getFirst(), orderLine.getQuantity(), Quantity::add);
+					if(lst.getFirst().getName().equals(name)) {
+						productQuantityMap.merge(lst.getFirst(), orderLine.getQuantity(), Quantity::add);
+					}
+					continue;
 				}
-				if (order instanceof EventOrder){
+				if (order instanceof EventOrder || order instanceof ReservationOrder) {
 					List<Bouquet> bouquetList = productService.findBouquetsByName(name);
 					if(!bouquetList.isEmpty()) {
-						Bouquet bouquet = bouquetList.getFirst();
-						for (Map.Entry<Flower, Integer> eventBouquettePair: bouquet.getFlowers().entrySet()) {
-							productQuantityMap.merge(eventBouquettePair.getKey(), Quantity.of(eventBouquettePair.getValue()), Quantity::add);
+						if(bouquetList.getFirst().getName().equals(name)) {
+							Bouquet bouquet = bouquetList.getFirst();
+							for (Map.Entry<Flower, Integer> eventBouquettePair : bouquet.getFlowers().entrySet()) {
+								productQuantityMap.merge(eventBouquettePair.getKey(),
+									Quantity.of(eventBouquettePair.getValue())
+										.times(orderLine.getQuantity().getAmount().intValue()),
+									Quantity::add);
+							}
 						}
 					}
 				}

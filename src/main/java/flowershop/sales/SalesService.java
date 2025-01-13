@@ -81,11 +81,12 @@ public class SalesService {
 		}
 
 		GiftCard giftCard = giftCardOptional.get();
-		Money fullPrice = Money.of(0, "EUR");
 
+		// Calculate the full price to pay
+		Money fullPrice = Money.of(0, "EUR");
 		for (CartItem cartItem : cart) {
 			Product product = cartItem.getProduct();
-			fullPrice = fullPrice.add(product.getPrice());
+			fullPrice = fullPrice.add(product.getPrice()).multiply(cartItem.getQuantity().getAmount());
 		}
 
 		if (giftCard.getBalance().subtract(fullPrice).isNegative()) {
@@ -113,6 +114,7 @@ public class SalesService {
 		cart.clear();
 		var event = OrderEvents.OrderPaid.of(wholesalerOrder);
 		eventPublisher.publishEvent(event); // Needed for Finances
+		//cashRegisterService.onOrderPaid(event);
 	}
 
 	/**
