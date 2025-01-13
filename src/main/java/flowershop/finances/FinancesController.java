@@ -379,7 +379,6 @@ public class FinancesController {
 	@PostMapping("/toggleState")
 	@PreAuthorize("hasRole('BOSS')")
 	public String toggleState(Model model) {
-		//TODO everything dissapears
 		clockService.openOrClose();
 		prepareFinancesModel(model, filteredAndCutOrdersList);
 		return "finances";
@@ -475,6 +474,16 @@ public class FinancesController {
 		setFilteredOrdersList(this.maxEntriesShown);
 		prepareFinancesModel(model, filteredAndCutOrdersList);
 		return "finances";
+	}
+
+	@GetMapping("/getReceipt")
+	@PreAuthorize("hasRole('BOSS')")
+	public ResponseEntity<byte[]> getReceipt(Model model, @RequestParam Long orderId) {
+		byte[] docu = this.cashRegisterService.getEntry(orderId,this.filteredAndCutOrdersList).generatePDF();
+		return ResponseEntity.ok()
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=receipt.pdf")
+			.contentType(MediaType.APPLICATION_PDF)
+			.body(docu);
 	}
 
 
