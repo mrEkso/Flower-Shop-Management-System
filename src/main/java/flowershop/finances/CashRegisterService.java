@@ -41,14 +41,18 @@ public class CashRegisterService implements Accountancy {
 
 	@Autowired
 	public CashRegisterService(OrderManagement<AbstractOrder> orderManagement,
-							   CashRegisterRepository cashRegisterRepository, ClockService clockService, ProductService productService, SalesService salesService) {
+							   CashRegisterRepository cashRegisterRepository, ClockService clockService,
+							   ProductService productService, SalesService salesService) {
+
 		this.orderManagement = orderManagement;
 		this.cashRegisterRepository = cashRegisterRepository;
 		this.productService = productService;
 		Streamable<AbstractOrder> previousOrders = Optional.ofNullable(orderManagement.findBy(OrderStatus.PAID))
 			.orElse(Streamable.empty());
 		for (Order order : previousOrders) {
-			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order, clockService.now(), productService);
+			AccountancyEntry convertedOrder =
+				new AccountancyEntryWrapper(order, clockService.now(), productService);
+
 			this.add(convertedOrder);
 		}
 		this.clockService = clockService;
@@ -68,9 +72,10 @@ public class CashRegisterService implements Accountancy {
 
 	/**
 	 * Is used to add an AccountancyEntry instance to the register
+	 *
 	 * @param entry
+	 * @param <T>   type of the entry (T extends AccountancyEntry)
 	 * @return entry, if everything went well. Otherwise - null
-	 * @param <T> type of the entry (T extends AccountancyEntry)
 	 */
 	@Override
 	public <T extends AccountancyEntry> T add(T entry) {
@@ -83,18 +88,15 @@ public class CashRegisterService implements Accountancy {
 		existing.add(entry);
 		cashRegister.setAccountancyEntries(existing);
 		cashRegister.setBalance((Money) entry.getValue().add(cashRegister.getBalance()));
-		if(((AccountancyEntryWrapper)entry).getCategory().equals("Einkauf"))
-		{
+		if (((AccountancyEntryWrapper) entry).getCategory().equals("Einkauf")) {
 			Set<PendingOrder> pendingOrders = cashRegister.getPendingOrders();
 			PendingOrder newOrder = new PendingOrder(((AccountancyEntryWrapper) entry).getFlowers(),
-				((AccountancyEntryWrapper) entry).getDeliveryDate()==null ? clockService.nextWorkingDay() : ((AccountancyEntryWrapper) entry).getDeliveryDate());
+				((AccountancyEntryWrapper) entry).getDeliveryDate() == null ? clockService.nextWorkingDay() : ((AccountancyEntryWrapper) entry).getDeliveryDate());
 			pendingOrders.add(newOrder);
 			cashRegister.setPendingOrders(pendingOrders);
-		}
-		else if(((AccountancyEntryWrapper)entry).getCategory().equals("Veranstaltung Verkauf") ||
-			((AccountancyEntryWrapper)entry).getCategory().equals("Reservierter Verkauf"))
-		{
-			if(((AccountancyEntryWrapper) entry).getDeliveryDate().isAfter(clockService.getCurrentDate())) {
+		} else if (((AccountancyEntryWrapper) entry).getCategory().equals("Veranstaltung Verkauf") ||
+			((AccountancyEntryWrapper) entry).getCategory().equals("Reservierter Verkauf")) {
+			if (((AccountancyEntryWrapper) entry).getDeliveryDate().isAfter(clockService.getCurrentDate())) {
 				Cart cart = new Cart();
 				for (Map.Entry<Product, Quantity> i : ((AccountancyEntryWrapper) entry).getFlowers().entrySet()) {
 					cart.addOrUpdateItem(i.getKey(), i.getValue());
@@ -111,47 +113,45 @@ public class CashRegisterService implements Accountancy {
 
 	/**
 	 * Will wrap the order into AccountancyEntryWrapper and add it to the register
+	 *
 	 * @param event of type OrderPaid that carries an order
 	 */
 	@EventListener
 	public void onOrderPaid(OrderEvents.OrderPaid event) {
 		AbstractOrder order = (AbstractOrder) event.getOrder();
 		//convert order to AccountancyEntry
-		AccountancyEntryWrapper convertedOrder = new AccountancyEntryWrapper(order,clockService.now(), productService);
+		AccountancyEntryWrapper convertedOrder = new AccountancyEntryWrapper(order, clockService.now(), productService);
 		this.add(convertedOrder);
 	}
 
 	/**
-	 *
 	 * @return list of all deleted products ever
 	 */
-	public List<DeletedProduct> getAllDeletedProducts(){
+	public List<DeletedProduct> getAllDeletedProducts() {
 		return productService.getDeletedProducts();
 	}
 
-	public List<DeletedProduct> getAllDeletedProducts(LocalDate date1, LocalDate date2){
+	public List<DeletedProduct> getAllDeletedProducts(LocalDate date1, LocalDate date2) {
 		return productService.getDeletedProducts().stream()
 			.filter(product -> (!date1.isAfter(product.getDateWhenDeleted()) && !date2.isBefore(product.getDateWhenDeleted())))
 			.toList();
 	}
 
 	/**
-	 *
 	 * @param date
 	 * @return list of all deleted products on a certain date
 	 */
-	public List<DeletedProduct> findDeletedProductsByDate(LocalDate date){
+	public List<DeletedProduct> findDeletedProductsByDate(LocalDate date) {
 		return normalizeDeletedProducts(productService.getDeletedProducts().stream()
 			.filter(product -> date.equals(product.getDateWhenDeleted()))
 			.toList());
 	}
 
 	/**
-	 *
 	 * @param month any day in a desired month
 	 * @return list of all deleted products during a certain month
 	 */
-	public List<DeletedProduct> findDeletedProductsByMonth(LocalDate month){
+	public List<DeletedProduct> findDeletedProductsByMonth(LocalDate month) {
 		return normalizeDeletedProducts(productService.getDeletedProducts().stream()
 			.filter(product -> month.getMonth().equals(product.getDateWhenDeleted().getMonth())
 				&& month.getYear() == product.getDateWhenDeleted().getYear())
@@ -173,7 +173,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @return all registered AccountancyEntries
 	 */
 	@Override
@@ -187,7 +186,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @param category
 	 * @return all registered AccountancyEntries of the given Category
 	 */
@@ -202,7 +200,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @param isIncome
 	 * @return a list of all AccountancyEntries that are either incomes or spendings
 	 */
@@ -227,7 +224,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @param interval
 	 * @return all AccountancyEntries form this interval of time
 	 */
@@ -251,7 +247,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @param interval overall period
 	 * @param duration periodity of how to split the data
 	 * @return the map of smaller periods of duration to AccountancyEntries from that interval
@@ -277,7 +272,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @param interval overall period
 	 * @param duration periodity of how to split the data
 	 * @return a map of smaller periods of duration to the overall profit from that interval
@@ -294,6 +288,7 @@ public class CashRegisterService implements Accountancy {
 
 	/**
 	 * Use this method instead of the DailyFinancialReport constructor
+	 *
 	 * @param day any timestamp during the needed day
 	 * @return an instance of DailyFinancialReport
 	 */
@@ -315,26 +310,24 @@ public class CashRegisterService implements Accountancy {
 		if (allEntries.isEmpty() && getAllDeletedProducts().isEmpty()) {
 			return null;
 		}
-		if(allEntries.isEmpty()) {
+		if (allEntries.isEmpty()) {
 			return new DailyFinancialReport(
 				interval,
 				moneyThen,
 				this,
-				getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9,0),
+				getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9, 0),
 				clockService);
-		}
-		else if(getAllDeletedProducts().isEmpty()) {
+		} else if (getAllDeletedProducts().isEmpty()) {
 			return new DailyFinancialReport(
 				interval,
 				moneyThen,
 				this,
 				allEntries.getFirst().getTimestamp(),
 				clockService);
-		}
-		else{
+		} else {
 			LocalDateTime earlier = allEntries.getFirst().getTimestamp()
-				.isBefore(getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9,0)) ?
-				allEntries.getFirst().getTimestamp() : getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9,0);
+				.isBefore(getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9, 0)) ?
+				allEntries.getFirst().getTimestamp() : getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9, 0);
 			return new DailyFinancialReport(
 				interval,
 				moneyThen,
@@ -346,6 +339,7 @@ public class CashRegisterService implements Accountancy {
 
 	/**
 	 * Use this method instead of the MonthlyFinancialReport constructor
+	 *
 	 * @param day any timestamp during the needed month
 	 * @return an instance of MonthlyFinancialReport
 	 */
@@ -369,26 +363,24 @@ public class CashRegisterService implements Accountancy {
 		if (allEntries.isEmpty() && getAllDeletedProducts().isEmpty()) {
 			return null;
 		}
-		if(allEntries.isEmpty()) {
+		if (allEntries.isEmpty()) {
 			return new MonthlyFinancialReport(
 				interval,
 				moneyThen,
 				this,
-				getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9,0),
+				getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9, 0),
 				clockService);
-		}
-		else if(getAllDeletedProducts().isEmpty()) {
+		} else if (getAllDeletedProducts().isEmpty()) {
 			return new MonthlyFinancialReport(
 				interval,
 				moneyThen,
 				this,
 				allEntries.getFirst().getTimestamp(),
 				clockService);
-		}
-		else{
+		} else {
 			LocalDateTime earlier = allEntries.getFirst().getTimestamp()
-				.isBefore(getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9,0)) ?
-				allEntries.getFirst().getTimestamp() : getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9,0);
+				.isBefore(getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9, 0)) ?
+				allEntries.getFirst().getTimestamp() : getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9, 0);
 			return new MonthlyFinancialReport(
 				interval,
 				moneyThen,
@@ -399,7 +391,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @param set AccountancyEntries, for which profit has to be calculated
 	 * @return profit
 	 */
@@ -412,7 +403,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @param set AccountancyEntries, for which income has to be calculated
 	 * @return income (all positive values added up and negative - ignored)
 	 */
@@ -427,7 +417,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @param set AccountancyEntries, for which spendings have to be calculated
 	 * @return expences (all negative values added up and positive - ignored)
 	 */
@@ -442,7 +431,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @return the instance of CashRegister, stored in the repository
 	 */
 	public CashRegister getCashRegister() {
@@ -455,7 +443,7 @@ public class CashRegisterService implements Accountancy {
 	public List<AccountancyEntryWrapper> filterByCustomer(String customerName) {
 		LinkedList<AccountancyEntryWrapper> filteredEntries = new LinkedList<>();
 		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
-			if (((AccountancyEntryWrapper)entry).getClientName().contains(customerName)) {
+			if (((AccountancyEntryWrapper) entry).getClientName().contains(customerName)) {
 				filteredEntries.add((AccountancyEntryWrapper) entry);
 			}
 		}
