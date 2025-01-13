@@ -24,6 +24,7 @@ import org.salespointframework.order.Totalable;
 import org.salespointframework.quantity.Quantity;
 import org.vandeseer.easytable.TableDrawer;
 import org.vandeseer.easytable.settings.HorizontalAlignment;
+import org.vandeseer.easytable.settings.VerticalAlignment;
 import org.vandeseer.easytable.structure.Row;
 import org.vandeseer.easytable.structure.Table;
 import org.vandeseer.easytable.structure.cell.TextCell;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,29 +83,27 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 
 
 	public String getClientPhone(){
-		if(clientPhone != null) return clientPhone;
-		return "";
+		return clientPhone;
 	}
 	public String getAdress(){
-		if(adress != null) return adress;
-		return "";
+		return adress;
 	}
 	public LocalDateTime getDate1(){
-		if(date1 != null) return date1;
-		return null;
+		return date1;
 	}
 	public LocalDateTime getDate2(){
-		if(date2 != null) return date2;
-		return null;
+		return date2;
 	}
 	public String getFrequency(){
-		if(frequency != null) return frequency;
-		return "";
+		return frequency;
 	}
 
 	public String getNotes() {
-		if(notes != null) return notes;
-		return "";
+		return notes;
+	}
+
+	public String getPaymentMethod() {
+		return paymentMethod;
 	}
 
 	/**
@@ -128,17 +128,9 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 
 	public String getTimestampStr()
 	{
-		StringBuilder str = new StringBuilder(this.timestamp.getDayOfMonth() + ".");
-		str.append(this.timestamp.getMonthValue() + ".")
-			.append(this.timestamp.getYear() + " ")
-			.append(this.timestamp.getHour() + ":");
-		if(this.timestamp.getMinute() < 10)
-		{
-			str.append("0");
-		}
-		str.append(this.timestamp.getMinute());
-		return str.toString();
+		return ClockService.getTimestampStr(this.timestamp);
 	}
+
 
 	/**
 	 * USE THIS METHOD INSTEAD OF getDate()!
@@ -253,7 +245,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 	public Map<Product, Quantity> getFlowers(){
 		return productQuantityMap;
 	}
-/*
+
 	public byte[] generatePDF(){
 		try (PDDocument document = new PDDocument()) {
 			InputStream inFont = getClass().getResourceAsStream("/fonts/josefin-sans.semibold.ttf");
@@ -314,7 +306,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		builder.addRow(emptyRow());
 		Row title = Row.builder()
 			.add(TextCell.builder()
-				.text("Verkaufszettel").fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text("Verkaufszettel").fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.CENTER).font(font)
 				.build())
 			.build();
 		Row type = Row.builder()
@@ -325,7 +317,159 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 				.text(this.getCategory()).fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
-		List<Row>
+		Row transactionTime = Row.builder()
+			.add(TextCell.builder()
+				.text("Bezahlt am:").fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.add(TextCell.builder()
+				.text(this.getTimestampStr()).fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.build();
+		builder.addRow(title);
+		builder.addRow(type);
+		builder.addRow(transactionTime);
+
+		if (getNotes() != null){
+			Row notes = Row.builder()
+				.add(TextCell.builder()
+					.text("Notizen:").fontSize(16).colSpan(1).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+					.build())
+				.add(TextCell.builder()
+					.text(this.getCategory()).fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+					.build())
+				.build();
+			builder.addRow(notes);
+		}
+		builder.addRow(emptyRow());
+		List<Row> customerDetails = getCustomerDetailsRows(font);
+		for (Row customerDetail : customerDetails) {
+			builder.addRow(customerDetail);
+		}
+		builder.addRow(emptyRow());
+		List<Row> timeRelatedInfo = getTimeRelatedInfoRows(font);
+		for (Row timeRelatedInfoRow : timeRelatedInfo) {
+			builder.addRow(timeRelatedInfoRow);
+		}
+		builder.addRow(emptyRow());
+		Row productListTitle = Row.builder()
+			.add(TextCell.builder()
+				.text("Verkaufszettel").fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.CENTER).font(font)
+				.build())
+			.build();
+		builder.addRow(productListTitle);
+		List<Row> productList = getProductListRows();
+		for (Row productListRow : productList) {
+			builder.addRow(productListRow);
+		}
+		builder.addRow(emptyRow());
+		List<Row> sideChargesRows = getSideChargesRows();
+		for (Row sideChargesRow : sideChargesRows) {
+			builder.addRow(sideChargesRow);
+		}
+		Row gesamtsumme = Row.builder()
+			.add(TextCell.builder()
+				.text("Gesamtsumme:").fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.add(TextCell.builder()
+				.text(this.getCategory()).fontSize(16).colSpan(1).horizontalAlignment(HorizontalAlignment.RIGHT).font(font)
+				.build())
+			.build();
+		builder.addRow(gesamtsumme);
+		Row zahlungsart = Row.builder()
+			.add(TextCell.builder()
+				.text(getPaymentMethod()).fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.build();
+		builder.addRow(zahlungsart);
+
+		return builder.build();
 	}
-*/
+
+	private List<Row> getProductListRows() {
+		List<Row> productListRows = new ArrayList<>();
+		for ()
+	}
+
+	private List<Row> getTimeRelatedInfoRows(PDFont font) {
+		List<Row> timeRelatedInfoRows = new ArrayList<>();
+		String formulation;
+		switch (this.category) {
+			case Einkauf -> formulation = "Zustellzeit:";
+			case Reservierter_Verkauf -> formulation = "Abholszeit:";
+			case Veranstaltung_Verkauf -> formulation = "Ereignisszeit:";
+			case Vertraglicher_Verkauf -> formulation = "Anfangszeit:";
+			default -> {
+				return timeRelatedInfoRows;
+			}
+		}
+		Row date1Row = Row.builder()
+			.add(TextCell.builder()
+				.text(formulation).fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.add(TextCell.builder()
+				.text(ClockService.getTimestampStr(this.getDate1())).fontSize(16).colSpan(1).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.build();
+		timeRelatedInfoRows.add(date1Row);
+		if(this.category != Category.Vertraglicher_Verkauf){
+			return timeRelatedInfoRows;
+		}
+		Row date2Row = Row.builder()
+			.add(TextCell.builder()
+				.text("Ablaufszeit:").fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.add(TextCell.builder()
+				.text(ClockService.getTimestampStr(this.getDate2())).fontSize(16).colSpan(1).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.build();
+		timeRelatedInfoRows.add(date2Row);
+		Row freq = Row.builder()
+			.add(TextCell.builder()
+				.text("Häufigkeit:").fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.add(TextCell.builder()
+				.text(this.getFrequency()).fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.build();
+		timeRelatedInfoRows.add(freq);
+		return timeRelatedInfoRows;
+	}
+
+	private List<Row> getCustomerDetailsRows(PDFont font) {
+		List<Row> customerDetails = new ArrayList<>();
+		if(this.category == Category.Einfacher_Verkauf || this.category == Category.Einkauf){
+			return customerDetails;
+		}
+		Row name = Row.builder()
+			.add(TextCell.builder()
+				.text("Kunde:").fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.add(TextCell.builder()
+				.text(this.getClientName()).fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.build();
+		customerDetails.add(name);
+		Row telephone = Row.builder()
+			.add(TextCell.builder()
+				.text("Telephonnummer:").fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.add(TextCell.builder()
+				.text(this.getClientName()).fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.build();
+		customerDetails.add(telephone);
+		if(this.getAdress() != null && !this.getAdress().equals("")){
+			Row adress = Row.builder()
+				.add(TextCell.builder()
+					.text("Zustelladress:").fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+					.build())
+				.add(TextCell.builder()
+					.text(this.getAdress()).fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+					.build())
+				.build();
+			customerDetails.add(adress);
+		}
+		return customerDetails;
+	}
+
 }
