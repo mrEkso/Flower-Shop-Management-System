@@ -24,8 +24,8 @@ public class ProductInventoryInitializer implements DataInitializer {
 	private final ProductService productService;
 	private final GiftCardRepository giftCardRepository;
 
-	public ProductInventoryInitializer(UniqueInventory<UniqueInventoryItem> inventory, 
-	ProductCatalog productCatalog, ProductService productService, GiftCardRepository giftCardRepository) {
+	public ProductInventoryInitializer(UniqueInventory<UniqueInventoryItem> inventory,
+									   ProductCatalog productCatalog, ProductService productService, GiftCardRepository giftCardRepository) {
 		Assert.notNull(inventory, "Inventory must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(productService, "ProductService must not be null!");
@@ -102,5 +102,14 @@ public class ProductInventoryInitializer implements DataInitializer {
 		productCatalog.save(roseLilyBouquet);
 		productCatalog.save(roseLilyBouquet2);
 
+		// Initialize inventory with 10 items of each product
+		productCatalog.findAll().forEach(flower -> {
+			int q = flower instanceof Flower ?
+				((Flower) flower).getQuantity()
+				: ((Bouquet) flower).getQuantity();
+			if (inventory.findByProduct(flower).isEmpty()) {
+				inventory.save(new UniqueInventoryItem(flower, Quantity.of(q)));
+			}
+		});
 	}
 }
