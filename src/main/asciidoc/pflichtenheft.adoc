@@ -580,6 +580,11 @@ Was das zu erstellende Programm auf alle Fälle leisten muss.
 | Zugriffskontrolle und Berechtigungen 
 | Das System soll Login- und Logout-Funktionen bieten, um die Sicherheit zu gewährleisten.
 
+| [[F9990]]<<F9990>> (Abschließender Kundenwunsch)
+| v0.1
+| Gutscheinkarten
+| Das System soll es ermöglichen, Kunden Gutscheinkarten zu erteilen, um dann beim Verkauf "Gutschein" als Zahlungsmethode zu wählen. Die Bilanz auf dem Gutschein soll dabei berücksichtigt und jeweils ggf. aktualisiert werden. 
+
 |===
 
 === Kann-Kriterien
