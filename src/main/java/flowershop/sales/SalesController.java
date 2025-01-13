@@ -209,7 +209,7 @@ public class SalesController {
 		@RequestParam(required = false) String paymentMethod,
 		@RequestParam(required = false) String giftCardId,
 		RedirectAttributes redirAttrs
-	) {
+	) throws InsufficientFundsException {
 
 		// Alert when shop is closed
 		if (!clockService.isOpen()) {
@@ -241,7 +241,13 @@ public class SalesController {
 
 		if (paymentMethod.equals("GiftCard")) {
 			UUID cardID = UUID.fromString(giftCardId);
-			salesService.sellProductsFromBasket(sellCart, paymentMethod, cardID);
+			try {
+				salesService.sellProductsFromBasket(sellCart, paymentMethod, cardID);
+			} catch (Exception e) {
+				redirAttrs.addFlashAttribute("error", e.getMessage());
+				return "redirect:sell";
+			}
+
 		} else {
 			salesService.sellProductsFromBasket(sellCart, paymentMethod, null);
 		}
@@ -440,11 +446,10 @@ public class SalesController {
 
 	@PostMapping("create-giftcard")
 	@PreAuthorize("hasRole('BOSS')")
-	public String createGiftCard(Model model,
-								 @RequestParam(required = true) Integer amount) {
-
-
-		// FIXME: Send a signal to Finances about this operation ----------------------------------------------------------------------
+	public String createGiftCard(
+		Model model,
+		@RequestParam(required = true) Integer amount
+	) {
 
 		GiftCard giftCard = new GiftCard(Money.of(amount, "EUR"), amount.toString());
 		giftCardRepository.save(giftCard);
@@ -455,8 +460,9 @@ public class SalesController {
 
 	@GetMapping("/check-balance")
 	@PreAuthorize("hasRole('BOSS')")
-	public String checkGiftCardBalance(Model model,
-									   @RequestParam String giftCardId
+	public String checkGiftCardBalance(
+		Model model,
+		@RequestParam String giftCardId
 	) {
 		giftCardRepository.findAll()
 			.stream()
