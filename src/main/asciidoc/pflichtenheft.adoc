@@ -305,7 +305,7 @@ image::./models/images/sequence_diagram_101_g.svg[sequence diagram, 100%, 100%, 
 2. Sie wählt Blumen bzw. Sträuße aus Katalog aus und bestätigt den Kauf.
 3. Der Kunde bezahlt oder storniert. 
 |Extensions                 |-
-|Funktionale Anforderungen    |<<F0103>>, <<F0301>>, <<F0105>>, <<F9990>>
+|Funktionale Anforderungen    |<<F0101>>, <<F0103>>, <<F0008>>, , <<F9990>>
 |===
 
 [cols="1h, 3"]
