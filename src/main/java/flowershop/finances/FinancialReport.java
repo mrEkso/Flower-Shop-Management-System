@@ -100,24 +100,36 @@ public abstract class FinancialReport {
 	 * @return german name of the weekday
 	 */
 	public static String getWeekdayNameDE(int day) {
+		String weekdayName;
+
 		switch (day) {
 			case 1:
-				return "Montag";
+				weekdayName = "Montag";
+				break;
 			case 2:
-				return "Dienstag";
+				weekdayName = "Dienstag";
+				break;
 			case 3:
-				return "Mittwoch";
+				weekdayName = "Mittwoch";
+				break;
 			case 4:
-				return "Donnerstag";
+				weekdayName = "Donnerstag";
+				break;
 			case 5:
-				return "Freitag";
+				weekdayName = "Freitag";
+				break;
 			case 6:
-				return "Samstag";
+				weekdayName = "Samstag";
+				break;
 			case 7:
-				return "Sonntag";
+				weekdayName = "Sonntag";
+				break;
 			default:
-				return "";
+				weekdayName = "";
+				break;
 		}
+
+		return weekdayName;
 	}
 
 	/**

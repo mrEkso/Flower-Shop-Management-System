@@ -23,9 +23,9 @@ public class SalesService {
 	private final ApplicationEventPublisher eventPublisher;
 	private final GiftCardService giftCardService;
 
-	public SalesService(ProductService productService, SimpleOrderService simpleOrderService, OrderFactory orderFactory,
-						WholesalerOrderService wholesalerOrderService, ApplicationEventPublisher eventPublisher, GiftCardService giftCardService)
-	{
+	public SalesService(ProductService productService, SimpleOrderService simpleOrderService,
+						OrderFactory orderFactory, WholesalerOrderService wholesalerOrderService,
+						ApplicationEventPublisher eventPublisher, GiftCardService giftCardService) {
 		this.productService = productService;
 		this.simpleOrderService = simpleOrderService;
 		this.orderFactory = orderFactory;
@@ -42,8 +42,7 @@ public class SalesService {
 	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
 	 */
 	public void sellProductsFromBasket(Cart cart, String paymentMethod, UUID giftCardId)
-		throws IllegalArgumentException, InsufficientFundsException
-	{
+		throws IllegalArgumentException, InsufficientFundsException {
 		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
 		}
@@ -74,8 +73,7 @@ public class SalesService {
 	}
 
 	private void handleGiftCardPayment(Cart cart, UUID giftCardId)
-		throws IllegalArgumentException, InsufficientFundsException
-	{
+		throws IllegalArgumentException, InsufficientFundsException {
 		Optional<GiftCard> giftCardOptional = giftCardService.findGiftCardById(giftCardId);
 		if (giftCardOptional.isEmpty()) {
 			throw new IllegalArgumentException("Gift card not found");
@@ -126,8 +124,8 @@ public class SalesService {
 	 * @param deliveryDate  the delivery date
 	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
 	 */
-	public void buyProductsFromBasket(Cart cart, String paymentMethod, String deliveryDate) throws
-		IllegalArgumentException {
+	public void buyProductsFromBasket(Cart cart, String paymentMethod, String deliveryDate)
+		throws IllegalArgumentException {
 		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
 		}
@@ -177,11 +175,10 @@ public class SalesService {
 					pricePerItem = isSellPage
 						? flower.getPricing().getSellPrice().getNumber().doubleValue()
 						: flower.getPricing().getBuyPrice().getNumber().doubleValue();
-				} else if (bi.getProduct() instanceof Bouquet bouquet) {
-					if (isSellPage) {
-						pricePerItem = bouquet.getPrice().getNumber().doubleValue();
-					}
+
+				} else if (bi.getProduct() instanceof Bouquet bouquet && isSellPage) {
 					// For buy page, pricePerItem remains 0 as Bouquets are not available
+					pricePerItem = bouquet.getPrice().getNumber().doubleValue();
 				}
 				// If it's not a Flower or Bouquet, pricePerItem remains 0
 				return pricePerItem * bi.getQuantity().getAmount().doubleValue();
