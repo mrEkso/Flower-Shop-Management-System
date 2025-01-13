@@ -259,7 +259,7 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	}
 
 	@Test
-	public void testSellFromCart_EmptyCart() {
+	public void testSellFromCart_EmptyCart() throws InsufficientFundsException {
 		Model model = new ExtendedModelMap();
 		Cart emptyCart = new Cart();  // Empty cart scenario
 		String paymentMethod = "Cash";

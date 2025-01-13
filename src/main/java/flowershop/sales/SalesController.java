@@ -6,11 +6,12 @@ import flowershop.product.Flower;
 import flowershop.product.GiftCard;
 import flowershop.product.GiftCardRepository;
 import flowershop.product.ProductService;
-import flowershop.services.ContractOrder;
-import flowershop.services.ContractOrderService;
+import flowershop.services.ReservationOrder;
+import flowershop.services.ReservationOrderService;
 
 import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
+import org.salespointframework.catalog.Product.ProductIdentifier;
 import org.salespointframework.order.Cart;
 import org.salespointframework.order.CartItem;
 import org.salespointframework.order.OrderLine;
@@ -37,14 +38,14 @@ public class SalesController {
 	private final GiftCardRepository giftCardRepository;
 	private final SalesService salesService;
 	private final ClockService clockService;
-	private final ContractOrderService contractOrderService;
+	private final ReservationOrderService reservationOrderService;
 
 	SalesController(ProductService productService, SalesService salesService,
-					ClockService clockService, ContractOrderService contractOrderService, GiftCardRepository giftCardRepository) {
+					ClockService clockService, ReservationOrderService reservationOrderService, GiftCardRepository giftCardRepository) {
 		this.productService = productService;
 		this.salesService = salesService;
 		this.clockService = clockService;
-		this.contractOrderService = contractOrderService;
+		this.reservationOrderService = reservationOrderService;
 		this.giftCardRepository = giftCardRepository;
 	}
 
@@ -104,6 +105,18 @@ public class SalesController {
 		flowers = productService.filterFlowersInStock(flowers);
 		bouquets = productService.filterBouquetsInStock(bouquets);
 
+		// Create a Map with adjusted quantities
+		Map<ProductIdentifier, Integer> productQuantities = new HashMap<>();
+		for (Flower flower : flowers) {
+			int adjustedQuantity = flower.getQuantity() - getReservedQuantity(flower.getName());
+			productQuantities.put(flower.getId(), Math.max(adjustedQuantity, 0));
+		}
+
+		for (Bouquet bouquet : bouquets) {
+			int adjustedQuantity = bouquet.getQuantity() - getReservedQuantity(bouquet.getName());
+			productQuantities.put(bouquet.getId(), Math.max(adjustedQuantity, 0));
+		}
+
 		// Add both flowers and bouquets together.
 		List<Product> products = new ArrayList<>();
 		products.addAll(flowers);
@@ -115,6 +128,7 @@ public class SalesController {
 		model.addAttribute("filterItem", filterItem);
 		model.addAttribute("searchInput", searchInput);
 		model.addAttribute("products", products);
+		model.addAttribute("quantities", productQuantities);
 
 		return "sales/sell";
 	}
@@ -163,9 +177,9 @@ public class SalesController {
 
 		Map<Product, Integer> productQuantities = new HashMap<>();
 
-		List<ContractOrder> orders = contractOrderService.findAll();
+		List<ReservationOrder> orders = reservationOrderService.findAll();
 
-		for (ContractOrder order : orders) {
+		for (ReservationOrder order : orders) {
 			for (OrderLine line : order.getOrderLines()) {
 				Product product = productService.getProductById(line.getProductIdentifier())
 					.orElseThrow(() -> new IllegalArgumentException("Product not found: " + line.getProductIdentifier()));
@@ -195,7 +209,7 @@ public class SalesController {
 		@RequestParam(required = false) String paymentMethod,
 		@RequestParam(required = false) String giftCardId,
 		RedirectAttributes redirAttrs
-	) {
+	) throws InsufficientFundsException {
 
 		// Alert when shop is closed
 		if (!clockService.isOpen()) {
@@ -227,7 +241,13 @@ public class SalesController {
 
 		if (paymentMethod.equals("GiftCard")) {
 			UUID cardID = UUID.fromString(giftCardId);
-			salesService.sellProductsFromBasket(sellCart, paymentMethod, cardID);
+			try {
+				salesService.sellProductsFromBasket(sellCart, paymentMethod, cardID);
+			} catch (Exception e) {
+				redirAttrs.addFlashAttribute("error", e.getMessage());
+				return "redirect:sell";
+			}
+
 		} else {
 			salesService.sellProductsFromBasket(sellCart, paymentMethod, null);
 		}
@@ -426,11 +446,10 @@ public class SalesController {
 
 	@PostMapping("create-giftcard")
 	@PreAuthorize("hasRole('BOSS')")
-	public String createGiftCard(Model model,
-								 @RequestParam(required = true) Integer amount) {
-
-
-		// FIXME: Send a signal to Finances about this operation ----------------------------------------------------------------------
+	public String createGiftCard(
+		Model model,
+		@RequestParam(required = true) Integer amount
+	) {
 
 		GiftCard giftCard = new GiftCard(Money.of(amount, "EUR"), amount.toString());
 		giftCardRepository.save(giftCard);
@@ -441,8 +460,9 @@ public class SalesController {
 
 	@GetMapping("/check-balance")
 	@PreAuthorize("hasRole('BOSS')")
-	public String checkGiftCardBalance(Model model,
-									   @RequestParam String giftCardId
+	public String checkGiftCardBalance(
+		Model model,
+		@RequestParam String giftCardId
 	) {
 		giftCardRepository.findAll()
 			.stream()
