@@ -463,12 +463,15 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	public List<AccountancyEntryWrapper> filterByPrice(double price) {
+		final double EPSILON = 1e-6; // Tolerance for floating-point comparison
 		LinkedList<AccountancyEntryWrapper> filteredEntries = new LinkedList<>();
+
 		for (AccountancyEntry entry : this.getCashRegister().getAccountancyEntries()) {
-			if (entry.getValue().getNumber().doubleValue() == price) {
+			if (Math.abs(entry.getValue().getNumber().doubleValue() - price) < EPSILON) {
 				filteredEntries.add((AccountancyEntryWrapper) entry);
 			}
 		}
 		return filteredEntries;
 	}
+
 }
