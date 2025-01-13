@@ -154,7 +154,12 @@
                                     ></li>
                                 </ul>
                             </td>
-                            <td th:text="${order.value}"></td>
+                            <td th:text="${order.value}">
+                                <form th:action="@{/getReceipt}" method="get">
+                                    <input type="hidden" name="orderId" th:value="${order.id}" />
+                                    <button type="submit">Get Receipt</button>
+                                </form>
+                            </td>
                         </tr>
                         </tbody>
                     </table>

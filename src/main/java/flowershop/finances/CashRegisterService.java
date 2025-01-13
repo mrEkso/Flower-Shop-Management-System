@@ -41,18 +41,14 @@ public class CashRegisterService implements Accountancy {
 
 	@Autowired
 	public CashRegisterService(OrderManagement<AbstractOrder> orderManagement,
-							   CashRegisterRepository cashRegisterRepository, ClockService clockService,
-							   ProductService productService, SalesService salesService) {
-
+							   CashRegisterRepository cashRegisterRepository, ClockService clockService, ProductService productService, SalesService salesService) {
 		this.orderManagement = orderManagement;
 		this.cashRegisterRepository = cashRegisterRepository;
 		this.productService = productService;
 		Streamable<AbstractOrder> previousOrders = Optional.ofNullable(orderManagement.findBy(OrderStatus.PAID))
 			.orElse(Streamable.empty());
 		for (Order order : previousOrders) {
-			AccountancyEntry convertedOrder =
-				new AccountancyEntryWrapper(order, clockService.now(), productService);
-
+			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order, clockService.now(), productService);
 			this.add(convertedOrder);
 		}
 		this.clockService = clockService;
@@ -72,10 +68,9 @@ public class CashRegisterService implements Accountancy {
 
 	/**
 	 * Is used to add an AccountancyEntry instance to the register
-	 *
 	 * @param entry
-	 * @param <T>   type of the entry (T extends AccountancyEntry)
 	 * @return entry, if everything went well. Otherwise - null
+	 * @param <T> type of the entry (T extends AccountancyEntry)
 	 */
 	@Override
 	public <T extends AccountancyEntry> T add(T entry) {
@@ -88,24 +83,36 @@ public class CashRegisterService implements Accountancy {
 		existing.add(entry);
 		cashRegister.setAccountancyEntries(existing);
 		cashRegister.setBalance((Money) entry.getValue().add(cashRegister.getBalance()));
+
 		if (((AccountancyEntryWrapper) entry).getCategory().equals("Einkauf")) {
 			Set<PendingOrder> pendingOrders = cashRegister.getPendingOrders();
-			PendingOrder newOrder = new PendingOrder(((AccountancyEntryWrapper) entry).getFlowers(),
-				((AccountancyEntryWrapper) entry).getDeliveryDate() == null ? clockService.nextWorkingDay() : ((AccountancyEntryWrapper) entry).getDeliveryDate());
+			PendingOrder newOrder = new PendingOrder(
+				((AccountancyEntryWrapper) entry).getFlowers(),
+				((AccountancyEntryWrapper) entry).getDeliveryDate() == null
+					? clockService.nextWorkingDay()
+					: ((AccountancyEntryWrapper) entry).getDeliveryDate()
+			);
 			pendingOrders.add(newOrder);
 			cashRegister.setPendingOrders(pendingOrders);
-		} else if (((AccountancyEntryWrapper) entry).getCategory().equals("Veranstaltung Verkauf") ||
-			((AccountancyEntryWrapper) entry).getCategory().equals("Reservierter Verkauf")) {
-			if (((AccountancyEntryWrapper) entry).getDeliveryDate().isAfter(clockService.getCurrentDate())) {
-				Cart cart = new Cart();
-				for (Map.Entry<Product, Quantity> i : ((AccountancyEntryWrapper) entry).getFlowers().entrySet()) {
-					cart.addOrUpdateItem(i.getKey(), i.getValue());
-				}
-				if (!cart.isEmpty()) {
-					salesService.buyProductsFromBasket(cart, "Card", ((AccountancyEntryWrapper) entry).getDeliveryDate().toString());
-				}
+
+		} else if (
+			(((AccountancyEntryWrapper) entry).getCategory().equals("Veranstaltung Verkauf") ||
+				((AccountancyEntryWrapper) entry).getCategory().equals("Reservierter Verkauf")) &&
+				((AccountancyEntryWrapper) entry).getDeliveryDate().isAfter(clockService.getCurrentDate())
+		) {
+			Cart cart = new Cart();
+			for (Map.Entry<Product, Quantity> i : ((AccountancyEntryWrapper) entry).getFlowers().entrySet()) {
+				cart.addOrUpdateItem(i.getKey(), i.getValue());
+			}
+			if (!cart.isEmpty()) {
+				salesService.buyProductsFromBasket(
+					cart,
+					"Card",
+					((AccountancyEntryWrapper) entry).getDeliveryDate().toString()
+				);
 			}
 		}
+
 
 		cashRegisterRepository.save(cashRegister);
 		return entry;
@@ -113,7 +120,6 @@ public class CashRegisterService implements Accountancy {
 
 	/**
 	 * Will wrap the order into AccountancyEntryWrapper and add it to the register
-	 *
 	 * @param event of type OrderPaid that carries an order
 	 */
 	@EventListener
@@ -125,6 +131,7 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
+	 *
 	 * @return list of all deleted products ever
 	 */
 	public List<DeletedProduct> getAllDeletedProducts() {
@@ -159,7 +166,11 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	private List<DeletedProduct> normalizeDeletedProducts(List<DeletedProduct> deletedProducts) {
-		Map<String, List<DeletedProduct>> grouped = deletedProducts.stream().collect(Collectors.groupingBy((DeletedProduct::getName)));
+		Map<String, List<DeletedProduct>> grouped =
+			deletedProducts
+				.stream()
+				.collect(Collectors.groupingBy((DeletedProduct::getName)));
+
 		List<DeletedProduct> output = new ArrayList<>();
 		for (Map.Entry<String, List<DeletedProduct>> entry : grouped.entrySet()) {
 			String name = entry.getKey();
@@ -173,6 +184,7 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
+	 *
 	 * @return all registered AccountancyEntries
 	 */
 	@Override
@@ -219,11 +231,13 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	@Override
-	public <T extends AccountancyEntry> Optional<T> get(AccountancyEntry.AccountancyEntryIdentifier identifier, Class<T> type) {
+	public <T extends AccountancyEntry> Optional<T> get(
+		AccountancyEntry.AccountancyEntryIdentifier identifier, Class<T> type) {
 		return Optional.empty();
 	}
 
 	/**
+	 *
 	 * @param interval
 	 * @return all AccountancyEntries form this interval of time
 	 */
@@ -247,6 +261,7 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
+	 *
 	 * @param interval overall period
 	 * @param duration periodity of how to split the data
 	 * @return the map of smaller periods of duration to AccountancyEntries from that interval
@@ -267,11 +282,13 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	@Override
-	public <T extends AccountancyEntry> Map<Interval, Streamable<T>> find(Interval interval, TemporalAmount duration, Class<T> type) {
+	public <T extends AccountancyEntry> Map<Interval, Streamable<T>> find(
+		Interval interval, TemporalAmount duration, Class<T> type) {
 		return Map.of();
 	}
 
 	/**
+	 *
 	 * @param interval overall period
 	 * @param duration periodity of how to split the data
 	 * @return a map of smaller periods of duration to the overall profit from that interval
@@ -462,4 +479,12 @@ public class CashRegisterService implements Accountancy {
 		return filteredEntries;
 	}
 
+	public AccountancyEntryWrapper getEntry(Long orderId, List<AccountancyEntryWrapper> filteredAndCutOrdersList) {
+		for (AccountancyEntryWrapper entry : filteredAndCutOrdersList) {
+			if (entry.getId().equals(orderId)) {
+				return entry;
+			}
+		}
+		return null;
+	}
 }

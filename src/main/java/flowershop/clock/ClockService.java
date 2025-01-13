@@ -124,7 +124,10 @@ public class ClockService {
 	 * Currently it works Mo-Fr. To change this, refactor the while-clause a little
 	 */
 	public LocalDate nextWorkingDay() {
-		LocalDate currentDate = getCurrentDate();
+		return ClockService.nextWorkingDay(getCurrentDate());
+	}
+
+	public static LocalDate nextWorkingDay(LocalDate currentDate) {
 		LocalDate nextWorkingDay = currentDate.plusDays(1);
 		while(nextWorkingDay.getDayOfWeek().getValue()>5)
 		{
@@ -132,6 +135,5 @@ public class ClockService {
 		}
 		return nextWorkingDay;
 	}
-
 
 }
