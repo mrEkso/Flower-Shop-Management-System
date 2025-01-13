@@ -54,15 +54,15 @@ class ServiceControllerIntegrationTests {
 
 	@Test
 	void getContractOrderViewPageShouldReturnContractOrderAndContractOrderPage() throws Exception {
-		mvc.perform(get("/services/contracts/view/{id}", getFirstValidContractId()))
+		mvc.perform(get("/services/contracts/view-details/{id}", getFirstValidContractId()))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeExists("contractOrder"))
-			.andExpect(view().name("services/view/contractOrderViewForm"));
+			.andExpect(view().name("services/view/viewContractDetails"));
 	}
 
 	@Test
 	void getContractOrderViewByIdShouldReturnErrorForNonExistingOrder() throws Exception {
-		mvc.perform(get("/services/contracts/view/{id}", UUID.randomUUID()))
+		mvc.perform(get("/services/contracts/view-details/{id}", UUID.randomUUID()))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(model().attribute("error", "Contract order not found"))
 			.andExpect(view().name("redirect:/404"));
@@ -70,15 +70,15 @@ class ServiceControllerIntegrationTests {
 
 	@Test
 	void getEventOrderViewByIdShouldGetEventOrderById() throws Exception {
-		mvc.perform(get("/services/events/view/{id}", getFirstValidEventId()))
+		mvc.perform(get("/services/events/view-details/{id}", getFirstValidEventId()))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeExists("eventOrder"))
-			.andExpect(view().name("services/view/eventOrderViewForm"));
+			.andExpect(view().name("services/view/viewEventDetails"));
 	}
 
 	@Test
 	void getEventOrderViewByIdShouldReturnErrorForNonExistingOrder() throws Exception {
-		mvc.perform(get("/services/events/view/{id}", UUID.randomUUID()))
+		mvc.perform(get("/services/events/view-details/{id}", UUID.randomUUID()))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(model().attribute("error", "Event order not found"))
 			.andExpect(view().name("redirect:/404"));
@@ -86,15 +86,15 @@ class ServiceControllerIntegrationTests {
 
 	@Test
 	void getReservationOrderViewByIdShouldGetReservationOrderById() throws Exception {
-		mvc.perform(get("/services/reservations/view/{id}", getFirstValidReservationId()))
+		mvc.perform(get("/services/reservations/view-details/{id}", getFirstValidReservationId()))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeExists("reservationOrder"))
-			.andExpect(view().name("services/view/reservationOrderViewForm"));
+			.andExpect(view().name("services/view/viewReservationDetails"));
 	}
 
 	@Test
 	void getReservationOrderViewByIdShouldReturnErrorForNonExistingOrder() throws Exception {
-		mvc.perform(get("/services/reservations/view/{id}", UUID.randomUUID()))
+		mvc.perform(get("/services/reservations/view-details/{id}", UUID.randomUUID()))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(model().attribute("error", "Reservation order not found"))
 			.andExpect(view().name("redirect:/404"));

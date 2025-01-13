@@ -74,69 +74,6 @@ public class ServiceController {
 	}
 
 	/**
-	 * Handles GET requests to display the view page for a contract order.
-	 *
-	 * @param id    the ID of the contract order
-	 * @param model the model to add attributes to
-	 * @return the view name for the contract order view page
-	 */
-	@GetMapping("/contracts/view/{id}")
-	public String getContractOrderViewPage(@PathVariable UUID id,
-										   Model model,
-										   RedirectAttributes redirectAttributes) {
-		Optional<ContractOrder> contractOrder = contractOrderService.getById(id);
-		if (contractOrder.isEmpty()) {
-			redirectAttributes.addAttribute("error", "Contract order not found");
-			return "redirect:/404";
-		}
-		model.addAttribute("contractOrder", contractOrder.get());
-		model.addAttribute("products", productService.getAllProducts());
-		return "services/view/contractOrderViewForm";
-	}
-
-	/**
-	 * Handles GET requests to display the view page for an event order.
-	 *
-	 * @param id    the ID of the event order
-	 * @param model the model to add attributes to
-	 * @return the view name for the event order view page
-	 */
-	@GetMapping("/events/view/{id}")
-	public String getEventOrderViewPage(@PathVariable UUID id,
-										Model model,
-										RedirectAttributes redirectAttributes) {
-		Optional<EventOrder> eventOrder = eventOrderService.getById(id);
-		if (eventOrder.isEmpty()) {
-			redirectAttributes.addAttribute("error", "Event order not found");
-			return "redirect:/404";
-		}
-		model.addAttribute("eventOrder", eventOrder.get());
-		model.addAttribute("products", productService.getAllProducts());
-		return "services/view/eventOrderViewForm";
-	}
-
-	/**
-	 * Handles GET requests to display the view page for a reservation order.
-	 *
-	 * @param id    the ID of the reservation order
-	 * @param model the model to add attributes to
-	 * @return the view name for the reservation order view page
-	 */
-	@GetMapping("/reservations/view/{id}")
-	public String getReservationOrderViewPage(@PathVariable UUID id,
-											  Model model,
-											  RedirectAttributes redirectAttributes) {
-		Optional<ReservationOrder> reservationOrder = reservationOrderService.getById(id);
-		if (reservationOrder.isEmpty()) {
-			redirectAttributes.addAttribute("error", "Reservation order not found");
-			return "redirect:/404";
-		}
-		model.addAttribute("reservationOrder", reservationOrder.get());
-		model.addAttribute("products", productService.getAllProducts());
-		return "services/view/reservationOrderViewForm";
-	}
-
-	/**
 	 * Handles GET requests to display the page for creating a new order.
 	 *
 	 * @return the view name for the new order creation page
@@ -647,6 +584,13 @@ public class ServiceController {
 		}
 	}
 
+	/**
+	 * Handles GET requests to display the view page for a contract order.
+	 *
+	 * @param id    the ID of the contract order
+	 * @param model the model to add attributes to
+	 * @return the view name for the contract order view page
+	 */
 	@GetMapping("/contracts/view-details/{id}")
 	public String getViewContractDetails(@PathVariable UUID id,
 										 Model model,
@@ -661,6 +605,13 @@ public class ServiceController {
 		return "services/view/viewContractDetails";
 	}
 
+	/**
+	 * Handles GET requests to display the view page for an event order.
+	 *
+	 * @param id    the ID of the event order
+	 * @param model the model to add attributes to
+	 * @return the view name for the event order view page
+	 */
 	@GetMapping("/events/view-details/{id}")
 	public String getViewEventDetails(@PathVariable UUID id,
 									  Model model,
@@ -675,6 +626,13 @@ public class ServiceController {
 		return "services/view/viewEventDetails";
 	}
 
+	/**
+	 * Handles GET requests to display the view page for a reservation order.
+	 *
+	 * @param id    the ID of the reservation order
+	 * @param model the model to add attributes to
+	 * @return the view name for the reservation order view page
+	 */
 	@GetMapping("/reservations/view-details/{id}")
 	public String getViewReservationDetails(@PathVariable UUID id,
 											Model model,
