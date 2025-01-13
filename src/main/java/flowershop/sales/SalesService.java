@@ -28,7 +28,9 @@ public class SalesService {
 	private final ApplicationEventPublisher eventPublisher;
 	private final GiftCardService giftCardService;
 
-	public SalesService(ProductService productService, SimpleOrderService simpleOrderService, OrderFactory orderFactory, WholesalerOrderService wholesalerOrderService, ApplicationEventPublisher eventPublisher, GiftCardService giftCardService) {
+	public SalesService(ProductService productService, SimpleOrderService simpleOrderService, OrderFactory orderFactory,
+						WholesalerOrderService wholesalerOrderService, ApplicationEventPublisher eventPublisher, GiftCardService giftCardService)
+	{
 		this.productService = productService;
 		this.simpleOrderService = simpleOrderService;
 		this.orderFactory = orderFactory;
@@ -44,7 +46,9 @@ public class SalesService {
 	 * @param paymentMethod the payment method for the sale
 	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
 	 */
-	public void sellProductsFromBasket(Cart cart, String paymentMethod, UUID giftCardId) throws IllegalArgumentException, InsufficientFundsException {
+	public void sellProductsFromBasket(Cart cart, String paymentMethod, UUID giftCardId)
+		throws IllegalArgumentException, InsufficientFundsException
+	{
 		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
 		}
@@ -74,7 +78,9 @@ public class SalesService {
 		eventPublisher.publishEvent(event); // Needed for Finances
 	}
 
-	private void handleGiftCardPayment(Cart cart, UUID giftCardId) throws IllegalArgumentException, InsufficientFundsException {
+	private void handleGiftCardPayment(Cart cart, UUID giftCardId)
+		throws IllegalArgumentException, InsufficientFundsException
+	{
 		Optional<GiftCard> giftCardOptional = giftCardService.findGiftCardById(giftCardId);
 		if (giftCardOptional.isEmpty()) {
 			throw new IllegalArgumentException("Gift card not found");
@@ -146,14 +152,12 @@ public class SalesService {
 			Product product = cartItem.getProduct();
 
 			if (product instanceof Flower) {
-				//productService.addFlowers((Flower) product, (int) cartItem.getQuantity().getAmount().doubleValue()); //TODO: Check this logic
 				wholesalerOrder.addOrderLine(product, cartItem.getQuantity());
 			} else if (product instanceof Bouquet) {
 				throw new IllegalArgumentException("Unsupported product type: Bouquet cannot be bought from Wholesaler.");
 			} else {
 				throw new IllegalArgumentException("Unsupported product type");
 			}
-
 		}
 	}
 
@@ -166,25 +170,25 @@ public class SalesService {
 	 * @return the total price of the items in the cart
 	 */
 	public double calculateFullCartPrice(Model model, Cart cart, Boolean isSellPage) {
-		double fp = cart.get()
+		double totalPrice = cart.get()
 			.mapToDouble(bi -> {
+				double pricePerItem = 0; // Initialize a default value for the price
+
 				if (bi.getProduct() instanceof Flower flower) {
-					double price = isSellPage
+					pricePerItem = isSellPage
 						? flower.getPricing().getSellPrice().getNumber().doubleValue()
 						: flower.getPricing().getBuyPrice().getNumber().doubleValue();
-					return price * bi.getQuantity().getAmount().doubleValue();
 				} else if (bi.getProduct() instanceof Bouquet bouquet) {
 					if (isSellPage) {
-						double price = bouquet.getPrice().getNumber().doubleValue();
-						return price * bi.getQuantity().getAmount().doubleValue();
-					} else {
-						return 0; // Bouquets are not available for buy page
+						pricePerItem = bouquet.getPrice().getNumber().doubleValue();
 					}
-				} else {
-					return 0;
+					// For buy page, pricePerItem remains 0 as Bouquets are not available
 				}
+				// If it's not a Flower or Bouquet, pricePerItem remains 0
+				return pricePerItem * bi.getQuantity().getAmount().doubleValue();
 			}).sum();
-		return fp;
+
+		return totalPrice;
 	}
 
 }
