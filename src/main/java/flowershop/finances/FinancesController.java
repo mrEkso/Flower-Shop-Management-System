@@ -479,11 +479,15 @@ public class FinancesController {
 	@GetMapping("/getReceipt")
 	@PreAuthorize("hasRole('BOSS')")
 	public ResponseEntity<byte[]> getReceipt(Model model, @RequestParam Long orderId) {
+		/*
 		byte[] docu = this.cashRegisterService.getEntry(orderId,this.filteredAndCutOrdersList).generatePDF();
 		return ResponseEntity.ok()
 			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=receipt.pdf")
 			.contentType(MediaType.APPLICATION_PDF)
 			.body(docu);
+
+		 */
+		return null;
 	}
 
 

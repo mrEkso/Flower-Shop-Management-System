@@ -10,6 +10,11 @@ import flowershop.services.ContractOrder;
 import flowershop.services.EventOrder;
 import flowershop.services.ReservationOrder;
 import jakarta.persistence.*;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.ChargeLine;
@@ -17,12 +22,22 @@ import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderLine;
 import org.salespointframework.order.Totalable;
 import org.salespointframework.quantity.Quantity;
+import org.vandeseer.easytable.TableDrawer;
+import org.vandeseer.easytable.settings.HorizontalAlignment;
+import org.vandeseer.easytable.structure.Row;
+import org.vandeseer.easytable.structure.Table;
+import org.vandeseer.easytable.structure.cell.TextCell;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static flowershop.finances.FinancialReport.emptyRow;
 
 
 /**
@@ -61,6 +76,8 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 
 	@Transient
 	private ProductService productService;
+	@Transient
+	private ClockService clockService;
 
 
 	public String getClientPhone(){
@@ -236,5 +253,79 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 	public Map<Product, Quantity> getFlowers(){
 		return productQuantityMap;
 	}
+/*
+	public byte[] generatePDF(){
+		try (PDDocument document = new PDDocument()) {
+			InputStream inFont = getClass().getResourceAsStream("/fonts/josefin-sans.semibold.ttf");
+			System.out.println(inFont.toString());
+			PDType0Font customFont = PDType0Font.load(document, inFont);
 
+			TableDrawer.builder()
+				.startX(50)
+				.endY(50)
+				.startY(780)
+				.table(buildTheTable(customFont))
+				.build()
+				.draw(() -> document, () -> new PDPage(PDRectangle.A4), 50);
+			try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+				document.save(outputStream);
+				return outputStream.toByteArray();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private Table buildTheTable(PDFont font) {
+		Table.TableBuilder builder = Table.builder()
+			.addColumnsOfWidth(121, 121, 121, 122);
+		Row shapka1 = Row.builder()
+			.add(TextCell.builder()
+				.text(" ").fontSize(16).colSpan(2)
+				.build())
+			.add(TextCell.builder()
+				.text("Floris Blumenladen Dresden").fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.build();
+		builder.addRow(shapka1);
+		Row adress = Row.builder()
+			.add(TextCell.builder()
+				.text(" ").fontSize(16).colSpan(2)
+				.build())
+			.add(TextCell.builder()
+				.text("Wiener Platz 4, 01069 Dresden").fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.build();
+		builder.addRow(adress);
+		LocalDateTime day = this.clockService.now();
+		String month = (day.getMonth().getValue() < 10) ? "0" + day.getMonth().getValue() : String.valueOf(day.getMonth().getValue());
+		String dateRepr = new StringBuilder().append(day.getDayOfMonth()).append(".").append(month).append(".").append(day.getYear()).toString();
+
+		Row datum = Row.builder()
+			.add(TextCell.builder()
+				.text(" ").fontSize(16).colSpan(2)
+				.build())
+			.add(TextCell.builder()
+				.text("Am " + dateRepr).fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.build();
+		builder.addRow(datum);
+		builder.addRow(emptyRow());
+		Row title = Row.builder()
+			.add(TextCell.builder()
+				.text("Verkaufszettel").fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.build();
+		Row type = Row.builder()
+			.add(TextCell.builder()
+				.text("Typ:").fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.add(TextCell.builder()
+				.text(this.getCategory()).fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.build())
+			.build();
+		List<Row>
+	}
+*/
 }
