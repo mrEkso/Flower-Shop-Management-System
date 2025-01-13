@@ -1,14 +1,17 @@
 package flowershop.service;
 
+import flowershop.clock.ClockService;
 import flowershop.services.ContractOrder;
 import flowershop.services.EventOrder;
 import flowershop.services.ReservationOrder;
 import flowershop.services.ServiceController;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.salespointframework.order.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -30,30 +34,16 @@ class ServiceControllerIntegrationTests {
 	@Autowired
 	MockMvc mvc;
 
-	@SuppressWarnings("unchecked")
-	private <T> T getFirstValidOrderByType(Class<T> orderClass, String type) throws Exception {
-		return ((List<T>) Objects.requireNonNull(mvc.perform(get("/services"))
-				.andReturn()
-				.getModelAndView())
-			.getModel()
-			.get(type))
-			.getFirst();
-	}
+	@MockBean
+	ClockService clockService;
 
-	private Order.OrderIdentifier getFirstValidContractId() throws Exception {
-		return getFirstValidOrderByType(ContractOrder.class, "contracts").getId();
-	}
-
-	private Order.OrderIdentifier getFirstValidEventId() throws Exception {
-		return getFirstValidOrderByType(EventOrder.class, "events").getId();
-	}
-
-	private Order.OrderIdentifier getFirstValidReservationId() throws Exception {
-		return getFirstValidOrderByType(ReservationOrder.class, "reservations").getId();
+	@BeforeEach
+	void setUp() {
+		when(clockService.isOpen()).thenReturn(true);
 	}
 
 	@Test
-	void showsAllServices() throws Exception {
+	void showsAllServicesShouldReturnContractsAndEventsAndReservationsAndServicePage() throws Exception {
 		mvc.perform(get("/services"))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeExists("contracts"))
@@ -62,29 +52,59 @@ class ServiceControllerIntegrationTests {
 			.andExpect(view().name("services/services"));
 	}
 
-//	@Test
-//	void shouldGetContractOrderById() throws Exception {
-//		mvc.perform(get("/services/contracts/{id}", getFirstValidContractId()))
-//			.andExpect(status().isOk())
-//			.andExpect(model().attributeExists("reservation"))
-//			.andExpect(view().name("services/reservation_details"));
-//	}
-//
-//	@Test
-//	void shouldGetEventOrderById() throws Exception {
-//		mvc.perform(get("/services/reservations/{id}", getFirstValidEventId()))
-//			.andExpect(status().isOk())
-//			.andExpect(model().attributeExists("reservation"))
-//			.andExpect(view().name("services/reservation_details"));
-//	}
-//
-//	@Test
-//	void shouldGetReservationOrderById() throws Exception {
-//		mvc.perform(get("/services/reservations/{id}", getFirstValidReservationId()))
-//			.andExpect(status().isOk())
-//			.andExpect(model().attributeExists("reservation"))
-//			.andExpect(view().name("services/reservation_details"));
-//	}
+	@Test
+	void getContractOrderViewPageShouldReturnContractOrderAndContractOrderPage() throws Exception {
+		mvc.perform(get("/services/contracts/view-details/{id}", getFirstValidContractId()))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("contractOrder"))
+			.andExpect(view().name("services/view/viewContractDetails"));
+	}
+
+	@Test
+	void getContractOrderViewByIdShouldReturnErrorForNonExistingOrder() throws Exception {
+		mvc.perform(get("/services/contracts/view-details/{id}", UUID.randomUUID()))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(model().attribute("error", "Contract order not found"))
+			.andExpect(view().name("redirect:/404"));
+	}
+
+	@Test
+	void getEventOrderViewByIdShouldGetEventOrderById() throws Exception {
+		mvc.perform(get("/services/events/view-details/{id}", getFirstValidEventId()))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("eventOrder"))
+			.andExpect(view().name("services/view/viewEventDetails"));
+	}
+
+	@Test
+	void getEventOrderViewByIdShouldReturnErrorForNonExistingOrder() throws Exception {
+		mvc.perform(get("/services/events/view-details/{id}", UUID.randomUUID()))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(model().attribute("error", "Event order not found"))
+			.andExpect(view().name("redirect:/404"));
+	}
+
+	@Test
+	void getReservationOrderViewByIdShouldGetReservationOrderById() throws Exception {
+		mvc.perform(get("/services/reservations/view-details/{id}", getFirstValidReservationId()))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("reservationOrder"))
+			.andExpect(view().name("services/view/viewReservationDetails"));
+	}
+
+	@Test
+	void getReservationOrderViewByIdShouldReturnErrorForNonExistingOrder() throws Exception {
+		mvc.perform(get("/services/reservations/view-details/{id}", UUID.randomUUID()))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(model().attribute("error", "Reservation order not found"))
+			.andExpect(view().name("redirect:/404"));
+	}
+
+	@Test
+	void getEmptyResponseShouldReturnOk() throws Exception {
+		mvc.perform(get("/services/empty-response"))
+			.andExpect(status().isOk());
+	}
 
 	@Test
 	void getNewOrderPageShouldBeAccessible() throws Exception {
@@ -103,10 +123,76 @@ class ServiceControllerIntegrationTests {
 	}
 
 	@Test
+	void chooseFrequencyOptionsShouldReturnFrequencyOptionsContainerForRecurring() throws Exception {
+		mvc.perform(get("/services/contracts/choose-frequency-options")
+				.param("contractType", "Recurring"))
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("contractType", "Recurring"))
+			.andExpect(view().name("fragments/frequency-options :: frequencyOptionsContainer"));
+	}
+
+	@Test
+	void chooseFrequencyOptionsShouldReturnEmptyFrequencyOptionsForOneTime() throws Exception {
+		mvc.perform(get("/services/contracts/choose-frequency-options")
+				.param("contractType", "One-Time"))
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("contractType", "One-Time"))
+			.andExpect(view().name("fragments/empty-frequency-options :: empty-frequency-options"));
+	}
+
+	@Test
+	void chooseFrequencyOptionsShouldReturnEmptyFrequencyOptionsForNullContractType() throws Exception {
+		mvc.perform(get("/services/contracts/choose-frequency-options"))
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("contractType", "One-Time"))
+			.andExpect(view().name("fragments/empty-frequency-options :: empty-frequency-options"));
+	}
+
+	@Test
+	void chooseCustomFrequencyOptionsShouldReturnCustomOptionsContainerForCustomFrequency() throws Exception {
+		mvc.perform(get("/services/contracts/choose-custom-frequency-options")
+				.param("frequency", "custom")
+				.param("customFrequency", "5")
+				.param("customUnit", "days"))
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("contractType", "Recurring"))
+			.andExpect(model().attribute("frequency", "custom"))
+			.andExpect(model().attribute("customFrequency", 5))
+			.andExpect(model().attribute("customUnit", "days"))
+			.andExpect(view().name("fragments/frequency-options :: customOptionsContainer"));
+	}
+
+	@Test
+	void chooseCustomFrequencyOptionsShouldReturnEmptyCustomOptionsForNonCustomFrequency() throws Exception {
+		mvc.perform(get("/services/contracts/choose-custom-frequency-options")
+				.param("frequency", "weekly"))
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("contractType", "Recurring"))
+			.andExpect(model().attribute("frequency", "weekly"))
+			.andExpect(model().attribute("customFrequency", (Integer) null))
+			.andExpect(model().attribute("customUnit", (String) null))
+			.andExpect(view().name("fragments/empty-frequency-options :: empty-custom-options"));
+	}
+
+	@Test
+	void chooseCustomFrequencyOptionsShouldReturnEmptyCustomOptionsForNullFrequency() throws Exception {
+		mvc.perform(get("/services/contracts/choose-custom-frequency-options"))
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("contractType", "Recurring"))
+			.andExpect(model().attribute("frequency", ""))
+			.andExpect(model().attribute("customFrequency", (Integer) null))
+			.andExpect(model().attribute("customUnit", (String) null))
+			.andExpect(view().name("fragments/empty-frequency-options :: empty-custom-options"));
+	}
+
+	@Test
 	void createContractOrderShouldCreateContractOrder() throws Exception {
 		mvc.perform(post("/services/contracts/create")
 				.param("clientName", "Test Client")
 				.param("contractType", "Standard")
+				.param("frequency", "custom")
+				.param("customFrequency", "5")
+				.param("customUnit", "day")
 				.param("startDate", "2024-05-01T12:00")
 				.param("endDate", "2024-12-01T12:00")
 				.param("address", "123 Test Street")
@@ -118,17 +204,53 @@ class ServiceControllerIntegrationTests {
 	}
 
 	@Test
-	void createContractOrderShouldReturnErrorForInvalidPhoneNumber() throws Exception {
+	void createContractOrderShouldReturnErrorWhenShopIsClosed() throws Exception {
+		// Mock the clockService to return false for isOpen()
+		when(clockService.isOpen()).thenReturn(false);
+
 		mvc.perform(post("/services/contracts/create")
 				.param("clientName", "Test Client")
 				.param("contractType", "Standard")
 				.param("startDate", "2024-05-01T12:00")
 				.param("endDate", "2024-12-01T12:00")
 				.param("address", "123 Test Street")
+				.param("phone", "123456789")
+				.param("servicePrice", "100"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/services/create"))
+			.andExpect(flash().attribute("error", "The shop is closed"));
+	}
+
+	@Test
+	void createContractOrderShouldReturnErrorForInvalidPhoneNumber() throws Exception {
+		mvc.perform(post("/services/contracts/create")
+				.param("clientName", "Test Client")
+				.param("contractType", "One-Time")
+				.param("startDate", "2042-05-01T12:00")
+				.param("endDate", "2042-12-01T12:00")
+				.param("address", "123 Test Street")
 				.param("phone", "invalid-phone")
 				.param("notes", "Test notes")
 				.param("servicePrice", "100"))
-			.andExpect(status().is(302));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/services/create"))
+			.andExpect(flash().attribute("error", "Invalid phone number format"));
+	}
+
+	@Test
+	void createContractOrderShouldReturnErrorForStartDateIsAfterEndDate() throws Exception {
+		mvc.perform(post("/services/contracts/create")
+				.param("clientName", "Test Client")
+				.param("contractType", "One-Time")
+				.param("startDate", "2042-05-01T12:00")
+				.param("endDate", "2042-04-01T12:00")
+				.param("address", "123 Test Street")
+				.param("phone", "123456789")
+				.param("notes", "Test notes")
+				.param("servicePrice", "100"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/services/create"))
+			.andExpect(flash().attribute("error", "Start date cannot be later than end date"));
 	}
 
 	@Test
@@ -136,14 +258,33 @@ class ServiceControllerIntegrationTests {
 		mvc.perform(post("/services/events/create")
 				.param("clientName", "Test Client Name")
 				.param("eventName", "Birthday Party")
-				.param("eventDate", "2024-05-01T12:00")
+				.param("eventDate", "2042-05-01T12:00")
 				.param("address", "Test Event Address")
 				.param("phone", "123456789")
 				.param("deliveryAddress", "Test Delivery Address")
 				.param("notes", "Test notes")
 				.param("deliveryPrice", "50"))
 			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl("/services/create"));
+			.andExpect(redirectedUrl("/services"));
+	}
+
+	@Test
+	void createEventOrderShouldReturnErrorWhenShopIsClosed() throws Exception {
+		// Mock the clockService to return false for isOpen()
+		when(clockService.isOpen()).thenReturn(false);
+
+		mvc.perform(post("/services/events/create")
+				.param("clientName", "Test Client Name")
+				.param("eventName", "Birthday Party")
+				.param("eventDate", "2042-05-01T12:00")
+				.param("address", "Test Event Address")
+				.param("phone", "123456789")
+				.param("deliveryAddress", "Test Delivery Address")
+				.param("notes", "Test notes")
+				.param("deliveryPrice", "50"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/services/create"))
+			.andExpect(flash().attribute("error", "The shop is closed"));
 	}
 
 	@Test
@@ -151,43 +292,98 @@ class ServiceControllerIntegrationTests {
 		mvc.perform(post("/services/events/create")
 				.param("clientName", "Test Client Name")
 				.param("eventName", "Birthday Party")
-				.param("eventDate", "2024-05-01T12:00")
+				.param("eventDate", "2042-05-01T12:00")
 				.param("address", "Test Event Address")
 				.param("phone", "invalid-phone")
 				.param("deliveryAddress", "Test Delivery Address")
 				.param("notes", "Test notes")
 				.param("deliveryPrice", "50"))
-			.andExpect(status().is(302));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/services/create"))
+			.andExpect(flash().attribute("error", "Invalid phone number format"));
+	}
+
+	@Test
+	void createEventOrderShouldReturnErrorForStartDateIsAfterEndDate() throws Exception {
+		mvc.perform(post("/services/events/create")
+				.param("clientName", "Test Client Name")
+				.param("eventName", "Birthday Party")
+				.param("eventDate", "2020-05-01T12:00")
+				.param("address", "Test Event Address")
+				.param("phone", "123456789")
+				.param("deliveryAddress", "Test Delivery Address")
+				.param("notes", "Test notes")
+				.param("deliveryPrice", "50"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/services/create"))
+			.andExpect(flash().attribute("error", "Event date and time cannot be in the past"));
 	}
 
 	@Test
 	void createReservationOrderShouldCreateReservationOrder() throws Exception {
 		mvc.perform(post("/services/reservations/create")
 				.param("clientName", "Test Client Name")
-				.param("reservationDateTime", "2024-05-01T12:00")
+				.param("reservationDateTime", "2042-05-01T12:00")
 				.param("phone", "123456789")
 				.param("notes", "Test notes"))
 			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl("/services/create"));
+			.andExpect(redirectedUrl("/services"));
+	}
+
+	@Test
+	void createReservationOrderShouldReturnErrorWhenShopIsClosed() throws Exception {
+		// Mock the clockService to return false for isOpen()
+		when(clockService.isOpen()).thenReturn(false);
+
+		mvc.perform(post("/services/reservations/create")
+				.param("clientName", "Test Client Name")
+				.param("reservationDateTime", "2042-05-01T12:00")
+				.param("phone", "invalid-phone")
+				.param("notes", "Test notes"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/services/create"))
+			.andExpect(flash().attribute("error", "The shop is closed"));
 	}
 
 	@Test
 	void createReservationOrderShouldReturnErrorForInvalidPhoneNumber() throws Exception {
 		mvc.perform(post("/services/reservations/create")
 				.param("clientName", "Test Client Name")
-				.param("reservationDateTime", "2024-05-01T12:00")
+				.param("reservationDateTime", "2042-05-01T12:00")
 				.param("phone", "invalid-phone")
 				.param("notes", "Test notes"))
-			.andExpect(status().is(302));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/services/create"))
+			.andExpect(flash().attribute("error", "Invalid phone number format"));
 	}
 
 	@Test
-	void shouldReturnContractOrderEditPage() throws Exception {
+	void createReservationOrderShouldReturnErrorForStartDateIsAfterEndDate() throws Exception {
+		mvc.perform(post("/services/reservations/create")
+				.param("clientName", "Test Client Name")
+				.param("reservationDateTime", "2020-05-01T12:00")
+				.param("phone", "123456789")
+				.param("notes", "Test notes"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/services/create"))
+			.andExpect(flash().attribute("error", "Reservation date and time cannot be in the past"));
+	}
+
+	@Test
+	void getContractOrderEditPageShouldReturnContractOrderEditPage() throws Exception {
 		mvc.perform(get("/services/contracts/edit/{id}", getFirstValidContractId()))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeExists("contractOrder"))
 			.andExpect(model().attributeExists("products"))
 			.andExpect(view().name("services/edit/contractOrderEditForm"));
+	}
+
+	@Test
+	void getContractOrderEditPageShouldReturnErrorForNonExistingOrder() throws Exception {
+		mvc.perform(get("/services/contracts/edit/{id}", UUID.randomUUID()))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(model().attribute("error", "Contract order not found"))
+			.andExpect(view().name("redirect:/404"));
 	}
 
 	@Test
@@ -203,8 +399,28 @@ class ServiceControllerIntegrationTests {
 				.param("orderStatus", "OPEN")
 				.param("servicePrice", "100")
 				.param("notes", "Test notes"))
-			.andExpect(status().is3xxRedirection());
-			// .andExpect(redirectedUrl("/services"));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/services"));
+	}
+
+	@Test
+	void editContractOrderShouldReturnErrorWhenShopIsClosed() throws Exception {
+		// Mock the clockService to return false for isOpen()
+		when(clockService.isOpen()).thenReturn(false);
+
+		mvc.perform(put("/services/contracts/edit/{id}", getFirstValidContractId())
+				.param("clientName", "Test Client Name")
+				.param("contractType", "Standard")
+				.param("startDate", "2024-01-01T12:30")
+				.param("endDate", "2024-12-01T12:30")
+				.param("address", "123 Test Street")
+				.param("phone", "123456789")
+				.param("paymentMethod", "CASH")
+				.param("orderStatus", "OPEN")
+				.param("servicePrice", "100")
+				.param("notes", "Test notes"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(flash().attribute("error", "The shop is closed"));
 	}
 
 	@Test
@@ -220,6 +436,7 @@ class ServiceControllerIntegrationTests {
 				.param("orderStatus", "OPEN")
 				.param("servicePrice", "100")
 				.param("notes", "Test notes"))
+			.andExpect(flash().attribute("error", "Contract order not found"))
 			.andExpect(status().is(302));
 	}
 
@@ -237,16 +454,40 @@ class ServiceControllerIntegrationTests {
 				.param("notes", "Updated notes")
 				.param("servicePrice", "100"))
 			.andExpect(status().is(302));
-
 	}
 
 	@Test
-	void shouldReturnEventOrderEditPage() throws Exception {
+	void editContractOrderShouldReturnErrorForStartDateIsAfterEndDate() throws Exception {
+		mvc.perform(put("/services/contracts/edit/{id}", getFirstValidContractId())
+				.param("clientName", "Updated Client")
+				.param("contractType", "one-time")
+				.param("startDate", "2026-01-01T12:30")
+				.param("endDate", "2025-01-01T12:30")
+				.param("address", "Updated Address")
+				.param("phone", "123456789")
+				.param("paymentMethod", "Cash")
+				.param("orderStatus", "OPEN")
+				.param("notes", "Updated notes")
+				.param("servicePrice", "100"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(flash().attribute("error", "Start date cannot be later than end date"));
+	}
+
+	@Test
+	void getEventOrderEditPageShouldReturnEventOrderEditPage() throws Exception {
 		mvc.perform(get("/services/events/edit/{id}", getFirstValidEventId()))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeExists("eventOrder"))
 			.andExpect(model().attributeExists("products"))
 			.andExpect(view().name("services/edit/eventOrderEditForm"));
+	}
+
+	@Test
+	void getEventOrderEditPageShouldReturnErrorForNonExistingOrder() throws Exception {
+		mvc.perform(get("/services/events/edit/{id}", UUID.randomUUID()))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(model().attribute("error", "Event order not found"))
+			.andExpect(view().name("redirect:/404"));
 	}
 
 	@Test
@@ -262,6 +503,24 @@ class ServiceControllerIntegrationTests {
 				.param("deliveryPrice", "50"))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(redirectedUrl("/services"));
+	}
+
+	@Test
+	void editEventOrderShouldReturnErrorWhenShopIsClosed() throws Exception {
+		// Mock the clockService to return false for isOpen()
+		when(clockService.isOpen()).thenReturn(false);
+
+		mvc.perform(put("/services/events/edit/{id}", getFirstValidEventId())
+				.param("clientName", "Updated Client")
+				.param("eventDate", "2024-01-01T12:30")
+				.param("phone", "123456789")
+				.param("deliveryAddress", "Updated Address")
+				.param("paymentMethod", "Cash")
+				.param("orderStatus", "OPEN")
+				.param("notes", "Updated notes")
+				.param("deliveryPrice", "50"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(flash().attribute("error", "The shop is closed"));
 	}
 
 	@Test
@@ -293,12 +552,20 @@ class ServiceControllerIntegrationTests {
 	}
 
 	@Test
-	void shouldReturnReservationOrderEditPage() throws Exception {
+	void getReservationOrderEditPageShouldReturnReservationOrderEditPage() throws Exception {
 		mvc.perform(get("/services/reservations/edit/{id}", getFirstValidReservationId()))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeExists("reservationOrder"))
 			.andExpect(model().attributeExists("products"))
 			.andExpect(view().name("services/edit/reservationOrderEditForm"));
+	}
+
+	@Test
+	void getReservationOrderEditPageShouldReturnErrorForNonExistingOrder() throws Exception {
+		mvc.perform(get("/services/reservations/edit/{id}", UUID.randomUUID()))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(model().attribute("error", "Reservation order not found"))
+			.andExpect(view().name("redirect:/404"));
 	}
 
 	@Test
@@ -316,6 +583,23 @@ class ServiceControllerIntegrationTests {
 	}
 
 	@Test
+	void editReservationOrderShouldReturnErrorWhenShopIsClosed() throws Exception {
+		// Mock the clockService to return false for isOpen()
+		when(clockService.isOpen()).thenReturn(false);
+
+		mvc.perform(put("/services/reservations/edit/{id}", getFirstValidReservationId())
+				.param("clientName", "Updated Client")
+				.param("paymentMethod", "Cash")
+				.param("reservationDateTime", "2024-05-01T12:00")
+				.param("phone", "123456789")
+				.param("orderStatus", "OPEN")
+				.param("reservationStatus", "IN_PROCESS")
+				.param("notes", "Updated notes"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(flash().attribute("error", "The shop is closed"));
+	}
+
+	@Test
 	void editReservationOrderShouldReturnErrorForNonExistingOrder() throws Exception {
 		mvc.perform(put("/services/reservations/edit/{id}", UUID.randomUUID())
 				.param("clientName", "Updated Client")
@@ -325,7 +609,7 @@ class ServiceControllerIntegrationTests {
 				.param("orderStatus", "OPEN")
 				.param("reservationStatus", "IN_PROCESS")
 				.param("notes", "Updated notes"))
-			.andExpect(status().is(302));
+			.andExpect(status().is3xxRedirection());
 	}
 
 	@Test
@@ -338,12 +622,34 @@ class ServiceControllerIntegrationTests {
 				.param("orderStatus", "OPEN")
 				.param("reservationStatus", "IN_PROCESS")
 				.param("notes", "Updated notes"))
-			.andExpect(status().is(302));
+			.andExpect(status().is3xxRedirection());
 	}
 
 	@Test
 	void getServicePageShouldReturnNotFoundForInvalidService() throws Exception {
 		mvc.perform(get("/services/unknown-service"))
 			.andExpect(status().isNotFound());
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> T getFirstValidOrderByType(Class<T> orderClass, String type) throws Exception {
+		return ((List<T>) Objects.requireNonNull(mvc.perform(get("/services"))
+				.andReturn()
+				.getModelAndView())
+			.getModel()
+			.get(type))
+			.getFirst();
+	}
+
+	private Order.OrderIdentifier getFirstValidContractId() throws Exception {
+		return getFirstValidOrderByType(ContractOrder.class, "contracts").getId();
+	}
+
+	private Order.OrderIdentifier getFirstValidEventId() throws Exception {
+		return getFirstValidOrderByType(EventOrder.class, "events").getId();
+	}
+
+	private Order.OrderIdentifier getFirstValidReservationId() throws Exception {
+		return getFirstValidOrderByType(ReservationOrder.class, "reservations").getId();
 	}
 }

@@ -40,8 +40,8 @@ public class SalesController {
 	private final ClockService clockService;
 	private final ReservationOrderService reservationOrderService;
 
-	SalesController(ProductService productService, SalesService salesService, 
-	ClockService clockService, ReservationOrderService reservationOrderService, GiftCardRepository giftCardRepository) {
+	SalesController(ProductService productService, SalesService salesService,
+					ClockService clockService, ReservationOrderService reservationOrderService, GiftCardRepository giftCardRepository) {
 		this.productService = productService;
 		this.salesService = salesService;
 		this.clockService = clockService;
@@ -106,24 +106,24 @@ public class SalesController {
 		bouquets = productService.filterBouquetsInStock(bouquets);
 
 		// Create a Map with adjusted quantities
-		Map<ProductIdentifier , Integer> productQuantities = new HashMap<>();
+		Map<ProductIdentifier, Integer> productQuantities = new HashMap<>();
 		for (Flower flower : flowers) {
 			int adjustedQuantity = flower.getQuantity() - getReservedQuantity(flower.getName());
 			productQuantities.put(flower.getId(), Math.max(adjustedQuantity, 0));
 		}
-	
+
 		for (Bouquet bouquet : bouquets) {
 			int adjustedQuantity = bouquet.getQuantity() - getReservedQuantity(bouquet.getName());
 			productQuantities.put(bouquet.getId(), Math.max(adjustedQuantity, 0));
 		}
-		
+
 		// Add both flowers and bouquets together.
 		List<Product> products = new ArrayList<>();
 		products.addAll(flowers);
 		products.addAll(bouquets);
-		
+
 		Set<String> colors = productService.getAllFlowerColors();
-		
+
 		model.addAttribute("typeList", colors);
 		model.addAttribute("filterItem", filterItem);
 		model.addAttribute("searchInput", searchInput);
@@ -205,11 +205,12 @@ public class SalesController {
 	 */
 	@PostMapping("/sell-from-cart")
 	public String sellFromCart(
-		@ModelAttribute("sellCart") Cart sellCart, Model model,
+		@ModelAttribute("sellCart") Cart sellCart,
+		Model model,
 		@RequestParam(required = false) String paymentMethod,
 		@RequestParam(required = false) String giftCardId,
 		RedirectAttributes redirAttrs
-	) {
+	) throws InsufficientFundsException {
 
 		// Alert when shop is closed
 		if (!clockService.isOpen()) {
@@ -234,14 +235,23 @@ public class SalesController {
 			return "redirect:sell";
 		}
 
-		if (sellCart == null || sellCart.isEmpty()) {
+		if (sellCart.isEmpty()) {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:sell";
 		}
 
 		if (paymentMethod.equals("GiftCard")) {
-			UUID cardID = UUID.fromString(giftCardId);
-			salesService.sellProductsFromBasket(sellCart, paymentMethod, cardID);
+			try {
+				UUID cardID = UUID.fromString(giftCardId);
+				salesService.sellProductsFromBasket(sellCart, paymentMethod, cardID);
+			} catch (InsufficientFundsException e) {
+				redirAttrs.addFlashAttribute("error", e.getMessage());
+				return "redirect:sell";
+			} catch (IllegalArgumentException e) {
+				redirAttrs.addFlashAttribute("error", "Enter correct GiftCard ID!");
+				return "redirect:sell";
+			}
+
 		} else {
 			salesService.sellProductsFromBasket(sellCart, paymentMethod, null);
 		}

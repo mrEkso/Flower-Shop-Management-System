@@ -40,7 +40,7 @@ class SalesServiceTests {
 	}
 
 	@Test
-	void sellProductsFromBasket_shouldSellProductsSuccessfully() {
+	void sellProductsFromBasket_shouldSellProductsSuccessfully() throws InsufficientFundsException {
 		Cart cart = new Cart();
 		Flower flower = new Flower("Rose", new Pricing(Money.of(20, "EUR"), Money.of(40, "EUR")), "Red", 10);
 

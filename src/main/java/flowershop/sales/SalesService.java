@@ -1,7 +1,9 @@
 package flowershop.sales;
 
+import com.sun.nio.sctp.InvalidStreamException;
 import flowershop.product.*;
 import flowershop.services.OrderFactory;
+import org.javamoney.moneta.CurrencyUnitBuilder;
 import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.Cart;
@@ -12,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import javax.money.CurrencyUnit;
 import javax.money.MonetaryAmount;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,9 +44,12 @@ public class SalesService {
 	 * @param paymentMethod the payment method for the sale
 	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
 	 */
-	public void sellProductsFromBasket(Cart cart, String paymentMethod, UUID giftCardId) throws IllegalArgumentException {
+	public void sellProductsFromBasket(Cart cart, String paymentMethod, UUID giftCardId) throws IllegalArgumentException, InsufficientFundsException {
 		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
+		}
+		if (paymentMethod.equals("GiftCard")) {
+			handleGiftCardPayment(cart, giftCardId);
 		}
 
 		SimpleOrder simpleOrder = orderFactory.createSimpleOrder();
@@ -57,12 +63,7 @@ public class SalesService {
 			} else {
 				throw new IllegalArgumentException("Unsupported product type");
 			}
-
 			simpleOrder.addOrderLine(product, cartItem.getQuantity());
-		}
-
-		if (paymentMethod.equals("GiftCard")) {
-			handleGiftCardPayment(simpleOrder, giftCardId);
 		}
 
 		simpleOrder.setPaymentMethod(paymentMethod);
@@ -73,18 +74,25 @@ public class SalesService {
 		eventPublisher.publishEvent(event); // Needed for Finances
 	}
 
-	private void handleGiftCardPayment(SimpleOrder simpleOrder, UUID giftCardId) throws IllegalArgumentException {
+	private void handleGiftCardPayment(Cart cart, UUID giftCardId) throws IllegalArgumentException, InsufficientFundsException {
 		Optional<GiftCard> giftCardOptional = giftCardService.findGiftCardById(giftCardId);
 		if (giftCardOptional.isEmpty()) {
 			throw new IllegalArgumentException("Gift card not found");
 		}
-		GiftCard giftCard = giftCardOptional.get();
-		MonetaryAmount toPay = simpleOrder.getTotal();
 
-		if (giftCard.getBalance().subtract(toPay).isNegative()){
-			throw new IllegalArgumentException("Gift card balance is too small");
+		GiftCard giftCard = giftCardOptional.get();
+
+		// Calculate the full price to pay
+		Money fullPrice = Money.of(0, "EUR");
+		for (CartItem cartItem : cart) {
+			Product product = cartItem.getProduct();
+			fullPrice = fullPrice.add(product.getPrice()).multiply(cartItem.getQuantity().getAmount());
 		}
-		giftCard.subtractBalance(toPay);
+
+		if (giftCard.getBalance().subtract(fullPrice).isNegative()) {
+			throw new InsufficientFundsException();
+		}
+		giftCard.subtractBalance(fullPrice);
 	}
 
 	/**
