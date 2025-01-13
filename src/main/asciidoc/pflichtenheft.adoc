@@ -24,7 +24,7 @@
 |1.0    | Fertig    | 03.11.2024     | Andrejs    | Release
 |2.0    | Fertig    | 04.11.2024     | Alle    | Überarbeitung und Konsolidierung
 |2.1    | Aktualisiert    | 13.01.2025     | Andrejs    | Kundenwunsch (Gutscheinkarten) ergänzt.
-
+|===
 
 == Zusammenfassung
 
