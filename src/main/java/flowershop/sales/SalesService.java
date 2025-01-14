@@ -1,5 +1,6 @@
 package flowershop.sales;
 
+import flowershop.finances.BalanceService;
 import flowershop.product.*;
 import flowershop.services.OrderFactory;
 import org.javamoney.moneta.Money;
@@ -22,16 +23,18 @@ public class SalesService {
 	private final WholesalerOrderService wholesalerOrderService;
 	private final ApplicationEventPublisher eventPublisher;
 	private final GiftCardService giftCardService;
+	private final BalanceService balanceService;
 
 	public SalesService(ProductService productService, SimpleOrderService simpleOrderService,
 						OrderFactory orderFactory, WholesalerOrderService wholesalerOrderService,
-						ApplicationEventPublisher eventPublisher, GiftCardService giftCardService) {
+						ApplicationEventPublisher eventPublisher, GiftCardService giftCardService, BalanceService balanceService) {
 		this.productService = productService;
 		this.simpleOrderService = simpleOrderService;
 		this.orderFactory = orderFactory;
 		this.wholesalerOrderService = wholesalerOrderService;
 		this.eventPublisher = eventPublisher;
 		this.giftCardService = giftCardService;
+		this.balanceService = balanceService;
 	}
 
 	/**
@@ -101,7 +104,7 @@ public class SalesService {
 	 * @param paymentMethod the payment method for the purchase
 	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
 	 */
-	public void buyProductsFromBasket(Cart cart, String paymentMethod) throws IllegalArgumentException {
+	public void buyProductsFromBasket(Cart cart, String paymentMethod) throws IllegalArgumentException, InsufficientFundsException {
 		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
 		}
@@ -110,6 +113,9 @@ public class SalesService {
 		addFlowersFromCart(cart, wholesalerOrder);
 		wholesalerOrder.setPaymentMethod(paymentMethod);
 		wholesalerOrderService.create(wholesalerOrder);
+		if(balanceService.denies(wholesalerOrder)){
+			throw new InsufficientFundsException();
+		}
 		cart.clear();
 		var event = OrderEvents.OrderPaid.of(wholesalerOrder);
 		eventPublisher.publishEvent(event); // Needed for Finances

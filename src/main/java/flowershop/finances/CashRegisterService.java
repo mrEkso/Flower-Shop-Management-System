@@ -4,7 +4,9 @@ import flowershop.clock.ClockService;
 import flowershop.clock.PendingOrder;
 import flowershop.inventory.DeletedProduct;
 import flowershop.product.ProductService;
+import flowershop.sales.InsufficientFundsException;
 import flowershop.sales.SalesService;
+import flowershop.sales.WholesalerOrder;
 import flowershop.services.AbstractOrder;
 import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.Accountancy;
@@ -104,6 +106,9 @@ public class CashRegisterService implements Accountancy {
 			Cart cart = new Cart();
 			for (Map.Entry<Product, Quantity> i : ((AccountancyEntryWrapper) entry).getFlowers().entrySet()) {
 				cart.addOrUpdateItem(i.getKey(), i.getValue());
+			}
+			if(cart.getPrice().add(getCashRegister().getBalance()).isNegative()){
+				return null;
 			}
 			if (!cart.isEmpty()) {
 				salesService.buyProductsFromBasket(
