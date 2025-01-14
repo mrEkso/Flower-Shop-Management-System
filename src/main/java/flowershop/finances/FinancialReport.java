@@ -180,7 +180,7 @@ public abstract class FinancialReport {
 				.build())
 			.build();
 		builder.addRow(datum);
-		builder.addRow(emptyRow());
+		builder.addRow(emptyRow(6));
 		//builder.addRow(emptyRow());
 		Row title = Row.builder()
 			.add(TextCell.builder()
@@ -188,7 +188,7 @@ public abstract class FinancialReport {
 				.build())
 			.build();
 		builder.addRow(title);
-		builder.addRow(emptyRow());
+		builder.addRow(emptyRow(6));
 		for (Row row : rows) {
 			builder.addRow(row);
 		}
@@ -268,8 +268,8 @@ public abstract class FinancialReport {
 	 *
 	 * @return the instance of an empty row (just to add distance between rows)
 	 */
-	public static Row emptyRow() {
-		return Row.builder().add(TextCell.builder().text("  ").colSpan(6).fontSize(10).build())
+	public static Row emptyRow(int numColumns) {
+		return Row.builder().add(TextCell.builder().text("  ").colSpan(numColumns).fontSize(10).build())
 			.build();
 	}
 

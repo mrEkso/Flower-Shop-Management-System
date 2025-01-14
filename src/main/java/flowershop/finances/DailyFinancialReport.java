@@ -94,7 +94,7 @@ public class DailyFinancialReport extends FinancialReport {
 		neededRows.add(date);
 
 
-		neededRows.add(emptyRow());
+		neededRows.add(emptyRow(6));
 		// balance in the morning of the day
 		Row kontostandMorning = Row.builder()
 			.add(TextCell.builder()
@@ -107,7 +107,7 @@ public class DailyFinancialReport extends FinancialReport {
 				.build())
 			.borderWidth(1).build();
 		neededRows.add(kontostandMorning);
-		neededRows.add(emptyRow());
+		neededRows.add(emptyRow(6));
 
 		// Header
 		Row header = Row.builder()
@@ -182,7 +182,7 @@ public class DailyFinancialReport extends FinancialReport {
 			}
 		}
 
-		neededRows.add(emptyRow());
+		neededRows.add(emptyRow(6));
 
 		// day difference
 		MonetaryAmount profit = getProfit();
@@ -211,7 +211,7 @@ public class DailyFinancialReport extends FinancialReport {
 				.build())
 			.borderWidth(1).build();
 		neededRows.add(evening);
-		neededRows.add(emptyRow());
+		neededRows.add(emptyRow(6));
 
 		// deleted products
 		neededRows.addAll(this.getDeletedProductRows(font));

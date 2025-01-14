@@ -15,6 +15,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.ChargeLine;
@@ -22,6 +23,7 @@ import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderLine;
 import org.salespointframework.order.Totalable;
 import org.salespointframework.quantity.Quantity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.vandeseer.easytable.TableDrawer;
 import org.vandeseer.easytable.settings.HorizontalAlignment;
 import org.vandeseer.easytable.settings.VerticalAlignment;
@@ -29,6 +31,7 @@ import org.vandeseer.easytable.structure.Row;
 import org.vandeseer.easytable.structure.Table;
 import org.vandeseer.easytable.structure.cell.TextCell;
 
+import javax.money.MonetaryAmount;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,6 +63,9 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Map<String, Quantity> nameQuantityMap = new HashMap<String, Quantity>();
 
+	@ElementCollection(fetch = FetchType.EAGER)
+	private Map<String, Double> namePriceMap = new HashMap<>();
+
 	@ElementCollection
 	private Map<Product, Quantity> productQuantityMap = new HashMap<>();
 
@@ -75,11 +81,8 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 	private String notes;
 	private String paymentMethod;
 
-
 	@Transient
 	private ProductService productService;
-	@Transient
-	private ClockService clockService;
 
 
 	public String getClientPhone(){
@@ -165,8 +168,9 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 
 	public AccountancyEntryWrapper(Order order, LocalDateTime time, ProductService productService) {
 		super(order.getTotal());
-		this.productService = productService;
+
 		this.timestamp = time;
+		this.productService = productService;
 		this.paymentMethod = order.getPaymentMethod().toString();
 		if (order instanceof WholesalerOrder) {
 			this.category = Category.Einkauf;
@@ -210,7 +214,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		Totalable<OrderLine> kindaItemQuantityMap = order.getOrderLines();
 		for (OrderLine orderLine : kindaItemQuantityMap) {
 			nameQuantityMap.put(orderLine.getProductName(), orderLine.getQuantity());
-
+			namePriceMap.put(orderLine.getProductName(), orderLine.getPrice().getNumber().doubleValue());
 			if(order instanceof WholesalerOrder || order instanceof EventOrder || order instanceof ReservationOrder) {
 				String name = orderLine.getProductName();
 				List<Flower> lst = productService.findFlowersByName(name);
@@ -239,6 +243,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		Totalable<ChargeLine> extraFees = order.getAllChargeLines();
 		for (ChargeLine chargeLine : extraFees) {
 			nameQuantityMap.put(chargeLine.getDescription(), Quantity.of(1));
+			namePriceMap.put(chargeLine.getDescription(), chargeLine.getPrice().getNumber().doubleValue());
 		}
 	}
 
@@ -246,7 +251,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		return productQuantityMap;
 	}
 
-	public byte[] generatePDF(){
+	public byte[] generatePDF(LocalDateTime now){
 		try (PDDocument document = new PDDocument()) {
 			InputStream inFont = getClass().getResourceAsStream("/fonts/josefin-sans.semibold.ttf");
 			System.out.println(inFont.toString());
@@ -256,7 +261,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 				.startX(50)
 				.endY(50)
 				.startY(780)
-				.table(buildTheTable(customFont))
+				.table(buildTheTable(customFont, now))
 				.build()
 				.draw(() -> document, () -> new PDPage(PDRectangle.A4), 50);
 			try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -269,7 +274,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		}
 	}
 
-	private Table buildTheTable(PDFont font) {
+	private Table buildTheTable(PDFont font, LocalDateTime day) {
 		Table.TableBuilder builder = Table.builder()
 			.addColumnsOfWidth(121, 121, 121, 122);
 		Row shapka1 = Row.builder()
@@ -290,7 +295,6 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 				.build())
 			.build();
 		builder.addRow(adress);
-		LocalDateTime day = this.clockService.now();
 		String month = (day.getMonth().getValue() < 10) ? "0" + day.getMonth().getValue() : String.valueOf(day.getMonth().getValue());
 		String dateRepr = new StringBuilder().append(day.getDayOfMonth()).append(".").append(month).append(".").append(day.getYear()).toString();
 
@@ -303,7 +307,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 				.build())
 			.build();
 		builder.addRow(datum);
-		builder.addRow(emptyRow());
+		builder.addRow(emptyRow(4));
 		Row title = Row.builder()
 			.add(TextCell.builder()
 				.text("Verkaufszettel").fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.CENTER).font(font)
@@ -335,49 +339,48 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 					.text("Notizen:").fontSize(16).colSpan(1).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 					.build())
 				.add(TextCell.builder()
-					.text(this.getCategory()).fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+					.text(this.getNotes()).fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 					.build())
 				.build();
 			builder.addRow(notes);
 		}
-		builder.addRow(emptyRow());
+		builder.addRow(emptyRow(4));
 		List<Row> customerDetails = getCustomerDetailsRows(font);
 		for (Row customerDetail : customerDetails) {
 			builder.addRow(customerDetail);
 		}
-		builder.addRow(emptyRow());
+		builder.addRow(emptyRow(4));
 		List<Row> timeRelatedInfo = getTimeRelatedInfoRows(font);
 		for (Row timeRelatedInfoRow : timeRelatedInfo) {
 			builder.addRow(timeRelatedInfoRow);
 		}
-		builder.addRow(emptyRow());
+		builder.addRow(emptyRow(4));
 		Row productListTitle = Row.builder()
 			.add(TextCell.builder()
-				.text("Verkaufszettel").fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.CENTER).font(font)
+				.text("Liste von bezahlten Produkten und Leistungen").fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.CENTER).font(font)
 				.build())
 			.build();
 		builder.addRow(productListTitle);
-		List<Row> productList = getProductListRows();
+		List<Row> productList = getProductListRows(font);
 		for (Row productListRow : productList) {
 			builder.addRow(productListRow);
 		}
-		builder.addRow(emptyRow());
-		List<Row> sideChargesRows = getSideChargesRows();
-		for (Row sideChargesRow : sideChargesRows) {
-			builder.addRow(sideChargesRow);
+		MonetaryAmount sum = this.getValue();
+		if(this.category == Category.Einkauf){
+			sum = sum.multiply(-1);
 		}
 		Row gesamtsumme = Row.builder()
 			.add(TextCell.builder()
-				.text("Gesamtsumme:").fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text("Gesamtsumme:").fontSize(20).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.add(TextCell.builder()
-				.text(this.getCategory()).fontSize(16).colSpan(1).horizontalAlignment(HorizontalAlignment.RIGHT).font(font)
+				.text(sum.toString()).fontSize(20).colSpan(1).horizontalAlignment(HorizontalAlignment.RIGHT).font(font)
 				.build())
 			.build();
 		builder.addRow(gesamtsumme);
 		Row zahlungsart = Row.builder()
 			.add(TextCell.builder()
-				.text(getPaymentMethod()).fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text("Zahlungsart: "+ getPaymentMethod()).fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
 		builder.addRow(zahlungsart);
@@ -385,9 +388,41 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		return builder.build();
 	}
 
-	private List<Row> getProductListRows() {
+	private List<Row> getProductListRows(PDFont font) {
+		Row head = Row.builder()
+			.add(TextCell.builder()
+				.text("Name").fontSize(16).horizontalAlignment(HorizontalAlignment.LEFT).font(font).borderWidth(1)
+				.build())
+			.add(TextCell.builder()
+				.text("Preis pro Stück").fontSize(16).horizontalAlignment(HorizontalAlignment.LEFT).font(font).borderWidth(1)
+				.build())
+			.add(TextCell.builder()
+				.text("Anzahl").fontSize(16).horizontalAlignment(HorizontalAlignment.LEFT).font(font).borderWidth(1)
+				.build())
+			.add(TextCell.builder()
+				.text("Summe").fontSize(16).horizontalAlignment(HorizontalAlignment.LEFT).font(font).borderWidth(1)
+				.build())
+			.build();
 		List<Row> productListRows = new ArrayList<>();
-		for ()
+		productListRows.add(head);
+		for (Map.Entry<String,Quantity> entry: this.nameQuantityMap.entrySet()){
+			Row row = Row.builder()
+				.add(TextCell.builder()
+					.text(entry.getKey()).fontSize(16).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+					.build())
+				.add(TextCell.builder()
+					.text(String.valueOf(Math.round(this.namePriceMap.get(entry.getKey())*100 / entry.getValue().getAmount().doubleValue())/100.0)).fontSize(16).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+					.build())
+				.add(TextCell.builder()
+					.text(String.valueOf(entry.getValue().getAmount().intValue())).fontSize(16).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+					.build())
+				.add(TextCell.builder()
+					.text(String.valueOf(this.namePriceMap.get(entry.getKey()))).fontSize(16).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+					.build())
+				.build();
+			productListRows.add(row);
+		}
+		return productListRows;
 	}
 
 	private List<Row> getTimeRelatedInfoRows(PDFont font) {
@@ -404,10 +439,10 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		}
 		Row date1Row = Row.builder()
 			.add(TextCell.builder()
-				.text(formulation).fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text(formulation).fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.add(TextCell.builder()
-				.text(ClockService.getTimestampStr(this.getDate1())).fontSize(16).colSpan(1).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text(ClockService.getTimestampStr(this.getDate1())).fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
 		timeRelatedInfoRows.add(date1Row);
@@ -416,10 +451,10 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		}
 		Row date2Row = Row.builder()
 			.add(TextCell.builder()
-				.text("Ablaufszeit:").fontSize(16).colSpan(3).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text("Ablaufszeit:").fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.add(TextCell.builder()
-				.text(ClockService.getTimestampStr(this.getDate2())).fontSize(16).colSpan(1).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text(ClockService.getTimestampStr(this.getDate2())).fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
 		timeRelatedInfoRows.add(date2Row);
@@ -454,7 +489,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 				.text("Telephonnummer:").fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.add(TextCell.builder()
-				.text(this.getClientName()).fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text(this.getClientPhone()).fontSize(16).colSpan(2).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
 		customerDetails.add(telephone);

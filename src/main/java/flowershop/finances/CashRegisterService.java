@@ -476,9 +476,9 @@ public class CashRegisterService implements Accountancy {
 		return filteredEntries;
 	}
 
-	public AccountancyEntryWrapper getEntry(Long orderId, List<AccountancyEntryWrapper> filteredAndCutOrdersList) {
+	public AccountancyEntryWrapper getEntry(String orderId, List<AccountancyEntryWrapper> filteredAndCutOrdersList) {
 		for (AccountancyEntryWrapper entry : filteredAndCutOrdersList) {
-			if (entry.getId().equals(orderId)) {
+			if (entry.getId().equals(AccountancyEntry.AccountancyEntryIdentifier.of(orderId))) {
 				return entry;
 			}
 		}

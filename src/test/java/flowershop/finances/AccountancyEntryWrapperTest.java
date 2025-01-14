@@ -1,5 +1,6 @@
 package flowershop.finances;
 
+import flowershop.clock.ClockService;
 import flowershop.product.Flower;
 import flowershop.product.ProductService;
 import flowershop.sales.SimpleOrder;
@@ -37,10 +38,12 @@ public class AccountancyEntryWrapperTest {
 	private Order simpleOrder;
 	private Order fake;
 	private ProductService productService;
+	private ClockService clockService;
 
 	@BeforeEach
 	void setUp() {
 		productService = mock(ProductService.class);
+		clockService = mock(ClockService.class);
 		Totalable<OrderLine> mockedTotalable = mock(Totalable.class);
 		List<OrderLine> mockedOrderLines = new ArrayList<>();
 		OrderLine orderLine1 = mock(OrderLine.class);
