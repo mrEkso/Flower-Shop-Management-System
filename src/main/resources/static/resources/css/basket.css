@@ -16,6 +16,10 @@
 .basket-footer {
   margin-top: 40px;
   align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
 .payment-method {
@@ -29,8 +33,7 @@
 }
 
 .basket-submit-btn {
-  width: 170px;
-  height: 40px;
+  margin-top: 10px;
 }
 
 .basket-head {
@@ -90,12 +93,14 @@
   justify-content: space-between;
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
 .basket-card-text {
   font-size: 14px;
   color: #555;
   text-align: left;
+  flex: 1 1 60%;
 }
 
 .basket-card-footer {
@@ -110,4 +115,21 @@
   justify-content: space-between;
   padding-left: 5px;
   padding-right: 5px;
+}
+
+.basket-input-quantity {
+  width: 50px;
+  text-align: center;
+}
+
+.basket-card-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  flex: 0 0 40%;
+}
+
+.basket-footer input[type="text"] {
+  text-align: center;
 }
