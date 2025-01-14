@@ -275,7 +275,7 @@ public class SalesController {
 		@ModelAttribute("buyCart") Cart buyCart,
 		Model model,
 		RedirectAttributes redirAttrs
-	) {
+	) throws InsufficientFundsException {
 		// Alert when shop is closed
 		if (!clockService.isOpen()) {
 			buyCart.clear();
@@ -287,7 +287,12 @@ public class SalesController {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:buy";
 		}
-		salesService.buyProductsFromBasket(buyCart, "Card");
+		try {
+			salesService.buyProductsFromBasket(buyCart, "Card");
+		} catch (InsufficientFundsException e) {
+			redirAttrs.addFlashAttribute("error", e.getMessage());
+			return "redirect:sell";
+		}
 
 		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
 		model.addAttribute("fullBuyPrice", fp);

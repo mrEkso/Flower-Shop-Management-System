@@ -1,5 +1,6 @@
 package flowershop.finances;
 
+import flowershop.clock.ClockService;
 import flowershop.product.Flower;
 import flowershop.product.ProductService;
 import flowershop.sales.SimpleOrder;
@@ -16,6 +17,7 @@ import org.salespointframework.order.ChargeLine;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderLine;
 import org.salespointframework.order.Totalable;
+import org.salespointframework.payment.PaymentMethod;
 import org.salespointframework.quantity.Quantity;
 
 import java.time.LocalDateTime;
@@ -37,14 +39,20 @@ public class AccountancyEntryWrapperTest {
 	private Order simpleOrder;
 	private Order fake;
 	private ProductService productService;
+	private ClockService clockService;
 
 	@BeforeEach
 	void setUp() {
 		productService = mock(ProductService.class);
+		clockService = mock(ClockService.class);
 		Totalable<OrderLine> mockedTotalable = mock(Totalable.class);
 		List<OrderLine> mockedOrderLines = new ArrayList<>();
 		OrderLine orderLine1 = mock(OrderLine.class);
+		when(orderLine1.getQuantity()).thenReturn(Quantity.of(1));
+		when(orderLine1.getPrice()).thenReturn(Money.of(23, "EUR"));
 		OrderLine orderLine2 = mock(OrderLine.class);
+		when(orderLine2.getQuantity()).thenReturn(Quantity.of(2));
+		when(orderLine2.getPrice()).thenReturn(Money.of(32, "EUR"));
 		mockedOrderLines.add(orderLine1);
 		mockedOrderLines.add(orderLine2);
 		when(mockedTotalable.iterator()).thenReturn(mockedOrderLines.iterator());
@@ -60,7 +68,8 @@ public class AccountancyEntryWrapperTest {
 		List<ChargeLine> mockedExtraFees = new ArrayList<>();
 		when(extraFees.iterator()).thenReturn(mockedExtraFees.iterator());
 		when(extraFees.stream()).thenReturn(mockedExtraFees.stream());
-
+		PaymentMethod paymentMethod = mock(PaymentMethod.class);
+		when(paymentMethod.toString()).thenReturn("PUTIN HUYLO, LALALALALALALALALA LALALALALLALALAL, LALALLALALALALALA");
 
 
 		wholesalerOrder = mock(WholesalerOrder.class);
@@ -68,24 +77,28 @@ public class AccountancyEntryWrapperTest {
 		when(wholesalerOrder.getDateCreated()).thenReturn(LocalDateTime.now());
 		when(wholesalerOrder.getOrderLines()).thenReturn(mockedTotalable);
 		when(wholesalerOrder.getAllChargeLines()).thenReturn(extraFees);
+		when(wholesalerOrder.getPaymentMethod()).thenReturn(paymentMethod);
 
 		contractOrder = mock(ContractOrder.class);
 		when(contractOrder.getTotal()).thenReturn(Money.of(100, "EUR"));
 		when(contractOrder.getDateCreated()).thenReturn(LocalDateTime.now());
 		when(contractOrder.getOrderLines()).thenReturn(mockedTotalable);
 		when(contractOrder.getAllChargeLines()).thenReturn(extraFees);
+		when(contractOrder.getPaymentMethod()).thenReturn(paymentMethod);
 
 		eventOrder = mock(EventOrder.class);
 		when(eventOrder.getTotal()).thenReturn(Money.of(100, "EUR"));
 		when(eventOrder.getDateCreated()).thenReturn(LocalDateTime.now());
 		when(eventOrder.getOrderLines()).thenReturn(mockedTotalable);
 		when(eventOrder.getAllChargeLines()).thenReturn(extraFees);
+		when(eventOrder.getPaymentMethod()).thenReturn(paymentMethod);
 
 		reservationOrder = mock(ReservationOrder.class);
 		when(reservationOrder.getTotal()).thenReturn(Money.of(100, "EUR"));
 		when(reservationOrder.getDateCreated()).thenReturn(LocalDateTime.now());
 		when(reservationOrder.getOrderLines()).thenReturn(mockedTotalable);
 		when(reservationOrder.getAllChargeLines()).thenReturn(extraFees);
+		when(reservationOrder.getPaymentMethod()).thenReturn(paymentMethod);
 
 		simpleOrder = mock(SimpleOrder.class);
 		when(simpleOrder.getTotal()).thenReturn(Money.of(100, "EUR"));
@@ -93,9 +106,11 @@ public class AccountancyEntryWrapperTest {
 		when(simpleOrder.getOrderLines()).thenReturn(mockedTotalable);
 		when(simpleOrder.getAllChargeLines()).thenReturn(extraFees);
 		when(simpleOrder.getAllChargeLines()).thenReturn(extraFees);
+		when(simpleOrder.getPaymentMethod()).thenReturn(paymentMethod);
 
 		fake = mock(Order.class);
 		when(fake.getTotal()).thenReturn(Money.of(100, "EUR"));
+		when(fake.getPaymentMethod()).thenReturn(paymentMethod);
 
 		Flower rose = mock(Flower.class);
 		ArrayList<Flower> roses = new ArrayList<>();

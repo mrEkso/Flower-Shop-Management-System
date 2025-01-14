@@ -136,4 +136,17 @@ public class ClockService {
 		return nextWorkingDay;
 	}
 
+	public static String getTimestampStr(LocalDateTime timestamp) {
+		StringBuilder str = new StringBuilder(timestamp.getDayOfMonth() + ".");
+		str.append(timestamp.getMonthValue() + ".")
+			.append(timestamp.getYear() + " ")
+			.append(timestamp.getHour() + ":");
+		if(timestamp.getMinute() < 10)
+		{
+			str.append("0");
+		}
+		str.append(timestamp.getMinute());
+		return str.toString();
+	}
+
 }
