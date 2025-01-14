@@ -90,8 +90,8 @@ public class MonthlyFinancialReport extends FinancialReport {
 				continue;
 			}
 			neededRows.addAll(dailyFinancialReport.getNeededRows(font));
-			neededRows.add(emptyRow());
-			neededRows.add(emptyRow());
+			neededRows.add(emptyRow(6));
+			neededRows.add(emptyRow(6));
 		}
 		MonetaryAmount profit = getProfit();
 		String profitRepr = profit.toString();
@@ -107,7 +107,7 @@ public class MonthlyFinancialReport extends FinancialReport {
 				.build())
 			.padding(10).borderWidth(1.5f).borderStyle(BorderStyle.DOTTED).build();
 		neededRows.add(difference);
-		neededRows.add(emptyRow());
+		neededRows.add(emptyRow(6));
 		neededRows.addAll(this.getDeletedProductRows(font));
 		return neededRows;
 	}
