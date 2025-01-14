@@ -117,8 +117,9 @@ public class ReservationOrderService {
 	 * @throws IllegalArgumentException if the order is already canceled, not paid yet, or cannot be canceled
 	 */
 	public ReservationOrder update(ReservationOrder order, Map<String, String> products, String orderStatus, String cancelReason, String reservationStatus) {
-		if (order.getOrderStatus().equals(OrderStatus.CANCELED))
+		if (order.getOrderStatus().equals(OrderStatus.CANCELED)) {
 			throw new IllegalArgumentException("Order is already canceled!");
+		}
 		if (order.getOrderStatus().equals(OrderStatus.OPEN)) {
 			if (OrderStatus.COMPLETED.name().equals(orderStatus)) {
 				throw new IllegalArgumentException("Order is not paid yet!");
@@ -129,22 +130,30 @@ public class ReservationOrderService {
 			}
 			Map<UUID, Integer> incoming = extractProducts(products);
 			order.getOrderLines().toList().forEach(line -> {
-				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) order.remove(line);
+				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) {
+					order.remove(line);
+				}
 			});
 			incoming.forEach((productId, quantity) -> productCatalog.findById(Product.ProductIdentifier.of(productId.toString()))
 				.ifPresent(product -> {
 					order.getOrderLines(product).toList().forEach(order::remove);
 					order.addOrderLine(product, Quantity.of(quantity));
 				}));
-			if (OrderStatus.PAID.name().equals(orderStatus)) orderManagement.payOrder(order);
+			if (OrderStatus.PAID.name().equals(orderStatus)) {
+				orderManagement.payOrder(order);
+			}
 		}
 		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
-			OrderStatus.CANCELED.name().equals(orderStatus))
+			OrderStatus.CANCELED.name().equals(orderStatus)) {
 			throw new IllegalArgumentException("Cannot cancel a paid order");
+		}
 		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
-			OrderStatus.COMPLETED.name().equals(orderStatus)) orderManagement.completeOrder(order);
-		if (reservationStatus != null && !reservationStatus.isBlank())
+			OrderStatus.COMPLETED.name().equals(orderStatus)) {
+			orderManagement.completeOrder(order);
+		}
+		if (reservationStatus != null && !reservationStatus.isBlank()) {
 			order.setReservationStatus(ReservationStatus.valueOf(reservationStatus));
+		}
 		return reservationOrderRepository.save(order);
 	}
 

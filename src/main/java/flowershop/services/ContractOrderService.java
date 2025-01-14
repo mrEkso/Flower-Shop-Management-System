@@ -129,11 +129,13 @@ public class ContractOrderService {
 	 * @throws IllegalArgumentException if the order is already canceled, not paid yet, or cannot be canceled
 	 */
 	public ContractOrder update(ContractOrder order, Map<String, String> products, int servicePrice, String orderStatus, String cancelReason) {
-		if (order.getOrderStatus().equals(OrderStatus.CANCELED))
+		if (order.getOrderStatus().equals(OrderStatus.CANCELED)) {
 			throw new IllegalArgumentException("Order is already canceled!");
+		}
 		if (order.getOrderStatus().equals(OrderStatus.OPEN)) {
-			if (OrderStatus.COMPLETED.name().equals(orderStatus))
+			if (OrderStatus.COMPLETED.name().equals(orderStatus)) {
 				throw new IllegalArgumentException("Order is not paid yet!");
+			}
 			if (OrderStatus.CANCELED.name().equals(orderStatus)) {
 				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
 				return contractOrderRepository.save(order);
@@ -145,20 +147,27 @@ public class ContractOrderService {
 			order.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
 			Map<UUID, Integer> incoming = extractProducts(products);
 			order.getOrderLines().toList().forEach(line -> {
-				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) order.remove(line);
+				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) {
+					order.remove(line);
+				}
 			});
 			incoming.forEach((productId, quantity) -> productCatalog.findById(Product.ProductIdentifier.of(productId.toString()))
 				.ifPresent(product -> {
 					order.getOrderLines(product).toList().forEach(order::remove);
 					order.addOrderLine(product, Quantity.of(quantity));
 				}));
-			if (OrderStatus.PAID.name().equals(orderStatus)) orderManagement.payOrder(order);
+			if (OrderStatus.PAID.name().equals(orderStatus)) {
+				orderManagement.payOrder(order);
+			}
 		}
 		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
-			OrderStatus.CANCELED.name().equals(orderStatus))
+			OrderStatus.CANCELED.name().equals(orderStatus)) {
 			throw new IllegalArgumentException("Cannot cancel a paid order!");
+		}
 		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
-			OrderStatus.COMPLETED.name().equals(orderStatus)) orderManagement.completeOrder(order);
+			OrderStatus.COMPLETED.name().equals(orderStatus)) {
+			orderManagement.completeOrder(order);
+		}
 		return contractOrderRepository.save(order);
 	}
 
