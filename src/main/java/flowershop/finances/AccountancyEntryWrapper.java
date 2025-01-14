@@ -310,7 +310,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		builder.addRow(emptyRow(4));
 		Row title = Row.builder()
 			.add(TextCell.builder()
-				.text("Verkaufszettel").fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.CENTER).font(font)
+				.text("Verkaufszettel").fontSize(20).colSpan(4).horizontalAlignment(HorizontalAlignment.CENTER).font(font)
 				.build())
 			.build();
 		Row type = Row.builder()
@@ -330,10 +330,11 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 				.build())
 			.build();
 		builder.addRow(title);
+		builder.addRow(emptyRow(4));
 		builder.addRow(type);
 		builder.addRow(transactionTime);
 
-		if (getNotes() != null){
+		if (getNotes() != null && !getNotes().isEmpty()){
 			Row notes = Row.builder()
 				.add(TextCell.builder()
 					.text("Notizen:").fontSize(16).colSpan(1).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
@@ -377,7 +378,9 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 				.text(sum.toString()).fontSize(20).colSpan(1).horizontalAlignment(HorizontalAlignment.RIGHT).font(font)
 				.build())
 			.build();
+		builder.addRow(emptyRow(4));
 		builder.addRow(gesamtsumme);
+		builder.addRow(emptyRow(4));
 		Row zahlungsart = Row.builder()
 			.add(TextCell.builder()
 				.text("Zahlungsart: "+ getPaymentMethod()).fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)

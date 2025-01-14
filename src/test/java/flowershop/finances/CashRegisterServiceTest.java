@@ -2,6 +2,7 @@ package flowershop.finances;
 
 import flowershop.clock.ClockService;
 import flowershop.product.ProductService;
+import flowershop.sales.InsufficientFundsException;
 import flowershop.sales.SimpleOrder;
 import flowershop.services.AbstractOrder;
 import org.javamoney.moneta.Money;
@@ -12,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.salespointframework.accountancy.AccountancyEntry;
 import org.salespointframework.order.*;
+import org.salespointframework.payment.PaymentMethod;
+import org.salespointframework.quantity.Quantity;
 import org.salespointframework.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,11 +158,15 @@ public class CashRegisterServiceTest {
 	}
 
 	@Test
-	void testOnOrderPaid() {
+	void testOnOrderPaid() throws InsufficientFundsException {
 		Totalable<OrderLine> mockedTotalable = mock(Totalable.class);
 		List<OrderLine> mockedOrderLines = new ArrayList<>();
 		OrderLine orderLine1 = mock(OrderLine.class);
+		when(orderLine1.getQuantity()).thenReturn(Quantity.of(2));
+		when(orderLine1.getPrice()).thenReturn(Money.of(35, "EUR"));
 		OrderLine orderLine2 = mock(OrderLine.class);
+		when(orderLine2.getQuantity()).thenReturn(Quantity.of(4));
+		when(orderLine2.getPrice()).thenReturn(Money.of(352, "EUR"));
 		mockedOrderLines.add(orderLine1);
 		mockedOrderLines.add(orderLine2);
 		when(mockedTotalable.iterator()).thenReturn(mockedOrderLines.iterator());
@@ -179,7 +186,7 @@ public class CashRegisterServiceTest {
 		when(mockOrder.getTotal()).thenReturn(Money.of(50, "EUR"));
 		when(mockOrder.getOrderLines()).thenReturn(mockedTotalable);
 		when(mockOrder.getAllChargeLines()).thenReturn(extraFees);
-
+		when(mockOrder.getPaymentMethod()).thenReturn(mock(PaymentMethod.class));
 		cashRegisterService.onOrderPaid(event);
 
 		verify(cashRegisterRepository, times(1)).save(any(CashRegister.class));
