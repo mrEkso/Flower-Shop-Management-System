@@ -126,15 +126,18 @@ public class CalendarService {
 
 					switch (event.getType()) {
 						case "event":
-							event.setName(eventOrderService.getById(event.getOrderId()).get().getClient().getName() + "'s Event");
+							event.setName(eventOrderService.getById(event.getOrderId()).get()
+								.getClient().getName() + "'s Event");
 							calendarDay.addEvent(event);
 							break;
 						case "contract":
-							event.setName(contractOrderService.getById(event.getOrderId()).get().getClient().getName() + "'s Contract");
+							event.setName(contractOrderService.getById(event.getOrderId()).get()
+								.getClient().getName() + "'s Contract");
 							calendarDay.addEvent(event);
 							break;
 						case "reservation":
-							event.setName(reservationOrderService.getById(event.getOrderId()).get().getClient().getName() + "'s Reservation");
+							event.setName(reservationOrderService.getById(event.getOrderId()).get()
+								.getClient().getName() + "'s Reservation");
 							calendarDay.addEvent(event);
 							break;
 						default:
@@ -152,7 +155,13 @@ public class CalendarService {
 		return calendarDays;
 	}
 
-	public void createReccuringEvent(String name, LocalDateTime startDate, LocalDateTime endDate, String description, String frequency, String type, UUID orderId) {
+	public void createReccuringEvent(String name,
+									 LocalDateTime startDate,
+									 LocalDateTime endDate,
+									 String description,
+									 String frequency,
+									 String type,
+									 UUID orderId) {
 		LocalDateTime current = startDate;
 		if (frequency == null) {
 			Event event = new Event(name, startDate, description, type, orderId);

@@ -34,7 +34,8 @@ public class ContractOrderService {
 	 * @param orderManagement         the order management system
 	 * @throws IllegalArgumentException if any of the parameters are null
 	 */
-	public ContractOrderService(ContractOrderRepository contractOrderRepository, ProductCatalog productCatalog, OrderManagement<ContractOrder> orderManagement) {
+	public ContractOrderService(ContractOrderRepository contractOrderRepository, ProductCatalog productCatalog,
+								OrderManagement<ContractOrder> orderManagement) {
 		Assert.notNull(contractOrderRepository, "ContractOrderRepository must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(orderManagement, "OrderManagement must not be null!");
@@ -89,7 +90,8 @@ public class ContractOrderService {
 		YearMonth lastMonth = YearMonth.now().minusMonths(1);
 		LocalDateTime startOfLastMonth = lastMonth.atDay(1).atStartOfDay();
 		LocalDateTime endOfLastMonth = lastMonth.atEndOfMonth().atStartOfDay();
-		return contractOrderRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanEqualAndOrderStatus(endOfLastMonth, startOfLastMonth, OrderStatus.OPEN);
+		return contractOrderRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanEqualAndOrderStatus(
+			endOfLastMonth, startOfLastMonth, OrderStatus.OPEN);
 	}
 
 	/**
@@ -128,7 +130,8 @@ public class ContractOrderService {
 	 * @return the updated contract order
 	 * @throws IllegalArgumentException if the order is already canceled, not paid yet, or cannot be canceled
 	 */
-	public ContractOrder update(ContractOrder order, Map<String, String> products, int servicePrice, String orderStatus, String cancelReason) {
+	public ContractOrder update(ContractOrder order, Map<String, String> products, int servicePrice,
+								String orderStatus, String cancelReason) {
 		if (order.getOrderStatus().equals(OrderStatus.CANCELED)) {
 			throw new IllegalArgumentException("Order is already canceled!");
 		}
@@ -137,7 +140,8 @@ public class ContractOrderService {
 				throw new IllegalArgumentException("Order is not paid yet!");
 			}
 			if (OrderStatus.CANCELED.name().equals(orderStatus)) {
-				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
+				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ?
+					"Reason not provided" : cancelReason);
 				return contractOrderRepository.save(order);
 			}
 			List<ChargeLine> chargeLinesToRemove = order.getChargeLines().stream()
@@ -151,7 +155,8 @@ public class ContractOrderService {
 					order.remove(line);
 				}
 			});
-			incoming.forEach((productId, quantity) -> productCatalog.findById(Product.ProductIdentifier.of(productId.toString()))
+			incoming.forEach((productId, quantity) -> productCatalog.findById(
+				Product.ProductIdentifier.of(productId.toString()))
 				.ifPresent(product -> {
 					order.getOrderLines(product).toList().forEach(order::remove);
 					order.addOrderLine(product, Quantity.of(quantity));

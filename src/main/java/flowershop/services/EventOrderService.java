@@ -141,7 +141,8 @@ public class EventOrderService {
 					order.remove(line);
 				}
 			});
-			incoming.forEach((productId, quantity) -> productCatalog.findById(Product.ProductIdentifier.of(productId.toString())).ifPresent(product -> {
+			incoming.forEach((productId, quantity) -> productCatalog.findById(
+				Product.ProductIdentifier.of(productId.toString())).ifPresent(product -> {
 				order.getOrderLines(product).toList().forEach(order::remove);
 				order.addOrderLine(product, Quantity.of(quantity));
 			}));

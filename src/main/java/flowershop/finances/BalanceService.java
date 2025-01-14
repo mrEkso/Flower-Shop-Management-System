@@ -17,7 +17,6 @@ public class BalanceService {
 	}
 
 	/**
-	 *
 	 * @param wholesalerOrder the created order
 	 * @return true, if we don't have enough money for this purchase
 	 */

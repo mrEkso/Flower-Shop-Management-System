@@ -140,9 +140,9 @@ public class ServiceController {
 											   @RequestParam(value = "frequency", required = false)
 											   String frequency,
 											   @RequestParam(value = "customFrequency", required = false)
-												   Integer customFrequency,
+											   Integer customFrequency,
 											   @RequestParam(value = "customUnit", required = false)
-												   String customUnit
+											   String customUnit
 	) {
 		model.addAttribute("contractType", "Recurring");
 		model.addAttribute("frequency", frequency != null ? frequency : "");
@@ -173,11 +173,11 @@ public class ServiceController {
 	public String createContractOrder(@RequestParam("clientName") String clientName,
 									  @RequestParam("contractType") String contractType,
 									  @RequestParam(value = "frequency", required = false)
-										  String frequency,
+									  String frequency,
 									  @RequestParam(value = "customFrequency", required = false)
-										  Integer customFrequency,
+									  Integer customFrequency,
 									  @RequestParam(value = "customUnit", required = false)
-										  String customUnit,
+									  String customUnit,
 									  @RequestParam("startDate") LocalDateTime startDate,
 									  @RequestParam("endDate") LocalDateTime endDate,
 									  @RequestParam("address") String address,
@@ -185,7 +185,7 @@ public class ServiceController {
 									  @RequestParam Map<String, String> products,
 									  @RequestParam(value = "notes", required = false) String notes,
 									  @RequestParam(value = "servicePrice", defaultValue = "0")
-										  int servicePrice,
+									  int servicePrice,
 									  RedirectAttributes redirectAttribute) {
 		try {
 			if (!clockService.isOpen()) {
@@ -236,7 +236,7 @@ public class ServiceController {
 								   @RequestParam Map<String, String> products,
 								   @RequestParam("notes") String notes,
 								   @RequestParam(value = "deliveryPrice", defaultValue = "0")
-									   int deliveryPrice,
+								   int deliveryPrice,
 								   RedirectAttributes redirectAttribute) {
 		try {
 			if (!clockService.isOpen()) {
@@ -346,7 +346,7 @@ public class ServiceController {
 									@RequestParam("contractType") String contractType,
 									@RequestParam(value = "frequency", required = false) String frequency,
 									@RequestParam(value = "customFrequency", required = false)
-										Integer customFrequency,
+									Integer customFrequency,
 									@RequestParam(value = "customUnit", required = false) String customUnit,
 									@RequestParam("startDate") LocalDateTime startDate,
 									@RequestParam("endDate") LocalDateTime endDate,
@@ -547,7 +547,7 @@ public class ServiceController {
 									   @RequestParam("paymentMethod") String paymentMethod,
 									   @RequestParam("orderStatus") String orderStatus,
 									   @RequestParam(value = "cancelReason", required = false)
-										   String cancelReason,
+									   String cancelReason,
 									   @RequestParam("reservationStatus") String reservationStatus,
 									   @RequestParam("notes") String notes,
 									   RedirectAttributes redirectAttributes) {

@@ -38,7 +38,6 @@ public class ClockService {
 	}
 
 	/**
-	 *
 	 * @return the instance of CashRegister, stored in the repository
 	 */
 	public CashRegister getCashRegister() {
@@ -47,10 +46,9 @@ public class ClockService {
 	}
 
 	/**
-	 *
 	 * @return the date the is currently in the world of Frau Floris
 	 */
-	public LocalDate getCurrentDate(){
+	public LocalDate getCurrentDate() {
 		CashRegister cashRegister = getCashRegister();
 		if (cashRegister == null) {
 			throw new IllegalStateException("CashRegister is not initialized");
@@ -59,13 +57,11 @@ public class ClockService {
 	}
 
 	/**
-	 *
 	 * @return current "in-game" time (current in-game date and some time after 09:00)
 	 */
-	public LocalDateTime now(){
+	public LocalDateTime now() {
 		CashRegister cashRegister = getCashRegister();
-		if(cashRegister.getInGameDate() == null)
-		{
+		if (cashRegister.getInGameDate() == null) {
 			return LocalDateTime.of(LocalDate.now(), LocalTime.of(9, 0));
 		}
 		return cashRegister
@@ -75,7 +71,7 @@ public class ClockService {
 			.plus(Interval.from(cashRegister.getNewDayStarted()).to(LocalDateTime.now()).toDuration());
 	}
 
-	public boolean isOpen(){
+	public boolean isOpen() {
 		CashRegister cashRegister = getCashRegister();
 		if (cashRegister == null) {
 			throw new IllegalStateException("CashRegister is not initialized");
@@ -85,30 +81,26 @@ public class ClockService {
 
 	/**
 	 * Toggles the state of the shop (opened/closed)
-	 *
 	 */
-	public void openOrClose(){
+	public void openOrClose() {
 		CashRegister cashRegister = getCashRegister();
 		cashRegister.setOpen(!cashRegister.getOpen());
 		if (cashRegister.getOpen()) {
-			if(!cashRegister.getInGameDate().getMonth().equals(this.nextWorkingDay().getMonth()))
-			{
+			if (!cashRegister.getInGameDate().getMonth().equals(this.nextWorkingDay().getMonth())) {
 				monthlyBillingService.addMonthlyCharges();
 			}
 			cashRegister.setInGameDate(this.nextWorkingDay());
 			cashRegister.setNewDayStarted(LocalDateTime.now());
 			Set<PendingOrder> newPendingOrdersSet = new HashSet<>();
-			Map<Flower,Integer> todaysGoods = new HashMap<>();
+			Map<Flower, Integer> todaysGoods = new HashMap<>();
 			for (PendingOrder i : cashRegister.getPendingOrders()) {
-				if(i.getDueDate().equals(getCurrentDate()) || i.getDueDate().isBefore(getCurrentDate())){
-					for(Product flower: i.getItemQuantityMap().keySet())
-					{
+				if (i.getDueDate().equals(getCurrentDate()) || i.getDueDate().isBefore(getCurrentDate())) {
+					for (Product flower : i.getItemQuantityMap().keySet()) {
 						// The ones that will be delivered today
 						todaysGoods.put((Flower) flower, i.getItemQuantityMap().get(flower).getAmount().intValue());
 					}
-				}
-				else{
-						// The ones, that will be later
+				} else {
+					// The ones, that will be later
 					newPendingOrdersSet.add(i);
 				}
 			}
@@ -119,7 +111,6 @@ public class ClockService {
 	}
 
 	/**
-	 *
 	 * @return next day, when the shop can work
 	 * Currently it works Mo-Fr. To change this, refactor the while-clause a little
 	 */
@@ -129,8 +120,7 @@ public class ClockService {
 
 	public static LocalDate nextWorkingDay(LocalDate currentDate) {
 		LocalDate nextWorkingDay = currentDate.plusDays(1);
-		while(nextWorkingDay.getDayOfWeek().getValue()>5)
-		{
+		while (nextWorkingDay.getDayOfWeek().getValue() > 5) {
 			nextWorkingDay = nextWorkingDay.plusDays(1);
 		}
 		return nextWorkingDay;
@@ -141,8 +131,7 @@ public class ClockService {
 		str.append(timestamp.getMonthValue() + ".")
 			.append(timestamp.getYear() + " ")
 			.append(timestamp.getHour() + ":");
-		if(timestamp.getMinute() < 10)
-		{
+		if (timestamp.getMinute() < 10) {
 			str.append("0");
 		}
 		str.append(timestamp.getMinute());

@@ -4,9 +4,7 @@ import flowershop.clock.ClockService;
 import flowershop.clock.PendingOrder;
 import flowershop.inventory.DeletedProduct;
 import flowershop.product.ProductService;
-import flowershop.sales.InsufficientFundsException;
 import flowershop.sales.SalesService;
-import flowershop.sales.WholesalerOrder;
 import flowershop.services.AbstractOrder;
 import org.javamoney.moneta.Money;
 import org.salespointframework.accountancy.Accountancy;
@@ -43,14 +41,17 @@ public class CashRegisterService implements Accountancy {
 
 	@Autowired
 	public CashRegisterService(OrderManagement<AbstractOrder> orderManagement,
-							   CashRegisterRepository cashRegisterRepository, ClockService clockService, ProductService productService, SalesService salesService) {
+							   CashRegisterRepository cashRegisterRepository,
+							   ClockService clockService, ProductService productService,
+							   SalesService salesService) {
 		this.orderManagement = orderManagement;
 		this.cashRegisterRepository = cashRegisterRepository;
 		this.productService = productService;
 		Streamable<AbstractOrder> previousOrders = Optional.ofNullable(orderManagement.findBy(OrderStatus.PAID))
 			.orElse(Streamable.empty());
 		for (Order order : previousOrders) {
-			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order, clockService.now(), productService);
+			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order,
+				clockService.now(), productService);
 			this.add(convertedOrder);
 		}
 		this.clockService = clockService;
@@ -70,9 +71,10 @@ public class CashRegisterService implements Accountancy {
 
 	/**
 	 * Is used to add an AccountancyEntry instance to the register
+	 *
 	 * @param entry
+	 * @param <T>   type of the entry (T extends AccountancyEntry)
 	 * @return entry, if everything went well. Otherwise - null
-	 * @param <T> type of the entry (T extends AccountancyEntry)
 	 */
 	@Override
 	public <T extends AccountancyEntry> T add(T entry) {
@@ -106,7 +108,7 @@ public class CashRegisterService implements Accountancy {
 			for (Map.Entry<Product, Quantity> i : ((AccountancyEntryWrapper) entry).getFlowers().entrySet()) {
 				cart.addOrUpdateItem(i.getKey(), i.getValue());
 			}
-			if(cart.getPrice().add(getCashRegister().getBalance()).isNegative()){
+			if (cart.getPrice().add(getCashRegister().getBalance()).isNegative()) {
 				return null;
 			}
 			if (!cart.isEmpty()) {
@@ -125,6 +127,7 @@ public class CashRegisterService implements Accountancy {
 
 	/**
 	 * Will wrap the order into AccountancyEntryWrapper and add it to the register
+	 *
 	 * @param event of type OrderPaid that carries an order
 	 */
 	@EventListener
@@ -136,7 +139,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @return list of all deleted products ever
 	 */
 	public List<DeletedProduct> getAllDeletedProducts() {
@@ -189,7 +191,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @return all registered AccountancyEntries
 	 */
 	@Override
@@ -242,7 +243,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @param interval
 	 * @return all AccountancyEntries form this interval of time
 	 */
@@ -266,7 +266,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @param interval overall period
 	 * @param duration periodity of how to split the data
 	 * @return the map of smaller periods of duration to AccountancyEntries from that interval
@@ -293,7 +292,6 @@ public class CashRegisterService implements Accountancy {
 	}
 
 	/**
-	 *
 	 * @param interval overall period
 	 * @param duration periodity of how to split the data
 	 * @return a map of smaller periods of duration to the overall profit from that interval

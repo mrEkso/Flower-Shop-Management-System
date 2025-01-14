@@ -54,12 +54,17 @@ public class OrderFactory {
 	 * @param notes           additional notes for the order
 	 * @return a new `EventOrder`
 	 */
-	public EventOrder createEventOrder(LocalDateTime eventDate, String deliveryAddress, Client client, String notes) {
+	public EventOrder createEventOrder(LocalDateTime eventDate,
+									   String deliveryAddress,
+									   Client client,
+									   String notes) {
 		EventOrder order = new EventOrder(getDefaultUserAccount(), eventDate, deliveryAddress, client, notes);
-		Event e = new Event(client.getName() + "'s Event", eventDate, notes, "event", UUID.fromString(order.getId().toString()));
+		Event e = new Event(client.getName() + "'s Event", eventDate, notes, "event",
+			UUID.fromString(order.getId().toString()));
 		calendarService.save(e);
 		return order;
 	}
+
 	/**
 	 * Creates a new `EventOrder` with the specified event date, delivery address, and client.
 	 *
@@ -68,9 +73,12 @@ public class OrderFactory {
 	 * @param client          the client associated with the order
 	 * @return a new `EventOrder`
 	 */
-	public EventOrder createEventOrder(LocalDateTime eventDate, String deliveryAddress, Client client) {
+	public EventOrder createEventOrder(LocalDateTime eventDate,
+									   String deliveryAddress,
+									   Client client) {
 		EventOrder order = new EventOrder(getDefaultUserAccount(), eventDate, deliveryAddress, client, "");
-		Event e = new Event(client.getName() + "'s Event", eventDate, "", "event", UUID.fromString(order.getId().toString()));
+		Event e = new Event(client.getName() + "'s Event", eventDate, "", "event",
+			UUID.fromString(order.getId().toString()));
 		calendarService.save(e);
 		return order;
 	}
@@ -86,14 +94,17 @@ public class OrderFactory {
 	 * @param notes        additional notes for the order
 	 * @return a new `ContractOrder`
 	 */
-	public ContractOrder createContractOrder(String contractType, String frequency, LocalDateTime startDate, LocalDateTime endDate, String address, Client client, String notes) {
-		ContractOrder order = new ContractOrder(getDefaultUserAccount(), contractType, frequency, startDate, endDate, address, client, notes);
-		if(order.getContractType().equalsIgnoreCase("recurring")){
-			calendarService.createReccuringEvent(client.getName() + "'s Contract", startDate, endDate, notes, frequency, "contract", UUID.fromString(order.getId().toString()));
-		}
-		else
-		{
-			calendarService.save(new Event(client.getName() + "'s Contract", startDate, notes, "contract", UUID.fromString(order.getId().toString())));
+	public ContractOrder createContractOrder(String contractType, String frequency,
+											 LocalDateTime startDate, LocalDateTime endDate, String address,
+											 Client client, String notes) {
+		ContractOrder order = new ContractOrder(getDefaultUserAccount(), contractType, frequency,
+			startDate, endDate, address, client, notes);
+		if (order.getContractType().equalsIgnoreCase("recurring")) {
+			calendarService.createReccuringEvent(client.getName() + "'s Contract", startDate,
+				endDate, notes, frequency, "contract", UUID.fromString(order.getId().toString()));
+		} else {
+			calendarService.save(new Event(client.getName() + "'s Contract", startDate, notes,
+				"contract", UUID.fromString(order.getId().toString())));
 		}
 		return order;
 	}
@@ -108,8 +119,10 @@ public class OrderFactory {
 	 * @param client       the client associated with the order
 	 * @return a new `ContractOrder`
 	 */
-	public ContractOrder createContractOrder(String contractType, String frequency, LocalDateTime startDate, LocalDateTime endDate, Client client) {
-		return new ContractOrder(getDefaultUserAccount(), frequency, contractType, startDate, endDate, frequency, client, "");
+	public ContractOrder createContractOrder(String contractType, String frequency, LocalDateTime startDate,
+											 LocalDateTime endDate, Client client) {
+		return new ContractOrder(getDefaultUserAccount(), frequency, contractType, startDate, endDate,
+			frequency, client, "");
 	}
 
 	/**
@@ -122,7 +135,8 @@ public class OrderFactory {
 	 */
 	public ReservationOrder createReservationOrder(LocalDateTime dateTime, Client client, String notes) {
 		ReservationOrder order = new ReservationOrder(getDefaultUserAccount(), dateTime, client, notes);
-		Event e = new Event(client.getName() + "'s Reservation", dateTime, notes, "reservation", UUID.fromString(order.getId().toString()));
+		Event e = new Event(client.getName() + "'s Reservation", dateTime, notes, "reservation",
+			UUID.fromString(order.getId().toString()));
 		calendarService.save(e);
 		return order;
 	}
@@ -136,7 +150,8 @@ public class OrderFactory {
 	 */
 	public ReservationOrder createReservationOrder(LocalDateTime dateTime, Client client) {
 		ReservationOrder order = new ReservationOrder(getDefaultUserAccount(), dateTime, client, "");
-		Event e = new Event(client.getName() + "'s Reservation", dateTime, "", "reservation", UUID.fromString(order.getId().toString()));
+		Event e = new Event(client.getName() + "'s Reservation", dateTime, "", "reservation",
+			UUID.fromString(order.getId().toString()));
 		calendarService.save(e);
 		return order;
 	}

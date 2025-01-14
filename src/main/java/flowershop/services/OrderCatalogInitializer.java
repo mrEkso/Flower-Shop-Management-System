@@ -40,7 +40,9 @@ public class OrderCatalogInitializer implements DataInitializer {
 	 * @param orderFactory               the factory used to create orders
 	 * @throws IllegalArgumentException if any of the parameters are null
 	 */
-	public OrderCatalogInitializer(EventOrderRepository eventOrderRepository, ContractOrderRepository contractOrderRepository, ReservationOrderRepository reservationOrderRepository, ProductCatalog productCatalog, ClientRepository clientRepository, OrderFactory orderFactory) {
+	public OrderCatalogInitializer(EventOrderRepository eventOrderRepository, ContractOrderRepository contractOrderRepository,
+								   ReservationOrderRepository reservationOrderRepository, ProductCatalog productCatalog,
+								   ClientRepository clientRepository, OrderFactory orderFactory) {
 		Assert.notNull(eventOrderRepository, "EventOrderRepository must not be null!");
 		Assert.notNull(contractOrderRepository, "ContractOrderRepository must not be null!");
 		Assert.notNull(reservationOrderRepository, "ReservationOrderRepository must not be null!");
@@ -63,8 +65,9 @@ public class OrderCatalogInitializer implements DataInitializer {
 	public void initialize() {
 		if (eventOrderRepository.findAll(Pageable.unpaged()).iterator().hasNext() &&
 			contractOrderRepository.findAll(Pageable.unpaged()).iterator().hasNext() &&
-			reservationOrderRepository.findAll(Pageable.unpaged()).iterator().hasNext())
+			reservationOrderRepository.findAll(Pageable.unpaged()).iterator().hasNext()) {
 			return; // Skip initialization if orders already exist
+		}
 
 		// Fetch Clients
 		Client client1 = clientRepository.findByName("John Doe")
@@ -81,8 +84,10 @@ public class OrderCatalogInitializer implements DataInitializer {
 		// Create and save orders using OrderFactory
 		// ContractOrders
 		ContractOrder contractOrder = orderFactory.createContractOrder(
-			"Recurring", "weekly", LocalDateTime.of(2025, 1, 1, 12, 0), LocalDateTime.of(2026, 1, 1, 12, 0),
-			"Nöthnitzer Str. 46, 01187 Dresden", client1, "Weekly flower delivery + flower arrangement + watering");
+			"Recurring", "weekly", LocalDateTime.of(2025, 1, 1,
+				12, 0), LocalDateTime.of(2026, 1, 1, 12, 0),
+			"Nöthnitzer Str. 46, 01187 Dresden", client1, "Weekly flower delivery " +
+				"+ flower arrangement + watering");
 		contractOrder.setPaymentMethod(Cash.CASH);
 		contractOrder.addOrderLine(rose, Quantity.of(8));
 		contractOrder.addOrderLine(roseLilyBouquet, Quantity.of(2));
@@ -91,14 +96,16 @@ public class OrderCatalogInitializer implements DataInitializer {
 
 		// EventOrders
 		EventOrder eventOrder1 = orderFactory.createEventOrder(
-			LocalDateTime.of(2026, 1, 1, 12, 0), "Nöthnitzer Str. 46, 01187 Dresden", client1);
+			LocalDateTime.of(2026, 1, 1, 12, 0),
+			"Nöthnitzer Str. 46, 01187 Dresden", client1);
 		eventOrder1.addOrderLine(rose, Quantity.of(2));
 		eventOrder1.setPaymentMethod(Cash.CASH);
 		eventOrder1.addChargeLine(Money.of(20, "EUR"), "Delivery Price");
 		eventOrderRepository.save(eventOrder1);
 
 		EventOrder eventOrder2 = orderFactory.createEventOrder(
-			LocalDateTime.of(2026, 1, 1, 12, 0), "Nöthnitzer Str. 46, 01187 Dresden", client2);
+			LocalDateTime.of(2026, 1, 1, 12, 0),
+			"Nöthnitzer Str. 46, 01187 Dresden", client2);
 		eventOrder2.addOrderLine(roseLilyBouquet, Quantity.of(1));
 		eventOrder2.setPaymentMethod(Cash.CASH);
 		eventOrder2.addChargeLine(Money.of(20, "EUR"), "Delivery Price");

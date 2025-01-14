@@ -39,7 +39,8 @@ public class MonthlyFinancialReport extends FinancialReport {
 		sortedBackwards.sort(new IntervalComparator());
 		MonetaryAmount moneyAfterEachDay = balanceEndOfTheMonth;
 		for (Interval day : sortedBackwards) {
-			DailyFinancialReport currentDay = new DailyFinancialReport(day, moneyAfterEachDay, cashRegister, firstEverTransaction, clockService);
+			DailyFinancialReport currentDay = new DailyFinancialReport(
+				day, moneyAfterEachDay, cashRegister, firstEverTransaction, clockService);
 			this.dailyFinancialReports.add(currentDay);
 			moneyAfterEachDay = moneyAfterEachDay.subtract(currentDay.getProfit());
 			this.income = this.income.add(currentDay.getIncome());
@@ -51,8 +52,8 @@ public class MonthlyFinancialReport extends FinancialReport {
 	}
 
 	/**
-	 *
-	 * @return true if there is no data registered during the whole month because the orders started to appear after this month
+	 * @return true if there is no data registered during the whole month
+	 * because the orders started to appear after this month
 	 */
 	@Override
 	public boolean isBeforeBeginning() {
@@ -65,21 +66,22 @@ public class MonthlyFinancialReport extends FinancialReport {
 	}
 
 	/**
-	 *
 	 * @return for example "12.2024" for December of 2024
 	 */
 	@Override
 	protected String intervalToString() {
 		LocalDateTime day = interval.getStart();
-		String month = (day.getMonth().getValue() < 10) ? "0" + day.getMonth().getValue() : String.valueOf(day.getMonth().getValue());
-		String dateRepr = new StringBuilder().append(month).append(".").append(day.getYear()).toString();
+		String month = (day.getMonth().getValue() < 10) ? "0" + day.getMonth().getValue()
+			: String.valueOf(day.getMonth().getValue());
+		String dateRepr = new StringBuilder().append(month).append(".")
+			.append(day.getYear()).toString();
 		return dateRepr;
 	}
 
 	/**
-	 *
 	 * @param font
-	 * @return a list of the rows of the table that represents the period (rows for all days that have some orders from that time)
+	 * @return a list of the rows of the table that represents the period
+	 * (rows for all days that have some orders from that time)
 	 */
 	@Override
 	protected List<Row> getNeededRows(PDFont font) {

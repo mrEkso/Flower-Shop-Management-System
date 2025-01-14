@@ -27,7 +27,8 @@ public class SalesService {
 
 	public SalesService(ProductService productService, SimpleOrderService simpleOrderService,
 						OrderFactory orderFactory, WholesalerOrderService wholesalerOrderService,
-						ApplicationEventPublisher eventPublisher, GiftCardService giftCardService, BalanceService balanceService) {
+						ApplicationEventPublisher eventPublisher, GiftCardService giftCardService,
+						BalanceService balanceService) {
 		this.productService = productService;
 		this.simpleOrderService = simpleOrderService;
 		this.orderFactory = orderFactory;
@@ -104,7 +105,8 @@ public class SalesService {
 	 * @param paymentMethod the payment method for the purchase
 	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
 	 */
-	public void buyProductsFromBasket(Cart cart, String paymentMethod) throws IllegalArgumentException, InsufficientFundsException {
+	public void buyProductsFromBasket(Cart cart, String paymentMethod)
+		throws IllegalArgumentException, InsufficientFundsException {
 		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
 		}
@@ -113,7 +115,7 @@ public class SalesService {
 		addFlowersFromCart(cart, wholesalerOrder);
 		wholesalerOrder.setPaymentMethod(paymentMethod);
 		wholesalerOrderService.create(wholesalerOrder);
-		if(balanceService.denies(wholesalerOrder)){
+		if (balanceService.denies(wholesalerOrder)) {
 			throw new InsufficientFundsException();
 		}
 		cart.clear();

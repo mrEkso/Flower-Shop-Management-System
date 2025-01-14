@@ -2,12 +2,10 @@ package flowershop.product;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-
 import org.javamoney.moneta.Money;
 
-import java.util.UUID;
-
 import javax.money.MonetaryAmount;
+import java.util.UUID;
 
 @Entity
 public class GiftCard {

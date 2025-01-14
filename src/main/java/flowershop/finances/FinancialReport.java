@@ -50,14 +50,13 @@ public abstract class FinancialReport {
 	}
 
 	/**
-	 *
 	 * @return the ready-made file of the report
 	 */
 	public byte[] generatePDF() {
 		try (PDDocument document = new PDDocument()) {
 			InputStream inFont = getClass().getResourceAsStream("/fonts/josefin-sans.semibold.ttf");
 			System.out.println(inFont.toString());
-      		PDType0Font customFont = PDType0Font.load(document, inFont);
+			PDType0Font customFont = PDType0Font.load(document, inFont);
 
 			TableDrawer.builder()
 				.startX(50)
@@ -95,7 +94,6 @@ public abstract class FinancialReport {
 	}
 
 	/**
-	 *
 	 * @param day number of the weekday (1-7)
 	 * @return german name of the weekday
 	 */
@@ -140,7 +138,6 @@ public abstract class FinancialReport {
 	}
 
 	/**
-	 *
 	 * @param font to be used in the document
 	 * @return ready Table for being wrapped into the document
 	 */
@@ -154,7 +151,8 @@ public abstract class FinancialReport {
 				.text(" ").fontSize(16).colSpan(2)
 				.build())
 			.add(TextCell.builder()
-				.text("Floris Blumenladen Dresden").fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text("Floris Blumenladen Dresden").fontSize(16)
+				.colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
 		builder.addRow(shapka1);
@@ -163,20 +161,24 @@ public abstract class FinancialReport {
 				.text(" ").fontSize(16).colSpan(2)
 				.build())
 			.add(TextCell.builder()
-				.text("Wiener Platz 4, 01069 Dresden").fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text("Wiener Platz 4, 01069 Dresden").fontSize(16)
+				.colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
 		builder.addRow(adress);
 		LocalDateTime day = clockService.now();
-		String month = (day.getMonth().getValue() < 10) ? "0" + day.getMonth().getValue() : String.valueOf(day.getMonth().getValue());
-		String dateRepr = new StringBuilder().append(day.getDayOfMonth()).append(".").append(month).append(".").append(day.getYear()).toString();
+		String month = (day.getMonth().getValue() < 10) ? "0" + day.getMonth().getValue()
+			: String.valueOf(day.getMonth().getValue());
+		String dateRepr = new StringBuilder().append(day.getDayOfMonth()).append(".")
+			.append(month).append(".").append(day.getYear()).toString();
 
 		Row datum = Row.builder()
 			.add(TextCell.builder()
 				.text(" ").fontSize(16).colSpan(2)
 				.build())
 			.add(TextCell.builder()
-				.text("Am " + dateRepr).fontSize(16).colSpan(4).horizontalAlignment(HorizontalAlignment.LEFT).font(font)
+				.text("Am " + dateRepr).fontSize(16).colSpan(4)
+				.horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
 		builder.addRow(datum);
@@ -184,7 +186,8 @@ public abstract class FinancialReport {
 		//builder.addRow(emptyRow());
 		Row title = Row.builder()
 			.add(TextCell.builder()
-				.text("Finanzübersicht für " + intervalToString()).font(font).fontSize(24).colSpan(6).horizontalAlignment(HorizontalAlignment.CENTER)
+				.text("Finanzübersicht für " + intervalToString()).font(font).fontSize(24)
+				.colSpan(6).horizontalAlignment(HorizontalAlignment.CENTER)
 				.build())
 			.build();
 		builder.addRow(title);
@@ -195,32 +198,42 @@ public abstract class FinancialReport {
 		return builder.build();
 	}
 
-	public List<Row> getDeletedProductRows(PDFont font){
+	public List<Row> getDeletedProductRows(PDFont font) {
 		List<Row> neededRows = new java.util.ArrayList<>();
-		if(!this.deletedProducts.isEmpty()){
+		if (!this.deletedProducts.isEmpty()) {
 			Row title = Row.builder()
 				.add(TextCell.builder()
-					.text(this instanceof DailyFinancialReport ? "Verwelkte Blumen an diesem Tag:" : "Verwelkte Blumen in diesem Monat:")
-					.font(font).fontSize(14).colSpan(6).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.CENTER)
+					.text(this instanceof DailyFinancialReport ? "Verwelkte Blumen an diesem Tag:"
+						: "Verwelkte Blumen in diesem Monat:")
+					.font(font).fontSize(14).colSpan(6).borderColor(Color.BLACK)
+					.horizontalAlignment(HorizontalAlignment.CENTER)
 					.build())
 				.build();
 			neededRows.add(title);
 			Row headerDeleted = Row.builder()
 				.add(TextCell.builder()
-					.text("Produkt").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
-					.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+					.text("Produkt").horizontalAlignment(HorizontalAlignment.CENTER)
+					.font(font).borderWidth(1)
+					.fontSize(14).colSpan(1).borderColor(Color.BLACK)
+					.horizontalAlignment(HorizontalAlignment.LEFT)
 					.build())
 				.add(TextCell.builder()
-					.text("Preis pro Stück").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
-					.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+					.text("Preis pro Stück").horizontalAlignment(HorizontalAlignment.CENTER)
+					.font(font).borderWidth(1)
+					.fontSize(14).colSpan(1).borderColor(Color.BLACK)
+					.horizontalAlignment(HorizontalAlignment.LEFT)
 					.build())
 				.add(TextCell.builder()
-					.text("Anzahl").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
-					.fontSize(14).colSpan(1).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+					.text("Anzahl").horizontalAlignment(HorizontalAlignment.CENTER)
+					.font(font).borderWidth(1)
+					.fontSize(14).colSpan(1).borderColor(Color.BLACK)
+					.horizontalAlignment(HorizontalAlignment.LEFT)
 					.build())
 				.add(TextCell.builder()
-					.text("Einnahmen verloren").horizontalAlignment(HorizontalAlignment.CENTER).font(font).borderWidth(1)
-					.fontSize(14).colSpan(3).borderColor(Color.BLACK).horizontalAlignment(HorizontalAlignment.LEFT)
+					.text("Einnahmen verloren").horizontalAlignment(HorizontalAlignment.CENTER)
+					.font(font).borderWidth(1)
+					.fontSize(14).colSpan(3).borderColor(Color.BLACK)
+					.horizontalAlignment(HorizontalAlignment.LEFT)
 					.build())
 				.build();
 			neededRows.add(headerDeleted);
@@ -231,16 +244,20 @@ public abstract class FinancialReport {
 						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
 						.build())
 					.add(TextCell.builder()
-						.text(deletedProduct.getPricePerUnit().toString()).verticalAlignment(VerticalAlignment.TOP)
+						.text(deletedProduct.getPricePerUnit().toString())
+						.verticalAlignment(VerticalAlignment.TOP)
 						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
 						.build())
 					.add(TextCell.builder()
-						.text(String.valueOf(deletedProduct.getQuantityDeleted())).verticalAlignment(VerticalAlignment.TOP)
+						.text(String.valueOf(deletedProduct.getQuantityDeleted()))
+						.verticalAlignment(VerticalAlignment.TOP)
 						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
 						.build())
 					.add(TextCell.builder()
-						.text(String.valueOf(deletedProduct.getTotalLoss())).verticalAlignment(VerticalAlignment.TOP)
-						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT).colSpan(3)
+						.text(String.valueOf(deletedProduct.getTotalLoss()))
+						.verticalAlignment(VerticalAlignment.TOP)
+						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
+						.colSpan(3)
 						.build())
 					.build();
 				neededRows.add(deleted);
@@ -265,7 +282,6 @@ public abstract class FinancialReport {
 
 
 	/**
-	 *
 	 * @return the instance of an empty row (just to add distance between rows)
 	 */
 	public static Row emptyRow(int numColumns) {

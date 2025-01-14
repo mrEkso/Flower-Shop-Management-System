@@ -33,7 +33,8 @@ public class ReservationOrderService {
 	 * @param orderManagement            the order management system
 	 * @throws IllegalArgumentException if any of the parameters are null
 	 */
-	public ReservationOrderService(ReservationOrderRepository reservationOrderRepository, ProductCatalog productCatalog, OrderManagement<ReservationOrder> orderManagement) {
+	public ReservationOrderService(ReservationOrderRepository reservationOrderRepository, ProductCatalog productCatalog,
+								   OrderManagement<ReservationOrder> orderManagement) {
 		Assert.notNull(reservationOrderRepository, "ReservationOrderRepository must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(orderManagement, "OrderManagement must not be null!");
@@ -95,7 +96,8 @@ public class ReservationOrderService {
 					int quantity = Integer.parseInt(products.get(quantityKey));
 					Product product = productCatalog.findById(Product.ProductIdentifier.of(value))
 						.orElseThrow(() -> new IllegalArgumentException("Product not found: " + value));
-					if (order.getReservationDateTime().toLocalDate().equals(LocalDate.now()) && getAvailableStock(product).isLessThan(Quantity.of(quantity))) {
+					if (order.getReservationDateTime().toLocalDate().equals(LocalDate.now()) &&
+						getAvailableStock(product).isLessThan(Quantity.of(quantity))) {
 						throw new IllegalArgumentException("Not enough stock for product: " + product.getName());
 					}
 					order.addOrderLine(product, Quantity.of(quantity));
@@ -116,7 +118,8 @@ public class ReservationOrderService {
 	 * @return the updated reservation order
 	 * @throws IllegalArgumentException if the order is already canceled, not paid yet, or cannot be canceled
 	 */
-	public ReservationOrder update(ReservationOrder order, Map<String, String> products, String orderStatus, String cancelReason, String reservationStatus) {
+	public ReservationOrder update(ReservationOrder order, Map<String, String> products, String orderStatus,
+								   String cancelReason, String reservationStatus) {
 		if (order.getOrderStatus().equals(OrderStatus.CANCELED)) {
 			throw new IllegalArgumentException("Order is already canceled!");
 		}
@@ -125,7 +128,8 @@ public class ReservationOrderService {
 				throw new IllegalArgumentException("Order is not paid yet!");
 			}
 			if (OrderStatus.CANCELED.name().equals(orderStatus)) {
-				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
+				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided"
+					: cancelReason);
 				return reservationOrderRepository.save(order);
 			}
 			Map<UUID, Integer> incoming = extractProducts(products);
@@ -134,7 +138,8 @@ public class ReservationOrderService {
 					order.remove(line);
 				}
 			});
-			incoming.forEach((productId, quantity) -> productCatalog.findById(Product.ProductIdentifier.of(productId.toString()))
+			incoming.forEach((productId, quantity) -> productCatalog.findById(
+					Product.ProductIdentifier.of(productId.toString()))
 				.ifPresent(product -> {
 					order.getOrderLines(product).toList().forEach(order::remove);
 					order.addOrderLine(product, Quantity.of(quantity));
