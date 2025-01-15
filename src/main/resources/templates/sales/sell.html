@@ -118,13 +118,16 @@
                                                 name="productId"
                                                 th:value="${selectedCart.product.id}"
                                         />
-                                        <input
-                                                class="basket-input-quantity"
-                                                type="number"
-                                                step="1"
-                                                min="0"
-                                                name="quantityInput"
-                                        />
+                                        <label>
+                                            <input
+                                                    class="basket-input-quantity"
+                                                    type="number"
+                                                    step="1"
+                                                    min="0"
+                                                    name="quantityInput"
+                                                    value="1"
+                                            />
+                                        </label>
                                         <button
                                                 class="basket-plus-btn"
                                                 type="submit"
@@ -192,11 +195,11 @@
                         </label>
                     </div>
 
-                        <input
-                                class="basket-submit-btn"
-                                type="submit"
-                                th:value="#{basket.footer.button}"
-                        />
+                    <input
+                            class="basket-submit-btn"
+                            type="submit"
+                            th:value="#{basket.footer.button}"
+                    />
                 </form>
             </div>
 
