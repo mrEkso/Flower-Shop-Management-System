@@ -95,11 +95,11 @@ public class ClockService {
 			}
 			cashRegister.setInGameDate(this.nextWorkingDay());
 			cashRegister.setNewDayStarted(LocalDateTime.now());
+			this.newPendingOrdersSet = new HashSet<>();
+			this.todaysGoods = new HashMap<>();
 			updateLists(cashRegister);
 			productService.addDeliveredFlowersFromWholesaler(todaysGoods);
 			cashRegister.setPendingOrders(newPendingOrdersSet); // Only the ones that are later are added to the waiting list
-			this.newPendingOrdersSet = new HashSet<>();
-			this.todaysGoods = new HashMap<>();
 		}
 		cashRegisterRepository.save(cashRegister);
 	}

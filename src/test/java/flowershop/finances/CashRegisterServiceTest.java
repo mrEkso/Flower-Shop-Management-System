@@ -223,7 +223,7 @@ public class CashRegisterServiceTest {
 	@Test
 	void testFilterEntriesByCategory() {
 		CashRegister mockCashRegister = mock(CashRegister.class);
-		Category category = mock(Category.class);
+		Category category = Category.EINKAUF;
 		LinkedList<AccountancyEntry> entries = new LinkedList<>();
 		entries.add(mock(AccountancyEntry.class));
 		when(mockCashRegister.getAccountancyEntries()).thenReturn(new HashSet<>(entries));
