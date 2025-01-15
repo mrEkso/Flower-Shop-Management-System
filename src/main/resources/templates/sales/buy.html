@@ -122,7 +122,7 @@
                     </div>
                     <div class="basket-card-footer">
                       <span
-                        th:text="${(selectedCart.quantity.getAmount.doubleValue* 1.0) * selectedCart.product.price.number * 1.0} + ' EUR'"
+                        th:text="${(selectedCart.quantity.getAmount.doubleValue* 1.0) * selectedCart.product.pricing.buyPrice.number * 1.0} + ' EUR'"
                       ></span>
                     </div>
                   </div>
