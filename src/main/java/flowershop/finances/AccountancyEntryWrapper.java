@@ -245,8 +245,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 			List<Flower> lst = productService.findFlowersByName(name);
 			if (!lst.isEmpty() && lst.getFirst().getName().equals(name)) {
 				productQuantityMap.merge(lst.getFirst(), orderLine.getQuantity(), Quantity::add);
-			}
-			else if (order instanceof EventOrder || order instanceof ReservationOrder) {
+			} else if (order instanceof EventOrder || order instanceof ReservationOrder) {
 				addFlowersFromBouquettes(name,orderLine);
 			}
 		}
@@ -254,15 +253,13 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 
 	private void addFlowersFromBouquettes(String name, OrderLine orderLine) {
 		List<Bouquet> bouquetList = productService.findBouquetsByName(name);
-		if (!bouquetList.isEmpty()) {
-			if (bouquetList.getFirst().getName().equals(name)) {
-				Bouquet bouquet = bouquetList.getFirst();
-				for (Map.Entry<Flower, Integer> eventBouquettePair : bouquet.getFlowers().entrySet()) {
-					productQuantityMap.merge(eventBouquettePair.getKey(),
-						Quantity.of(eventBouquettePair.getValue())
-							.times(orderLine.getQuantity().getAmount().intValue()),
-						Quantity::add);
-				}
+		if (!bouquetList.isEmpty() && bouquetList.getFirst().getName().equals(name)) {
+			Bouquet bouquet = bouquetList.getFirst();
+			for (Map.Entry<Flower, Integer> eventBouquettePair : bouquet.getFlowers().entrySet()) {
+				productQuantityMap.merge(eventBouquettePair.getKey(),
+					Quantity.of(eventBouquettePair.getValue())
+						.times(orderLine.getQuantity().getAmount().intValue()),
+					Quantity::add);
 			}
 		}
 	}
