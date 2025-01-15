@@ -391,8 +391,8 @@ public class SalesController {
 							   @ModelAttribute("buyCart") Cart buyCart,
 							   @RequestParam(required = false) Integer quantityInput) {
 		Product product = productService.getProductById(productId).get();
-		
-		Integer tmpQuantity = (quantityInput == null || quantityInput == 0)? 1 : quantityInput;
+
+		int tmpQuantity = (quantityInput == null || quantityInput == 0)? 1 : quantityInput;
 
 		buyCart.addOrUpdateItem(product, tmpQuantity);
 
@@ -415,6 +415,7 @@ public class SalesController {
 		Model model,
 		@RequestParam UUID productId,
 		@ModelAttribute("buyCart") Cart buyCart
+
 	) {
 		Product product = productService.getProductById(productId).get();
 
