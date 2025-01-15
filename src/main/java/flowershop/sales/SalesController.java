@@ -306,14 +306,17 @@ public class SalesController {
 	public String addToSellCart(
 		Model model,
 		@RequestParam UUID productId,
+		@RequestParam(required = false) Integer quantityInput,
 		@ModelAttribute("sellCart") Cart sellCart
 	) {
 		Product product = productService.getProductById(productId).get();
 
-		if (sellCart.getQuantity(product).getAmount().intValue() <
+		Integer tmpQuantity = (quantityInput == null || quantityInput == 0)? 1 : quantityInput;
+
+		if (sellCart.getQuantity(product).getAmount().intValue() + tmpQuantity <=
 			(product instanceof Flower ? ((Flower) product).getQuantity() :
 				((Bouquet) product).getQuantity())) {
-			sellCart.addOrUpdateItem(product, 1);
+			sellCart.addOrUpdateItem(product, tmpQuantity);
 
 			double fp = salesService.calculateFullCartPrice(model, sellCart, true);
 			model.addAttribute("fullSellPrice", fp);
@@ -382,9 +385,13 @@ public class SalesController {
 	@PostMapping("add-to-buy-cart")
 	public String addToBuyCart(Model model,
 							   @RequestParam UUID productId,
-							   @ModelAttribute("buyCart") Cart buyCart) {
+							   @ModelAttribute("buyCart") Cart buyCart,
+							   @RequestParam(required = false) Integer quantityInput) {
 		Product product = productService.getProductById(productId).get();
-		buyCart.addOrUpdateItem(product, 1);
+		
+		Integer tmpQuantity = (quantityInput == null || quantityInput == 0)? 1 : quantityInput;
+
+		buyCart.addOrUpdateItem(product, tmpQuantity);
 
 		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
 		model.addAttribute("fullBuyPrice", fp);

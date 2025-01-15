@@ -115,14 +115,19 @@
                           name="productId"
                           th:value="${selectedCart.product.id}"
                         />
-                        <button class="basket-minus-btn" type="submit">
-                          +
-                        </button>
+                        <input
+                          class="basket-input-quantity"
+                          type="number"
+                          step="1"
+                          min="0"
+                          name="quantityInput"
+                        />
+                        <button class="basket-plus-btn" type="submit">+</button>
                       </form>
                     </div>
                     <div class="basket-card-footer">
                       <span
-                        th:text="${(selectedCart.quantity.getAmount.doubleValue* 1.0) * selectedCart.product.price.number * 1.0} + ' EUR'"
+                        th:text="${(selectedCart.quantity.getAmount.doubleValue* 1.0) * selectedCart.product.pricing.buyPrice.number * 1.0} + ' EUR'"
                       ></span>
                     </div>
                   </div>

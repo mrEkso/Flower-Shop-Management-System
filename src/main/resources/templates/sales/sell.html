@@ -118,19 +118,15 @@
                             name="productId"
                             th:value="${selectedCart.product.id}"
                           />
-                          <input class="basket-input-quantity" type="text" />
-                          <!--        th:placeholder="#{sell.search}"
-                                        th:value="${searchInput}"
-                                        name="searchInput" -->
-                        </form>
-                        <form method="post" action="/add-to-sell-cart">
                           <input
-                            type="hidden"
-                            name="productId"
-                            th:value="${selectedCart.product.id}"
+                            class="basket-input-quantity"
+                            type="number"
+                            step="1"
+                            min="0"
+                            name="quantityInput"
                           />
                           <button
-                            class="basket-minus-btn"
+                            class="basket-plus-btn"
                             type="submit"
                             th:disabled="${(selectedCart.product instanceof T(flowershop.product.Flower) ? selectedCart.product.quantity :
                                                             (selectedCart.product instanceof T(flowershop.product.Bouquet) ? selectedCart.product.quantity : 0))
