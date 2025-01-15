@@ -309,14 +309,17 @@ public class SalesController {
 	public String addToSellCart(
 		Model model,
 		@RequestParam UUID productId,
+		@RequestParam(required = false) Integer quantityInput,
 		@ModelAttribute("sellCart") Cart sellCart
 	) {
 		Product product = productService.getProductById(productId).get();
 
-		if (sellCart.getQuantity(product).getAmount().intValue() <
+		Integer tmpQuantity = (quantityInput == null || quantityInput == 0)? 1 : quantityInput;
+
+		if (sellCart.getQuantity(product).getAmount().intValue() + tmpQuantity <=
 			(product instanceof Flower ? ((Flower) product).getQuantity() :
 				((Bouquet) product).getQuantity())) {
-			sellCart.addOrUpdateItem(product, 1);
+			sellCart.addOrUpdateItem(product, tmpQuantity);
 
 			double fp = salesService.calculateFullCartPrice(model, sellCart, true);
 			model.addAttribute("fullSellPrice", fp);
