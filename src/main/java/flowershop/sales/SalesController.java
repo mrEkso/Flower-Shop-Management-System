@@ -388,9 +388,13 @@ public class SalesController {
 	@PostMapping("add-to-buy-cart")
 	public String addToBuyCart(Model model,
 							   @RequestParam UUID productId,
-							   @ModelAttribute("buyCart") Cart buyCart) {
+							   @ModelAttribute("buyCart") Cart buyCart,
+							   @RequestParam(required = false) Integer quantityInput) {
 		Product product = productService.getProductById(productId).get();
-		buyCart.addOrUpdateItem(product, 1);
+		
+		Integer tmpQuantity = (quantityInput == null || quantityInput == 0)? 1 : quantityInput;
+
+		buyCart.addOrUpdateItem(product, tmpQuantity);
 
 		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
 		model.addAttribute("fullBuyPrice", fp);
