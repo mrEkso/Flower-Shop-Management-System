@@ -7,21 +7,21 @@ public enum Category {
 	/**
 	 * Simple purchase at the store
 	 */
-	Einfacher_Verkauf,
+	EINFACHER_VERKAUF,
 	/**
 	 * Purchase with a reservation
 	 */
-	Reservierter_Verkauf,
+	RESERVIERTER_VERKAUF,
 	/**
 	 * Purchase for the event
 	 */
-	Veranstaltung_Verkauf,
+	VERANSTALTUNG_VERKAUF,
 	/**
 	 * Contract
 	 */
-	Vertraglicher_Verkauf,
+	VERTRAGLICHER_VERKAUF,
 	/**
 	 * Purchase by the shop from the wholesaler
 	 */
-	Einkauf
+	EINKAUF
 }

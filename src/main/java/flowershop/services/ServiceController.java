@@ -393,9 +393,7 @@ public class ServiceController {
 			}
 			Event event = calendarService.findEventByUUID(id);
 			if (event != null) {
-				if (frequency != null && (frequency.equals("weekly") ||
-					frequency.equals("monthly") || frequency.equals("daily") ||
-					frequency.equals("custom"))) {
+				if (complicatedConditionCheck(frequency)) {
 					if (orderStatus.equals("CANCELED") || orderStatus.equals("COMPLETED")) {
 						calendarService.removeReccuringEvent(id);
 					} else {
@@ -417,6 +415,21 @@ public class ServiceController {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/contracts/edit/" + id;
 		}
+	}
+
+	private boolean complicatedConditionCheck(String frequency) {
+		if (frequency == null) {
+			return false;
+		}
+		boolean out = false;
+		if ((frequency.equals("weekly") || frequency.equals("monthly"))) {
+			out = true;
+		} else if (frequency.equals("daily") || frequency.equals("custom")) {
+			out = true;
+		} else {
+			out = false;
+		}
+		return out;
 	}
 
 	/**

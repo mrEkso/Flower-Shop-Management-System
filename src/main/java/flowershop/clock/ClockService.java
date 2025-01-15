@@ -29,6 +29,10 @@ public class ClockService {
 
 	private final ProductService productService;
 
+	private Set<PendingOrder> newPendingOrdersSet;
+
+	Map<Flower, Integer> todaysGoods;
+
 	public ClockService(CashRegisterRepository cashRegisterRepository,
 						MonthlyBillingService monthlyBillingService,
 						ProductService productService) {
@@ -91,23 +95,27 @@ public class ClockService {
 			}
 			cashRegister.setInGameDate(this.nextWorkingDay());
 			cashRegister.setNewDayStarted(LocalDateTime.now());
-			Set<PendingOrder> newPendingOrdersSet = new HashSet<>();
-			Map<Flower, Integer> todaysGoods = new HashMap<>();
-			for (PendingOrder i : cashRegister.getPendingOrders()) {
-				if (i.getDueDate().equals(getCurrentDate()) || i.getDueDate().isBefore(getCurrentDate())) {
-					for (Product flower : i.getItemQuantityMap().keySet()) {
-						// The ones that will be delivered today
-						todaysGoods.put((Flower) flower, i.getItemQuantityMap().get(flower).getAmount().intValue());
-					}
-				} else {
-					// The ones, that will be later
-					newPendingOrdersSet.add(i);
-				}
-			}
+			updateLists(cashRegister);
 			productService.addDeliveredFlowersFromWholesaler(todaysGoods);
 			cashRegister.setPendingOrders(newPendingOrdersSet); // Only the ones that are later are added to the waiting list
+			this.newPendingOrdersSet = new HashSet<>();
+			this.todaysGoods = new HashMap<>();
 		}
 		cashRegisterRepository.save(cashRegister);
+	}
+
+	private void updateLists(CashRegister cashRegister) {
+		for (PendingOrder i : cashRegister.getPendingOrders()) {
+			if (i.getDueDate().equals(getCurrentDate()) || i.getDueDate().isBefore(getCurrentDate())) {
+				for (Product flower : i.getItemQuantityMap().keySet()) {
+					// The ones that will be delivered today
+					todaysGoods.put((Flower) flower, i.getItemQuantityMap().get(flower).getAmount().intValue());
+				}
+			} else {
+				// The ones, that will be later
+				newPendingOrdersSet.add(i);
+			}
+		}
 	}
 
 	/**

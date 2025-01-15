@@ -30,7 +30,7 @@ public class DailyFinancialReport extends FinancialReport {
 								CashRegisterService cashRegister,
 								LocalDateTime firstEverTransaction,
 								ClockService clockService) {
-		super(day, balanceEndOfTheDay, cashRegister, firstEverTransaction, clockService);
+		super(day, balanceEndOfTheDay, firstEverTransaction, clockService);
 		Streamable<AccountancyEntry> set = cashRegister.find(day);
 		this.orders = new ArrayList<>(set.stream().toList());
 		Collections.sort(orders, new Comparator<AccountancyEntry>() {

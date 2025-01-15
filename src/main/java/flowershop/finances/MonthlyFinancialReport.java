@@ -30,7 +30,7 @@ public class MonthlyFinancialReport extends FinancialReport {
 								  CashRegisterService cashRegister,
 								  LocalDateTime firstEverTransaction,
 								  ClockService clockService) {
-		super(month, balanceEndOfTheMonth, cashRegister, firstEverTransaction, clockService);
+		super(month, balanceEndOfTheMonth, firstEverTransaction, clockService);
 		this.income = Money.of(0, balanceEndOfTheMonth.getCurrency());
 		this.expenditure = Money.of(0, balanceEndOfTheMonth.getCurrency());
 

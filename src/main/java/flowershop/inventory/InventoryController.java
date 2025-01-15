@@ -174,11 +174,8 @@ public class InventoryController {
 			return ((Bouquet) product).getPrice().getNumber().doubleValue();
 		}
 
-
-		if (product instanceof Flower flower) {
-			if (flower.getPricing() != null && flower.getPricing().getSellPrice() != null) {
-				return flower.getPricing().getSellPrice().getNumber().doubleValue();
-			}
+		if (product instanceof Flower flower && flower.getPricing() != null && flower.getPricing().getSellPrice() != null) {
+			return flower.getPricing().getSellPrice().getNumber().doubleValue();
 		}
 
 		return 0;
@@ -227,7 +224,7 @@ public class InventoryController {
 
 		selectedFlowerOpt.ifPresent(product -> {
 			if (product instanceof Flower) {
-				model.addAttribute("selectedFlower", (Flower) product);
+				model.addAttribute("selectedFlower", product);
 				model.addAttribute("showChooseModal", true);
 			} else {
 				model.addAttribute("error", "Selected product is not a flower.");
@@ -315,8 +312,8 @@ public class InventoryController {
 				Map<Flower, Integer> flowerMap = selectedFlowersForBouquet.stream()
 					.filter(Objects::nonNull)
 					.collect(Collectors.toMap(
-						flower -> (Flower) flower,
-						flower -> ((Flower) flower).getDeletedQuantity()
+						flower -> flower,
+						flower -> flower.getDeletedQuantity()
 					));
 
 				Money additionalPrice = Money.of(addPrice, "EUR");

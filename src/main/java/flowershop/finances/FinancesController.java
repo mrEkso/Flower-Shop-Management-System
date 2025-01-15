@@ -312,29 +312,7 @@ public class FinancesController {
 					"But if you do, use format YYYY-MM-DD")
 					.getBytes(StandardCharsets.UTF_8));
 		}
-		if (actualDate.isAfter(clockService.getCurrentDate())) {
-			return ResponseEntity.badRequest()
-				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
-		}
-
-		DailyFinancialReport report = cashRegisterService.createFinancialReportDay(actualDate.atStartOfDay());
-		if (report == null) {
-			return ResponseEntity.badRequest()
-				.body("No Transactions saved in the system.".getBytes(StandardCharsets.UTF_8));
-
-		}
-		if (report.isBeforeBeginning()) {
-			return ResponseEntity.badRequest()
-				.body(("The given date is before the accounting process started. " +
-					"No Data.").getBytes(StandardCharsets.UTF_8));
-		}
-
-
-		byte[] docu = report.generatePDF();
-		return ResponseEntity.ok()
-			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report_day.pdf")
-			.contentType(MediaType.APPLICATION_PDF)
-			.body(docu);
+		return cashRegisterService.getDayReportOutput(actualDate);
 	}
 
 	/**
@@ -368,28 +346,8 @@ public class FinancesController {
 			return ResponseEntity.badRequest()
 				.body("No such month exists, dummy ;)".getBytes(StandardCharsets.UTF_8));
 		}
+		return cashRegisterService.getMonthReportOutput(month,year);
 
-		YearMonth monthParsed = YearMonth.of(year, month);
-		LocalDate firstOfMonth = monthParsed.atDay(1);
-		if (firstOfMonth.isAfter(clockService.getCurrentDate())) {
-			return ResponseEntity.badRequest()
-				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
-		}
-		MonthlyFinancialReport report = cashRegisterService.createFinancialReportMonth(firstOfMonth.atStartOfDay());
-		if (report == null) {
-			return ResponseEntity.badRequest()
-				.body("No Transactions saved in the system.".getBytes(StandardCharsets.UTF_8));
-
-		}
-		if (report.isBeforeBeginning()) {
-			return ResponseEntity.badRequest()
-				.body("The given month is before the accounting process started. No Data.".getBytes(StandardCharsets.UTF_8));
-		}
-		byte[] docu = report.generatePDF();
-		return ResponseEntity.ok()
-			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report_month.pdf")
-			.contentType(MediaType.APPLICATION_PDF)
-			.body(docu);
 	}
 
 	@PostMapping("/toggleState")
@@ -420,15 +378,15 @@ public class FinancesController {
 			} else if (category.equals("spendings")) {
 				lst = this.cashRegisterService.filterIncomeOrSpending(false);
 			} else if (category.equals("simple order")) {
-				lst = this.cashRegisterService.filterEntries(Category.Einfacher_Verkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.EINFACHER_VERKAUF).stream().toList();
 			} else if (category.equals("reserved order")) {
-				lst = this.cashRegisterService.filterEntries(Category.Reservierter_Verkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.RESERVIERTER_VERKAUF).stream().toList();
 			} else if (category.equals("event order")) {
-				lst = this.cashRegisterService.filterEntries(Category.Veranstaltung_Verkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.VERANSTALTUNG_VERKAUF).stream().toList();
 			} else if (category.equals("contract order")) {
-				lst = this.cashRegisterService.filterEntries(Category.Vertraglicher_Verkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.VERTRAGLICHER_VERKAUF).stream().toList();
 			} else {
-				lst = this.cashRegisterService.filterEntries(Category.Einkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.EINKAUF).stream().toList();
 			}
 			this.filteredByCategory = new HashSet<>();
 			for (AccountancyEntry i : lst) {

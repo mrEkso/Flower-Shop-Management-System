@@ -16,7 +16,8 @@ import java.time.LocalDate;
 import java.util.*;
 
 /**
- * The `ReservationOrderService` class provides services related to managing reservation orders in the flower shop system.
+ * The `ReservationOrderService` class provides services related to managing reservation orders in the flower
+ * shop system.
  * It is annotated with `@Service` to indicate that it is a Spring service component.
  */
 @Service
@@ -200,8 +201,11 @@ public class ReservationOrderService {
 	 * @return the available stock quantity of the product
 	 */
 	private Quantity getAvailableStock(Product product) {
-		if (product instanceof Flower) return Quantity.of(((Flower) product).getQuantity());
-		if (product instanceof Bouquet) return Quantity.of(((Bouquet) product).getQuantity());
+		if (product instanceof Flower) {
+			return Quantity.of(((Flower) product).getQuantity());
+		} else if (product instanceof Bouquet) {
+			return Quantity.of(((Bouquet) product).getQuantity());
+		}
 		return Quantity.of(0);
 	}
 }

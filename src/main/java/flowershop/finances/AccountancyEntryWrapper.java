@@ -118,7 +118,20 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 	 * @return the names of categories of orders in German
 	 */
 	public static String categoryToString(Category category) {
-		return category.toString().replace('_', ' ');
+		if (category == null) {
+			throw new IllegalArgumentException("Category cannot be null");
+		}
+		String formattedName = category.name()
+			.replace("_", " ")
+			.toLowerCase();
+		String[] words = formattedName.split(" ");
+		StringBuilder capitalized = new StringBuilder();
+		for (String word : words) {
+			capitalized.append(Character.toUpperCase(word.charAt(0)))
+				.append(word.substring(1))
+				.append(" ");
+		}
+		return capitalized.toString().trim();
 	}
 
 	public String getCategory() {
@@ -175,7 +188,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		this.productService = productService;
 		this.paymentMethod = order.getPaymentMethod().toString();
 		if (order instanceof WholesalerOrder) {
-			this.category = Category.Einkauf;
+			this.category = Category.EINKAUF;
 			String notes = ((WholesalerOrder) order).getNotes();
 			if (notes != null) {
 				this.reservationExecution = LocalDate.parse(notes);
@@ -187,7 +200,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 			this.clientName = ((ContractOrder) order).getClient().getName();
 			this.clientPhone = ((ContractOrder) order).getClient().getPhone();
 			this.adress = ((ContractOrder) order).getAddress();
-			this.category = Category.Vertraglicher_Verkauf;
+			this.category = Category.VERTRAGLICHER_VERKAUF;
 			this.date1 = ((ContractOrder) order).getStartDate();
 			this.date2 = ((ContractOrder) order).getEndDate();
 			this.frequency = ((ContractOrder) order).getFrequency();
@@ -196,55 +209,61 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 			this.clientName = ((EventOrder) order).getClient().getName();
 			this.clientPhone = ((EventOrder) order).getClient().getPhone();
 			this.adress = ((EventOrder) order).getDeliveryAddress();
-			this.category = Category.Veranstaltung_Verkauf;
+			this.category = Category.VERANSTALTUNG_VERKAUF;
 			this.date1 = ((EventOrder) order).getEventDate();
 			this.reservationExecution = this.date1.toLocalDate();
 			this.notes = ((EventOrder) order).getNotes();
 		} else if (order instanceof ReservationOrder) {
 			this.clientName = ((ReservationOrder) order).getClient().getName();
 			this.clientPhone = ((ReservationOrder) order).getClient().getPhone();
-			this.category = Category.Reservierter_Verkauf;
+			this.category = Category.RESERVIERTER_VERKAUF;
 			this.date1 = ((ReservationOrder) order).getReservationDateTime();
 			this.reservationExecution = this.date1.toLocalDate();
 			this.notes = ((ReservationOrder) order).getNotes();
 		} else if (order instanceof SimpleOrder) {
-			this.category = Category.Einfacher_Verkauf;
+			this.category = Category.EINFACHER_VERKAUF;
 		} else {
 			throw new IllegalArgumentException("Order is not recognized");
 		}
-		Totalable<OrderLine> kindaItemQuantityMap = order.getOrderLines();
-		for (OrderLine orderLine : kindaItemQuantityMap) {
-			nameQuantityMap.put(orderLine.getProductName(), orderLine.getQuantity());
-			namePriceMap.put(orderLine.getProductName(), orderLine.getPrice().getNumber().doubleValue());
-			if (order instanceof WholesalerOrder || order instanceof EventOrder || order instanceof ReservationOrder) {
-				String name = orderLine.getProductName();
-				List<Flower> lst = productService.findFlowersByName(name);
-				if (!lst.isEmpty()) {
-					if (lst.getFirst().getName().equals(name)) {
-						productQuantityMap.merge(lst.getFirst(), orderLine.getQuantity(), Quantity::add);
-					}
-					continue;
-				}
-				if (order instanceof EventOrder || order instanceof ReservationOrder) {
-					List<Bouquet> bouquetList = productService.findBouquetsByName(name);
-					if (!bouquetList.isEmpty()) {
-						if (bouquetList.getFirst().getName().equals(name)) {
-							Bouquet bouquet = bouquetList.getFirst();
-							for (Map.Entry<Flower, Integer> eventBouquettePair : bouquet.getFlowers().entrySet()) {
-								productQuantityMap.merge(eventBouquettePair.getKey(),
-									Quantity.of(eventBouquettePair.getValue())
-										.times(orderLine.getQuantity().getAmount().intValue()),
-									Quantity::add);
-							}
-						}
-					}
-				}
-			}
-		}
+		fillTheMaps(order);
 		Totalable<ChargeLine> extraFees = order.getAllChargeLines();
 		for (ChargeLine chargeLine : extraFees) {
 			nameQuantityMap.put(chargeLine.getDescription(), Quantity.of(1));
 			namePriceMap.put(chargeLine.getDescription(), chargeLine.getPrice().getNumber().doubleValue());
+		}
+	}
+
+	private void fillTheMaps(Order order){
+		Totalable<OrderLine> kindaItemQuantityMap = order.getOrderLines();
+		for (OrderLine orderLine : kindaItemQuantityMap) {
+			nameQuantityMap.put(orderLine.getProductName(), orderLine.getQuantity());
+			namePriceMap.put(orderLine.getProductName(), orderLine.getPrice().getNumber().doubleValue());
+			if (!(order instanceof WholesalerOrder || order instanceof EventOrder || order instanceof ReservationOrder)) {
+				continue;
+			}
+			String name = orderLine.getProductName();
+			List<Flower> lst = productService.findFlowersByName(name);
+			if (!lst.isEmpty() && lst.getFirst().getName().equals(name)) {
+				productQuantityMap.merge(lst.getFirst(), orderLine.getQuantity(), Quantity::add);
+			}
+			else if (order instanceof EventOrder || order instanceof ReservationOrder) {
+				addFlowersFromBouquettes(name,orderLine);
+			}
+		}
+	}
+
+	private void addFlowersFromBouquettes(String name, OrderLine orderLine) {
+		List<Bouquet> bouquetList = productService.findBouquetsByName(name);
+		if (!bouquetList.isEmpty()) {
+			if (bouquetList.getFirst().getName().equals(name)) {
+				Bouquet bouquet = bouquetList.getFirst();
+				for (Map.Entry<Flower, Integer> eventBouquettePair : bouquet.getFlowers().entrySet()) {
+					productQuantityMap.merge(eventBouquettePair.getKey(),
+						Quantity.of(eventBouquettePair.getValue())
+							.times(orderLine.getQuantity().getAmount().intValue()),
+						Quantity::add);
+				}
+			}
 		}
 	}
 
@@ -381,7 +400,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 			builder.addRow(productListRow);
 		}
 		MonetaryAmount sum = this.getValue();
-		if (this.category == Category.Einkauf) {
+		if (this.category == Category.EINKAUF) {
 			sum = sum.multiply(-1);
 		}
 		Row gesamtsumme = Row.builder()
@@ -458,10 +477,10 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		List<Row> timeRelatedInfoRows = new ArrayList<>();
 		String formulation;
 		switch (this.category) {
-			case Einkauf -> formulation = "Zustellzeit:";
-			case Reservierter_Verkauf -> formulation = "Abholszeit:";
-			case Veranstaltung_Verkauf -> formulation = "Ereignisszeit:";
-			case Vertraglicher_Verkauf -> formulation = "Anfangszeit:";
+			case EINKAUF -> formulation = "Zustellzeit:";
+			case RESERVIERTER_VERKAUF -> formulation = "Abholszeit:";
+			case VERANSTALTUNG_VERKAUF -> formulation = "Ereignisszeit:";
+			case VERTRAGLICHER_VERKAUF -> formulation = "Anfangszeit:";
 			default -> {
 				return timeRelatedInfoRows;
 			}
@@ -477,7 +496,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 				.build())
 			.build();
 		timeRelatedInfoRows.add(date1Row);
-		if (this.category != Category.Vertraglicher_Verkauf) {
+		if (this.category != Category.VERTRAGLICHER_VERKAUF) {
 			return timeRelatedInfoRows;
 		}
 		Row date2Row = Row.builder()
@@ -507,7 +526,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 
 	private List<Row> getCustomerDetailsRows(PDFont font) {
 		List<Row> customerDetails = new ArrayList<>();
-		if (this.category == Category.Einfacher_Verkauf || this.category == Category.Einkauf) {
+		if (this.category == Category.EINFACHER_VERKAUF || this.category == Category.EINKAUF) {
 			return customerDetails;
 		}
 		Row name = Row.builder()

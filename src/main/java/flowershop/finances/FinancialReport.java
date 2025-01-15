@@ -38,7 +38,6 @@ public abstract class FinancialReport {
 
 	public FinancialReport(Interval period,
 						   MonetaryAmount balanceEndOfThePeriod,
-						   CashRegisterService cashRegister,
 						   LocalDateTime firstEverTransaction,
 						   ClockService clockService) {
 		this.balance = balanceEndOfThePeriod;

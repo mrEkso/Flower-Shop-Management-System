@@ -11,8 +11,6 @@ import flowershop.services.Client;
 import flowershop.services.ContractOrder;
 import flowershop.services.EventOrder;
 import flowershop.services.ReservationOrder;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,17 +19,13 @@ import org.salespointframework.order.ChargeLine;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderLine;
 import org.salespointframework.order.Totalable;
-import org.salespointframework.payment.Cash;
 import org.salespointframework.payment.PaymentMethod;
 import org.salespointframework.quantity.Quantity;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -164,8 +158,8 @@ public class AccountancyEntryWrapperTest {
 
 	@Test
 	public void categoryToStringTest() {
-		assertEquals("Einfacher Verkauf", AccountancyEntryWrapper.categoryToString(Category.Einfacher_Verkauf));
-		assertEquals("Einkauf", AccountancyEntryWrapper.categoryToString(Category.Einkauf));
+		assertEquals("Einfacher Verkauf", AccountancyEntryWrapper.categoryToString(Category.EINFACHER_VERKAUF));
+		assertEquals("Einkauf", AccountancyEntryWrapper.categoryToString(Category.EINKAUF));
 	}
 
 
