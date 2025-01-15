@@ -88,6 +88,9 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 	public String getClientPhone(){
 		return clientPhone;
 	}
+	public Map<String, Double> getNamePriceMap(){
+		return namePriceMap;
+	}
 	public String getAdress(){
 		return adress;
 	}
