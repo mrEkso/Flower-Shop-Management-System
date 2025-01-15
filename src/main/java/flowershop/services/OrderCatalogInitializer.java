@@ -40,9 +40,10 @@ public class OrderCatalogInitializer implements DataInitializer {
 	 * @param orderFactory               the factory used to create orders
 	 * @throws IllegalArgumentException if any of the parameters are null
 	 */
-	public OrderCatalogInitializer(EventOrderRepository eventOrderRepository, ContractOrderRepository contractOrderRepository,
-								   ReservationOrderRepository reservationOrderRepository, ProductCatalog productCatalog,
-								   ClientRepository clientRepository, OrderFactory orderFactory) {
+	public OrderCatalogInitializer(EventOrderRepository eventOrderRepository, 
+			ContractOrderRepository contractOrderRepository,
+			ReservationOrderRepository reservationOrderRepository, ProductCatalog productCatalog,
+			ClientRepository clientRepository, OrderFactory orderFactory) {
 		Assert.notNull(eventOrderRepository, "EventOrderRepository must not be null!");
 		Assert.notNull(contractOrderRepository, "ContractOrderRepository must not be null!");
 		Assert.notNull(reservationOrderRepository, "ReservationOrderRepository must not be null!");
