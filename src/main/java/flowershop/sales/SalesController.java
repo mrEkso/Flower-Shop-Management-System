@@ -283,7 +283,7 @@ public class SalesController {
 			salesService.buyProductsFromBasket(buyCart, "Card");
 		} catch (InsufficientFundsException e) {
 			redirAttrs.addFlashAttribute("error", e.getMessage());
-			return "redirect:sell";
+			return "redirect:buy";
 		}
 
 		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
