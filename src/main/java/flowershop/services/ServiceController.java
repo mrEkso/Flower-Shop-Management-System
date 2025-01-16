@@ -206,7 +206,8 @@ public class ServiceController {
 				contractOrder.setFrequency(frequency);
 			} else {
 				contractOrder.setFrequency("One-Time");
-			}if ("custom".equals(frequency)) {
+			}
+			if ("custom".equals(frequency)) {
 				contractOrder.setCustomFrequency(customFrequency);
 				contractOrder.setCustomUnit(customUnit);
 				calendarService.removeReccuringEvent(UUID.fromString(contractOrder.getId().toString()));
@@ -404,13 +405,13 @@ public class ServiceController {
 						calendarService.removeReccuringEvent(id);
 					} else {
 						calendarService.removeReccuringEvent(id);
-						if(customFrequency == null) {
+						if (customFrequency == null) {
 							customFrequency = 1;
 						}
-						if(customUnit == null) {
+						if (customUnit == null) {
 							calendarService.createReccuringEvent("Contract for " +
 								clientName, startDate, endDate, notes, frequency, "contract", id, customFrequency);
-						} else{
+						} else {
 							calendarService.createReccuringEvent("Contract for " +
 								clientName, startDate, endDate, notes, customUnit, "contract", id, customFrequency);
 						}

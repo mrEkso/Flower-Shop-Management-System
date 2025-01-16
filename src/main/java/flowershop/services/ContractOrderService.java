@@ -125,6 +125,7 @@ public class ContractOrderService {
 	 *
 	 * @param order        the contract order to update
 	 * @param products     a map of product IDs and their quantities
+	 * @param servicePrice the new service price for the order
 	 * @param orderStatus  the new status of the order
 	 * @param cancelReason the reason for cancellation, if applicable
 	 * @return the updated contract order
@@ -132,48 +133,71 @@ public class ContractOrderService {
 	 */
 	public ContractOrder update(ContractOrder order, Map<String, String> products, int servicePrice,
 								String orderStatus, String cancelReason) {
-		if (order.getOrderStatus().equals(OrderStatus.CANCELED)) {
-			throw new IllegalArgumentException("Order is already canceled!");
-		}
-		if (order.getOrderStatus().equals(OrderStatus.OPEN)) {
-			if (OrderStatus.COMPLETED.name().equals(orderStatus)) {
-				throw new IllegalArgumentException("Order is not paid yet!");
-			}
-			if (OrderStatus.CANCELED.name().equals(orderStatus)) {
-				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ?
-					"Reason not provided" : cancelReason);
-				return contractOrderRepository.save(order);
-			}
-			List<ChargeLine> chargeLinesToRemove = order.getChargeLines().stream()
-				.filter(chargeLine -> chargeLine.getDescription().equals("Service Price"))
-				.toList();
-			chargeLinesToRemove.forEach(order::remove);
-			order.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
-			Map<UUID, Integer> incoming = extractProducts(products);
-			order.getOrderLines().toList().forEach(line -> {
-				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) {
-					order.remove(line);
+		switch (order.getOrderStatus()) {
+			case CANCELED -> throw new IllegalArgumentException("Order is already canceled!");
+			case OPEN -> handleOpenOrder(order, products, servicePrice, orderStatus, cancelReason);
+			case PAID -> {
+				if (OrderStatus.OPEN.name().equals(orderStatus)) {
+					throw new IllegalArgumentException("Order is already paid!");
 				}
-			});
-			incoming.forEach((productId, quantity) -> productCatalog.findById(
-				Product.ProductIdentifier.of(productId.toString()))
-				.ifPresent(product -> {
-					order.getOrderLines(product).toList().forEach(order::remove);
-					order.addOrderLine(product, Quantity.of(quantity));
-				}));
-			if (OrderStatus.PAID.name().equals(orderStatus)) {
-				orderManagement.payOrder(order);
+				if (OrderStatus.CANCELED.name().equals(orderStatus)) {
+					throw new IllegalArgumentException("Cannot cancel a paid order!");
+				}
+				if (OrderStatus.COMPLETED.name().equals(orderStatus)) {
+					orderManagement.completeOrder(order);
+				}
 			}
-		}
-		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
-			OrderStatus.CANCELED.name().equals(orderStatus)) {
-			throw new IllegalArgumentException("Cannot cancel a paid order!");
-		}
-		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
-			OrderStatus.COMPLETED.name().equals(orderStatus)) {
-			orderManagement.completeOrder(order);
+			case COMPLETED -> {
+				if (!OrderStatus.COMPLETED.name().equals(orderStatus)) {
+					throw new IllegalArgumentException("Order is already completed!");
+				}
+			}
+			default -> throw new IllegalArgumentException("Unsupported order status: " + order.getOrderStatus());
 		}
 		return contractOrderRepository.save(order);
+	}
+
+	/**
+	 * Handles logic for orders with OPEN status.
+	 *
+	 * @param order        the contract order to update
+	 * @param products     a map of product IDs and their quantities
+	 * @param servicePrice the new service price for the order
+	 * @param orderStatus  the new status of the order
+	 * @param cancelReason the reason for cancellation, if applicable
+	 * @throws IllegalArgumentException if the order is not paid yet or cannot be canceled
+	 */
+	private void handleOpenOrder(ContractOrder order, Map<String, String> products, int servicePrice,
+								 String orderStatus, String cancelReason) {
+		if (OrderStatus.COMPLETED.name().equals(orderStatus)) {
+			throw new IllegalArgumentException("Order is not paid yet!");
+		}
+		if (OrderStatus.CANCELED.name().equals(orderStatus)) {
+			orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ?
+				"Reason not provided" : cancelReason);
+			contractOrderRepository.save(order);
+			return;
+		}
+		List<ChargeLine> chargeLinesToRemove = order.getChargeLines().stream()
+			.filter(chargeLine -> chargeLine.getDescription().equals("Service Price"))
+			.toList();
+		chargeLinesToRemove.forEach(order::remove);
+		order.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
+		Map<UUID, Integer> incoming = extractProducts(products);
+		order.getOrderLines().toList().forEach(line -> {
+			if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) {
+				order.remove(line);
+			}
+		});
+		incoming.forEach((productId, quantity) -> productCatalog.findById(
+				Product.ProductIdentifier.of(productId.toString()))
+			.ifPresent(product -> {
+				order.getOrderLines(product).toList().forEach(order::remove);
+				order.addOrderLine(product, Quantity.of(quantity));
+			}));
+		if (OrderStatus.PAID.name().equals(orderStatus)) {
+			orderManagement.payOrder(order);
+		}
 	}
 
 	/**

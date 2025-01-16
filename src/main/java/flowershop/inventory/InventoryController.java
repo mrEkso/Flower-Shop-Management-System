@@ -253,30 +253,24 @@ public class InventoryController {
 									 @RequestParam int chooseQuantity,
 									 Model model) {
 		Optional<Product> productOpt = productService.getProductById(flowerID);
-
 		if (productOpt.isEmpty()) {
 			model.addAttribute("quantityProblemLabel2", true);
 			model.addAttribute("quantityProblemMessage", "Flower not found.");
-			return "inventory";
+		} else {
+			Product product = productOpt.get();
+			if (!(product instanceof Flower selectedFlower)) {
+				model.addAttribute("quantityProblemLabel2", true);
+				model.addAttribute("quantityProblemMessage", "Invalid product type.");
+				return "inventory";
+			}
+			int reservedQuantity = getReservedQuantity(selectedFlower.getName());
+			int availableQuantity = selectedFlower.getQuantity() - reservedQuantity;
+
+			if (!validateChosenQuantity(chooseQuantity, availableQuantity, selectedFlower, reservedQuantity, model)) {
+				return "inventory";
+			}
+			addFlowerToSelection(selectedFlower, chooseQuantity, model);
 		}
-
-		Product product = productOpt.get();
-
-		if (!(product instanceof Flower selectedFlower)) {
-			model.addAttribute("quantityProblemLabel2", true);
-			model.addAttribute("quantityProblemMessage", "Invalid product type.");
-			return "inventory";
-		}
-
-		int reservedQuantity = getReservedQuantity(selectedFlower.getName());
-		int availableQuantity = selectedFlower.getQuantity() - reservedQuantity;
-
-		if (!validateChosenQuantity(chooseQuantity, availableQuantity, selectedFlower, reservedQuantity, model)) {
-			return "inventory";
-		}
-
-		addFlowerToSelection(selectedFlower, chooseQuantity, model);
-
 		return "inventory";
 	}
 
@@ -317,7 +311,6 @@ public class InventoryController {
 		model.addAttribute("quantityProblemLabel2", true);
 		model.addAttribute("quantityProblemMessage", message);
 	}
-
 
 
 	/**

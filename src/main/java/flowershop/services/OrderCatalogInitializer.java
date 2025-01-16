@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -40,10 +41,10 @@ public class OrderCatalogInitializer implements DataInitializer {
 	 * @param orderFactory               the factory used to create orders
 	 * @throws IllegalArgumentException if any of the parameters are null
 	 */
-	public OrderCatalogInitializer(EventOrderRepository eventOrderRepository, 
-			ContractOrderRepository contractOrderRepository,
-			ReservationOrderRepository reservationOrderRepository, ProductCatalog productCatalog,
-			ClientRepository clientRepository, OrderFactory orderFactory) {
+	public OrderCatalogInitializer(EventOrderRepository eventOrderRepository,
+								   ContractOrderRepository contractOrderRepository,
+								   ReservationOrderRepository reservationOrderRepository, ProductCatalog productCatalog,
+								   ClientRepository clientRepository, OrderFactory orderFactory) {
 		Assert.notNull(eventOrderRepository, "EventOrderRepository must not be null!");
 		Assert.notNull(contractOrderRepository, "ContractOrderRepository must not be null!");
 		Assert.notNull(reservationOrderRepository, "ReservationOrderRepository must not be null!");
@@ -83,10 +84,13 @@ public class OrderCatalogInitializer implements DataInitializer {
 			.stream().findFirst().orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
 		// Create and save orders using OrderFactory
+		String address = "Nöthnitzer Str. 46, 01187 Dresden";
 		// ContractOrders
 		ContractOrder contractOrder = orderFactory.createContractOrder(
-			"Recurring", "weekly", LocalDateTime.now().plusDays(1), LocalDateTime.now().plusYears(1),
-			"Nöthnitzer Str. 46, 01187 Dresden", client1, "Weekly flower delivery " +
+			"Recurring", "weekly",
+			LocalDateTime.of(LocalDate.now().plusDays(1), LocalDateTime.MIN.toLocalTime()),
+			LocalDateTime.of(LocalDate.now().plusYears(2), LocalDateTime.MIN.toLocalTime()),
+			address, client1, "Weekly flower delivery " +
 				"+ flower arrangement + watering");
 		contractOrder.setPaymentMethod(Cash.CASH);
 		contractOrder.addOrderLine(rose, Quantity.of(8));
@@ -96,16 +100,16 @@ public class OrderCatalogInitializer implements DataInitializer {
 
 		// EventOrders
 		EventOrder eventOrder1 = orderFactory.createEventOrder(
-			LocalDateTime.of(2026, 1, 1, 12, 0),
-			"Nöthnitzer Str. 46, 01187 Dresden", client1);
+			LocalDateTime.of(LocalDate.now().plusYears(2), LocalDateTime.MIN.toLocalTime()),
+			address, client1);
 		eventOrder1.addOrderLine(rose, Quantity.of(2));
 		eventOrder1.setPaymentMethod(Cash.CASH);
 		eventOrder1.addChargeLine(Money.of(20, "EUR"), "Delivery Price");
 		eventOrderRepository.save(eventOrder1);
 
 		EventOrder eventOrder2 = orderFactory.createEventOrder(
-			LocalDateTime.of(2026, 1, 1, 12, 0),
-			"Nöthnitzer Str. 46, 01187 Dresden", client2);
+			LocalDateTime.of(LocalDate.now().plusYears(1), LocalDateTime.MIN.toLocalTime()),
+			address, client2);
 		eventOrder2.addOrderLine(roseLilyBouquet, Quantity.of(1));
 		eventOrder2.setPaymentMethod(Cash.CASH);
 		eventOrder2.addChargeLine(Money.of(20, "EUR"), "Delivery Price");
@@ -113,7 +117,7 @@ public class OrderCatalogInitializer implements DataInitializer {
 
 		// ReservationOrders
 		ReservationOrder reservationOrder = orderFactory.createReservationOrder(
-			LocalDateTime.now().plusDays(1), client2);
+			LocalDateTime.of(LocalDate.now().plusDays(3), LocalDateTime.MIN.toLocalTime()), client2);
 		reservationOrder.addOrderLine(roseLilyBouquet, Quantity.of(5));
 		reservationOrder.setPaymentMethod(new CardPayment());
 		reservationOrderRepository.save(reservationOrder);

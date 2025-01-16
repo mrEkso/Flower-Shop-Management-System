@@ -344,7 +344,7 @@ public class CashRegisterService implements Accountancy {
 				getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9, 0),
 				clockService);
 		} else if (getAllDeletedProducts().isEmpty()) {
-			output =  new DailyFinancialReport(
+			output = new DailyFinancialReport(
 				interval,
 				moneyThen,
 				this,
@@ -522,7 +522,7 @@ public class CashRegisterService implements Accountancy {
 			abort = true;
 		}
 
-		if(abort) {
+		if (abort) {
 			return badOutput;
 		}
 
@@ -554,7 +554,7 @@ public class CashRegisterService implements Accountancy {
 				.body("The given month is before the accounting process started. No Data.".getBytes(StandardCharsets.UTF_8));
 			abort = true;
 		}
-		if(abort) {
+		if (abort) {
 			return badOutput;
 		}
 		byte[] docu = report.generatePDF();
