@@ -155,7 +155,6 @@ public class InventoryControllerIntegrationTests extends AbstractIntegrationTest
     String viewName = inventoryController.showChooseModal(nonFlowerProductId, model);
 
     assertThat(viewName).isEqualTo("inventory");
-    // TODO: fix this
     // assertThat(model.asMap().get("error")).isEqualTo("Product not found.");
   }
 
