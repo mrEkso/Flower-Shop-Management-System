@@ -253,47 +253,71 @@ public class InventoryController {
 									 @RequestParam int chooseQuantity,
 									 Model model) {
 		Optional<Product> productOpt = productService.getProductById(flowerID);
-		if (productOpt.isPresent()) {
-			Product product = productOpt.get();
-			if (product instanceof Flower selectedFlower) {
-				int reservedQuantity = getReservedQuantity(selectedFlower.getName());
-				int availableQuantity = selectedFlower.getQuantity() - reservedQuantity;
 
-				if (chooseQuantity > availableQuantity) {
-					if (chooseQuantity > selectedFlower.getQuantity()) {
-						model.addAttribute("quantityProblemLabel2", true);
-						model.addAttribute("quantityProblemMessage",
-							"We don t have that quantity");
-					}
-
-					if (chooseQuantity < selectedFlower.getQuantity()) {
-						model.addAttribute("quantityProblemLabel2", true);
-						model.addAttribute("quantityProblemMessage",
-							"You chose more quantity than the available stock. because " +
-								reservedQuantity + " are reserved");
-					}
-				} else if (chooseQuantity > 0) {
-					selectedFlower.setDeletedQuantity(chooseQuantity);
-					if (!selectedFlowersForBouquet.contains(selectedFlower)) {
-						selectedFlowersForBouquet.add(selectedFlower);
-					} else {
-						model.addAttribute("quantityProblemLabel2", true);
-						model.addAttribute("quantityProblemMessage",
-							"You can t choose the same flower type more than once.");
-					}
-				}
-			}
+		if (productOpt.isEmpty()) {
+			model.addAttribute("quantityProblemLabel2", true);
+			model.addAttribute("quantityProblemMessage", "Flower not found.");
+			return "inventory";
 		}
 
-		List<Map<String, Object>> enrichedProducts = productService.getAllProducts().stream()
-			.map(this::enrichProductData)
-			.collect(Collectors.toList());
+		Product product = productOpt.get();
 
-		model.addAttribute("createBouquetMode", true);
-		model.addAttribute("products", enrichedProducts);
-		model.addAttribute("selectedFlowersForBouquet", selectedFlowersForBouquet);
+		if (!(product instanceof Flower selectedFlower)) {
+			model.addAttribute("quantityProblemLabel2", true);
+			model.addAttribute("quantityProblemMessage", "Invalid product type.");
+			return "inventory";
+		}
+
+		int reservedQuantity = getReservedQuantity(selectedFlower.getName());
+		int availableQuantity = selectedFlower.getQuantity() - reservedQuantity;
+
+		if (!validateChosenQuantity(chooseQuantity, availableQuantity, selectedFlower, reservedQuantity, model)) {
+			return "inventory";
+		}
+
+		addFlowerToSelection(selectedFlower, chooseQuantity, model);
+
 		return "inventory";
 	}
+
+	private boolean validateChosenQuantity(int chooseQuantity,
+										   int availableQuantity,
+										   Flower selectedFlower,
+										   int reservedQuantity,
+										   Model model) {
+		if (chooseQuantity > availableQuantity) {
+			if (chooseQuantity > selectedFlower.getQuantity()) {
+				setModelError(model, "We don’t have that quantity.");
+			} else {
+				setModelError(model, "You chose more quantity than the available stock because " +
+					reservedQuantity + " are reserved.");
+			}
+			return false;
+		}
+
+		if (chooseQuantity <= 0) {
+			setModelError(model, "Invalid quantity chosen.");
+			return false;
+		}
+
+		return true;
+	}
+
+	private void addFlowerToSelection(Flower selectedFlower, int chooseQuantity, Model model) {
+		selectedFlower.setDeletedQuantity(chooseQuantity);
+
+		if (!selectedFlowersForBouquet.contains(selectedFlower)) {
+			selectedFlowersForBouquet.add(selectedFlower);
+		} else {
+			setModelError(model, "You can’t choose the same flower type more than once.");
+		}
+	}
+
+	private void setModelError(Model model, String message) {
+		model.addAttribute("quantityProblemLabel2", true);
+		model.addAttribute("quantityProblemMessage", message);
+	}
+
 
 
 	/**
