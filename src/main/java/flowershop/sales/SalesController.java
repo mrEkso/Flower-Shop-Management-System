@@ -371,11 +371,12 @@ public class SalesController {
 
 
 	/**
-	 * Decreases a product quantity by one in the sell cart.
+	 * Decreases a product quantity by specified amount in the sell cart.
 	 *
-	 * @param model     the model to hold attributes for the view
-	 * @param productId the ID of the product to remove
-	 * @param sellCart  the cart for which the product quantity is changed
+	 * @param model         the model to hold attributes for the view
+	 * @param productId     the ID of the product to remove
+	 * @param sellCart      the cart for which the product quantity is changed
+	 * @param quantityInput the amount by which to decrease
 	 * @return the redirect URL to the selling catalog
 	 */
 	@PostMapping("decrease-from-sell-cart")
@@ -395,12 +396,31 @@ public class SalesController {
 		return "redirect:/sell";
 	}
 
+	@PostMapping("/update-buy-cart")
+	public String updateBuyCart(
+		Model model,
+		@RequestParam UUID productId,
+		@ModelAttribute("buyCart") Cart buyCart,
+		@RequestParam(required = false) Integer quantityInput,
+		@RequestParam("action") String action) {
+
+		if (action.equals("increase")) {
+			return addToBuyCart(model, productId, buyCart, quantityInput);
+		} else if (action.equals("decrease")) {
+			return decreaseFromBuyCart(model, productId, buyCart, quantityInput);
+		} else {
+			model.addAttribute("error", "Incorrect action");
+			return "redirect:/buy";
+		}
+	}
+
 	/**
 	 * Adds a product to the buy cart.
 	 *
-	 * @param model     the model to hold attributes for the view
-	 * @param productId the ID of the product to add
-	 * @param buyCart   the cart to which the product is added
+	 * @param model         the model to hold attributes for the view
+	 * @param productId     the ID of the product to add
+	 * @param buyCart       the cart to which the product is added
+	 * @param quantityInput the amount by which to decrease
 	 * @return the redirect URL to the selling catalog
 	 */
 	@PostMapping("add-to-buy-cart")
@@ -445,11 +465,12 @@ public class SalesController {
 	}
 
 	/**
-	 * Decreases a product quantity by one in the buy cart.
+	 * Decreases a product quantity by specified amount in the buy cart.
 	 *
-	 * @param model     the model to hold attributes for the view
-	 * @param productId the ID of the product to remove
-	 * @param buyCart   the cart for which the product quantity is changed
+	 * @param model         the model to hold attributes for the view
+	 * @param productId     the ID of the product to remove
+	 * @param buyCart       the cart for which the product quantity is changed
+	 * @param quantityInput the amount by which to decrease
 	 * @return the redirect URL to the selling catalog
 	 */
 	@PostMapping("decrease-from-buy-cart")
@@ -470,22 +491,7 @@ public class SalesController {
 		return "redirect:/buy";
 	}
 
-	@PostMapping("/update-buy-cart")
-	public String updateBuyCart(
-		Model model,
-		@RequestParam UUID productId,
-		@ModelAttribute("buyCart") Cart buyCart,
-		@RequestParam(required = false) Integer quantityInput,
-		@RequestParam("action") String action) {
-		if (action.equals("increase")) {
-			return addToBuyCart(model, productId, buyCart, quantityInput);
-		} else if (action.equals("decrease")) {
-			return decreaseFromBuyCart(model, productId, buyCart, quantityInput);
-		} else {
-			model.addAttribute("error", "Incorrect action");
-			return "redirect:/buy";
-		}
-	}
+
 
 	@GetMapping("/giftcard")
 	@PreAuthorize("hasRole('BOSS')")
