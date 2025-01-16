@@ -121,17 +121,7 @@ public class EventOrderService {
 		switch (order.getOrderStatus()) {
 			case CANCELED -> throw new IllegalArgumentException("Order is already canceled!");
 			case OPEN -> handleOpenOrder(order, products, deliveryPrice, orderStatus, cancelReason);
-			case PAID -> {
-				if (OrderStatus.OPEN.name().equals(orderStatus)) {
-					throw new IllegalArgumentException("Order is already paid!");
-				}
-				if (OrderStatus.CANCELED.name().equals(orderStatus)) {
-					throw new IllegalArgumentException("Cannot cancel a paid order!");
-				}
-				if (OrderStatus.COMPLETED.name().equals(orderStatus)) {
-					orderManagement.completeOrder(order);
-				}
-			}
+			case PAID -> handlePaidOrder(order, orderStatus);
 			case COMPLETED -> {
 				if (!OrderStatus.COMPLETED.name().equals(orderStatus)) {
 					throw new IllegalArgumentException("Order is already completed!");
@@ -182,6 +172,25 @@ public class EventOrderService {
 			}));
 		if (OrderStatus.PAID.name().equals(orderStatus)) {
 			orderManagement.payOrder(order);
+		}
+	}
+
+	/**
+	 * Handles logic for orders with PAID status.
+	 *
+	 * @param order       the event order to update
+	 * @param orderStatus the new status of the order
+	 * @throws IllegalArgumentException if the order is already paid or cannot be canceled
+	 */
+	private void handlePaidOrder(EventOrder order, String orderStatus) {
+		if (OrderStatus.OPEN.name().equals(orderStatus)) {
+			throw new IllegalArgumentException("Order is already paid!");
+		}
+		if (OrderStatus.CANCELED.name().equals(orderStatus)) {
+			throw new IllegalArgumentException("Cannot cancel a paid order!");
+		}
+		if (OrderStatus.COMPLETED.name().equals(orderStatus)) {
+			orderManagement.completeOrder(order);
 		}
 	}
 
