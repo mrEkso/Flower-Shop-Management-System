@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -56,7 +57,7 @@ public class CalendarControllerIntegrationTests {
 	@Test
 	public void testAddEvent() {
 		Event event = new Event(1L, "New Event", LocalDate.now().atStartOfDay(), "Description");
-		String redirect = controller.addEvent(event);
+		String redirect = controller.addEvent(event, mock(RedirectAttributes.class));
 		assertEquals("redirect:/calendar", redirect);
 		verify(service).save(event);
 	}

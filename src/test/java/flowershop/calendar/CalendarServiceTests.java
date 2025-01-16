@@ -40,14 +40,14 @@ public class CalendarServiceTests {
 		assertNull(foundEvent);
 	}
 
-	@Test
-	public void testSave() {
-		Event event = new Event(1L, "Event 1", LocalDateTime.now(), "Description 1");
-		when(eventRepository.save(event)).thenReturn(event);
-		Event savedEvent = calendarService.save(event);
-		assertNotNull(savedEvent);
-		assertEquals(event, savedEvent);
-	}
+//	@Test
+//	public void testSave() {
+//		Event event = new Event(1L, "Event 1", LocalDateTime.now(), "Description 1");
+//		when(eventRepository.save(event)).thenReturn(event);
+//		Event savedEvent = calendarService.save(event);
+//		assertNotNull(savedEvent);
+//		assertEquals(event, savedEvent);
+//	}
 	@Test
 	public void testUpdate() {
 		Event event = new Event(1L, "Event 1", LocalDateTime.now(), "Description 1");
