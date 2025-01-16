@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -398,33 +399,7 @@ public class ServiceController {
 				contractOrder.setCustomFrequency(null);
 				contractOrder.setCustomUnit(null);
 			}
-			Event event = calendarService.findEventByUUID(id);
-			if (event != null) {
-				if (complicatedConditionCheck(frequency)) {
-					if (orderStatus.equals("CANCELED") || orderStatus.equals("COMPLETED")) {
-						calendarService.removeReccuringEvent(id);
-					} else {
-						calendarService.removeReccuringEvent(id);
-						if (customFrequency == null) {
-							customFrequency = 1;
-						}
-						if (customUnit == null) {
-							calendarService.createReccuringEvent("Contract for " +
-								clientName, startDate, endDate, notes, frequency, "contract", id, customFrequency);
-						} else {
-							calendarService.createReccuringEvent("Contract for " +
-								clientName, startDate, endDate, notes, customUnit, "contract", id, customFrequency);
-						}
-					}
-				} else {
-					if (orderStatus.equals("CANCELED") || orderStatus.equals("COMPLETED")) {
-						calendarService.removeEvent(id);
-					} else {
-						event.setDate(startDate);
-						calendarService.save(event);
-					}
-				}
-			}
+			handleCalendarEvents(id, frequency, customFrequency, customUnit, startDate, endDate, notes, clientName, orderStatus);
 			contractOrderService.update(contractOrder, products, servicePrice, orderStatus, cancelReason);
 			return "redirect:/services";
 		} catch (Exception e) {
@@ -433,6 +408,51 @@ public class ServiceController {
 		}
 	}
 
+	/**
+	 * Handles calendar events based on the provided parameters.
+	 * Updates or removes events in the calendar service depending on the order status and frequency.
+	 *
+	 * @param id              the UUID of the order
+	 * @param frequency       the frequency of the event (e.g., daily, weekly, monthly, custom)
+	 * @param customFrequency the custom frequency interval for the event
+	 * @param customUnit      the custom unit for the event frequency
+	 * @param startDate       the start date of the event
+	 * @param endDate         the end date of the event
+	 * @param notes           additional notes for the event
+	 * @param clientName      the name of the client associated with the event
+	 * @param orderStatus     the status of the order (e.g., CANCELED, COMPLETED)
+	 */
+	private void handleCalendarEvents(UUID id, String frequency, Integer customFrequency, String customUnit,
+									  LocalDateTime startDate, LocalDateTime endDate, String notes, String clientName,
+									  String orderStatus) {
+		Event event = calendarService.findEventByUUID(id);
+		if (event == null) return;
+
+		boolean isCanceledOrCompleted = "CANCELED".equals(orderStatus) || "COMPLETED".equals(orderStatus);
+
+		if (complicatedConditionCheck(frequency)) {
+			calendarService.removeReccuringEvent(id);
+			if (isCanceledOrCompleted) return;
+			customFrequency = Objects.requireNonNullElse(customFrequency, 1);
+			String unit = Objects.requireNonNullElse(customUnit, frequency);
+			calendarService.createReccuringEvent("Contract for " + clientName, startDate, endDate, notes, unit,
+				"contract", id, customFrequency);
+		} else {
+			if (isCanceledOrCompleted) {
+				calendarService.removeEvent(id);
+			} else {
+				event.setDate(startDate);
+				calendarService.save(event);
+			}
+		}
+	}
+
+	/**
+	 * Checks if the provided frequency meets certain conditions.
+	 *
+	 * @param frequency the frequency to check
+	 * @return true if the frequency is "weekly", "monthly", "daily", or "custom"; false otherwise
+	 */
 	private boolean complicatedConditionCheck(String frequency) {
 		if (frequency == null) {
 			return false;
