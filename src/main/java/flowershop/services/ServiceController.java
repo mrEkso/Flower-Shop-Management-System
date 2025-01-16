@@ -201,15 +201,19 @@ public class ServiceController {
 				startDate, endDate, address, getOrCreateClient(clientName, phone), notes);
 			if ("Recurring".equals(contractType)) {
 				contractOrder.setFrequency(frequency);
-			} else if ("custom".equals(frequency)) {
+			}
+			else
+			{
+				contractOrder.setFrequency("One-Time");
+			}
+			if ("custom".equals(frequency)) {
 				contractOrder.setCustomFrequency(customFrequency);
 				contractOrder.setCustomUnit(customUnit);
 				calendarService.removeReccuringEvent(UUID.fromString(contractOrder.getId().toString()));
 				calendarService.createReccuringEvent("Contract for " + clientName, startDate, endDate, notes,
-					frequency, "contract", UUID.fromString(contractOrder.getId().toString()), customFrequency);
-			} else {
-				contractOrder.setFrequency("One-Time");
+					customUnit, "contract", UUID.fromString(contractOrder.getId().toString()), customFrequency);
 			}
+
 			contractOrder.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
 			contractOrderService.save(contractOrder, products);
 			return "redirect:/services";

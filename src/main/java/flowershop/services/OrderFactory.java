@@ -86,7 +86,8 @@ public class OrderFactory {
 	/**
 	 * Creates a new `ContractOrder` with the specified contract type, start date, end date, address, client, and notes.
 	 *
-	 * @param contractType the type of the contract
+	 * @param contractType the type of the contract RECURRING OR ONE-TIME
+	 * @param frequency    the frequency of the contract, i.e. daily
 	 * @param startDate    the start date of the contract
 	 * @param endDate      the end date of the contract
 	 * @param address      the address associated with the contract
