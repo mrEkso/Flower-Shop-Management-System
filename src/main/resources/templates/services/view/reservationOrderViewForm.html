@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{services.reservation.edit}">Edit Reservation Form</title>
+    <title th:text="#{services.reservation.view}">View Reservation Details</title>
     <!-- Bootstrap CSS CDN -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container mt-2">
     <div class="text-center mb-4">
-        <h1 th:text="#{services.reservation.edit}">Edit Reservation Form</h1>
+        <h1 th:text="#{services.reservation.view}">View Reservation Details</h1>
     </div>
     <div class="container mt-5">
         <form class="p-4 border rounded shadow-sm">
@@ -74,7 +74,7 @@
 
             <!-- Back Button -->
             <div class="text-center">
-                <a href="/services" class="btn btn-secondary" th:text="#{action.cancel}">Back</a>
+                <a href="/calendar" class="btn btn-secondary" th:text="#{action.cancel}">Back</a>
             </div>
         </form>
     </div>
