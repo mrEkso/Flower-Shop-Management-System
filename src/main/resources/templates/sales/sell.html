@@ -99,25 +99,18 @@
                             <div class="basket-card-body">
                                 <p
                                         class="basket-card-text"
-                                        th:text="${selectedCart.quantity.getAmount.doubleValue} + 'x' + ${selectedCart.product.price.number * 1.0} + ' EUR'"
+                                        th:text="${selectedCart.quantity.getAmount.intValue()} + 'x' + ${selectedCart.product.price.number * 1.0} + ' EUR'"
                                 ></p>
                                 <div class="basket-card-inputs">
-                                    <form method="post" action="/decrease-from-sell-cart">
+                                    <form method="post" action="/update-sell-cart">
+                                        <!-- Hidden field to identify the product -->
                                         <input
                                                 type="hidden"
                                                 name="productId"
                                                 th:value="${selectedCart.product.id}"
                                         />
-                                        <button class="basket-minus-btn" type="submit">
-                                            -
-                                        </button>
-                                    </form>
-                                    <form method="post" action="/add-to-sell-cart">
-                                        <input
-                                                type="hidden"
-                                                name="productId"
-                                                th:value="${selectedCart.product.id}"
-                                        />
+
+                                        <!-- Input field for quantity -->
                                         <label>
                                             <input
                                                     class="basket-input-quantity"
@@ -128,18 +121,33 @@
                                                     value="1"
                                             />
                                         </label>
+
+                                        <!-- Action buttons -->
+                                        <button
+                                                class="basket-minus-btn"
+                                                type="submit"
+                                                name="action"
+                                                value="decrease"
+                                        >
+                                            -
+                                        </button>
                                         <button
                                                 class="basket-plus-btn"
                                                 type="submit"
-                                                th:disabled="${(selectedCart.product instanceof T(flowershop.product.Flower) ? selectedCart.product.quantity :
-                                                            (selectedCart.product instanceof T(flowershop.product.Bouquet) ? selectedCart.product.quantity : 0))
-                                                            - selectedCart.quantity.getAmount.doubleValue == 0}"
+                                                name="action"
+                                                value="increase"
+                                                th:disabled="${(selectedCart.product instanceof T(flowershop.product.Flower)
+                                                        ? selectedCart.product.quantity :
+                                                        (selectedCart.product instanceof T(flowershop.product.Bouquet)
+                                                            ? selectedCart.product.quantity : 0))
+                                                        - selectedCart.quantity.getAmount.doubleValue == 0}"
                                         >
                                             +
                                         </button>
                                     </form>
                                 </div>
                             </div>
+
                             <div class="basket-card-footer">
                       <span
                               th:text="${(selectedCart.quantity.getAmount.doubleValue* 1.0) * selectedCart.product.price.number * 1.0} + ' EUR'"

@@ -297,6 +297,23 @@ public class SalesController {
 		return "redirect:buy";
 	}
 
+	@PostMapping("/update-sell-cart")
+	public String updateSellCart(
+		Model model,
+		@RequestParam UUID productId,
+		@ModelAttribute("sellCart") Cart sellCart,
+		@RequestParam(required = false) Integer quantityInput,
+		@RequestParam("action") String action) {
+		if (action.equals("increase")) {
+			return addToSellCart(model, productId, sellCart, quantityInput);
+		} else if (action.equals("decrease")) {
+			return decreaseFromSellCart(model, productId, sellCart, quantityInput);
+		} else {
+			model.addAttribute("error", "Incorrect action");
+			return "redirect:/buy";
+		}
+	}
+
 	/**
 	 * Adds a product to the sell cart.
 	 *
@@ -309,12 +326,12 @@ public class SalesController {
 	public String addToSellCart(
 		Model model,
 		@RequestParam UUID productId,
-		@RequestParam(required = false) Integer quantityInput,
-		@ModelAttribute("sellCart") Cart sellCart
+		@ModelAttribute("sellCart") Cart sellCart,
+		@RequestParam(required = false) Integer quantityInput
 	) {
 		Product product = productService.getProductById(productId).get();
 
-		Integer tmpQuantity = (quantityInput == null || quantityInput == 0)? 1 : quantityInput;
+		Integer tmpQuantity = (quantityInput == null || quantityInput == 0) ? 1 : quantityInput;
 
 		if (sellCart.getQuantity(product).getAmount().intValue() + tmpQuantity <=
 			(product instanceof Flower ? ((Flower) product).getQuantity() :
@@ -365,11 +382,12 @@ public class SalesController {
 	public String decreaseFromSellCart(
 		Model model,
 		@RequestParam UUID productId,
-		@ModelAttribute("sellCart") Cart sellCart
+		@ModelAttribute("sellCart") Cart sellCart,
+		@RequestParam(required = false) Integer quantityInput
 	) {
 		Product product = productService.getProductById(productId).get();
-
-		sellCart.addOrUpdateItem(product, -1);
+		int tmpQuantity = (quantityInput == null || quantityInput == 0) ? 1 : quantityInput;
+		sellCart.addOrUpdateItem(product, -1 * tmpQuantity);
 
 		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
 		model.addAttribute("fullSellPrice", fp);
@@ -392,7 +410,7 @@ public class SalesController {
 							   @RequestParam(required = false) Integer quantityInput) {
 		Product product = productService.getProductById(productId).get();
 
-		int tmpQuantity = (quantityInput == null || quantityInput == 0)? 1 : quantityInput;
+		int tmpQuantity = (quantityInput == null || quantityInput == 0) ? 1 : quantityInput;
 
 		buyCart.addOrUpdateItem(product, tmpQuantity);
 
@@ -438,15 +456,35 @@ public class SalesController {
 	public String decreaseFromBuyCart(
 		Model model,
 		@RequestParam UUID productId,
-		@ModelAttribute("buyCart") Cart buyCart
+		@ModelAttribute("buyCart") Cart buyCart,
+		@RequestParam(required = false) Integer quantityInput
 	) {
 		Product product = productService.getProductById(productId).get();
 
-		buyCart.addOrUpdateItem(product, -1);
+		int tmpQuantity = (quantityInput == null || quantityInput == 0) ? 1 : quantityInput;
+
+		buyCart.addOrUpdateItem(product, -1 * tmpQuantity);
 
 		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
 		model.addAttribute("fullBuyPrice", fp);
 		return "redirect:/buy";
+	}
+
+	@PostMapping("/update-buy-cart")
+	public String updateBuyCart(
+		Model model,
+		@RequestParam UUID productId,
+		@ModelAttribute("buyCart") Cart buyCart,
+		@RequestParam(required = false) Integer quantityInput,
+		@RequestParam("action") String action) {
+		if (action.equals("increase")) {
+			return addToBuyCart(model, productId, buyCart, quantityInput);
+		} else if (action.equals("decrease")) {
+			return decreaseFromBuyCart(model, productId, buyCart, quantityInput);
+		} else {
+			model.addAttribute("error", "Incorrect action");
+			return "redirect:/buy";
+		}
 	}
 
 	@GetMapping("/giftcard")

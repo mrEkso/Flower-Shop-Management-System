@@ -157,7 +157,7 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 		Product product = productService.findAllFlowers().iterator().next();
 		buyCart.addOrUpdateItem(product, 3);
 
-		String buyView = controller.decreaseFromBuyCart(model, UUID.fromString(product.getId().toString()), buyCart);
+		String buyView = controller.decreaseFromBuyCart(model, UUID.fromString(product.getId().toString()), buyCart, 1);
 		assertThat(buyView).isEqualTo("redirect:/buy");
 
 		assertThat(buyCart.getQuantity(product).getAmount().intValue()).isEqualTo(2);
@@ -175,7 +175,7 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 		Product product = productService.findAllFlowers().iterator().next();
 		sellCart.addOrUpdateItem(product, 3);
 
-		String sellView = controller.decreaseFromSellCart(model, UUID.fromString(product.getId().toString()), sellCart);
+		String sellView = controller.decreaseFromSellCart(model, UUID.fromString(product.getId().toString()), sellCart, 1);
 		assertThat(sellView).isEqualTo("redirect:/sell");
 
 		assertThat(sellCart.getQuantity(product).getAmount().intValue()).isEqualTo(2);
@@ -232,7 +232,7 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 
 		Product product = productService.findAllFlowers().iterator().next();
 
-		String sellView = controller.addToSellCart(model, UUID.fromString(product.getId().toString()), null, sellCart);
+		String sellView = controller.addToSellCart(model, UUID.fromString(product.getId().toString()), sellCart, null);
 		assertThat(sellView).isEqualTo("redirect:/sell");
 
 		assertThat(sellCart.getQuantity(product).getAmount().intValue()).isEqualTo(1);
