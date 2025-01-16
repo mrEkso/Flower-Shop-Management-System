@@ -89,10 +89,11 @@
 }
 
 .basket-card-text {
-  font-size: 14px;
+  float: right;
+  font-size: 17px;
   color: #555;
-  text-align: left;
-  flex: 1 1 40%;
+  /* text-align: left; */
+  /* flex: 1 1 40%; */
 }
 
 .basket-card-footer {
@@ -115,24 +116,27 @@
 
 .basket-card-inputs {
   /* display: flex;
-  align-items: center;
-  gap: 5px; */
+    align-items: center;
+    gap: 5px; */
   display: flex;
 }
 
 .basket-minus-btn {
   float: left;
-  /* width: 30px;
-  height: 30px;
-  cursor: pointer;
   border-color: #eeeeee;
-  font-size: 16px; */
+  /* width: 30px;
+    height: 30px;
+    cursor: pointer;
+    border-color: #eeeeee;
+    font-size: 16px; */
 }
 
 .basket-plus-btn {
   float: right;
+  border-color: #eeeeee;
 }
 
 .basket-footer input[type="text"] {
   text-align: center;
+  border-color: #eeeeee;
 }

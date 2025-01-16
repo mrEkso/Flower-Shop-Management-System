@@ -23,3 +23,14 @@
     width: 15px;
     height: 15px;
 }
+
+/* Hide the gift card input by default */
+.gift-card-input {
+    display: none;
+    margin-top: 10px;
+}
+
+/* Show the input field when the Gift Card radio is checked */
+input[type="radio"][value="GiftCard"]:checked ~ .gift-card-input {
+    display: block;
+}
