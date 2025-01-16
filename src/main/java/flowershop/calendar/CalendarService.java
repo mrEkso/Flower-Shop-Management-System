@@ -31,6 +31,8 @@ public class CalendarService {
 	@Autowired
 	private ClockService clockService;
 
+
+
 	public CalendarService(EventRepository eventRepository) {
 		this.eventRepository = eventRepository;
 	}
@@ -50,9 +52,9 @@ public class CalendarService {
 	 */
 	public Event save(Event event) {
 
-		if(event.getDate().isAfter(clockService.now()))
+		//if(event.getDate().isAfter(clockService.now()))
 			return eventRepository.save(event);
-		throw new IllegalArgumentException("Event date is in the past");
+		//throw new IllegalArgumentException("Event date is in the past");
 
 	}
 
