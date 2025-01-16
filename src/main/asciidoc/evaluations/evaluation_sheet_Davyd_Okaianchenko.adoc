@@ -1,0 +1,40 @@
+= Persönliches Feedback eines Teammitgliedes des Softwarepraktikums 2024/25
+// Auch wenn der Bogen nicht anonymisiert ist, dürfen Sie gern Ihre Meinung offen kundtun.
+// Sowohl positive als auch negative Anmerkungen werden gern gesehen und zur stetigen Verbesserung genutzt.
+// Versuchen Sie in dieser Auswertung also stets sowohl Positives wie auch Negatives zu erwähnen.
+
+**Von: Davyd Okaianchenko**
+
+**Gruppe: 7**
+
+== Was habe ich gelernt / was habe ich nicht gelernt?
+// Ausführung der positiven und negativen Erfahrungen, die im Softwarepraktikum gesammelt wurden
+Während des Praktikums habe ich viel über die praktische Anwendung von Softwareentwicklungstechniken gelernt, insbesondere über agiles Arbeiten und Versionskontrolle mit Git. Positiv war, dass ich neue Technologien wie SalesPoint kennenlernen konnte und auch, wie es ist, mit sieben Leuten gemeinsam an einem Stück Code zu arbeiten und ständig Merge-Konflikte zu haben :)
+
+Negativ ist, dass einige Themen wie das Schreiben von Tests oder Bereitstellungsprozesse weniger intensiv behandelt wurden. Ich hätte mir mehr Anleitungen oder Beispiele gewünscht.
+
+== Welche Erfahrungen habe ich mit der Zusammenarbeit im Team gemacht?
+// Kurze Beschreibung der Zusammenarbeit im Team. Was lief gut? Was war verbesserungswürdig? Was würden Sie das nächste Mal anders machen?
+Die Zusammenarbeit im Team lief größtenteils gut. Besonders positiv war, dass wir regelmäßig kommuniziert und uns gegenseitig unterstützt haben, vor allem bei der Fehlerbehebung.
+
+Vielleicht wäre es wirklich interessant, zu mehreren Personen in "Paaren" zu arbeiten, denn mit einer Person kann man verrückt werden, wenn man Dutzende von Stunden zusammen programmiert.
+
+== Welche Erfahrungen habe ich bei der Wiederverwendung von Bibliotheken/Frameworks (insbesondere SalesPoint) gemacht?
+// Einschätzung der Arbeit mit den bereitgestellten und zusätzlich genutzten Frameworks. Was War gut? Was war verbesserungswürdig?
+Die Arbeit mit SalesPoint war hilfreich, da es viele wichtige Funktionen bereitstellte und den Entwicklungsprozess beschleunigte. Besonders positiv fand ich die gut dokumentierten Beispiele und die Unterstützung durch den Tutor.
+
+Verbesserungswürdig war allerdings die Komplexität bei der Integration bestimmter Module. Es wäre hilfreich, wenn mehr Beispiele oder Tutorials bereitgestellt würden, die sich speziell auf diese Problemfälle beziehen.
+
+== Welche Vorschläge zur weiteren Verbesserung des Softwarepraktikums gibt es?
+// Möglichst mit Beschreibung, warum die Umsetzung des von Ihnen angebrachten Vorschlages nötig ist.
+Es wäre sinnvoll, zusätzliche Workshops oder Materialien zu bestimmten Themen wie SalesPoint anzubieten. Dies würde den praktischen Nutzen des Praktikums weiter erhöhen. Außerdem würde der Einsatz anderer, modernerer Technologien den Entwicklungsprozess nicht behindern, sondern nur erleichtern bzw. das Ergebnis verbessern. Generell bin ich also dafür, den Werkzeugkasten des Programmierers in zukünftigen Praktikumsjahren zu erweitern.
+
+== Feedback für den Tutor
+// Fühlten Sie sich durch den vom Lehrstuhl bereitgestellten Tutor gut betreut? Was war positiv? Was war verbesserungswürdig?
+Der Tutor war sehr hilfsbereit und hat Fragen schnell und verständlich beantwortet. Besonders positiv war, dass der Tutor regelmäßig nach unserem Fortschritt gefragt hat und hilfreiche Tipps gab.
+
+Verbesserungswürdig wäre es, wenn der Tutor bei komplexeren Fragen noch tiefer in den Code einsteigt, um spezifische Lösungen aufzuzeigen.
+
+== Sonstiges und Anmerkungen
+// Welche Aspekte fanden in den oben genannten Punkten keine Erwähnung?
+Ich fand es sehr positiv, dass das Praktikum realitätsnahe Szenarien und Herausforderungen abgedeckt hat. Ein kleiner Kritikpunkt wäre jedoch, dass die Zeitvorgaben manchmal etwas knapp bemessen waren, insbesondere bei den letzten Meilensteinen.
