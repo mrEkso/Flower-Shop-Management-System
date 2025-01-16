@@ -21,6 +21,7 @@ import org.salespointframework.order.ChargeLine;
 import org.salespointframework.order.Order;
 import org.salespointframework.order.OrderLine;
 import org.salespointframework.order.Totalable;
+import org.salespointframework.payment.PaymentMethod;
 import org.salespointframework.quantity.Quantity;
 import org.vandeseer.easytable.TableDrawer;
 import org.vandeseer.easytable.settings.HorizontalAlignment;
@@ -417,13 +418,23 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		builder.addRow(emptyRow(4));
 		Row zahlungsart = Row.builder()
 			.add(TextCell.builder()
-				.text("Zahlungsart: " + getPaymentMethod()).fontSize(16).colSpan(4)
+				.text("Zahlungsart: " + getPaymentMethodForPrinting()).fontSize(16).colSpan(4)
 				.horizontalAlignment(HorizontalAlignment.LEFT).font(font)
 				.build())
 			.build();
 		builder.addRow(zahlungsart);
 
 		return builder.build();
+	}
+
+	private String getPaymentMethodForPrinting() {
+		String method =  getPaymentMethod();
+		return switch (method) {
+			case "Card()" -> "Card";
+			case "Cash()" -> "Cash";
+			default -> "GiftCard";
+		};
+
 	}
 
 	private List<Row> getProductListRows(PDFont font) {
