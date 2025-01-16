@@ -26,18 +26,24 @@ import java.util.*;
 //@RequestMapping("/finances")
 public class FinancesController {
 
-
+	private final int maxEntriesShown = 100;
 	private final CashRegisterService cashRegisterService;
 	private final ClockService clockService;
 	private List<AccountancyEntryWrapper> filteredOrdersList = new ArrayList<>();
 	private List<AccountancyEntryWrapper> filteredAndCutOrdersList;
 	private HashSet<AccountancyEntryWrapper> filteredByDates = new HashSet<>();
 	private HashSet<AccountancyEntryWrapper> filteredByCategory = new HashSet<>();
+	private HashSet<AccountancyEntryWrapper> filteredByCustomerName = new HashSet<>();
+	private HashSet<AccountancyEntryWrapper> filteredBySum = new HashSet<>();
 	private LocalDate date1;
 	private LocalDate date2;
 	private boolean isFilteredByDates;
 	private boolean isFilteredByCategory;
+	private boolean isFilteredByCustomerName;
+	private boolean isFilteredBySum;
 	private String category;
+	private String name = "";
+	private String sum = "";
 	private List<DeletedProduct> deletedProducts = new ArrayList<>();
 
 	public FinancesController(CashRegisterService cashRegisterService, ClockService clockService) {
@@ -55,7 +61,9 @@ public class FinancesController {
 	 */
 	@GetMapping("/filterDates")
 	@PreAuthorize("hasRole('BOSS')")
-	public String filterDates(@RequestParam("date1") LocalDate date1, @RequestParam("date2") LocalDate date2, Model model) {
+	public String filterDates(@RequestParam("date1") LocalDate date1,
+							  @RequestParam("date2") LocalDate date2,
+							  Model model) {
 		if (date1.isAfter(date2)) {
 			return "finances";
 		}
@@ -77,13 +85,9 @@ public class FinancesController {
 			filteredList.add((AccountancyEntryWrapper) i);
 		}
 		this.filteredByDates = filteredList;
-		if (!this.filteredByCategory.isEmpty()) {
-			setFilteredOrdersList(intersection(filteredList, this.filteredByCategory).stream().toList(), 100);
-		} else {
-			setFilteredOrdersList(filteredList.stream().toList(), 100);
-		}
 		this.isFilteredByDates = true;
-		List<DeletedProduct> tempList = new ArrayList<>(cashRegisterService.getAllDeletedProducts(date1,date2));
+		setFilteredOrdersList(this.maxEntriesShown);
+		List<DeletedProduct> tempList = new ArrayList<>(cashRegisterService.getAllDeletedProducts(date1, date2));
 		tempList.sort(Comparator.comparing(DeletedProduct::getDateWhenDeleted).reversed());
 		this.deletedProducts = tempList;
 		prepareFinancesModel(model, filteredAndCutOrdersList);
@@ -105,9 +109,6 @@ public class FinancesController {
 		this.date1 = LocalDate.of(1970, 1, 1);
 		this.date2 = LocalDate.now();
 		getTransactionPage(model);
-		if (this.isFilteredByCategory) {
-			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByCategory).stream().toList(), 100);
-		}
 		List<DeletedProduct> tempList = new ArrayList<>(cashRegisterService.getAllDeletedProducts());
 		tempList.sort(Comparator.comparing(DeletedProduct::getDateWhenDeleted).reversed());
 		this.deletedProducts = tempList;
@@ -128,9 +129,6 @@ public class FinancesController {
 		this.isFilteredByCategory = false;
 		this.category = "all";
 		getTransactionPage(model);
-		if (this.isFilteredByDates) {
-			setFilteredOrdersList(intersection(new HashSet<>(this.filteredOrdersList), this.filteredByDates).stream().toList(), 100);
-		}
 		/*
 		else{
 			getTransactionPage(model);
@@ -159,18 +157,23 @@ public class FinancesController {
 		model.addAttribute("deletedProductsNotEmpty", !this.deletedProducts.isEmpty());
 		LocalDateTime startOfDay = clockService.getCurrentDate().atTime(9, 0, 0);
 		LocalDateTime endOfInterval = startOfDay.plusDays(1);
-		model.addAttribute("dayProfit", cashRegisterService.salesVolume(Interval.from(startOfDay).to(endOfInterval), Duration.ofDays(1)).get(Interval.from(startOfDay).to(endOfInterval)));
+		model.addAttribute("dayProfit", cashRegisterService.salesVolume(
+			Interval.from(startOfDay).to(endOfInterval),
+			Duration.ofDays(1)).get(Interval.from(startOfDay).to(endOfInterval))
+		);
 		model.addAttribute("transactionsNotEmpty", !transactions.isEmpty());
+		model.addAttribute("customerName", this.name);
+		model.addAttribute("transactionValue", this.sum);
+
 	}
 
 	/**
 	 * Will sort this list and show a cut version of it in the table
 	 *
-	 * @param filteredOrdersList name speaks for itself
-	 * @param size               max number of entries which are shown in the table at a time
+	 * @param size max number of entries which are shown in the table at a time
 	 */
-	private void setFilteredOrdersList(List<AccountancyEntryWrapper> filteredOrdersList, int size) {
-		List<AccountancyEntryWrapper> tempList = new ArrayList<>(filteredOrdersList);
+	private void setFilteredOrdersList(int size) {
+		List<AccountancyEntryWrapper> tempList = new ArrayList<>(findFilteredEntries());
 		Collections.sort(tempList, new Comparator<AccountancyEntry>() {
 			@Override
 			public int compare(AccountancyEntry first, AccountancyEntry second) {
@@ -185,6 +188,39 @@ public class FinancesController {
 		});
 		this.filteredOrdersList = tempList;
 		limitListSize(size);
+	}
+
+	private Set<AccountancyEntryWrapper> findFilteredEntries() {
+		final List<Set<AccountancyEntryWrapper>> filterSets = List.of(
+			filteredByDates,
+			filteredByCategory,
+			filteredByCustomerName,
+			filteredBySum
+		);
+		final List<Boolean> filterSettings = List.of(
+			isFilteredByDates,
+			isFilteredByCategory,
+			isFilteredByCustomerName,
+			isFilteredBySum
+		);
+		Set<AccountancyEntryWrapper> filteredSet = new HashSet<>();
+		boolean firstActiveFilterFound = false;
+		int i = 0;
+		while (i < filterSets.size()) {
+			if (filterSettings.get(i) && !firstActiveFilterFound) {
+				firstActiveFilterFound = true;
+				filteredSet = filterSets.get(i);
+			} else if (filterSettings.get(i)) {
+				filteredSet = intersection(filteredSet, filterSets.get(i));
+			}
+			i += 1;
+		}
+		if (!firstActiveFilterFound) {
+			for (AccountancyEntry j : this.cashRegisterService.findAll().toList()) {
+				filteredSet.add((AccountancyEntryWrapper) j);
+			}
+		}
+		return filteredSet;
 	}
 
 	/**
@@ -202,7 +238,7 @@ public class FinancesController {
 		tempList.sort(Comparator.comparing(DeletedProduct::getDateWhenDeleted).reversed());
 		this.deletedProducts = tempList;
 
-		setFilteredOrdersList(filteredOrdersList, 100);
+		setFilteredOrdersList(this.maxEntriesShown);
 		model.addAttribute("transactions", filteredAndCutOrdersList);
 		model.addAttribute("currentBalance", cashRegisterService.getBalance());
 		model.addAttribute("todayDate", clockService.getCurrentDate());
@@ -210,10 +246,15 @@ public class FinancesController {
 		model.addAttribute("shopOpened", clockService.isOpen());
 		LocalDateTime startOfDay = clockService.getCurrentDate().atTime(9, 0, 0);
 		LocalDateTime endOfInterval = startOfDay.plusDays(1);
-		model.addAttribute("dayProfit", cashRegisterService.salesVolume(Interval.from(startOfDay).to(endOfInterval), Duration.ofDays(1)).get(Interval.from(startOfDay).to(endOfInterval)));
+		model.addAttribute("dayProfit", cashRegisterService.salesVolume(
+			Interval.from(startOfDay).to(endOfInterval),
+			Duration.ofDays(1)).get(Interval.from(startOfDay).to(endOfInterval))
+		);
 		model.addAttribute("deletedProducts", this.deletedProducts);
 		model.addAttribute("deletedProductsNotEmpty", !this.deletedProducts.isEmpty());
 		model.addAttribute("transactionsNotEmpty", !filteredOrdersList.isEmpty());
+		model.addAttribute("customerName", this.name);
+		model.addAttribute("transactionValue", this.sum);
 		return "finances";
 	}
 
@@ -255,45 +296,30 @@ public class FinancesController {
 		String[] dateArray = date.split("-");
 		if (dateArray.length != 3) {
 			return ResponseEntity.badRequest()
-				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM-DD".getBytes(StandardCharsets.UTF_8));
+				.body(("Please just use the widget. " +
+					"Don't Write text there. " +
+					"But if you do, use format YYYY-MM-DD")
+					.getBytes(StandardCharsets.UTF_8));
 		}
 		//if (dateArray[0].length() != 4 || !dateArray[0].matches("19[0-9][0-9]|2[0-9][0-9][0-9]"))
 		LocalDate actualDate;
-		try{
+		try {
 			actualDate = LocalDate.parse(date);
-		} catch (DateTimeParseException e){
+		} catch (DateTimeParseException e) {
 			return ResponseEntity.badRequest()
-				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM-DD".getBytes(StandardCharsets.UTF_8));
+				.body(("Please just use the widget. " +
+					"Don't Write text there. " +
+					"But if you do, use format YYYY-MM-DD")
+					.getBytes(StandardCharsets.UTF_8));
 		}
-		if (actualDate.isAfter(clockService.getCurrentDate())) {
-			return ResponseEntity.badRequest()
-				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
-		}
-
-		DailyFinancialReport report = cashRegisterService.createFinancialReportDay(actualDate.atStartOfDay());
-		if (report == null) {
-			return ResponseEntity.badRequest()
-				.body("No Transactions saved in the system.".getBytes(StandardCharsets.UTF_8));
-
-		}
-		if (report.isBeforeBeginning()) {
-			return ResponseEntity.badRequest()
-				.body("The given date is before the accounting process started. No Data.".getBytes(StandardCharsets.UTF_8));
-		}
-
-
-		byte[] docu = report.generatePDF();
-		return ResponseEntity.ok()
-			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report_day.pdf")
-			.contentType(MediaType.APPLICATION_PDF)
-			.body(docu);
+		return cashRegisterService.getDayReportOutput(actualDate);
 	}
 
 	/**
 	 * Uploads a generated month-report
 	 *
 	 * @param month number of the needed month (1-12)
-	 * @param year the needed year
+	 * @param year  the needed year
 	 * @param model
 	 * @return PDF-File
 	 */
@@ -306,46 +332,27 @@ public class FinancesController {
 		String[] date = year_month.split("-");
 		if (date.length != 2) {
 			return ResponseEntity.badRequest()
-				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM".getBytes(StandardCharsets.UTF_8));
+				.body("Please just use the widget. Don't Write text there.
+				But if you do, use format YYYY-MM".getBytes(StandardCharsets.UTF_8));
 		}
 		if (date[0].length() != 4 ||
 			!date[1].matches("0[1-9]|1[1-2]") || !date[0].matches("19[0-9][0-9]|2[0-9][0-9][0-9]")) {
 			return ResponseEntity.badRequest()
-				.body("Please just use the widget. Don't Write text there. But if you do, use format YYYY-MM".getBytes(StandardCharsets.UTF_8));
+				.body("Please just use the widget. Don't Write text there.
+				But if you do, use format YYYY-MM".getBytes(StandardCharsets.UTF_8));
 		}
 		*/
-		if(month < 1 || month > 12) {
+		if (month < 1 || month > 12) {
 			return ResponseEntity.badRequest()
 				.body("No such month exists, dummy ;)".getBytes(StandardCharsets.UTF_8));
 		}
+		return cashRegisterService.getMonthReportOutput(month,year);
 
-		YearMonth monthParsed = YearMonth.of(year, month);
-		LocalDate firstOfMonth = monthParsed.atDay(1);
-		if (firstOfMonth.isAfter(clockService.getCurrentDate())) {
-			return ResponseEntity.badRequest()
-				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
-		}
-		MonthlyFinancialReport report = cashRegisterService.createFinancialReportMonth(firstOfMonth.atStartOfDay());
-		if (report == null) {
-			return ResponseEntity.badRequest()
-				.body("No Transactions saved in the system.".getBytes(StandardCharsets.UTF_8));
-
-		}
-		if (report.isBeforeBeginning()) {
-			return ResponseEntity.badRequest()
-				.body("The given month is before the accounting process started. No Data.".getBytes(StandardCharsets.UTF_8));
-		}
-		byte[] docu = report.generatePDF();
-		return ResponseEntity.ok()
-			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report_month.pdf")
-			.contentType(MediaType.APPLICATION_PDF)
-			.body(docu);
 	}
 
 	@PostMapping("/toggleState")
 	@PreAuthorize("hasRole('BOSS')")
 	public String toggleState(Model model) {
-		//TODO everything dissapears
 		clockService.openOrClose();
 		prepareFinancesModel(model, filteredAndCutOrdersList);
 		return "finances";
@@ -360,39 +367,101 @@ public class FinancesController {
 	@PreAuthorize("hasRole('BOSS')")
 	public String filterCategories(@RequestParam("filter") String category, Model model) {
 		//this.categorySet = category;
+		this.category = category;
 		if (category.equals("all")) {
 			return this.resetCategory(model);
 		} else {
+			this.isFilteredByCategory = true;
 			List<AccountancyEntry> lst;
 			if (category.equals("income")) {
 				lst = this.cashRegisterService.filterIncomeOrSpending(true);
 			} else if (category.equals("spendings")) {
 				lst = this.cashRegisterService.filterIncomeOrSpending(false);
 			} else if (category.equals("simple order")) {
-				lst = this.cashRegisterService.filterEntries(Category.Einfacher_Verkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.EINFACHER_VERKAUF).stream().toList();
 			} else if (category.equals("reserved order")) {
-				lst = this.cashRegisterService.filterEntries(Category.Reservierter_Verkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.RESERVIERTER_VERKAUF).stream().toList();
 			} else if (category.equals("event order")) {
-				lst = this.cashRegisterService.filterEntries(Category.Veranstaltung_Verkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.VERANSTALTUNG_VERKAUF).stream().toList();
 			} else if (category.equals("contract order")) {
-				lst = this.cashRegisterService.filterEntries(Category.Vertraglicher_Verkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.VERTRAGLICHER_VERKAUF).stream().toList();
 			} else {
-				lst = this.cashRegisterService.filterEntries(Category.Einkauf).stream().toList();
+				lst = this.cashRegisterService.filterEntries(Category.EINKAUF).stream().toList();
 			}
 			this.filteredByCategory = new HashSet<>();
 			for (AccountancyEntry i : lst) {
 				this.filteredByCategory.add((AccountancyEntryWrapper) i);
 			}
-			if (!this.filteredByDates.isEmpty()) {
-				setFilteredOrdersList(this.intersection(this.filteredByCategory, this.filteredByDates).stream().toList(), 100);
-			} else {
-				setFilteredOrdersList(this.filteredByCategory.stream().toList(), 100);
-			}
+			setFilteredOrdersList(this.maxEntriesShown);
 		}
 		prepareFinancesModel(model, filteredAndCutOrdersList);
-		this.isFilteredByCategory = true;
 		return "finances";
 	}
+
+	@GetMapping("/filterCustomerName")
+	@PreAuthorize("hasRole('BOSS')")
+	public String filterCustomerName(Model model, @RequestParam("customerName") String customerName) {
+		this.name = customerName;
+		List<AccountancyEntryWrapper> lst = this.cashRegisterService.filterByCustomer(customerName);
+		this.filteredByCustomerName = new HashSet<>();
+		for (AccountancyEntry i : lst) {
+			this.filteredByCustomerName.add((AccountancyEntryWrapper) i);
+		}
+		this.isFilteredByCustomerName = true;
+		setFilteredOrdersList(this.maxEntriesShown);
+		prepareFinancesModel(model, filteredAndCutOrdersList);
+		return "finances";
+	}
+
+	@GetMapping("/filterTransactionValue")
+	@PreAuthorize("hasRole('BOSS')")
+	public String filterPrice(Model model, @RequestParam("transactionValue") double price) {
+		this.sum = String.valueOf(price);
+		List<AccountancyEntryWrapper> lst = this.cashRegisterService.filterByPrice(price);
+		this.filteredBySum = new HashSet<>();
+		for (AccountancyEntry i : lst) {
+			this.filteredBySum.add((AccountancyEntryWrapper) i);
+		}
+		this.isFilteredBySum = true;
+		setFilteredOrdersList(this.maxEntriesShown);
+		prepareFinancesModel(model, filteredAndCutOrdersList);
+		return "finances";
+	}
+
+	@GetMapping("/resetCustomerName")
+	@PreAuthorize("hasRole('BOSS')")
+	public String resetCustomerName(Model model) {
+		this.name = "";
+		this.isFilteredByCustomerName = false;
+		this.filteredByCustomerName.clear();
+		setFilteredOrdersList(this.maxEntriesShown);
+		prepareFinancesModel(model, filteredAndCutOrdersList);
+		return "finances";
+	}
+
+	@GetMapping("/resetTransactionValue")
+	@PreAuthorize("hasRole('BOSS')")
+	public String resetTransactionValue(Model model) {
+		this.sum = "";
+		this.isFilteredBySum = false;
+		this.filteredBySum.clear();
+		setFilteredOrdersList(this.maxEntriesShown);
+		prepareFinancesModel(model, filteredAndCutOrdersList);
+		return "finances";
+	}
+
+	@GetMapping("/getReceipt")
+	@PreAuthorize("hasRole('BOSS')")
+	public ResponseEntity<byte[]> getReceipt(Model model, @RequestParam String orderId) {
+		byte[] docu = this.cashRegisterService.getEntry(orderId, this.filteredAndCutOrdersList)
+			.generatePDF(clockService.now());
+		return ResponseEntity.ok()
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=receipt.pdf")
+			.contentType(MediaType.APPLICATION_PDF)
+			.body(docu);
+
+	}
+
 
 	/**
 	 * @param size maximal number of entries to be shown in the table
@@ -411,7 +480,8 @@ public class FinancesController {
 	 * @param set2
 	 * @return the intersection of these two sets (in mathematical terms)
 	 */
-	private Set<AccountancyEntryWrapper> intersection(Set<AccountancyEntryWrapper> set1, Set<AccountancyEntryWrapper> set2) {
+	private Set<AccountancyEntryWrapper> intersection(Set<AccountancyEntryWrapper> set1,
+													  Set<AccountancyEntryWrapper> set2) {
 		Set<AccountancyEntryWrapper> intersection = new HashSet<>(set1);
 		intersection.retainAll(set2);
 		return intersection;

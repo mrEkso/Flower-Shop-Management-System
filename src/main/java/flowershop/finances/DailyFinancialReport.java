@@ -30,7 +30,7 @@ public class DailyFinancialReport extends FinancialReport {
 								CashRegisterService cashRegister,
 								LocalDateTime firstEverTransaction,
 								ClockService clockService) {
-		super(day, balanceEndOfTheDay, cashRegister, firstEverTransaction,clockService);
+		super(day, balanceEndOfTheDay, firstEverTransaction, clockService);
 		Streamable<AccountancyEntry> set = cashRegister.find(day);
 		this.orders = new ArrayList<>(set.stream().toList());
 		Collections.sort(orders, new Comparator<AccountancyEntry>() {
@@ -56,7 +56,6 @@ public class DailyFinancialReport extends FinancialReport {
 	}
 
 	/**
-	 *
 	 * @return true if no entries are registered at the moment, and no report can be made
 	 */
 	@Override
@@ -70,8 +69,10 @@ public class DailyFinancialReport extends FinancialReport {
 	@Override
 	protected String intervalToString() {
 		LocalDateTime day = interval.getStart();
-		String month = (day.getMonth().getValue() < 10) ? "0" + day.getMonth().getValue() : String.valueOf(day.getMonth().getValue());
-		String dateRepr = new StringBuilder().append(day.getDayOfMonth()).append(".").append(month).append(".").append(day.getYear()).toString();
+		String month = (day.getMonth().getValue() < 10) ? "0" + day.getMonth().getValue()
+			: String.valueOf(day.getMonth().getValue());
+		String dateRepr = new StringBuilder().append(day.getDayOfMonth()).append(".")
+			.append(month).append(".").append(day.getYear()).toString();
 		return dateRepr;
 	}
 
@@ -85,16 +86,18 @@ public class DailyFinancialReport extends FinancialReport {
 		List<Row> neededRows = new ArrayList<>();
 		// adding date
 		LocalDateTime day = interval.getStart();
-		String month = (day.getMonth().getValue() < 10) ? "0" + day.getMonth().getValue() : String.valueOf(day.getMonth().getValue());
-		String dateRepr = new StringBuilder().append(day.getDayOfMonth()).append(".").append(month).append(".").append(day.getYear()).toString();
+		String month = (day.getMonth().getValue() < 10) ? "0" + day.getMonth().getValue()
+			: String.valueOf(day.getMonth().getValue());
+		String dateRepr = new StringBuilder().append(day.getDayOfMonth()).append(".")
+			.append(month).append(".").append(day.getYear()).toString();
 		Row date = Row.builder()
 			.add(TextCell.builder().text(
-				(new StringBuilder().append(FinancialReport.getWeekdayNameDE(day.getDayOfWeek().getValue()))
-					.append(", ").append(dateRepr)).toString()).backgroundColor(Color.WHITE).fontSize(16).horizontalAlignment(HorizontalAlignment.CENTER).colSpan(6).font(font).build()).build();
+					(new StringBuilder().append(FinancialReport.getWeekdayNameDE(day.getDayOfWeek().getValue()))
+						.append(", ").append(dateRepr)).toString()).backgroundColor(Color.WHITE)
+				.fontSize(16).horizontalAlignment(HorizontalAlignment.CENTER).colSpan(6).font(font).build()).build();
 		neededRows.add(date);
 
-
-		neededRows.add(emptyRow());
+		neededRows.add(emptyRow(6));
 		// balance in the morning of the day
 		Row kontostandMorning = Row.builder()
 			.add(TextCell.builder()
@@ -107,7 +110,7 @@ public class DailyFinancialReport extends FinancialReport {
 				.build())
 			.borderWidth(1).build();
 		neededRows.add(kontostandMorning);
-		neededRows.add(emptyRow());
+		neededRows.add(emptyRow(6));
 
 		// Header
 		Row header = Row.builder()
@@ -156,9 +159,9 @@ public class DailyFinancialReport extends FinancialReport {
 							.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
 							.build())
 						.add(TextCell.builder()
-						.text(realEntry.getClientName()).rowSpan(numRows).verticalAlignment(VerticalAlignment.TOP)
-						.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
-						.build());
+							.text(realEntry.getClientName()).rowSpan(numRows).verticalAlignment(VerticalAlignment.TOP)
+							.font(font).fontSize(10).horizontalAlignment(HorizontalAlignment.LEFT)
+							.build());
 				}
 				String productName = itemList.get(currentRow);
 				eintrag.add(TextCell.builder()
@@ -182,7 +185,7 @@ public class DailyFinancialReport extends FinancialReport {
 			}
 		}
 
-		neededRows.add(emptyRow());
+		neededRows.add(emptyRow(6));
 
 		// day difference
 		MonetaryAmount profit = getProfit();
@@ -211,7 +214,7 @@ public class DailyFinancialReport extends FinancialReport {
 				.build())
 			.borderWidth(1).build();
 		neededRows.add(evening);
-		neededRows.add(emptyRow());
+		neededRows.add(emptyRow(6));
 
 		// deleted products
 		neededRows.addAll(this.getDeletedProductRows(font));

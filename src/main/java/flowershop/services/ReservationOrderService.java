@@ -1,5 +1,7 @@
 package flowershop.services;
 
+import flowershop.product.Bouquet;
+import flowershop.product.Flower;
 import flowershop.product.ProductCatalog;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.Order;
@@ -10,10 +12,12 @@ import org.salespointframework.quantity.Quantity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.time.LocalDate;
 import java.util.*;
 
 /**
- * The `ReservationOrderService` class provides services related to managing reservation orders in the flower shop system.
+ * The `ReservationOrderService` class provides services related to managing reservation orders in the flower
+ * shop system.
  * It is annotated with `@Service` to indicate that it is a Spring service component.
  */
 @Service
@@ -30,7 +34,8 @@ public class ReservationOrderService {
 	 * @param orderManagement            the order management system
 	 * @throws IllegalArgumentException if any of the parameters are null
 	 */
-	public ReservationOrderService(ReservationOrderRepository reservationOrderRepository, ProductCatalog productCatalog, OrderManagement<ReservationOrder> orderManagement) {
+	public ReservationOrderService(ReservationOrderRepository reservationOrderRepository, ProductCatalog productCatalog,
+								   OrderManagement<ReservationOrder> orderManagement) {
 		Assert.notNull(reservationOrderRepository, "ReservationOrderRepository must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(orderManagement, "OrderManagement must not be null!");
@@ -62,7 +67,6 @@ public class ReservationOrderService {
 			case PAID -> 2;
 			case COMPLETED -> 3;
 			case CANCELED -> 4;
-			default -> 5;
 		};
 	}
 
@@ -91,11 +95,13 @@ public class ReservationOrderService {
 				String quantityKey = "quantities[" + index + "]";
 				if (products.containsKey(quantityKey)) {
 					int quantity = Integer.parseInt(products.get(quantityKey));
-					productCatalog.findById(Product.ProductIdentifier.of(value))
-						.ifPresent(product -> {
-							Quantity qty = Quantity.of(quantity);
-							order.addOrderLine(product, qty);
-						});
+					Product product = productCatalog.findById(Product.ProductIdentifier.of(value))
+						.orElseThrow(() -> new IllegalArgumentException("Product not found: " + value));
+					if (order.getReservationDateTime().toLocalDate().equals(LocalDate.now()) &&
+						getAvailableStock(product).isLessThan(Quantity.of(quantity))) {
+						throw new IllegalArgumentException("Not enough stock for product: " + product.getName());
+					}
+					order.addOrderLine(product, Quantity.of(quantity));
 				}
 			}
 		});
@@ -113,35 +119,47 @@ public class ReservationOrderService {
 	 * @return the updated reservation order
 	 * @throws IllegalArgumentException if the order is already canceled, not paid yet, or cannot be canceled
 	 */
-	public ReservationOrder update(ReservationOrder order, Map<String, String> products, String orderStatus, String cancelReason, String reservationStatus) {
-		if (order.getOrderStatus().equals(OrderStatus.CANCELED))
+	public ReservationOrder update(ReservationOrder order, Map<String, String> products, String orderStatus,
+								   String cancelReason, String reservationStatus) {
+		if (order.getOrderStatus().equals(OrderStatus.CANCELED)) {
 			throw new IllegalArgumentException("Order is already canceled!");
+		}
 		if (order.getOrderStatus().equals(OrderStatus.OPEN)) {
 			if (OrderStatus.COMPLETED.name().equals(orderStatus)) {
 				throw new IllegalArgumentException("Order is not paid yet!");
 			}
 			if (OrderStatus.CANCELED.name().equals(orderStatus)) {
-				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
+				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided"
+					: cancelReason);
 				return reservationOrderRepository.save(order);
 			}
 			Map<UUID, Integer> incoming = extractProducts(products);
 			order.getOrderLines().toList().forEach(line -> {
-				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) order.remove(line);
+				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) {
+					order.remove(line);
+				}
 			});
-			incoming.forEach((productId, quantity) -> productCatalog.findById(Product.ProductIdentifier.of(productId.toString()))
+			incoming.forEach((productId, quantity) -> productCatalog.findById(
+					Product.ProductIdentifier.of(productId.toString()))
 				.ifPresent(product -> {
 					order.getOrderLines(product).toList().forEach(order::remove);
 					order.addOrderLine(product, Quantity.of(quantity));
 				}));
-			if (OrderStatus.PAID.name().equals(orderStatus)) orderManagement.payOrder(order);
+			if (OrderStatus.PAID.name().equals(orderStatus)) {
+				orderManagement.payOrder(order);
+			}
 		}
 		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
-			OrderStatus.CANCELED.name().equals(orderStatus))
+			OrderStatus.CANCELED.name().equals(orderStatus)) {
 			throw new IllegalArgumentException("Cannot cancel a paid order");
+		}
 		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
-			OrderStatus.COMPLETED.name().equals(orderStatus)) orderManagement.completeOrder(order);
-		if (reservationStatus != null && !reservationStatus.isBlank())
+			OrderStatus.COMPLETED.name().equals(orderStatus)) {
+			orderManagement.completeOrder(order);
+		}
+		if (reservationStatus != null && !reservationStatus.isBlank()) {
 			order.setReservationStatus(ReservationStatus.valueOf(reservationStatus));
+		}
 		return reservationOrderRepository.save(order);
 	}
 
@@ -176,16 +194,18 @@ public class ReservationOrderService {
 		return productQuantities;
 	}
 
-	public void removeProductFromOrder(UUID orderId, UUID productId) {
-		ReservationOrder order = getById(orderId)
-			.orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderId));
-
-		// Remove the product
-		order.getOrderLines().stream()
-			.filter(line -> line.getProductIdentifier().equals(productId))
-			.findFirst()
-			.ifPresent(order::remove);
-
-		save(order, new HashMap<>());
+	/**
+	 * Retrieves the available stock quantity for a given product.
+	 *
+	 * @param product the product for which to retrieve the available stock
+	 * @return the available stock quantity of the product
+	 */
+	private Quantity getAvailableStock(Product product) {
+		if (product instanceof Flower) {
+			return Quantity.of(((Flower) product).getQuantity());
+		} else if (product instanceof Bouquet) {
+			return Quantity.of(((Bouquet) product).getQuantity());
+		}
+		return Quantity.of(0);
 	}
 }

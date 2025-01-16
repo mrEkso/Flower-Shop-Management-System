@@ -1,7 +1,7 @@
 package flowershop.services;
 
 import flowershop.sales.CardPayment;
-import jakarta.persistence.Column;
+import flowershop.sales.GiftCardPayment;
 import jakarta.persistence.MappedSuperclass;
 import org.salespointframework.order.Order;
 import org.salespointframework.payment.Cash;
@@ -78,6 +78,8 @@ public abstract class AbstractOrder extends Order {
 			this.setPaymentMethod(Cash.CASH);
 		} else if (paymentMethod.equals("Card")) {
 			this.setPaymentMethod(new CardPayment());
+		} else if (paymentMethod.equals("GiftCard")) {
+			this.setPaymentMethod(new GiftCardPayment());
 		}
 	}
 }

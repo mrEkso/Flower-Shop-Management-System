@@ -2,8 +2,9 @@ package flowershop.inventory;
 
 import flowershop.clock.ClockService;
 import flowershop.product.*;
-import flowershop.services.ContractOrder;
 import flowershop.services.ContractOrderService;
+import flowershop.services.ReservationOrder;
+import flowershop.services.ReservationOrderService;
 import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.OrderLine;
@@ -35,7 +36,7 @@ public class InventoryController {
 
 	private final ContractOrderService contractOrderService;
 	private final ProductCatalog productCatalog;
-
+	private final ReservationOrderService reservationOrderService;
 
 
 	/**
@@ -43,20 +44,23 @@ public class InventoryController {
 	 *
 	 * @param productService the service for managing products
 	 */
-	public InventoryController(ProductService productService, ClockService clockService, ContractOrderService contractOrderService, ProductCatalog productCatalog) {
+	public InventoryController(ProductService productService, ClockService clockService,
+							   ContractOrderService contractOrderService, ProductCatalog productCatalog,
+							   ReservationOrderService reservationOrderService) {
 		this.productService = productService;
 		this.clockService = clockService;
 		this.contractOrderService = contractOrderService;
 		this.productCatalog = productCatalog;
+		this.reservationOrderService = reservationOrderService;
 	}
 
 	/**
 	 * Displays the inventory page with optional search and filter parameters.
 	 *
-	 * @param search search term to filter products by name
-	 * @param filter filter to show specific product types (e.g., Flower, Bouquet)
+	 * @param search               search term to filter products by name
+	 * @param filter               filter to show specific product types (e.g., Flower, Bouquet)
 	 * @param quantityProblemLabel appear when the user try to over delete quantity product
-	 * @param model  the model to pass data to the view
+	 * @param model                the model to pass data to the view
 	 * @return the name of the inventory view
 	 */
 	@GetMapping("/inventory")
@@ -132,9 +136,9 @@ public class InventoryController {
 	}
 
 	/**
-	* @param productName the name of the product
- 	* @return the reserved quantity
- 	*/
+	 * @param productName the name of the product
+	 * @return the reserved quantity
+	 */
 	private int getReservedQuantity(String productName) {
 		return getTotalUsedQuantities().entrySet().stream()
 			.filter(entry -> entry.getKey().getName().equalsIgnoreCase(productName))
@@ -167,14 +171,11 @@ public class InventoryController {
 	 */
 	private double computePricePerUnit(Product product) {
 		if (product instanceof Bouquet) {
-			return ((Bouquet)product).getPrice().getNumber().doubleValue();
+			return ((Bouquet) product).getPrice().getNumber().doubleValue();
 		}
 
-
-		if (product instanceof Flower flower) {
-			if (flower.getPricing() != null && flower.getPricing().getSellPrice() != null) {
-				return flower.getPricing().getSellPrice().getNumber().doubleValue();
-			}
+		if (product instanceof Flower flower && flower.getPricing() != null && flower.getPricing().getSellPrice() != null) {
+			return flower.getPricing().getSellPrice().getNumber().doubleValue();
 		}
 
 		return 0;
@@ -223,7 +224,7 @@ public class InventoryController {
 
 		selectedFlowerOpt.ifPresent(product -> {
 			if (product instanceof Flower) {
-				model.addAttribute("selectedFlower", (Flower) product);
+				model.addAttribute("selectedFlower", product);
 				model.addAttribute("showChooseModal", true);
 			} else {
 				model.addAttribute("error", "Selected product is not a flower.");
@@ -261,21 +262,24 @@ public class InventoryController {
 				if (chooseQuantity > availableQuantity) {
 					if (chooseQuantity > selectedFlower.getQuantity()) {
 						model.addAttribute("quantityProblemLabel2", true);
-						model.addAttribute("quantityProblemMessage", "We don t have that quantity");
+						model.addAttribute("quantityProblemMessage",
+							"We don t have that quantity");
 					}
 
 					if (chooseQuantity < selectedFlower.getQuantity()) {
 						model.addAttribute("quantityProblemLabel2", true);
-						model.addAttribute("quantityProblemMessage", "You chose more quantity than the available stock. because "+reservedQuantity+ " are reserved");
+						model.addAttribute("quantityProblemMessage",
+							"You chose more quantity than the available stock. because " +
+								reservedQuantity + " are reserved");
 					}
-				}
-				else if (chooseQuantity > 0) {
+				} else if (chooseQuantity > 0) {
 					selectedFlower.setDeletedQuantity(chooseQuantity);
 					if (!selectedFlowersForBouquet.contains(selectedFlower)) {
 						selectedFlowersForBouquet.add(selectedFlower);
 					} else {
 						model.addAttribute("quantityProblemLabel2", true);
-						model.addAttribute("quantityProblemMessage", "You can t choose the same flower type more than once.");
+						model.addAttribute("quantityProblemMessage",
+							"You can t choose the same flower type more than once.");
 					}
 				}
 			}
@@ -292,8 +296,6 @@ public class InventoryController {
 	}
 
 
-
-
 	/**
 	 * Creates a custom bouquet using the selected flowers.
 	 *
@@ -302,14 +304,16 @@ public class InventoryController {
 	 * @return the inventory view name
 	 */
 	@PostMapping("/create-custom-bouquet")
-	public String createCustomBouquet(@RequestParam String bouquetName, @RequestParam Double addPrice, Model model) {
+	public String createCustomBouquet(@RequestParam String bouquetName,
+									  @RequestParam Double addPrice,
+									  Model model) {
 		if (!selectedFlowersForBouquet.isEmpty() && bouquetName != null && !bouquetName.isEmpty()) {
-			if (selectedFlowersForBouquet.size() > 1 || selectedFlowersForBouquet.getFirst().getDeletedQuantity()> 1) {
+			if (selectedFlowersForBouquet.size() > 1 || selectedFlowersForBouquet.getFirst().getDeletedQuantity() > 1) {
 				Map<Flower, Integer> flowerMap = selectedFlowersForBouquet.stream()
 					.filter(Objects::nonNull)
 					.collect(Collectors.toMap(
-						flower -> (Flower) flower,
-						flower -> ((Flower) flower).getDeletedQuantity()
+						flower -> flower,
+						flower -> flower.getDeletedQuantity()
 					));
 
 				Money additionalPrice = Money.of(addPrice, "EUR");
@@ -326,7 +330,8 @@ public class InventoryController {
 				productService.addBouquet(customBouquet);
 			} else {
 				model.addAttribute("quantityProblemLabel2", true);
-				model.addAttribute("quantityProblemMessage", "You can t create a bouquet with only one flower");
+				model.addAttribute("quantityProblemMessage",
+					"You can t create a bouquet with only one flower");
 			}
 		}
 		selectedFlowersForBouquet.clear();
@@ -484,8 +489,8 @@ public class InventoryController {
 	/**
 	 * Updates the price of a product.
 	 *
-	 * @param productID   the id of the product to update
-	 * @param model       the model to hold attributes for the view
+	 * @param productID the id of the product to update
+	 * @param model     the model to hold attributes for the view
 	 * @return the redirect path to the inventory view
 	 */
 	@PostMapping("/inventory/update-price")
@@ -508,7 +513,6 @@ public class InventoryController {
 
 		return "redirect:/inventory";
 	}
-
 
 
 	@GetMapping("/inventory/change-price")
@@ -534,18 +538,18 @@ public class InventoryController {
 	public Map<Product, Integer> getTotalUsedQuantities() {
 		Map<Product, Integer> productQuantities = new HashMap<>();
 
-		List<ContractOrder> orders = contractOrderService.findAll();
+		List<ReservationOrder> orders = reservationOrderService.findAll();
 
-		for (ContractOrder order : orders) {
+		for (ReservationOrder order : orders) {
 			for (OrderLine line : order.getOrderLines()) {
 				Product product = productCatalog.findById(line.getProductIdentifier())
-					.orElseThrow(() -> new IllegalArgumentException("Product not found: " + line.getProductIdentifier()));
+					.orElseThrow(() -> new IllegalArgumentException("Product not found: "
+						+ line.getProductIdentifier()));
 
 				int quantity = line.getQuantity().getAmount().intValue();
 				productQuantities.merge(product, quantity, Integer::sum);
 			}
 		}
-
 		return productQuantities;
 	}
 

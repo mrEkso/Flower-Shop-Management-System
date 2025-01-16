@@ -21,14 +21,17 @@ public class ProductInventoryInitializer implements DataInitializer {
 	private final UniqueInventory<UniqueInventoryItem> inventory;
 	private final ProductCatalog productCatalog;
 	private final ProductService productService;
+	private final GiftCardRepository giftCardRepository;
 
-	public ProductInventoryInitializer(UniqueInventory<UniqueInventoryItem> inventory, ProductCatalog productCatalog, ProductService productService) {
+	public ProductInventoryInitializer(UniqueInventory<UniqueInventoryItem> inventory,
+									   ProductCatalog productCatalog, ProductService productService, GiftCardRepository giftCardRepository) {
 		Assert.notNull(inventory, "Inventory must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(productService, "ProductService must not be null!");
 		this.inventory = inventory;
 		this.productCatalog = productCatalog;
 		this.productService = productService;
+		this.giftCardRepository = giftCardRepository;
 	}
 
 	@Override
@@ -52,6 +55,9 @@ public class ProductInventoryInitializer implements DataInitializer {
 		Flower dahlia = new Flower("Dahlia", new Pricing(Money.of(10.0, EURO), Money.of(20.0, EURO)), "Burgundy", 0);
 		Flower gladiolus = new Flower("Gladiolus", new Pricing(Money.of(6.5, EURO), Money.of(13.0, EURO)), "Orange", 0);
 
+		// Pre-defined Gift Cards
+		GiftCard giftCard1 = new GiftCard(Money.of(10, "EUR"), "20");
+		GiftCard giftCard2 = new GiftCard(Money.of(20, "EUR"), "20");
 
 		productCatalog.save(rose);
 		productCatalog.save(sunflower);
@@ -66,6 +72,8 @@ public class ProductInventoryInitializer implements DataInitializer {
 		productCatalog.save(dahlia);
 		productCatalog.save(gladiolus);
 
+		giftCardRepository.save(giftCard1);
+		giftCardRepository.save(giftCard2);
 
 		Map<Flower, Integer> bouquetFlowersMap1 = new HashMap<>();
 		bouquetFlowersMap1.put(rose, 3);
@@ -95,8 +103,11 @@ public class ProductInventoryInitializer implements DataInitializer {
 
 		// Initialize inventory with 10 items of each product
 		productCatalog.findAll().forEach(flower -> {
+			int q = flower instanceof Flower ?
+				((Flower) flower).getQuantity()
+				: ((Bouquet) flower).getQuantity();
 			if (inventory.findByProduct(flower).isEmpty()) {
-				inventory.save(new UniqueInventoryItem(flower, Quantity.of(10)));
+				inventory.save(new UniqueInventoryItem(flower, Quantity.of(q)));
 			}
 		});
 	}

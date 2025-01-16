@@ -1,4 +1,4 @@
-package flowershop.service;
+//package flowershop.service;
 //import flowershop.services.*;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
@@ -144,11 +144,11 @@ package flowershop.service;
 //		when(contractOrderRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
 //		when(contractOrderRepository.save(any(ContractOrder.class))).thenReturn(mockOrder);
 //
-//		contractOrderService.removeProductFromOrder(orderUuid, productUuid);
+//		//contractOrderService.removeProductFromOrder(orderUuid, productUuid);
 //
 //		verify(contractOrderRepository, times(1)).save(mockOrder);
 //	}
 //
 //
 //}
-
+//

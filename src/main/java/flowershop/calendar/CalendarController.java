@@ -21,6 +21,7 @@ public class CalendarController {
 	//Dependecies injection
 	@Autowired
 	private CalendarService service;
+
 	public CalendarController(CalendarService service) {
 		this.service = service;
 	}
@@ -31,7 +32,7 @@ public class CalendarController {
 	 *
 	 * @param model the Model object for adding attributes to the view
 	 * @param month the month to display
-	 * @param year the year to display (optional)
+	 * @param year  the year to display (optional)
 	 * @return the name of the calendar view template
 	 */
 	@GetMapping("/calendar")
@@ -68,11 +69,13 @@ public class CalendarController {
 	 *
 	 * @param model the Model object for adding attributes to the view
 	 * @param month the current month
-	 * @param year the current year
+	 * @param year  the current year
 	 * @return a redirect URL to the next month's view
 	 */
 	@GetMapping("/calendar/next")
-	public String nextMonth(Model model, @RequestParam(value = "month") int month, @RequestParam(value = "year") int year) {
+	public String nextMonth(Model model,
+							@RequestParam(value = "month") int month,
+							@RequestParam(value = "year") int year) {
 		month++;
 		if (month > 12) {
 			month = 1;
@@ -83,13 +86,16 @@ public class CalendarController {
 
 	/**
 	 * Redirects to the calendar view of the next month.
+	 *
 	 * @param model the Model object for adding attributes to the view
 	 * @param month the current month
-	 * @param year the current year
+	 * @param year  the current year
 	 * @return a redirect URL to the previous month's view
 	 */
 	@GetMapping("/calendar/previous")
-	public String previousMonth(Model model, @RequestParam(value = "month") int month, @RequestParam(value = "year") int year) {
+	public String previousMonth(Model model,
+								@RequestParam(value = "month") int month,
+								@RequestParam(value = "year") int year) {
 		month--;
 		if (month < 1) {
 			month = 12;
@@ -116,6 +122,7 @@ public class CalendarController {
 		service.save(event);
 		return "redirect:/calendar";
 	}
+
 	//Deletes an existing event from mvc and service
 	@PostMapping("/calendar/delete")
 	public String deleteEvent(@RequestParam Long id) {
@@ -129,7 +136,7 @@ public class CalendarController {
 	 * for rendering the edit event page.
 	 *
 	 * @param model the model object used to pass attributes to the view
-	 * @param id the unique identifier of the event to be edited
+	 * @param id    the unique identifier of the event to be edited
 	 * @return the name of the view template to render the edit event page
 	 */
 	@GetMapping("/calendar/edit")

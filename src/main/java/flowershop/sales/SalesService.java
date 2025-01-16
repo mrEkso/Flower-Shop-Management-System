@@ -1,9 +1,9 @@
 package flowershop.sales;
 
-import flowershop.product.Bouquet;
-import flowershop.product.Flower;
-import flowershop.product.ProductService;
+import flowershop.finances.BalanceService;
+import flowershop.product.*;
 import flowershop.services.OrderFactory;
+import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.order.Cart;
 import org.salespointframework.order.CartItem;
@@ -12,6 +12,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 public class SalesService {
 	private final ProductService productService;
@@ -19,13 +22,20 @@ public class SalesService {
 	private final OrderFactory orderFactory;
 	private final WholesalerOrderService wholesalerOrderService;
 	private final ApplicationEventPublisher eventPublisher;
+	private final GiftCardService giftCardService;
+	private final BalanceService balanceService;
 
-	public SalesService(ProductService productService, SimpleOrderService simpleOrderService, OrderFactory orderFactory, WholesalerOrderService wholesalerOrderService, ApplicationEventPublisher eventPublisher) {
+	public SalesService(ProductService productService, SimpleOrderService simpleOrderService,
+						OrderFactory orderFactory, WholesalerOrderService wholesalerOrderService,
+						ApplicationEventPublisher eventPublisher, GiftCardService giftCardService,
+						BalanceService balanceService) {
 		this.productService = productService;
 		this.simpleOrderService = simpleOrderService;
 		this.orderFactory = orderFactory;
 		this.wholesalerOrderService = wholesalerOrderService;
 		this.eventPublisher = eventPublisher;
+		this.giftCardService = giftCardService;
+		this.balanceService = balanceService;
 	}
 
 	/**
@@ -35,9 +45,13 @@ public class SalesService {
 	 * @param paymentMethod the payment method for the sale
 	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
 	 */
-	public void sellProductsFromBasket(Cart cart, String paymentMethod) throws IllegalArgumentException {
+	public void sellProductsFromBasket(Cart cart, String paymentMethod, UUID giftCardId)
+		throws IllegalArgumentException, InsufficientFundsException {
 		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
+		}
+		if (paymentMethod.equals("GiftCard")) {
+			handleGiftCardPayment(cart, giftCardId);
 		}
 
 		SimpleOrder simpleOrder = orderFactory.createSimpleOrder();
@@ -51,9 +65,9 @@ public class SalesService {
 			} else {
 				throw new IllegalArgumentException("Unsupported product type");
 			}
-
 			simpleOrder.addOrderLine(product, cartItem.getQuantity());
 		}
+
 		simpleOrder.setPaymentMethod(paymentMethod);
 		simpleOrderService.create(simpleOrder);
 		cart.clear();
@@ -62,6 +76,28 @@ public class SalesService {
 		eventPublisher.publishEvent(event); // Needed for Finances
 	}
 
+	private void handleGiftCardPayment(Cart cart, UUID giftCardId)
+		throws IllegalArgumentException, InsufficientFundsException {
+		Optional<GiftCard> giftCardOptional = giftCardService.findGiftCardById(giftCardId);
+		if (giftCardOptional.isEmpty()) {
+			throw new IllegalArgumentException("Gift card not found");
+		}
+
+		GiftCard giftCard = giftCardOptional.get();
+
+		// Calculate the full price to pay
+		Money fullPrice = Money.of(0, "EUR");
+		for (CartItem cartItem : cart) {
+			Product product = cartItem.getProduct();
+			fullPrice = fullPrice.add(product.getPrice()).multiply(cartItem.getQuantity().getAmount());
+		}
+
+		if (giftCard.getBalance().subtract(fullPrice).isNegative()) {
+			throw new InsufficientFundsException();
+		}
+		giftCard.subtractBalance(fullPrice);
+	}
+
 	/**
 	 * Processes the purchase of products from a cart and creates a corresponding wholesaler order.
 	 *
@@ -69,7 +105,8 @@ public class SalesService {
 	 * @param paymentMethod the payment method for the purchase
 	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
 	 */
-	public void buyProductsFromBasket(Cart cart, String paymentMethod) throws IllegalArgumentException {
+	public void buyProductsFromBasket(Cart cart, String paymentMethod)
+		throws IllegalArgumentException, InsufficientFundsException {
 		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
 		}
@@ -78,10 +115,15 @@ public class SalesService {
 		addFlowersFromCart(cart, wholesalerOrder);
 		wholesalerOrder.setPaymentMethod(paymentMethod);
 		wholesalerOrderService.create(wholesalerOrder);
+		if (balanceService.denies(wholesalerOrder)) {
+			throw new InsufficientFundsException();
+		}
 		cart.clear();
 		var event = OrderEvents.OrderPaid.of(wholesalerOrder);
 		eventPublisher.publishEvent(event); // Needed for Finances
+		//cashRegisterService.onOrderPaid(event);
 	}
+
 	/**
 	 * Processes the purchase of products from a cart and creates a corresponding wholesaler order.
 	 *
@@ -90,7 +132,8 @@ public class SalesService {
 	 * @param deliveryDate  the delivery date
 	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
 	 */
-	public void buyProductsFromBasket(Cart cart, String paymentMethod, String deliveryDate) throws IllegalArgumentException{
+	public void buyProductsFromBasket(Cart cart, String paymentMethod, String deliveryDate)
+		throws IllegalArgumentException {
 		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
 		}
@@ -110,14 +153,12 @@ public class SalesService {
 			Product product = cartItem.getProduct();
 
 			if (product instanceof Flower) {
-				//productService.addFlowers((Flower) product, (int) cartItem.getQuantity().getAmount().doubleValue()); //TODO: Check this logic
 				wholesalerOrder.addOrderLine(product, cartItem.getQuantity());
 			} else if (product instanceof Bouquet) {
 				throw new IllegalArgumentException("Unsupported product type: Bouquet cannot be bought from Wholesaler.");
 			} else {
 				throw new IllegalArgumentException("Unsupported product type");
 			}
-
 		}
 	}
 
@@ -130,25 +171,26 @@ public class SalesService {
 	 * @return the total price of the items in the cart
 	 */
 	public double calculateFullCartPrice(Model model, Cart cart, Boolean isSellPage) {
-		double fp = cart.get()
+		// Initialize a default value for the price
+		// For buy page, pricePerItem remains 0 as Bouquets are not available
+		// If it's not a Flower or Bouquet, pricePerItem remains 0
+
+		return cart.get()
 			.mapToDouble(bi -> {
+				double pricePerItem = 0; // Initialize a default value for the price
+
 				if (bi.getProduct() instanceof Flower flower) {
-					double price = isSellPage
+					pricePerItem = isSellPage
 						? flower.getPricing().getSellPrice().getNumber().doubleValue()
 						: flower.getPricing().getBuyPrice().getNumber().doubleValue();
-					return price * bi.getQuantity().getAmount().doubleValue();
-				} else if (bi.getProduct() instanceof Bouquet bouquet) {
-					if (isSellPage) {
-						double price = bouquet.getPrice().getNumber().doubleValue();
-						return price * bi.getQuantity().getAmount().doubleValue();
-					} else {
-						return 0; // Bouquets are not available for buy page
-					}
-				} else {
-					return 0;
+
+				} else if (bi.getProduct() instanceof Bouquet bouquet && isSellPage) {
+					// For buy page, pricePerItem remains 0 as Bouquets are not available
+					pricePerItem = bouquet.getPrice().getNumber().doubleValue();
 				}
+				// If it's not a Flower or Bouquet, pricePerItem remains 0
+				return pricePerItem * bi.getQuantity().getAmount().doubleValue();
 			}).sum();
-		return fp;
 	}
 
 }

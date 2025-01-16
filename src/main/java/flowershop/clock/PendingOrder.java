@@ -23,7 +23,9 @@ public class PendingOrder {
 		this.itemQuantityMap = itemQuantityMap;
 		this.dueDate = dueDate;
 	}
-	protected PendingOrder() {}
+
+	protected PendingOrder() {
+	}
 
 	public void setId(Long id) {
 		this.id = id;
@@ -32,6 +34,7 @@ public class PendingOrder {
 	public Long getId() {
 		return id;
 	}
+
 	public Map<Product, Quantity> getItemQuantityMap() {
 		return itemQuantityMap;
 	}
@@ -39,6 +42,7 @@ public class PendingOrder {
 	public void setDueDate(LocalDate dueDate) {
 		this.dueDate = dueDate;
 	}
+
 	public LocalDate getDueDate() {
 		return dueDate;
 	}

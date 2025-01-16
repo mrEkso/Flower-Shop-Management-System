@@ -32,7 +32,8 @@ public class EventOrderService {
 	 * @param orderManagement      the order management system
 	 * @throws IllegalArgumentException if any of the parameters are null
 	 */
-	public EventOrderService(EventOrderRepository eventOrderRepository, ProductCatalog productCatalog, OrderManagement<EventOrder> orderManagement) {
+	public EventOrderService(EventOrderRepository eventOrderRepository, ProductCatalog productCatalog,
+							 OrderManagement<EventOrder> orderManagement) {
 		Assert.notNull(eventOrderRepository, "EventOrderRepository must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(orderManagement, "OrderManagement must not be null!");
@@ -93,11 +94,10 @@ public class EventOrderService {
 				String quantityKey = "quantities[" + index + "]";
 				if (products.containsKey(quantityKey)) {
 					int quantity = Integer.parseInt(products.get(quantityKey));
-					productCatalog.findById(Product.ProductIdentifier.of(value))
-						.ifPresent(product -> {
-							Quantity qty = Quantity.of(quantity);
-							order.addOrderLine(product, qty);
-						});
+					productCatalog.findById(Product.ProductIdentifier.of(value)).ifPresent(product -> {
+						Quantity qty = Quantity.of(quantity);
+						order.addOrderLine(product, qty);
+					});
 				}
 			}
 		});
@@ -116,14 +116,18 @@ public class EventOrderService {
 	 * @return the updated event order
 	 * @throws IllegalArgumentException if the order is already canceled, not paid yet, or cannot be canceled
 	 */
-	public EventOrder update(EventOrder order, Map<String, String> products, int deliveryPrice, String orderStatus, String cancelReason) {
-		if (order.getOrderStatus().equals(OrderStatus.CANCELED))
+	public EventOrder update(EventOrder order, Map<String, String> products, int deliveryPrice,
+							 String orderStatus, String cancelReason) {
+		if (order.getOrderStatus().equals(OrderStatus.CANCELED)) {
 			throw new IllegalArgumentException("Order is already canceled!");
+		}
 		if (order.getOrderStatus().equals(OrderStatus.OPEN)) {
-			if (OrderStatus.COMPLETED.name().equals(orderStatus))
+			if (OrderStatus.COMPLETED.name().equals(orderStatus)) {
 				throw new IllegalArgumentException("Order is not paid yet!");
+			}
 			if (OrderStatus.CANCELED.name().equals(orderStatus)) {
-				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
+				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ?
+					"Reason not provided" : cancelReason);
 				return eventOrderRepository.save(order);
 			}
 			List<ChargeLine> chargeLinesToRemove = order.getChargeLines().stream()
@@ -133,20 +137,25 @@ public class EventOrderService {
 			order.addChargeLine(Money.of(deliveryPrice, "EUR"), "Delivery Price");
 			Map<UUID, Integer> incoming = extractProducts(products);
 			order.getOrderLines().toList().forEach(line -> {
-				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) order.remove(line);
+				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) {
+					order.remove(line);
+				}
 			});
-			incoming.forEach((productId, quantity) -> productCatalog.findById(Product.ProductIdentifier.of(productId.toString()))
-				.ifPresent(product -> {
-					order.getOrderLines(product).toList().forEach(order::remove);
-					order.addOrderLine(product, Quantity.of(quantity));
-				}));
-			if (OrderStatus.PAID.name().equals(orderStatus)) orderManagement.payOrder(order);
+			incoming.forEach((productId, quantity) -> productCatalog.findById(
+				Product.ProductIdentifier.of(productId.toString())).ifPresent(product -> {
+				order.getOrderLines(product).toList().forEach(order::remove);
+				order.addOrderLine(product, Quantity.of(quantity));
+			}));
+			if (OrderStatus.PAID.name().equals(orderStatus)) {
+				orderManagement.payOrder(order);
+			}
 		}
-		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
-			OrderStatus.CANCELED.name().equals(orderStatus))
+		if (order.getOrderStatus().equals(OrderStatus.PAID) && OrderStatus.CANCELED.name().equals(orderStatus)) {
 			throw new IllegalArgumentException("Cannot cancel a paid order!");
-		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
-			OrderStatus.COMPLETED.name().equals(orderStatus)) orderManagement.completeOrder(order);
+		}
+		if (order.getOrderStatus().equals(OrderStatus.PAID) && OrderStatus.COMPLETED.name().equals(orderStatus)) {
+			orderManagement.completeOrder(order);
+		}
 		return eventOrderRepository.save(order);
 	}
 
@@ -179,18 +188,5 @@ public class EventOrderService {
 			}
 		});
 		return productQuantities;
-	}
-
-	public void removeProductFromOrder(UUID orderId, UUID productId) {
-		EventOrder order = getById(orderId)
-			.orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderId));
-
-		// Remove the product
-		order.getOrderLines().stream()
-			.filter(line -> line.getProductIdentifier().equals(productId))
-			.findFirst()
-			.ifPresent(order::remove);
-
-		save(order, new HashMap<>());
 	}
 }

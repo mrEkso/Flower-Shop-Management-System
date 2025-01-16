@@ -16,6 +16,10 @@
 .basket-footer {
   margin-top: 40px;
   align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
 .payment-method {
@@ -25,12 +29,11 @@
 }
 
 .payment-method input[type="radio"] {
-  margin-right: 5px;
+  margin-left: 10px;
 }
 
 .basket-submit-btn {
-  width: 170px;
-  height: 40px;
+  margin-top: 10px;
 }
 
 .basket-head {
@@ -78,24 +81,18 @@
   overflow: hidden;
 }
 
-.basket-minus-btn {
-  width: 30px;
-  height: 30px;
-  cursor: pointer;
-  border-color: #eeeeee;
-  font-size: 16px;
-}
-
 .basket-card-body {
   justify-content: space-between;
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
 .basket-card-text {
   font-size: 14px;
   color: #555;
   text-align: left;
+  flex: 1 1 40%;
 }
 
 .basket-card-footer {
@@ -110,4 +107,32 @@
   justify-content: space-between;
   padding-left: 5px;
   padding-right: 5px;
+}
+
+.basket-input-quantity {
+  width: 50px;
+}
+
+.basket-card-inputs {
+  /* display: flex;
+  align-items: center;
+  gap: 5px; */
+  display: flex;
+}
+
+.basket-minus-btn {
+  float: left;
+  /* width: 30px;
+  height: 30px;
+  cursor: pointer;
+  border-color: #eeeeee;
+  font-size: 16px; */
+}
+
+.basket-plus-btn {
+  float: right;
+}
+
+.basket-footer input[type="text"] {
+  text-align: center;
 }

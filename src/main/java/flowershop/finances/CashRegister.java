@@ -45,6 +45,7 @@ public class CashRegister {
 	public void setAccountancyEntries(Set<AccountancyEntry> accountancyEntries) {
 		this.accountancyEntries = accountancyEntries;
 	}
+
 	public LocalDate getFirstEverDate() {
 		return firstEverDate;
 	}
@@ -63,12 +64,15 @@ public class CashRegister {
 	public boolean getOpen() {
 		return open;
 	}
+
 	public void setOpen(boolean open) {
 		this.open = open;
 	}
+
 	public LocalDateTime getNewDayStarted() {
 		return newDayStarted;
 	}
+
 	public void setNewDayStarted(LocalDateTime newDayStarted) {
 		this.newDayStarted = newDayStarted;
 	}
@@ -76,9 +80,11 @@ public class CashRegister {
 	public Money getBalance() {
 		return balance;
 	}
+
 	public LocalDate getInGameDate() {
 		return inGameDate;
 	}
+
 	public void setInGameDate(LocalDate currentDate) {
 		this.inGameDate = currentDate;
 	}

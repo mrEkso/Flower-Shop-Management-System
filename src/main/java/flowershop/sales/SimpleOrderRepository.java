@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
 /**
  * Repository for storing {@link SimpleOrder}s.
  */
-public interface SimpleOrderRepository extends CrudRepository<SimpleOrder, Order.OrderIdentifier>, PagingAndSortingRepository<SimpleOrder, Order.OrderIdentifier> {
+public interface SimpleOrderRepository extends CrudRepository<SimpleOrder, Order.OrderIdentifier>,
+	PagingAndSortingRepository<SimpleOrder, Order.OrderIdentifier> {
 	@NotNull
 	@Query("select o from #{#entityName} o")
 	Page<SimpleOrder> findAll(@NotNull Pageable pageable);
@@ -27,5 +28,7 @@ public interface SimpleOrderRepository extends CrudRepository<SimpleOrder, Order
 
 	Streamable<SimpleOrder> findByUserAccountIdentifier(UserAccount.UserAccountIdentifier userAccountIdentifier);
 
-	Streamable<SimpleOrder> findByUserAccountIdentifierAndDateCreatedBetween(UserAccount.UserAccountIdentifier userAccountIdentifier, LocalDateTime from, LocalDateTime to);
+	Streamable<SimpleOrder> findByUserAccountIdentifierAndDateCreatedBetween(
+		UserAccount.UserAccountIdentifier userAccountIdentifier,
+		LocalDateTime from, LocalDateTime to);
 }
