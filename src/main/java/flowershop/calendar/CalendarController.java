@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,7 +22,6 @@ public class CalendarController {
 	//Dependecies injection
 	@Autowired
 	private CalendarService service;
-
 	public CalendarController(CalendarService service) {
 		this.service = service;
 	}
@@ -32,7 +32,7 @@ public class CalendarController {
 	 *
 	 * @param model the Model object for adding attributes to the view
 	 * @param month the month to display
-	 * @param year  the year to display (optional)
+	 * @param year the year to display (optional)
 	 * @return the name of the calendar view template
 	 */
 	@GetMapping("/calendar")
@@ -69,7 +69,7 @@ public class CalendarController {
 	 *
 	 * @param model the Model object for adding attributes to the view
 	 * @param month the current month
-	 * @param year  the current year
+	 * @param year the current year
 	 * @return a redirect URL to the next month's view
 	 */
 	@GetMapping("/calendar/next")
@@ -117,10 +117,16 @@ public class CalendarController {
 
 	//Sends the request to add a new Event
 	@PostMapping("/calendar/add")
-	public String addEvent(@ModelAttribute Event event) {
-		event.setType("regular");
-		service.save(event);
-		return "redirect:/calendar";
+	public String addEvent(@ModelAttribute Event event, RedirectAttributes redirectAttribute) {
+		try {
+			event.setType("regular");
+			service.save(event);
+			return "redirect:/calendar";
+		}
+		catch (Exception e) {
+		redirectAttribute.addFlashAttribute("error", e.getMessage());
+		return "redirect:/calendar/new";
+	}
 	}
 
 	//Deletes an existing event from mvc and service

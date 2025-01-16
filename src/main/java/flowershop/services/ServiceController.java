@@ -406,6 +406,7 @@ public class ServiceController {
 						calendarService.removeEvent(id);
 					} else {
 						event.setDate(startDate);
+						calendarService.save(event);
 					}
 				}
 			}

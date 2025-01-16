@@ -1,5 +1,6 @@
 package flowershop.calendar;
 
+import flowershop.clock.ClockService;
 import flowershop.services.ContractOrderService;
 import flowershop.services.EventOrderService;
 import flowershop.services.ReservationOrderService;
@@ -27,6 +28,8 @@ public class CalendarService {
 	private ReservationOrderService reservationOrderService;
 	@Autowired
 	private EventOrderService eventOrderService;
+	@Autowired
+	private ClockService clockService;
 
 	public CalendarService(EventRepository eventRepository) {
 		this.eventRepository = eventRepository;
@@ -46,7 +49,11 @@ public class CalendarService {
 	 * @return The saved {@link Event}.
 	 */
 	public Event save(Event event) {
-		return eventRepository.save(event);
+
+		if(event.getDate().isAfter(clockService.now()))
+			return eventRepository.save(event);
+		throw new IllegalArgumentException("Event date is in the past");
+
 	}
 
 	/**
