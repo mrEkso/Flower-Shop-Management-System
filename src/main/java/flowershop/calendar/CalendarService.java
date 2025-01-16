@@ -20,21 +20,26 @@ public class CalendarService {
 	 * Set the desired dependencies
 	 * for {@link Event}
 	 */
-	@Autowired
 	private EventRepository eventRepository;
-	@Autowired
+
 	private ContractOrderService contractOrderService;
-	@Autowired
+
 	private ReservationOrderService reservationOrderService;
-	@Autowired
+
 	private EventOrderService eventOrderService;
-	@Autowired
+
 	private ClockService clockService;
 
 
 
-	public CalendarService(EventRepository eventRepository) {
+	public CalendarService(EventRepository eventRepository,
+						   EventOrderService eventOrderService, ContractOrderService contractOrderService,
+						   ReservationOrderService reservationOrderService, ClockService clockService) {
 		this.eventRepository = eventRepository;
+		this.eventOrderService = eventOrderService;
+		this.contractOrderService = contractOrderService;
+		this.reservationOrderService = reservationOrderService;
+		this.clockService = clockService;
 	}
 
 	/**
@@ -52,9 +57,9 @@ public class CalendarService {
 	 */
 	public Event save(Event event) {
 
-		//if(event.getDate().isAfter(clockService.now()))
+		if(event.getDate().isAfter(LocalDateTime.now()))
 			return eventRepository.save(event);
-		//throw new IllegalArgumentException("Event date is in the past");
+		throw new IllegalArgumentException("Event date is in the past");
 
 	}
 
@@ -131,30 +136,32 @@ public class CalendarService {
 		while (!currentDay.isAfter(endOfGrid)) {
 			CalendarDay calendarDay = new CalendarDay(currentDay);
 			for (Event event : events) {
-				if (event.getDate().toLocalDate().equals(currentDay)) {
-
-					switch (event.getType()) {
-						case "event":
-							event.setName(eventOrderService.getById(event.getOrderId()).get()
-								.getClient().getName() + "'s Event");
-							calendarDay.addEvent(event);
-							break;
-						case "contract":
-							event.setName(contractOrderService.getById(event.getOrderId()).get()
-								.getClient().getName() + "'s Contract");
-							calendarDay.addEvent(event);
-							break;
-						case "reservation":
-							event.setName(reservationOrderService.getById(event.getOrderId()).get()
-								.getClient().getName() + "'s Reservation");
-							calendarDay.addEvent(event);
-							break;
-						default:
-							calendarDay.addEvent(event);
-							break;
-					}
-
+				if (!event.getDate().toLocalDate().equals(currentDay)) {
+					continue;
 				}
+
+				switch (event.getType()) {
+					case "event":
+						event.setName(eventOrderService.getById(event.getOrderId()).get()
+							.getClient().getName() + "'s Event");
+						calendarDay.addEvent(event);
+						break;
+					case "contract":
+						event.setName(contractOrderService.getById(event.getOrderId()).get()
+							.getClient().getName() + "'s Contract");
+						calendarDay.addEvent(event);
+						break;
+					case "reservation":
+						event.setName(reservationOrderService.getById(event.getOrderId()).get()
+							.getClient().getName() + "'s Reservation");
+						calendarDay.addEvent(event);
+						break;
+					default:
+						calendarDay.addEvent(event);
+						break;
+				}
+
+
 			}
 			calendarDay.setState(currentDay.getMonth() == firstDayOfMonth.getMonth());
 			calendarDays.add(calendarDay);

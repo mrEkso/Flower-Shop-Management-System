@@ -85,7 +85,7 @@ public class OrderCatalogInitializer implements DataInitializer {
 		// Create and save orders using OrderFactory
 		// ContractOrders
 		ContractOrder contractOrder = orderFactory.createContractOrder(
-			"Recurring", "weekly", LocalDateTime.now(), LocalDateTime.now().plusYears(1),
+			"Recurring", "weekly", LocalDateTime.now().plusDays(1), LocalDateTime.now().plusYears(1),
 			"Nöthnitzer Str. 46, 01187 Dresden", client1, "Weekly flower delivery " +
 				"+ flower arrangement + watering");
 		contractOrder.setPaymentMethod(Cash.CASH);
@@ -113,7 +113,7 @@ public class OrderCatalogInitializer implements DataInitializer {
 
 		// ReservationOrders
 		ReservationOrder reservationOrder = orderFactory.createReservationOrder(
-			LocalDateTime.now(), client2);
+			LocalDateTime.now().plusDays(1), client2);
 		reservationOrder.addOrderLine(roseLilyBouquet, Quantity.of(5));
 		reservationOrder.setPaymentMethod(new CardPayment());
 		reservationOrderRepository.save(reservationOrder);

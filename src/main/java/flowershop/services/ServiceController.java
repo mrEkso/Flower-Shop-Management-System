@@ -197,6 +197,9 @@ public class ServiceController {
 			if (startDate.isAfter(endDate)) {
 				throw new IllegalArgumentException("Start date cannot be later than end date");
 			}
+			if (startDate.isBefore(clockService.now())) {
+				throw new IllegalArgumentException("Event date and time cannot be in the past");
+			}
 			ContractOrder contractOrder = orderFactory.createContractOrder(contractType, frequency,
 				startDate, endDate, address, getOrCreateClient(clientName, phone), notes);
 			if ("Recurring".equals(contractType)) {
@@ -252,7 +255,7 @@ public class ServiceController {
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$")) {
 				throw new IllegalArgumentException("Invalid phone number format");
 			}
-			if (eventDate.isBefore(LocalDateTime.now())) {
+			if (eventDate.isBefore(clockService.now())) {
 				throw new IllegalArgumentException("Event date and time cannot be in the past");
 			}
 			EventOrder eventOrder = orderFactory.createEventOrder(eventDate,
@@ -291,7 +294,7 @@ public class ServiceController {
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$")) {
 				throw new IllegalArgumentException("Invalid phone number format");
 			}
-			if (reservationDateTime.isBefore(LocalDateTime.now())) {
+			if (reservationDateTime.isBefore(clockService.now())) {
 				throw new IllegalArgumentException("Reservation date and time cannot be in the past");
 			}
 			ReservationOrder reservationOrder = orderFactory.createReservationOrder(reservationDateTime,
