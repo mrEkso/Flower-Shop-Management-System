@@ -204,6 +204,9 @@ public class ServiceController {
 			} else if ("custom".equals(frequency)) {
 				contractOrder.setCustomFrequency(customFrequency);
 				contractOrder.setCustomUnit(customUnit);
+				calendarService.removeReccuringEvent(UUID.fromString(contractOrder.getId().toString()));
+				calendarService.createReccuringEvent("Contract for " + clientName, startDate, endDate, notes,
+					frequency, "contract", UUID.fromString(contractOrder.getId().toString()), customFrequency);
 			} else {
 				contractOrder.setFrequency("One-Time");
 			}
@@ -382,14 +385,13 @@ public class ServiceController {
 			contractOrder.setPaymentMethod(paymentMethod);
 			if ("Recurring".equals(contractType)) {
 				contractOrder.setFrequency(frequency);
+			} else if ("custom".equals(frequency) && customFrequency != null && customUnit != null) {
+				contractOrder.setCustomFrequency(customFrequency);
+				contractOrder.setCustomUnit(customUnit);
 			} else {
 				contractOrder.setFrequency(null);
 				contractOrder.setCustomFrequency(null);
 				contractOrder.setCustomUnit(null);
-			}
-			if ("custom".equals(frequency) && customFrequency != null && customUnit != null) {
-				contractOrder.setCustomFrequency(customFrequency);
-				contractOrder.setCustomUnit(customUnit);
 			}
 			Event event = calendarService.findEventByUUID(id);
 			if (event != null) {
@@ -398,14 +400,24 @@ public class ServiceController {
 						calendarService.removeReccuringEvent(id);
 					} else {
 						calendarService.removeReccuringEvent(id);
-						calendarService.createReccuringEvent("Contract for " +
-							clientName, startDate, endDate, notes, frequency, "contract", id);
+						if(customFrequency == null) {
+							customFrequency = 1;
+						}
+						if(customUnit == null) {
+							calendarService.createReccuringEvent("Contract for " +
+								clientName, startDate, endDate, notes, frequency, "contract", id, customFrequency);
+						}
+						else{
+							calendarService.createReccuringEvent("Contract for " +
+								clientName, startDate, endDate, notes, customUnit, "contract", id, customFrequency);
+						}
 					}
 				} else {
 					if (orderStatus.equals("CANCELED") || orderStatus.equals("COMPLETED")) {
 						calendarService.removeEvent(id);
 					} else {
 						event.setDate(startDate);
+						calendarService.save(event);
 					}
 				}
 			}
@@ -505,6 +517,7 @@ public class ServiceController {
 					calendarService.removeEvent(id);
 				} else {
 					event.setDate(eventDate);
+					calendarService.save(event);
 				}
 			}
 			return "redirect:/services";
@@ -587,6 +600,7 @@ public class ServiceController {
 					calendarService.removeEvent(id);
 				} else {
 					event.setDate(reservationDateTime);
+					calendarService.save(event);
 				}
 
 			}

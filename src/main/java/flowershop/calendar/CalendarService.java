@@ -161,7 +161,8 @@ public class CalendarService {
 									 String description,
 									 String frequency,
 									 String type,
-									 UUID orderId) {
+									 UUID orderId,
+									 Integer interval) {
 		LocalDateTime current = startDate;
 		if (frequency == null) {
 			Event event = new Event(name, startDate, description, type, orderId);
@@ -172,13 +173,16 @@ public class CalendarService {
 			Event event = new Event(name, current, description, type, orderId);
 			save(event);
 			current = switch (frequency) {
-				case "daily" -> current.plusDays(1);
-				case "weekly" -> current.plusWeeks(1);
-				case "monthly" -> current.plusMonths(1);
+				case "daily", "day" -> current.plusDays(interval);
+				case "weekly", "week" -> current.plusWeeks(interval);
+				case "monthly", "month" -> current.plusMonths(interval);
+				case "year" -> current.plusYears(interval);
 				default -> current.plusDays(1);
 			};
 		}
 	}
+
+
 
 	/**
 	 * Removes all {@link Event} instances with the specified UUID.

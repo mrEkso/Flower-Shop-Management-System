@@ -101,7 +101,7 @@ public class OrderFactory {
 			startDate, endDate, address, client, notes);
 		if (order.getContractType().equalsIgnoreCase("recurring")) {
 			calendarService.createReccuringEvent(client.getName() + "'s Contract", startDate,
-				endDate, notes, frequency, "contract", UUID.fromString(order.getId().toString()));
+				endDate, notes, frequency, "contract", UUID.fromString(order.getId().toString()), 1);
 		} else {
 			calendarService.save(new Event(client.getName() + "'s Contract", startDate, notes,
 				"contract", UUID.fromString(order.getId().toString())));
