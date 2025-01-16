@@ -426,13 +426,15 @@ public class ServiceController {
 									  LocalDateTime startDate, LocalDateTime endDate, String notes, String clientName,
 									  String orderStatus) {
 		Event event = calendarService.findEventByUUID(id);
-		if (event == null) return;
-
+		if (event == null) {
+			return;
+		}
 		boolean isCanceledOrCompleted = "CANCELED".equals(orderStatus) || "COMPLETED".equals(orderStatus);
-
 		if (complicatedConditionCheck(frequency)) {
 			calendarService.removeReccuringEvent(id);
-			if (isCanceledOrCompleted) return;
+			if (isCanceledOrCompleted) {
+				return;
+			}
 			customFrequency = Objects.requireNonNullElse(customFrequency, 1);
 			String unit = Objects.requireNonNullElse(customUnit, frequency);
 			calendarService.createReccuringEvent("Contract for " + clientName, startDate, endDate, notes, unit,
