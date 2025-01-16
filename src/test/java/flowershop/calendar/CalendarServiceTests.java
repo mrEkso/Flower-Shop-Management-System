@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,6 +70,21 @@ public class CalendarServiceTests {
 		calendarService.delete(eventId);
 		verify(eventRepository, times(1)).deleteById(eventId);
 	}
+
+	@Test
+	void testRemoveEvent() {
+
+		UUID orderId = UUID.randomUUID();
+		Event event1 = new Event("Event 1", LocalDateTime.now(), "Description 1", "type1", orderId);
+		Event event2 = new Event("Event 2", LocalDateTime.now(), "Description 2", "type2", UUID.randomUUID());
+		List<Event> events = List.of(event1, event2);
+
+		Mockito.when(eventRepository.findAll()).thenReturn(events);
+		calendarService.removeEvent(orderId);
+		Mockito.verify(eventRepository, Mockito.times(1)).deleteById(event1.getId());
+//		Mockito.verify(eventRepository, Mockito.never()).deleteById(event2.getId());
+	}
+
 
 
 	@Test

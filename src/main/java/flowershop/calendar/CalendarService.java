@@ -131,30 +131,31 @@ public class CalendarService {
 		while (!currentDay.isAfter(endOfGrid)) {
 			CalendarDay calendarDay = new CalendarDay(currentDay);
 			for (Event event : events) {
-				if (event.getDate().toLocalDate().equals(currentDay)) {
-
-					switch (event.getType()) {
-						case "event":
-							event.setName(eventOrderService.getById(event.getOrderId()).get()
-								.getClient().getName() + "'s Event");
-							calendarDay.addEvent(event);
-							break;
-						case "contract":
-							event.setName(contractOrderService.getById(event.getOrderId()).get()
-								.getClient().getName() + "'s Contract");
-							calendarDay.addEvent(event);
-							break;
-						case "reservation":
-							event.setName(reservationOrderService.getById(event.getOrderId()).get()
-								.getClient().getName() + "'s Reservation");
-							calendarDay.addEvent(event);
-							break;
-						default:
-							calendarDay.addEvent(event);
-							break;
-					}
-
+				if (!event.getDate().toLocalDate().equals(currentDay)) {
+					continue;
 				}
+				switch (event.getType()) {
+					case "event":
+						event.setName(eventOrderService.getById(event.getOrderId()).get()
+							.getClient().getName() + "'s Event");
+						calendarDay.addEvent(event);
+						break;
+					case "contract":
+						event.setName(contractOrderService.getById(event.getOrderId()).get()
+							.getClient().getName() + "'s Contract");
+						calendarDay.addEvent(event);
+						break;
+					case "reservation":
+						event.setName(reservationOrderService.getById(event.getOrderId()).get()
+							.getClient().getName() + "'s Reservation");
+						calendarDay.addEvent(event);
+						break;
+					default:
+						calendarDay.addEvent(event);
+						break;
+				}
+
+
 			}
 			calendarDay.setState(currentDay.getMonth() == firstDayOfMonth.getMonth());
 			calendarDays.add(calendarDay);
