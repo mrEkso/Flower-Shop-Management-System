@@ -11,6 +11,8 @@
 // Ausführung der positiven und negativen Erfahrungen, die im Softwarepraktikum gesammelt wurden
 Ich habe erlebt, wie man in einer großen Gruppe arbeitet und wie schnell alles unübersichtlich wird, es sei denn, gutes Managment ist vorhanden.  
 
+Als Scrum-Master darf ich bestätigen, dass es kein Scrum im Praktikum verplant war. Aus anderen Kursen habe ich mehr über Scrum gelernt, hier aber nichts.  
+
 == Welche Erfahrungen habe ich mit der Zusammenarbeit im Team gemacht?
 // Kurze Beschreibung der Zusammenarbeit im Team. Was lief gut? Was war verbesserungswürdig? Was würden Sie das nächste Mal anders machen?
 Es war nicht angenehm, als nicht alle seine Arbeit leisten und es zu Verspätungen kommen musste. 
