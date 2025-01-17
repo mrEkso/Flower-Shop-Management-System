@@ -32,7 +32,6 @@ public class CalendarService {
 	private ClockService clockService;
 
 
-
 	public CalendarService(EventRepository eventRepository,
 						   EventOrderService eventOrderService, ContractOrderService contractOrderService,
 						   ReservationOrderService reservationOrderService, ClockService clockService) {
@@ -57,11 +56,10 @@ public class CalendarService {
 	 * @return The saved {@link Event}.
 	 */
 	public Event save(Event event) {
-
-		if(event.getDate().isAfter(LocalDateTime.now()))
+		if (event.getDate().isAfter(LocalDateTime.now())) {
 			return eventRepository.save(event);
+		}
 		throw new IllegalArgumentException("Event date is in the past");
-
 	}
 
 	/**
@@ -199,7 +197,6 @@ public class CalendarService {
 			};
 		}
 	}
-
 
 
 	/**

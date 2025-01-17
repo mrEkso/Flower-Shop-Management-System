@@ -158,7 +158,7 @@
                                 <span th:text="${order.value}"></span>
                                 <form th:action="@{/getReceipt}" method="get" style="display:inline;">
                                     <input type="hidden" name="orderId" th:value="${order.id}" />
-                                    <button type="submit">Get Receipt</button>
+                                    <button type="submit" th:text="#{finances.order.getReceipt}">Get Receipt</button>
                                 </form>
                             </td>
                         </tr>

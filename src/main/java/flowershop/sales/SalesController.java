@@ -391,7 +391,7 @@ public class SalesController {
 	) {
 		Product product = productService.getProductById(productId).get();
 		int tmpQuantity = (quantityInput == null || quantityInput == 0) ? 1 : quantityInput;
-		sellCart.addOrUpdateItem(product, -1 * (long)tmpQuantity);
+		sellCart.addOrUpdateItem(product, -1 * (long) tmpQuantity);
 
 		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
 		model.addAttribute("fullSellPrice", fp);
@@ -487,13 +487,12 @@ public class SalesController {
 
 		int tmpQuantity = (quantityInput == null || quantityInput == 0) ? 1 : quantityInput;
 
-		buyCart.addOrUpdateItem(product, -1 * (long)tmpQuantity);
+		buyCart.addOrUpdateItem(product, -1 * (long) tmpQuantity);
 
 		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
 		model.addAttribute("fullBuyPrice", fp);
 		return "redirect:/buy";
 	}
-
 
 
 	@GetMapping("/giftcard")

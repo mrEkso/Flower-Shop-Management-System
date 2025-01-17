@@ -37,7 +37,7 @@ public class CalendarController {
 	 *
 	 * @param model the Model object for adding attributes to the view
 	 * @param month the month to display
-	 * @param year the year to display (optional)
+	 * @param year  the year to display (optional)
 	 * @return the name of the calendar view template
 	 */
 	@GetMapping("/calendar")
@@ -77,7 +77,7 @@ public class CalendarController {
 	 *
 	 * @param model the Model object for adding attributes to the view
 	 * @param month the current month
-	 * @param year the current year
+	 * @param year  the current year
 	 * @return a redirect URL to the next month's view
 	 */
 	@GetMapping("/calendar/next")
@@ -130,11 +130,10 @@ public class CalendarController {
 			event.setType("regular");
 			service.save(event);
 			return "redirect:/calendar";
+		} catch (Exception e) {
+			redirectAttribute.addFlashAttribute("error", e.getMessage());
+			return "redirect:/calendar/new";
 		}
-		catch (Exception e) {
-		redirectAttribute.addFlashAttribute("error", e.getMessage());
-		return "redirect:/calendar/new";
-	}
 	}
 
 	//Deletes an existing event from mvc and service

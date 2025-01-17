@@ -87,9 +87,11 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 	public String getClientPhone() {
 		return clientPhone;
 	}
+
 	public Map<String, Double> getNamePriceMap() {
 		return namePriceMap;
 	}
+
 	public String getAdress() {
 		return adress;
 	}
@@ -234,7 +236,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 		}
 	}
 
-	private void fillTheMaps(Order order){
+	private void fillTheMaps(Order order) {
 		Totalable<OrderLine> kindaItemQuantityMap = order.getOrderLines();
 		for (OrderLine orderLine : kindaItemQuantityMap) {
 			nameQuantityMap.put(orderLine.getProductName(), orderLine.getQuantity());
@@ -247,7 +249,7 @@ public class AccountancyEntryWrapper extends AccountancyEntry {
 			if (!lst.isEmpty() && lst.getFirst().getName().equals(name)) {
 				productQuantityMap.merge(lst.getFirst(), orderLine.getQuantity(), Quantity::add);
 			} else if (order instanceof EventOrder || order instanceof ReservationOrder) {
-				addFlowersFromBouquettes(name,orderLine);
+				addFlowersFromBouquettes(name, orderLine);
 			}
 		}
 	}

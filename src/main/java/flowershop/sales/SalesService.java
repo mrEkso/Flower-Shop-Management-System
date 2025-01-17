@@ -76,8 +76,12 @@ public class SalesService {
 
 			simpleOrder.addOrderLine(p, cartItem.getQuantity());
 		}
-		
-		System.out.println("---------------------");
+		System.out.println("------GET-TOTAL------");
+		System.out.println(simpleOrder.getTotal());
+		simpleOrder.getOrderLines().stream().forEach(ol -> {
+			System.out.println(ol.getPrice());
+		});
+		System.out.println("--------END--------");
 		simpleOrder.setPaymentMethod(paymentMethod);
 		simpleOrderService.create(simpleOrder);
 		cart.clear();

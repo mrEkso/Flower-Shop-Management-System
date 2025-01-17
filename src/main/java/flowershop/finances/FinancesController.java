@@ -346,7 +346,7 @@ public class FinancesController {
 			return ResponseEntity.badRequest()
 				.body("No such month exists, dummy ;)".getBytes(StandardCharsets.UTF_8));
 		}
-		return cashRegisterService.getMonthReportOutput(month,year);
+		return cashRegisterService.getMonthReportOutput(month, year);
 
 	}
 
