@@ -2,13 +2,17 @@ package flowershop.sales;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import java.util.UUID;
 
+import flowershop.product.Flower;
 import flowershop.product.ProductService;
 import org.junit.jupiter.api.Test;
 import org.salespointframework.catalog.Product;
+import org.salespointframework.catalog.Product.ProductIdentifier;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.salespointframework.order.Cart;
@@ -235,7 +239,6 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 		Cart sellCart = controller.initializeSellCart();
 
 		Product product = productService.findAllFlowers().iterator().next();
-
 		String sellView = controller.addToSellCart(model, UUID.fromString(product.getId().toString()), sellCart, null);
 		assertThat(sellView).isEqualTo("redirect:/sell");
 

@@ -98,6 +98,7 @@ public class SalesController {
 
 		// Create a Map with adjusted quantities
 		Map<ProductIdentifier, Integer> productQuantities = new HashMap<>();
+		
 		for (Flower flower : flowers) {
 			int adjustedQuantity = flower.getQuantity() - getReservedQuantity(flower.getName());
 			productQuantities.put(flower.getId(), Math.max(adjustedQuantity, 0));
@@ -336,9 +337,13 @@ public class SalesController {
 
 		Integer tmpQuantity = (quantityInput == null || quantityInput == 0) ? 1 : quantityInput;
 
-		if (sellCart.getQuantity(product).getAmount().intValue() + tmpQuantity <=
-			(product instanceof Flower ? ((Flower) product).getQuantity() :
-				((Bouquet) product).getQuantity())) {
+		if ((sellCart.getQuantity(product).getAmount().intValue() + tmpQuantity <=
+				(product instanceof Flower ? ((Flower) product).getQuantity() :
+				((Bouquet) product).getQuantity())) 
+			&& ((product instanceof Flower ? 
+					((Flower) product).getQuantity() :
+					((Bouquet) product).getQuantity()) 
+				- getReservedQuantity(product.getName()) > 0)) {
 			sellCart.addOrUpdateItem(product, tmpQuantity);
 
 			double fp = salesService.calculateFullCartPrice(model, sellCart, true);
