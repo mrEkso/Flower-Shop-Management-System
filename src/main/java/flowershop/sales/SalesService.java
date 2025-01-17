@@ -181,12 +181,18 @@ public class SalesService {
 
 				if (bi.getProduct() instanceof Flower flower) {
 					pricePerItem = isSellPage
-						? flower.getPricing().getSellPrice().getNumber().doubleValue()
-						: flower.getPricing().getBuyPrice().getNumber().doubleValue();
+						? productService.findAllFlowers().stream()
+							.filter(f -> f.getId().equals(flower.getId())).findFirst().orElse(null)
+							.getPricing().getSellPrice().getNumber().doubleValue()
+						: productService.findAllFlowers().stream()
+							.filter(f -> f.getId().equals(flower.getId())).findFirst().orElse(null)
+							.getPricing().getBuyPrice().getNumber().doubleValue();
 
 				} else if (bi.getProduct() instanceof Bouquet bouquet && isSellPage) {
 					// For buy page, pricePerItem remains 0 as Bouquets are not available
-					pricePerItem = bouquet.getPrice().getNumber().doubleValue();
+					pricePerItem = productService.findAllBouquets().stream()
+						.filter(b -> b.getId().equals(bouquet.getId())).findFirst().orElse(null)
+						.getPrice().getNumber().doubleValue();
 				}
 				// If it's not a Flower or Bouquet, pricePerItem remains 0
 				return pricePerItem * bi.getQuantity().getAmount().doubleValue();
