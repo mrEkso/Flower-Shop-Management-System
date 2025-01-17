@@ -206,7 +206,7 @@ image::./models/images/package_diagram_h.svg[package diagram, 100%, 100%, pdfwid
 
 === Product
 [[class_diagram_product]]
-image::./models/images/product_package_a.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für product package in UML", align=center]
+image::./models/images/product_package_b.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für product package in UML", align=center]
 
 === Sales
 [[class_diagram_sales]]
