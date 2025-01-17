@@ -1,5 +1,6 @@
 package flowershop.sales;
 
+import flowershop.finances.BalanceService;
 import flowershop.product.*;
 import flowershop.services.OrderFactory;
 import org.javamoney.moneta.Money;
@@ -27,7 +28,8 @@ class SalesServiceTests {
 	private ApplicationEventPublisher eventPublisher;
 	private SalesService salesService;
 	private GiftCardService giftCardService;
-
+	private BalanceService balanceService;
+	
 	@BeforeEach
 	void setUp() {
 		productService = mock(ProductService.class);
@@ -36,7 +38,8 @@ class SalesServiceTests {
 		wholesalerOrderService = mock(WholesalerOrderService.class);
 		eventPublisher = mock(ApplicationEventPublisher.class);
 		giftCardService = mock(GiftCardService.class);
-		salesService = new SalesService(productService, simpleOrderService, orderFactory, wholesalerOrderService, eventPublisher, giftCardService);
+		balanceService = mock(BalanceService.class);
+		salesService = new SalesService(productService, simpleOrderService, orderFactory, wholesalerOrderService, eventPublisher, giftCardService, balanceService);
 	}
 
 	@Test
@@ -45,6 +48,8 @@ class SalesServiceTests {
 		Flower flower = new Flower("Rose", new Pricing(Money.of(20, "EUR"), Money.of(40, "EUR")), "Red", 10);
 
 		cart.addOrUpdateItem(flower, 5);
+		
+		productService.addFlower(flower);
 
 		SimpleOrder simpleOrder = mock(SimpleOrder.class);
 		when(orderFactory.createSimpleOrder()).thenReturn(simpleOrder);
@@ -70,7 +75,7 @@ class SalesServiceTests {
 	}
 
 	@Test
-	void buyProductsFromBasket_shouldBuyProductsSuccessfully() {
+	void buyProductsFromBasket_shouldBuyProductsSuccessfully() throws InsufficientFundsException {
 		Cart cart = new Cart();
 		Flower flower = new Flower("Lily", new Pricing(Money.of(20, "EUR"), Money.of(40, "EUR")), "White", 10);
 		Flower flower2 = new Flower("Rose", new Pricing(Money.of(10, "EUR"), Money.of(20, "EUR")), "Red", 15);

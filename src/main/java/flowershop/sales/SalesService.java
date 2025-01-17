@@ -1,5 +1,6 @@
 package flowershop.sales;
 
+import flowershop.finances.BalanceService;
 import flowershop.product.*;
 import flowershop.services.OrderFactory;
 import org.javamoney.moneta.Money;
@@ -22,16 +23,19 @@ public class SalesService {
 	private final WholesalerOrderService wholesalerOrderService;
 	private final ApplicationEventPublisher eventPublisher;
 	private final GiftCardService giftCardService;
+	private final BalanceService balanceService;
 
 	public SalesService(ProductService productService, SimpleOrderService simpleOrderService,
 						OrderFactory orderFactory, WholesalerOrderService wholesalerOrderService,
-						ApplicationEventPublisher eventPublisher, GiftCardService giftCardService) {
+						ApplicationEventPublisher eventPublisher, GiftCardService giftCardService,
+						BalanceService balanceService) {
 		this.productService = productService;
 		this.simpleOrderService = simpleOrderService;
 		this.orderFactory = orderFactory;
 		this.wholesalerOrderService = wholesalerOrderService;
 		this.eventPublisher = eventPublisher;
 		this.giftCardService = giftCardService;
+		this.balanceService = balanceService;
 	}
 
 	/**
@@ -61,9 +65,17 @@ public class SalesService {
 			} else {
 				throw new IllegalArgumentException("Unsupported product type");
 			}
-			simpleOrder.addOrderLine(product, cartItem.getQuantity());
-		}
 
+			Product p = productService.getAllProducts().stream()
+				.filter(f -> f.getId().equals(product.getId()))
+				.findFirst().orElse(product);
+
+			System.out.println(p.getName() + "\t" + 
+			(p instanceof Flower? ((Flower)p).getPricing().getSellPrice().getNumber().doubleValue()
+				: ((Bouquet)p).getPrice().getNumber().doubleValue()));
+
+			simpleOrder.addOrderLine(p, cartItem.getQuantity());
+		}
 		simpleOrder.setPaymentMethod(paymentMethod);
 		simpleOrderService.create(simpleOrder);
 		cart.clear();
@@ -101,7 +113,8 @@ public class SalesService {
 	 * @param paymentMethod the payment method for the purchase
 	 * @throws IllegalArgumentException if the cart is null, empty, or contains unsupported product types
 	 */
-	public void buyProductsFromBasket(Cart cart, String paymentMethod) throws IllegalArgumentException {
+	public void buyProductsFromBasket(Cart cart, String paymentMethod)
+		throws IllegalArgumentException, InsufficientFundsException {
 		if (cart == null || cart.isEmpty()) {
 			throw new IllegalArgumentException("Basket is null or empty");
 		}
@@ -110,6 +123,9 @@ public class SalesService {
 		addFlowersFromCart(cart, wholesalerOrder);
 		wholesalerOrder.setPaymentMethod(paymentMethod);
 		wholesalerOrderService.create(wholesalerOrder);
+		if (balanceService.denies(wholesalerOrder)) {
+			throw new InsufficientFundsException();
+		}
 		cart.clear();
 		var event = OrderEvents.OrderPaid.of(wholesalerOrder);
 		eventPublisher.publishEvent(event); // Needed for Finances
@@ -173,12 +189,18 @@ public class SalesService {
 
 				if (bi.getProduct() instanceof Flower flower) {
 					pricePerItem = isSellPage
-						? flower.getPricing().getSellPrice().getNumber().doubleValue()
-						: flower.getPricing().getBuyPrice().getNumber().doubleValue();
+						? productService.findAllFlowers().stream()
+							.filter(f -> f.getId().equals(flower.getId())).findFirst().orElse(flower)
+							.getPricing().getSellPrice().getNumber().doubleValue()
+						: productService.findAllFlowers().stream()
+							.filter(f -> f.getId().equals(flower.getId())).findFirst().orElse(flower)
+							.getPricing().getBuyPrice().getNumber().doubleValue();
 
 				} else if (bi.getProduct() instanceof Bouquet bouquet && isSellPage) {
 					// For buy page, pricePerItem remains 0 as Bouquets are not available
-					pricePerItem = bouquet.getPrice().getNumber().doubleValue();
+					pricePerItem = productService.findAllBouquets().stream()
+						.filter(b -> b.getId().equals(bouquet.getId())).findFirst().orElse(bouquet)
+						.getPrice().getNumber().doubleValue();
 				}
 				// If it's not a Flower or Bouquet, pricePerItem remains 0
 				return pricePerItem * bi.getQuantity().getAmount().doubleValue();

@@ -25,7 +25,8 @@ public class MonthlyBillingService {
 	 * @param eventPublisher       the publisher for application events
 	 * @param orderManagement      the management system for orders
 	 */
-	public MonthlyBillingService(ContractOrderService contractOrderService, ApplicationEventPublisher eventPublisher, OrderManagement<ContractOrder> orderManagement) {
+	public MonthlyBillingService(ContractOrderService contractOrderService, ApplicationEventPublisher eventPublisher,
+								 OrderManagement<ContractOrder> orderManagement) {
 		Assert.notNull(contractOrderService, "ContractOrderService must not be null!");
 		Assert.notNull(eventPublisher, "ApplicationEventPublisher must not be null!");
 		Assert.notNull(orderManagement, "OrderManagement must not be null!");
@@ -43,8 +44,9 @@ public class MonthlyBillingService {
 	public void addMonthlyCharges() {
 		for (ContractOrder contract : contractOrderService.findAllActiveLastMonth()) {
 			// If the contract's end date has passed, mark it as paid
-			if (contract.getEndDate().isBefore(LocalDateTime.now())) orderManagement.payOrder(contract);
-			else {
+			if (contract.getEndDate().isBefore(LocalDateTime.now())) {
+				orderManagement.payOrder(contract);
+			} else {
 				// Publish an event indicating the order in last month has been paid
 				var event = OrderEvents.OrderPaid.of(contract);
 				eventPublisher.publishEvent(event); // Needed for Finances

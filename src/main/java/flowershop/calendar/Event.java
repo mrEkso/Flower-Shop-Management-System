@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -54,6 +55,7 @@ public class Event {
 
 	/**
 	 * Constructs an {@code Event} with the specified name, date, description, type, and order ID.
+	 *
 	 * @param name
 	 * @param date
 	 * @param description
@@ -154,9 +156,11 @@ public class Event {
 	public void setType(String type) {
 		this.type = type;
 	}
+
 	public UUID getOrderId() {
 		return orderId;
 	}
+
 	public void setOrderId(UUID orderId) {
 		this.orderId = orderId;
 	}

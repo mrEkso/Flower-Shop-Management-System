@@ -3,14 +3,11 @@ package flowershop.product;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Transient;
 import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.money.MonetaryAmount;
 
 @Entity
 public class Bouquet extends Product {
@@ -50,7 +47,9 @@ public class Bouquet extends Product {
 
 	public void setAdditionalPrice(Money additionalPrice) {
 
-		this.setPrice(Money.of(this.getPrice().getNumber().doubleValue() - this.additionalPrice.getNumber().doubleValue() + additionalPrice.getNumber().doubleValue(), "EUR"));
+		this.setPrice(Money.of(this.getPrice().getNumber().doubleValue() -
+			this.additionalPrice.getNumber().doubleValue() +
+			additionalPrice.getNumber().doubleValue(), "EUR"));
 
 		this.additionalPrice = additionalPrice;
 	}

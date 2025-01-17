@@ -54,7 +54,8 @@ public class ProductService {
 				removeFlowers(flower, quant);
 			}
 		}
-		//bouquet.addQuantity(bouquetQuantity); //this make the quantity of the created bouquet in the inventory 2 instead of 1
+		//bouquet.addQuantity(bouquetQuantity);
+		// this make the quantity of the created bouquet in the inventory 2 instead of 1
 		return productCatalog.save(bouquet);
 	}
 
@@ -219,6 +220,7 @@ public class ProductService {
 	public void updateSellPrice(Product product, double newSellPrice) {
 		if (product instanceof Flower flower) {
 			flower.getPricing().setSellPrice(Money.of(newSellPrice, "EUR"));
+			flower.setPrice(Money.of(newSellPrice, "EUR"));	
 		} else if (product instanceof Bouquet bouquet) {
 			bouquet.setAdditionalPrice(Money.of(newSellPrice, "EUR"));
 		} else {

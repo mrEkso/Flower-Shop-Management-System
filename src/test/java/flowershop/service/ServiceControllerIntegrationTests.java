@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -39,6 +40,7 @@ class ServiceControllerIntegrationTests {
 
 	@BeforeEach
 	void setUp() {
+		when(clockService.now()).thenReturn(LocalDateTime.now());
 		when(clockService.isOpen()).thenReturn(true);
 	}
 
@@ -193,8 +195,8 @@ class ServiceControllerIntegrationTests {
 				.param("frequency", "custom")
 				.param("customFrequency", "5")
 				.param("customUnit", "day")
-				.param("startDate", "2024-05-01T12:00")
-				.param("endDate", "2024-12-01T12:00")
+				.param("startDate", "2030-05-01T12:00")
+				.param("endDate", "2030-12-01T12:00")
 				.param("address", "123 Test Street")
 				.param("phone", "123456789")
 				.param("notes", "Test notes")
@@ -391,8 +393,8 @@ class ServiceControllerIntegrationTests {
 		mvc.perform(put("/services/contracts/edit/{id}", getFirstValidContractId())
 				.param("clientName", "Test Client Name")
 				.param("contractType", "Standard")
-				.param("startDate", "2024-01-01T12:30")
-				.param("endDate", "2024-12-01T12:30")
+				.param("startDate", "2030-01-01T12:30")
+				.param("endDate", "2030-12-01T12:30")
 				.param("address", "123 Test Street")
 				.param("phone", "123456789")
 				.param("paymentMethod", "CASH")
@@ -494,7 +496,7 @@ class ServiceControllerIntegrationTests {
 	void editEventOrderShouldUpdateDetails() throws Exception {
 		mvc.perform(put("/services/events/edit/{id}", getFirstValidEventId())
 				.param("clientName", "Updated Client")
-				.param("eventDate", "2024-01-01T12:30")
+				.param("eventDate", "2030-01-01T12:30")
 				.param("phone", "123456789")
 				.param("deliveryAddress", "Updated Address")
 				.param("paymentMethod", "Cash")
@@ -512,7 +514,7 @@ class ServiceControllerIntegrationTests {
 
 		mvc.perform(put("/services/events/edit/{id}", getFirstValidEventId())
 				.param("clientName", "Updated Client")
-				.param("eventDate", "2024-01-01T12:30")
+				.param("eventDate", "2028-01-01T12:30")
 				.param("phone", "123456789")
 				.param("deliveryAddress", "Updated Address")
 				.param("paymentMethod", "Cash")
@@ -573,7 +575,7 @@ class ServiceControllerIntegrationTests {
 		mvc.perform(put("/services/reservations/edit/{id}", getFirstValidReservationId())
 				.param("clientName", "Updated Client")
 				.param("paymentMethod", "Cash")
-				.param("reservationDateTime", "2024-05-01T12:00")
+				.param("reservationDateTime", "2030-05-01T12:00")
 				.param("phone", "123456789")
 				.param("orderStatus", "OPEN")
 				.param("reservationStatus", "IN_PROCESS")
@@ -633,12 +635,16 @@ class ServiceControllerIntegrationTests {
 
 	@SuppressWarnings("unchecked")
 	private <T> T getFirstValidOrderByType(Class<T> orderClass, String type) throws Exception {
-		return ((List<T>) Objects.requireNonNull(mvc.perform(get("/services"))
+		List<?> orders = (List<?>) Objects.requireNonNull(mvc.perform(get("/services"))
 				.andReturn()
 				.getModelAndView())
 			.getModel()
-			.get(type))
-			.getFirst();
+			.get(type);
+		if (!orders.isEmpty() && !orderClass.isInstance(orders.get(0))) {
+			throw new IllegalArgumentException("Invalid order type in response: expected "
+				+ orderClass.getName());
+		}
+		return (T) orders.getFirst();
 	}
 
 	private Order.OrderIdentifier getFirstValidContractId() throws Exception {

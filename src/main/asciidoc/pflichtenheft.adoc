@@ -23,8 +23,8 @@
 |0.6.4     | In Arbeit    | 03.11.2024     | Andrejs    | Cleanup
 |1.0    | Fertig    | 03.11.2024     | Andrejs    | Release
 |2.0    | Fertig    | 04.11.2024     | Alle    | Überarbeitung und Konsolidierung
+|2.1    | Aktualisiert    | 13.01.2025     | Andrejs    | Kundenwunsch (Gutscheinkarten) ergänzt.
 |===
-
 
 == Zusammenfassung
 
@@ -305,7 +305,7 @@ image::./models/images/sequence_diagram_101_g.svg[sequence diagram, 100%, 100%, 
 2. Sie wählt Blumen bzw. Sträuße aus Katalog aus und bestätigt den Kauf.
 3. Der Kunde bezahlt oder storniert. 
 |Extensions                 |-
-|Funktionale Anforderungen    |<<F0103>>, <<F0301>>, <<F0105>>
+|Funktionale Anforderungen    |<<F0101>>, <<F0103>>, <<F0008>>, , <<F9990>>
 |===
 
 [cols="1h, 3"]
@@ -579,6 +579,11 @@ Was das zu erstellende Programm auf alle Fälle leisten muss.
 | v0.2
 | Zugriffskontrolle und Berechtigungen 
 | Das System soll Login- und Logout-Funktionen bieten, um die Sicherheit zu gewährleisten.
+
+| [[F9990]]<<F9990>> (Abschließender Kundenwunsch)
+| v0.1
+| Gutscheinkarten
+| Das System soll es ermöglichen, Kunden Gutscheinkarten zu erteilen, um dann beim Verkauf "Gutschein" als Zahlungsmethode zu wählen. Die Bilanz auf dem Gutschein soll dabei berücksichtigt und jeweils ggf. aktualisiert werden. 
 
 |===
 

@@ -42,9 +42,8 @@
                 th:placeholder="#{sell.search}"
                 th:value="${searchInput}"
               />
-              <!-- <div id="filter-div"> -->
               <select id="filter-dd" name="filterItem" th:value="${filterItem}">
-                <option value="">All</option>
+                <option value="" th:text="#{buy.filter.all}"></option>
                 <option
                   th:each="type : ${typeList}"
                   th:value="${type}"
@@ -52,7 +51,6 @@
                   th:selected="${type == filterItem}"
                 ></option>
               </select>
-              <!-- </div> -->
               <button type="submit">
                 <img th:src="@{/resources/img/filter.png}" />
               </button>
@@ -64,13 +62,13 @@
         </div>
 
         <div class="basket col-2 vh-100">
-          <h2 class="basket-head">Modify order</h2>
+          <h2 class="basket-head" th:text="#{basket.mod-order}"></h2>
           <div class="basket-head">
             <img
               class="basket-img"
               th:src="@{/resources/img/shopping-basket.png}"
             />
-            <b class="basket-header">Your basket</b>
+            <b class="basket-header" th:text="#{basket.your-basket}"></b>
           </div>
           <table class="basket-table">
             <tbody>
@@ -99,14 +97,11 @@
                     <div class="basket-card-body">
                       <div class="basket-card-inputs">
                         <form method="post" action="/update-sell-cart">
-                          <!-- Hidden field to identify the product -->
                           <input
                             type="hidden"
                             name="productId"
                             th:value="${selectedCart.product.id}"
                           />
-
-                          <!-- Input field for quantity -->
                           <label>
                             <input
                               class="basket-input-quantity"
@@ -117,8 +112,6 @@
                               value="1"
                             />
                           </label>
-
-                          <!-- Action buttons -->
                           <button
                             class="basket-minus-btn"
                             type="submit"
@@ -144,26 +137,28 @@
                       </div>
                       <p
                         class="basket-card-text"
-                        th:text="${selectedCart.quantity.getAmount.intValue()} + 'x' + ${selectedCart.product.price.number * 1.0} + ' EUR'"
+                        th:each="p : ${products}"
+                        th:if="${p.id == selectedCart.product.id}"
+                        th:text="${selectedCart.quantity.getAmount.doubleValue* 1.0} + 'x ' 
+                          + ${(p instanceof T(flowershop.product.Bouquet) ? (p.price.number) 
+                            : (p.pricing.sellPrice.number)) * 1.0} + ' EUR'"
                       ></p>
                     </div>
-
                     <div class="basket-card-footer">
                       <span
-                        th:text="${(selectedCart.quantity.getAmount.doubleValue* 1.0) * selectedCart.product.price.number * 1.0} + ' EUR'"
+                        th:each="p : ${products}"
+                        th:if="${p.id == selectedCart.product.id}"
+                        th:text="${(selectedCart.quantity.getAmount.doubleValue* 1.0) * (p instanceof T(flowershop.product.Bouquet) ? (p.price.number) 
+                          : (p.pricing.sellPrice.number)) * 1.0} + ' EUR'"
                       ></span>
                     </div>
                   </div>
                 </td>
               </tr>
-              <!-- <tr>
-                    <td><b>Total:</b></td>
-                    <td th:text="${fullPrice} + ' EUR'"></td>
-                  </tr> -->
             </tbody>
           </table>
           <div class="basket-total-price" th:unless="${sellCart.isEmpty()}">
-            <b>Total:</b>
+            <b th:text="#{basket.label.total}"></b>
             <div th:text="${fullSellPrice} + ' EUR'"></div>
           </div>
           <div class="basket-footer" th:unless="${sellCart.isEmpty()}">
@@ -175,12 +170,16 @@
                     name="paymentMethod"
                     value="Cash"
                     checked
+                    th:text="#{radio-button.cash}"
                   />
-                  Cash
                 </label>
                 <label>
-                  <input type="radio" name="paymentMethod" value="Card" />
-                  Card
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="Card"
+                    th:text="#{radio-button.card}"
+                  />
                 </label>
                 <label>
                   <input
@@ -188,9 +187,8 @@
                     name="paymentMethod"
                     value="GiftCard"
                     id="giftCardRadio"
+                    th:text="#{radio-button.gift-card}"
                   />
-                  Gift Card
-                  <!-- Move the input inside a wrapper that depends on the radio -->
                   <div class="gift-card-input">
                     <input
                       type="text"
@@ -202,7 +200,6 @@
                   </div>
                 </label>
               </div>
-
               <input
                 class="basket-submit-btn"
                 type="submit"

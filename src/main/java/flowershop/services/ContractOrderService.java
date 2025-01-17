@@ -34,7 +34,8 @@ public class ContractOrderService {
 	 * @param orderManagement         the order management system
 	 * @throws IllegalArgumentException if any of the parameters are null
 	 */
-	public ContractOrderService(ContractOrderRepository contractOrderRepository, ProductCatalog productCatalog, OrderManagement<ContractOrder> orderManagement) {
+	public ContractOrderService(ContractOrderRepository contractOrderRepository, ProductCatalog productCatalog,
+								OrderManagement<ContractOrder> orderManagement) {
 		Assert.notNull(contractOrderRepository, "ContractOrderRepository must not be null!");
 		Assert.notNull(productCatalog, "ProductCatalog must not be null!");
 		Assert.notNull(orderManagement, "OrderManagement must not be null!");
@@ -89,7 +90,8 @@ public class ContractOrderService {
 		YearMonth lastMonth = YearMonth.now().minusMonths(1);
 		LocalDateTime startOfLastMonth = lastMonth.atDay(1).atStartOfDay();
 		LocalDateTime endOfLastMonth = lastMonth.atEndOfMonth().atStartOfDay();
-		return contractOrderRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanEqualAndOrderStatus(endOfLastMonth, startOfLastMonth, OrderStatus.OPEN);
+		return contractOrderRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanEqualAndOrderStatus(
+			endOfLastMonth, startOfLastMonth, OrderStatus.OPEN);
 	}
 
 	/**
@@ -123,43 +125,88 @@ public class ContractOrderService {
 	 *
 	 * @param order        the contract order to update
 	 * @param products     a map of product IDs and their quantities
+	 * @param servicePrice the new service price for the order
 	 * @param orderStatus  the new status of the order
 	 * @param cancelReason the reason for cancellation, if applicable
 	 * @return the updated contract order
 	 * @throws IllegalArgumentException if the order is already canceled, not paid yet, or cannot be canceled
 	 */
-	public ContractOrder update(ContractOrder order, Map<String, String> products, int servicePrice, String orderStatus, String cancelReason) {
-		if (order.getOrderStatus().equals(OrderStatus.CANCELED))
-			throw new IllegalArgumentException("Order is already canceled!");
-		if (order.getOrderStatus().equals(OrderStatus.OPEN)) {
-			if (OrderStatus.COMPLETED.name().equals(orderStatus))
-				throw new IllegalArgumentException("Order is not paid yet!");
-			if (OrderStatus.CANCELED.name().equals(orderStatus)) {
-				orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ? "Reason not provided" : cancelReason);
-				return contractOrderRepository.save(order);
+	public ContractOrder update(ContractOrder order, Map<String, String> products, int servicePrice,
+								String orderStatus, String cancelReason) {
+		switch (order.getOrderStatus()) {
+			case CANCELED -> throw new IllegalArgumentException("Order is already canceled!");
+			case OPEN -> handleOpenOrder(order, products, servicePrice, orderStatus, cancelReason);
+			case PAID -> handlePaidOrder(order, orderStatus);
+			case COMPLETED -> {
+				if (!OrderStatus.COMPLETED.name().equals(orderStatus)) {
+					throw new IllegalArgumentException("Order is already completed!");
+				}
 			}
-			List<ChargeLine> chargeLinesToRemove = order.getChargeLines().stream()
-				.filter(chargeLine -> chargeLine.getDescription().equals("Service Price"))
-				.toList();
-			chargeLinesToRemove.forEach(order::remove);
-			order.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
-			Map<UUID, Integer> incoming = extractProducts(products);
-			order.getOrderLines().toList().forEach(line -> {
-				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) order.remove(line);
-			});
-			incoming.forEach((productId, quantity) -> productCatalog.findById(Product.ProductIdentifier.of(productId.toString()))
-				.ifPresent(product -> {
-					order.getOrderLines(product).toList().forEach(order::remove);
-					order.addOrderLine(product, Quantity.of(quantity));
-				}));
-			if (OrderStatus.PAID.name().equals(orderStatus)) orderManagement.payOrder(order);
+			default -> throw new IllegalArgumentException("Unsupported order status: " + order.getOrderStatus());
 		}
-		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
-			OrderStatus.CANCELED.name().equals(orderStatus))
-			throw new IllegalArgumentException("Cannot cancel a paid order!");
-		if (order.getOrderStatus().equals(OrderStatus.PAID) &&
-			OrderStatus.COMPLETED.name().equals(orderStatus)) orderManagement.completeOrder(order);
 		return contractOrderRepository.save(order);
+	}
+
+	/**
+	 * Handles logic for orders with OPEN status.
+	 *
+	 * @param order        the contract order to update
+	 * @param products     a map of product IDs and their quantities
+	 * @param servicePrice the new service price for the order
+	 * @param orderStatus  the new status of the order
+	 * @param cancelReason the reason for cancellation, if applicable
+	 * @throws IllegalArgumentException if the order is not paid yet or cannot be canceled
+	 */
+	private void handleOpenOrder(ContractOrder order, Map<String, String> products, int servicePrice,
+								 String orderStatus, String cancelReason) {
+		if (OrderStatus.COMPLETED.name().equals(orderStatus)) {
+			throw new IllegalArgumentException("Order is not paid yet!");
+		}
+		if (OrderStatus.CANCELED.name().equals(orderStatus)) {
+			orderManagement.cancelOrder(order, cancelReason == null || cancelReason.isBlank() ?
+				"Reason not provided" : cancelReason);
+			contractOrderRepository.save(order);
+			return;
+		}
+		List<ChargeLine> chargeLinesToRemove = order.getChargeLines().stream()
+			.filter(chargeLine -> chargeLine.getDescription().equals("Service Price"))
+			.toList();
+		chargeLinesToRemove.forEach(order::remove);
+		order.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
+		Map<UUID, Integer> incoming = extractProducts(products);
+		order.getOrderLines().toList().forEach(line -> {
+			if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) {
+				order.remove(line);
+			}
+		});
+		incoming.forEach((productId, quantity) -> productCatalog.findById(
+				Product.ProductIdentifier.of(productId.toString()))
+			.ifPresent(product -> {
+				order.getOrderLines(product).toList().forEach(order::remove);
+				order.addOrderLine(product, Quantity.of(quantity));
+			}));
+		if (OrderStatus.PAID.name().equals(orderStatus)) {
+			orderManagement.payOrder(order);
+		}
+	}
+
+	/**
+	 * Handles logic for orders with PAID status.
+	 *
+	 * @param order       the contract order to update
+	 * @param orderStatus the new status of the order
+	 * @throws IllegalArgumentException if the order is already paid or cannot be canceled
+	 */
+	private void handlePaidOrder(ContractOrder order, String orderStatus) {
+		if (OrderStatus.OPEN.name().equals(orderStatus)) {
+			throw new IllegalArgumentException("Order is already paid!");
+		}
+		if (OrderStatus.CANCELED.name().equals(orderStatus)) {
+			throw new IllegalArgumentException("Cannot cancel a paid order!");
+		}
+		if (OrderStatus.COMPLETED.name().equals(orderStatus)) {
+			orderManagement.completeOrder(order);
+		}
 	}
 
 	/**

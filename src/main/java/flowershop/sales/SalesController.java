@@ -1,14 +1,9 @@
 package flowershop.sales;
 
 import flowershop.clock.ClockService;
-import flowershop.product.Bouquet;
-import flowershop.product.Flower;
-import flowershop.product.GiftCard;
-import flowershop.product.GiftCardRepository;
-import flowershop.product.ProductService;
+import flowershop.product.*;
 import flowershop.services.ReservationOrder;
 import flowershop.services.ReservationOrderService;
-
 import org.javamoney.moneta.Money;
 import org.salespointframework.catalog.Product;
 import org.salespointframework.catalog.Product.ProductIdentifier;
@@ -20,12 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 
 @SessionAttributes({"fullSellPrice", "fullBuyPrice",
@@ -40,7 +30,8 @@ public class SalesController {
 	private final ReservationOrderService reservationOrderService;
 
 	SalesController(ProductService productService, SalesService salesService,
-					ClockService clockService, ReservationOrderService reservationOrderService, GiftCardRepository giftCardRepository) {
+					ClockService clockService, ReservationOrderService reservationOrderService,
+					GiftCardRepository giftCardRepository) {
 		this.productService = productService;
 		this.salesService = salesService;
 		this.clockService = clockService;
@@ -81,7 +72,8 @@ public class SalesController {
 	@PreAuthorize("hasRole('BOSS')")
 	public String sellCatalog(Model model,
 							  @RequestParam(required = false) String filterItem,
-							  @RequestParam(required = false) String searchInput) {
+							  @RequestParam(required = false) String searchInput,
+							  @ModelAttribute("sellCart") Cart sellCart) {
 
 		List<Flower> flowers = productService.findAllFlowers();
 		List<Bouquet> bouquets = productService.findAllBouquets();
@@ -122,6 +114,11 @@ public class SalesController {
 		products.addAll(bouquets);
 
 		Set<String> colors = productService.getAllFlowerColors();
+
+		if(!sellCart.isEmpty()){
+			double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+			model.addAttribute("fullSellPrice", fp);
+		}
 
 		model.addAttribute("typeList", colors);
 		model.addAttribute("filterItem", filterItem);
@@ -181,7 +178,8 @@ public class SalesController {
 		for (ReservationOrder order : orders) {
 			for (OrderLine line : order.getOrderLines()) {
 				Product product = productService.getProductById(line.getProductIdentifier())
-					.orElseThrow(() -> new IllegalArgumentException("Product not found: " + line.getProductIdentifier()));
+					.orElseThrow(() -> new IllegalArgumentException("Product not found: "
+						+ line.getProductIdentifier()));
 
 				int quantity = line.getQuantity().getAmount().intValue();
 				productQuantities.merge(product, quantity, Integer::sum);
@@ -275,7 +273,7 @@ public class SalesController {
 		@ModelAttribute("buyCart") Cart buyCart,
 		Model model,
 		RedirectAttributes redirAttrs
-	) {
+	) throws InsufficientFundsException {
 		// Alert when shop is closed
 		if (!clockService.isOpen()) {
 			buyCart.clear();
@@ -287,7 +285,12 @@ public class SalesController {
 			model.addAttribute("message", "Your basket is empty.");
 			return "redirect:buy";
 		}
-		salesService.buyProductsFromBasket(buyCart, "Card");
+		try {
+			salesService.buyProductsFromBasket(buyCart, "Card");
+		} catch (InsufficientFundsException e) {
+			redirAttrs.addFlashAttribute("error", e.getMessage());
+			return "redirect:buy";
+		}
 
 		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
 		model.addAttribute("fullBuyPrice", fp);
@@ -388,7 +391,7 @@ public class SalesController {
 	) {
 		Product product = productService.getProductById(productId).get();
 		int tmpQuantity = (quantityInput == null || quantityInput == 0) ? 1 : quantityInput;
-		sellCart.addOrUpdateItem(product, -1 * (long)tmpQuantity);
+		sellCart.addOrUpdateItem(product, -1 * (long) tmpQuantity);
 
 		double fp = salesService.calculateFullCartPrice(model, sellCart, true);
 		model.addAttribute("fullSellPrice", fp);
@@ -484,13 +487,12 @@ public class SalesController {
 
 		int tmpQuantity = (quantityInput == null || quantityInput == 0) ? 1 : quantityInput;
 
-		buyCart.addOrUpdateItem(product, -1 * (long)tmpQuantity);
+		buyCart.addOrUpdateItem(product, -1 * (long) tmpQuantity);
 
 		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
 		model.addAttribute("fullBuyPrice", fp);
 		return "redirect:/buy";
 	}
-
 
 
 	@GetMapping("/giftcard")
