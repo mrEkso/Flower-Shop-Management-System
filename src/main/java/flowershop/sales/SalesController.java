@@ -122,7 +122,9 @@ public class SalesController {
 		products.addAll(bouquets);
 
 		Set<String> colors = productService.getAllFlowerColors();
+		ProductIdentifier a = products.get(0).getId();
 
+		products.stream().anyMatch(p -> p.getId() == a);
 		model.addAttribute("typeList", colors);
 		model.addAttribute("filterItem", filterItem);
 		model.addAttribute("searchInput", searchInput);
