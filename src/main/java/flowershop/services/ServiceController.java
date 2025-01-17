@@ -392,9 +392,10 @@ public class ServiceController {
 			contractOrder.setPaymentMethod(paymentMethod);
 			if ("Recurring".equals(contractType)) {
 				contractOrder.setFrequency(frequency);
-			} else if ("custom".equals(frequency) && customFrequency != null && customUnit != null) {
-				contractOrder.setCustomFrequency(customFrequency);
-				contractOrder.setCustomUnit(customUnit);
+				if ("custom".equals(frequency) && customFrequency != null && customUnit != null) {
+					contractOrder.setCustomFrequency(customFrequency);
+					contractOrder.setCustomUnit(customUnit);
+				}
 			} else {
 				contractOrder.setFrequency(null);
 				contractOrder.setCustomFrequency(null);
