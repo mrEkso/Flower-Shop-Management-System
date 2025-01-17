@@ -47,4 +47,4 @@ Durchschnittliche Arbeitzeit aller Studenten pro Woche:
 
 (SUMME(SPALTE(Dev1)) + SUMME(SPALTE(Dev2)) + SUMME(SPALTE(Dev3)) + SUMME(SPALTE(Dev4)) + SUMME(SPALTE(Dev5)) +SUMME(SPALTE(Dev6))) / 6
 
-*Durchschnitt =*
+*Durchschnitt =* 9.32
