@@ -60,6 +60,11 @@
                   th:value="${product.id}"
                 />
                 <button type="submit" class="basket-btn">
+                  <!-- th:disabled="${(selectedCart.product instanceof T(flowershop.product.Flower)
+                                    ? selectedCart.product.quantity :
+                                    (selectedCart.product instanceof T(flowershop.product.Bouquet)
+                                        ? selectedCart.product.quantity : 0))
+                                    - selectedCart.quantity.getAmount.doubleValue == 0}" -->
                   <img th:src="@{/resources/img/shopping-basket.png}" />
                 </button>
               </form>
