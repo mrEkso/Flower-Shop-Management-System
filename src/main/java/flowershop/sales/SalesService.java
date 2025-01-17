@@ -68,7 +68,7 @@ public class SalesService {
 
 			Product p = productService.getAllProducts().stream()
 				.filter(f -> f.getId().equals(product.getId()))
-				.findFirst().get();
+				.findFirst().orElse(product);
 
 			System.out.println(p.getName() + "\t" + 
 			(p instanceof Flower? ((Flower)p).getPricing().getSellPrice().getNumber().doubleValue()
@@ -76,12 +76,6 @@ public class SalesService {
 
 			simpleOrder.addOrderLine(p, cartItem.getQuantity());
 		}
-		System.out.println("------GET-TOTAL------");
-		System.out.println(simpleOrder.getTotal());
-		simpleOrder.getOrderLines().stream().forEach(ol -> {
-			System.out.println(ol.getPrice());
-		});
-		System.out.println("--------END--------");
 		simpleOrder.setPaymentMethod(paymentMethod);
 		simpleOrderService.create(simpleOrder);
 		cart.clear();
@@ -196,16 +190,16 @@ public class SalesService {
 				if (bi.getProduct() instanceof Flower flower) {
 					pricePerItem = isSellPage
 						? productService.findAllFlowers().stream()
-							.filter(f -> f.getId().equals(flower.getId())).findFirst().orElse(null)
+							.filter(f -> f.getId().equals(flower.getId())).findFirst().orElse(flower)
 							.getPricing().getSellPrice().getNumber().doubleValue()
 						: productService.findAllFlowers().stream()
-							.filter(f -> f.getId().equals(flower.getId())).findFirst().orElse(null)
+							.filter(f -> f.getId().equals(flower.getId())).findFirst().orElse(flower)
 							.getPricing().getBuyPrice().getNumber().doubleValue();
 
 				} else if (bi.getProduct() instanceof Bouquet bouquet && isSellPage) {
 					// For buy page, pricePerItem remains 0 as Bouquets are not available
 					pricePerItem = productService.findAllBouquets().stream()
-						.filter(b -> b.getId().equals(bouquet.getId())).findFirst().orElse(null)
+						.filter(b -> b.getId().equals(bouquet.getId())).findFirst().orElse(bouquet)
 						.getPrice().getNumber().doubleValue();
 				}
 				// If it's not a Flower or Bouquet, pricePerItem remains 0
