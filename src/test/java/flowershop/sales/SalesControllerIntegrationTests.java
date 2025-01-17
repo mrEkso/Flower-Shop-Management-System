@@ -43,7 +43,7 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	public void testSellCatalog_DefaultView() {
 		Model model = new ExtendedModelMap();
 
-		String sellView = controller.sellCatalog(model, null, null);
+		String sellView = controller.sellCatalog(model, null, null, null);
 		assertThat(sellView).isEqualTo("sales/sell");
 
 		Iterable<Object> sellProducts = (Iterable<Object>) model.asMap().get("products");
@@ -55,7 +55,7 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	public void testSellCatalog_FilterByColor() {
 		Model model = new ExtendedModelMap();
 
-		String sellView = controller.sellCatalog(model, "Red", null);
+		String sellView = controller.sellCatalog(model, "Red", null, null);
 		assertThat(sellView).isEqualTo("sales/sell");
 
 		Iterable<Object> sellProducts = (Iterable<Object>) model.asMap().get("products");
@@ -67,7 +67,7 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	public void testSellCatalog_SearchByName() {
 		Model model = new ExtendedModelMap();
 
-		String sellView = controller.sellCatalog(model, null, "Rose");
+		String sellView = controller.sellCatalog(model, null, "Rose", null);
 		assertThat(sellView).isEqualTo("sales/sell");
 
 		Iterable<Object> sellProducts = (Iterable<Object>) model.asMap().get("products");
@@ -115,7 +115,7 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	public void testSellCatalog_EmptyFilters() {
 		Model model = new ExtendedModelMap();
 
-		String sellView = controller.sellCatalog(model, "", "");
+		String sellView = controller.sellCatalog(model, "", "", null);
 		assertThat(sellView).isEqualTo("sales/sell");
 
 		Iterable<Object> sellProducts = (Iterable<Object>) model.asMap().get("products");
