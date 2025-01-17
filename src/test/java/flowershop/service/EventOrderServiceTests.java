@@ -156,8 +156,9 @@ class EventOrderServiceTests {
 		eventOrderService.update(order, Map.of(), 0, "CANCELED", "cancel reason");
 
 		verify(orderManagement).cancelOrder(order, "cancel reason");
-		verify(eventOrderRepository).save(order);
+		verify(eventOrderRepository, times(2)).save(order);
 	}
+
 
 	@Test
 	void update_PaysOrder_WhenStatusIsPaid() {
