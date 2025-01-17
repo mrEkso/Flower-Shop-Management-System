@@ -29,7 +29,7 @@ SUMME(SPALTE(DevX))
 [option="headers"]
 |===
 |Andrejs |Davyd      |Vadym |Oleh   |Bechir     |Valeriia |Paul
-|115.5 |139.17     |153  |88.17    |85.33      |…        |79.83
+|115.5 |139.17     |153  |88.17    |85.33      |121.7       |79.83
 |===
 
 
@@ -40,7 +40,7 @@ SUMME(SPALTE(DevX)) / 12
 [option="headers"]
 |===
 |Andrejs |Davyd |Vadym |Oleh |Bechir |Valeriia |Paul
-|9.63       |11.6     |12.75  |7.35    |7.15      |…        |6.65
+|9.63       |11.6     |12.75  |7.35    |7.15      |10.14       |6.65
 |===
 
 Durchschnittliche Arbeitzeit aller Studenten pro Woche:
