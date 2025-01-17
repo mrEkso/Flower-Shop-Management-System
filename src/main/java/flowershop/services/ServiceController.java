@@ -443,6 +443,7 @@ public class ServiceController {
 			if (isCanceledOrCompleted) {
 				calendarService.removeEvent(id);
 			} else {
+				calendarService.removeReccuringEvent(id);
 				event.setDate(startDate);
 				calendarService.save(event);
 			}
