@@ -1,0 +1,24 @@
+= Persönliches Feedback eines Teammitgliedes des Softwarepraktikums 2024/25
+
+
+**Von: Bechir Sayadi**
+
+**Gruppe: 7**
+
+== Was habe ich gelernt / was habe ich nicht gelernt?
+Ich habe gelernt, wie wichtig klare Kommunikation und Aufgabenverteilung im Team sind. Git und Merge-Konflikte habe ich besser verstanden. Aber leider wollte ich mehr mit Data Base handeln
+
+== Welche Erfahrungen habe ich mit der Zusammenarbeit im Team gemacht?
+Die Teamarbeit war gut, vor allem durch regelmäßige Meetings. Es war aber schwierig, wenn Aufgaben erst kurz vor der Deadline erledigt wurden. Wäre besser, wenn ich interne Deadlines früher setzen würde.
+
+== Welche Erfahrungen habe ich bei der Wiederverwendung von Bibliotheken/Frameworks (insbesondere SalesPoint) gemacht?
+SalesPoint war hilfreich und hat uns in manchen Bereichen Zeit gespart, aber manchmal unnötig kompliziert.
+
+== Welche Vorschläge zur weiteren Verbesserung des Softwarepraktikums gibt es?
+Alternative Technologien wie Python oder JavaScript zulassen.
+
+== Feedback für den Tutor
+Der Tutor war super hilfsbereit und immer verfügbar. Fragen könnten manchmal etwas ausführlicher behandelt werden. Er war immer positiv.
+
+== Sonstiges und Anmerkungen
+in manchen Wochen arbeite ich viel, in anderen nicht so viel
