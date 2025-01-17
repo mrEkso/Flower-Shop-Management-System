@@ -144,13 +144,17 @@
                       </div>
                       <p
                         class="basket-card-text"
-                        th:text="${selectedCart.quantity.getAmount.intValue()} + 'x' + ${selectedCart.product.pricing.sellPrice.number * 1.0} + ' EUR'"
+                        th:each="p : ${products}"
+                        th:if="${p.id == selectedCart.product.id}"
+                        th:text="${selectedCart.quantity.getAmount.doubleValue* 1.0} + 'x ' + ${p.pricing.sellPrice.number * 1.0} + ' EUR'"
                       ></p>
                     </div>
-
+                    <!-- -->
                     <div class="basket-card-footer">
                       <span
-                        th:text="${(selectedCart.quantity.getAmount.doubleValue* 1.0) * selectedCart.product.pricing.sellPrice.number * 1.0} + ' EUR'"
+                        th:each="p : ${products}"
+                        th:if="${p.id == selectedCart.product.id}"
+                        th:text="${(selectedCart.quantity.getAmount.doubleValue* 1.0) * p.pricing.sellPrice.number * 1.0} + ' EUR'"
                       ></span>
                     </div>
                   </div>
