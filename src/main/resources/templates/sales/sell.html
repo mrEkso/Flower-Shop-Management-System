@@ -144,13 +144,13 @@
                       </div>
                       <p
                         class="basket-card-text"
-                        th:text="${selectedCart.quantity.getAmount.intValue()} + 'x' + ${selectedCart.product.price.number * 1.0} + ' EUR'"
+                        th:text="${selectedCart.quantity.getAmount.intValue()} + 'x' + ${selectedCart.product.pricing.sellPrice.number * 1.0} + ' EUR'"
                       ></p>
                     </div>
 
                     <div class="basket-card-footer">
                       <span
-                        th:text="${(selectedCart.quantity.getAmount.doubleValue* 1.0) * selectedCart.product.price.number * 1.0} + ' EUR'"
+                        th:text="${(selectedCart.quantity.getAmount.doubleValue* 1.0) * selectedCart.product.pricing.sellPrice.number * 1.0} + ' EUR'"
                       ></span>
                     </div>
                   </div>
