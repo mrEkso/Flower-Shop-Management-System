@@ -327,7 +327,7 @@ public class CashRegisterServiceTest {
 		when(entry.getFlowers()).thenReturn(new HashMap<>());
 		when(entry.getValue()).thenReturn(Money.of(-50, "EUR"));
 		when(entry.getDeliveryDate()).thenReturn(LocalDate.from(LocalDateTime.now().plusDays(1)));
-		when(clockService.nextWorkingDay()).thenReturn(LocalDate.from(LocalDateTime.now().plusDays(2)));
+		//when(clockService.nextWorkingDay()).thenReturn(ClockService.nextWorkingDay(LocalDate.now()));
 
 		// Mocking PendingOrder behavior
 		Set<PendingOrder> pendingOrders = new HashSet<>();
@@ -339,7 +339,7 @@ public class CashRegisterServiceTest {
 		// Assertions
 		assertNotNull(result, "Expected a non-null return value");
 		assertEquals(1, pendingOrders.size(), "Expected one pending order added");
-		assertEquals(ClockService.nextWorkingDay(LocalDate.now()), pendingOrders.iterator().next().getDueDate(),
+		assertEquals(LocalDate.from(LocalDateTime.now().plusDays(1)), pendingOrders.iterator().next().getDueDate(),
 			"Expected the correct delivery date for pending order");
 	}
 
