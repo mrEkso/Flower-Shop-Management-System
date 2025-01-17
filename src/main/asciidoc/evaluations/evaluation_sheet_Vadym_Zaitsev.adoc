@@ -1,0 +1,40 @@
+= Persönliches Feedback eines Teammitgliedes des Softwarepraktikums 2024/25
+// Auch wenn der Bogen nicht anonymisiert ist, dürfen Sie gern Ihre Meinung offen kundtun.
+// Sowohl positive als auch negative Anmerkungen werden gern gesehen und zur stetigen Verbesserung genutzt.
+// Versuchen Sie in dieser Auswertung also stets sowohl Positives wie auch Negatives zu erwähnen.
+
+**Von: Vadym Zaitsev**
+
+**Gruppe: 07**
+
+== Was habe ich gelernt / was habe ich nicht gelernt?
+// Ausführung der positiven und negativen Erfahrungen, die im Softwarepraktikum gesammelt wurden
+Ich habe die Grundlagen von SpringBoot gelernt, als auch das Workflow bei einer Teamarbeit.
+
+== Welche Erfahrungen habe ich mit der Zusammenarbeit im Team gemacht?
+// Kurze Beschreibung der Zusammenarbeit im Team. Was lief gut? Was war verbesserungswürdig? Was würden Sie das nächste Mal anders machen?
+Damit gibt es eigentlich nur gute Erfahrungen, obwohl ich warscheinlich ein bisschen zu großen Anteil von den Arbeit für sich selbst genommen hat. Aber trotzdem haben die andere mir
+mehrmals geholfen. Und vielleicht das wichtigste - ich habe hier eine neue gute Freudschaft erzeugt, und ich hoffe das wird noch sehr lange dauern.
+
+== Welche Erfahrungen habe ich bei der Wiederverwendung von Bibliotheken/Frameworks (insbesondere SalesPoint) gemacht?
+// Einschätzung der Arbeit mit den bereitgestellten und zusätzlich genutzten Frameworks. Was War gut? Was war verbesserungswürdig?
+Es ist nicht alles Freundschaft und Liebe. Kritikzeit :) Salespoint hat uns ein bisschen Zeit gespart, natürlich. Aber diese kleine Bibliothek hat noch sehr lange bis sie aufwächst. Ich versuche jetzt alle Probleme hier notieren, und oh boy gab es Probleme:
+
+- Meistens gibt es überhaupt keine beschreibung von Methoden, und es ist schwer nachzuvollziehen, was etwas darstellt bzw macht.
+- Benutzung von einer obskurer Collection Streamable. Es is schwierig mit denen zu arbeiten, ohne die zu Lists oder Sets usw zu konvertieren. Es gibt Gründe, warum ich sie nirgendwo sonst gesehen und benutzt habe.
+- Noch zum ersten Punkt: Da es wenig Beschreibungen gibt, und was auch wichtig - 0 Beispiele von wie man die Sache benutzt, ist es manchmal besser eine eigene Klasse zu schreiben, weil man nicht weiß ob das wie gedacht funktionieren wird. Genau deswegen habe ich entschieden min eigenes ClockService zu schreiben, anstatt BuisnessTime zu benutzen. Ich habe auch eine opensource Bibliothek Easytable benutzt, und obwohl da absolut keine JavaDocs gab (und absolut keine Information darüber im Internet), war es für mich viel einfacher zu verstehen, wie ich das benutzen soll, weil es ziemlich gute und robuste Beispiele mit Code gab. Auch hat mir geholfen, dass ich etwas gerade im Code eigucken konnte.
+- Existenz von einer Methode getProductIdentifier() in OrderLine. Es mach absolut kein Sinn diese Methode zu haben, weil es zu Bugs führt. Problem damit ist, dass OrderLines nur Kopien von echten Objekten speichert. Das heißt, dieses Produkt aus dieser Methode ist nicht dasselbe wie z.B. im Catalog.
+
+Die idee von SalePoint is aber super und das wirklich kann viel mehr verbessert werden.
+
+== Welche Vorschläge zur weiteren Verbesserung des Softwarepraktikums gibt es?
+// Möglichst mit Beschreibung, warum die Umsetzung des von Ihnen angebrachten Vorschlages nötig ist.
+Das ist sicherlich eine von den besten Veranstaltungen an der Uni, dass ich gemacht habe, weil ich so viel zu tun und lernen sollte. Aber es gab Momente, wenn wir alle davon erschöpft waren. Ich verstehe, dass wir haben nur einen Semester dafür, aber es ist echt schwierig SWP mit anderen Uni- und Jobpflichten. Über persönliche Sachen schweige ich)) Auch alle diese Dokumentation zu machen war absolut nicht toll, aber ich verstehe, dass ALLE denken genauso und trotzdem soll es gemacht werden.
+
+== Feedback für den Tutor
+// Fühlten Sie sich durch den vom Lehrstuhl bereitgestellten Tutor gut betreut? Was war positiv? Was war verbesserungswürdig?
+Es war sehr angenehm mit Vincent zu arbeiten. Er hat unsere Fragen beantwortet.
+
+== Sonstiges und Anmerkungen
+// Welche Aspekte fanden in den oben genannten Punkten keine Erwähnung?
+Ich hoffe, dass Sie nicht SO stark unter meinen Sprachfehlern gelitten.
