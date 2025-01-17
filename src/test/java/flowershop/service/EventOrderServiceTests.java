@@ -8,14 +8,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.salespointframework.catalog.Product;
-import org.salespointframework.order.ChargeLine;
-import org.salespointframework.order.Order;
-import org.salespointframework.order.OrderManagement;
-import org.salespointframework.order.OrderStatus;
+import org.salespointframework.order.*;
 import org.salespointframework.quantity.Quantity;
 
 import java.util.*;
+import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -128,6 +127,90 @@ class EventOrderServiceTests {
 	}
 
 	@Test
+	void update_ThrowsException_WhenOrderIsCanceled() {
+		EventOrder order = mock(EventOrder.class);
+		when(order.getOrderStatus()).thenReturn(OrderStatus.CANCELED);
+
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+			() -> eventOrderService.update(order, Map.of(), 0, "PAID", null));
+
+		assertEquals("Order is already canceled!", exception.getMessage());
+	}
+
+	@Test
+	void update_ThrowsException_WhenOrderIsNotPaidAndCompleted() {
+		EventOrder order = mock(EventOrder.class);
+		when(order.getOrderStatus()).thenReturn(OrderStatus.OPEN);
+
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+			() -> eventOrderService.update(order, Map.of(), 0, "COMPLETED", null));
+
+		assertEquals("Order is not paid yet!", exception.getMessage());
+	}
+
+	@Test
+	void update_CancelsOrder_WhenOrderIsOpenAndCanceled() {
+		EventOrder order = mock(EventOrder.class);
+		when(order.getOrderStatus()).thenReturn(OrderStatus.OPEN);
+
+		eventOrderService.update(order, Map.of(), 0, "CANCELED", "cancel reason");
+
+		verify(orderManagement).cancelOrder(order, "cancel reason");
+		verify(eventOrderRepository).save(order);
+	}
+
+	@Test
+	void update_PaysOrder_WhenStatusIsPaid() {
+		EventOrder order = mock(EventOrder.class);
+		when(order.getOrderStatus()).thenReturn(OrderStatus.OPEN);
+
+		ChargeLine mockChargeLine = mock(ChargeLine.class);
+		when(mockChargeLine.getDescription()).thenReturn("Product Description");
+		Totalable<ChargeLine> mockChargeLineTotalable = mock(Totalable.class);
+		when(mockChargeLineTotalable.stream()).thenReturn(Stream.of(mockChargeLine));
+		when(order.getChargeLines()).thenReturn(mockChargeLineTotalable);
+
+		Totalable<OrderLine> mockOrderLineTotalable = mock(Totalable.class);
+		when(order.getOrderLines()).thenReturn(mockOrderLineTotalable);
+		when(mockOrderLineTotalable.toList()).thenReturn(new ArrayList<>());
+
+		Map<String, String> products = new HashMap<>();
+		String newStatus = "PAID";
+
+		eventOrderService.update(order, products, 0, newStatus, null);
+
+		verify(orderManagement).payOrder(order);
+		verify(eventOrderRepository).save(order);
+	}
+
+	@Test
+	void update_ThrowsException_WhenTryingToCancelPaidOrder() {
+		EventOrder order = mock(EventOrder.class);
+		when(order.getOrderStatus()).thenReturn(OrderStatus.PAID);
+
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+			eventOrderService.update(order, Map.of(), 0, "CANCELED", null)
+		);
+
+		assertEquals("Cannot cancel a paid order!", exception.getMessage());
+	}
+
+	@Test
+	void update_CompletesOrder_WhenStatusIsCompleted() {
+		EventOrder order = mock(EventOrder.class);
+		when(order.getOrderStatus()).thenReturn(OrderStatus.PAID);
+
+		Map<String, String> products = new HashMap<>();
+		String newStatus = "COMPLETED";
+
+		eventOrderService.update(order, products, 0, newStatus, null);
+
+		verify(orderManagement).completeOrder(order);
+		verify(eventOrderRepository).save(order);
+	}
+
+
+	@Test
 	void testDelete() {
 		EventOrder existingOrder = mock(EventOrder.class);
 		doNothing().when(eventOrderRepository).delete(existingOrder);
@@ -151,4 +234,6 @@ class EventOrderServiceTests {
 		assertThat(savedOrder).isNotNull();
 		verify(newOrder, times(1)).addOrderLine(any(Product.class), any(Quantity.class));
 	}
+
+
 }
