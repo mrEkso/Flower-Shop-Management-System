@@ -15,7 +15,8 @@ Als Scrum-Master darf ich bestätigen, dass es kein Scrum im Praktikum verplant 
 
 == Welche Erfahrungen habe ich mit der Zusammenarbeit im Team gemacht?
 // Kurze Beschreibung der Zusammenarbeit im Team. Was lief gut? Was war verbesserungswürdig? Was würden Sie das nächste Mal anders machen?
-Es war nicht angenehm, als nicht alle seine Arbeit leisten und es zu Verspätungen kommen musste. 
+Ich habe gelernt, wie wichtig Meetings für eine gute Zusammenarbeit sind. 
+Es war nicht angenehm, als nicht alle seine Arbeit geleistet haben und es deshalb zu Verspätungen kommen musste. Manche Kollegen haben alles kurz vor Deadlines aktiv gearbeitet, ich aber so früh wie möglich. 
 
 == Welche Erfahrungen habe ich bei der Wiederverwendung von Bibliotheken/Frameworks (insbesondere SalesPoint) gemacht?
 // Einschätzung der Arbeit mit den bereitgestellten und zusätzlich genutzten Frameworks. Was War gut? Was war verbesserungswürdig?
