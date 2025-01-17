@@ -6,6 +6,7 @@ import flowershop.clock.ClockService;
 import flowershop.product.ProductService;
 import javassist.NotFoundException;
 import org.javamoney.moneta.Money;
+import org.salespointframework.order.OrderCompletionFailure;
 import org.salespointframework.order.OrderStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -402,6 +403,10 @@ public class ServiceController {
 			handleCalendarEvents(id, frequency, customFrequency, customUnit, startDate, endDate, notes, clientName, orderStatus);
 			contractOrderService.update(contractOrder, products, servicePrice, orderStatus, cancelReason);
 			return "redirect:/services";
+		} catch (OrderCompletionFailure e) {
+			redirectAttributes.addFlashAttribute("error", e.getReport().iterator().next()
+				.getMessage().orElse(""));
+			return "redirect:/services/contracts/edit/" + id;
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/contracts/edit/" + id;
@@ -547,6 +552,10 @@ public class ServiceController {
 				}
 			}
 			return "redirect:/services";
+		} catch (OrderCompletionFailure e) {
+			redirectAttributes.addFlashAttribute("error", e.getReport().iterator().next()
+				.getMessage().orElse(""));
+			return "redirect:/services/events/edit/" + id;
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/events/edit/" + id;
@@ -618,7 +627,6 @@ public class ServiceController {
 			reservationOrder.setPaymentMethod(paymentMethod);
 			reservationOrderService.update(reservationOrder, products, orderStatus,
 				cancelReason, reservationStatus);
-
 			Event event = calendarService.findEventByUUID(id);
 			if (calendarService.findEventByUUID(id) != null) {
 				if (reservationOrder.getOrderStatus().name().equals("CANCELED") ||
@@ -628,12 +636,14 @@ public class ServiceController {
 					event.setDate(reservationDateTime);
 					calendarService.save(event);
 				}
-
 			}
-
 			return "redirect:/services";
-		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("error", e.getMessage());
+		} catch (OrderCompletionFailure e) {
+			redirectAttributes.addFlashAttribute("error", e.getReport().iterator().next()
+				.getMessage().orElse(""));
+			return "redirect:/services/reservations/edit/" + id;
+		} catch (Exception ex) {
+			redirectAttributes.addFlashAttribute("error", ex.getMessage());
 			return "redirect:/services/reservations/edit/" + id;
 		}
 	}

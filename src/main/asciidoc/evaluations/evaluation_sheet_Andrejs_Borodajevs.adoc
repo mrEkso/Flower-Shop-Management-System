@@ -15,7 +15,8 @@ Als Scrum-Master darf ich bestätigen, dass es kein Scrum im Praktikum verplant 
 
 == Welche Erfahrungen habe ich mit der Zusammenarbeit im Team gemacht?
 // Kurze Beschreibung der Zusammenarbeit im Team. Was lief gut? Was war verbesserungswürdig? Was würden Sie das nächste Mal anders machen?
-Es war nicht angenehm, als nicht alle seine Arbeit leisten und es zu Verspätungen kommen musste. 
+Ich habe gelernt, wie wichtig Meetings und Beschrechungen für eine gute Zusammenarbeit sind. 
+Manche Kollegen haben alles kurz vor Deadlines aktiv gearbeitet, ich aber so früh wie möglich. 
 
 == Welche Erfahrungen habe ich bei der Wiederverwendung von Bibliotheken/Frameworks (insbesondere SalesPoint) gemacht?
 // Einschätzung der Arbeit mit den bereitgestellten und zusätzlich genutzten Frameworks. Was War gut? Was war verbesserungswürdig?
@@ -23,12 +24,19 @@ Salespoint war weder sehr groß noch klein, sodass es tatsächlich sogar schlech
 
 == Welche Vorschläge zur weiteren Verbesserung des Softwarepraktikums gibt es?
 // Möglichst mit Beschreibung, warum die Umsetzung des von Ihnen angebrachten Vorschlages nötig ist.
-Die Tatsache, dass man nur statische Webseiten entwickeln darf, ist sehr frustrierend. Es ist doch nicht zeitgemäß, dass die Seite komplett ohne JS funktionieren soll. Warum nicht erlauben, dass es JS gibt, aber selbstverständlich ohne weiteren Frameworks bzw. Libraries wie React und Co.
+Die Tatsache, dass man nur statische Webseiten entwickeln darf, ist sehr frustrierend. Es ist doch nicht zeitgemäß, dass die Seite komplett ohne JS funktionieren soll. Warum nicht erlauben, dass es JS gibt, aber selbstverständlich ohne weiteren Frameworks bzw. Libraries wie React und Co. 
+Beispielsweise musste ich ein Input-Feld verstecken, falls ein Radio-Button gewählt wurde. Das würde sehr locker mit JS gehen, aber es war nicht erlaubt, und ich musste fortgeschrittenes CSS anwenden, um es dynamisch zu verstecken. Solche Anwendungslogik in .css Dateien zu schreiben war nicht unbedingt schön für Maintainability auf längerer Sicht.  
 
-Ich würde empfehlen, dass es mehr Mittel und Zeit für Scrum-Entwicklung zur Verfügung gestellt wird. Es soll unbedingt einen normalen Backlog geben (GitHub Issues reichen nicht aus), der dann vom Scrum-Master + Tutor gepflegt wird, um eine Organisation des Entwicklungsprozesses abzubilden.  
+Ich würde empfehlen, dass es mehr Mittel und Zeit für Scrum-Entwicklung zur Verfügung gestellt wird. Es soll unbedingt einen normalen Backlog geben (GitHub Issues reichen nicht aus), der dann vom Scrum-Master (oder sogar Product Owner haben?) gepflegt wird, um eine Organisation des Entwicklungsprozesses abzubilden. Es muss dadurch auch wirkliche Sprints geplant werden. Das wäre schon realistischer und hilfreicher für Studierende. Ich wollte am Anfang so was unmsetzen, aber es war nicht gefragt und es wäre zu schwer, von anderen zu erwarten, dass sie sich an diese Scrum-Rituale halten. 
  
 == Feedback für den Tutor
 // Fühlten Sie sich durch den vom Lehrstuhl bereitgestellten Tutor gut betreut? Was war positiv? Was war verbesserungswürdig?
+Alles war gut. Vincent war sehr hilfsbereit und freundig. Vor Weihnachten hat er uns sogar selbstgebackene Kuchen und Glühwein gebracht.   
 
 == Sonstiges und Anmerkungen
 // Welche Aspekte fanden in den oben genannten Punkten keine Erwähnung?
+Warum erlaubt man keine regelmäßige Online-Meetings? Wieso unbedingt vor Ort?
+
+In der Kritik da oben könnte der Eindruck entstehen, dass ich sehr viel wüsste und alles besser als Uniangestellte mache. Ich hab keine solche Ansprüche und kann falschliegen. :)  
+
+In einer Woche habe ich 42 Stunden mit SWP verbracht und es war gruselig. Die Erwartung für den Anwendungsprototypen war viel zu hoch. Ich habe deshalb alle andere Fächer vernachlässigt und bracuhte noch Wochen, um alles nachzuholen. 
