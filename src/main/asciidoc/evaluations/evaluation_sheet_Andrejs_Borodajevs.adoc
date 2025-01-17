@@ -39,4 +39,4 @@ Warum erlaubt man keine regelmäßige Online-Meetings? Wieso unbedingt vor Ort?
 
 In der Kritik da oben könnte der Eindruck entstehen, dass ich sehr viel wüsste und alles besser als Uniangestellte mache. Ich hab keine solche Ansprüche und kann falschliegen. :)  
 
-In einer Woche habe ich 42 Stunden mit SWP verbracht und es war gruselig. Die Erwartung für den Prototypen war viel zu hoch.
+In einer Woche habe ich 42 Stunden mit SWP verbracht und es war gruselig. Die Erwartung für den Anwendungsprototypen war viel zu hoch.
