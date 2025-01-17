@@ -635,12 +635,16 @@ class ServiceControllerIntegrationTests {
 
 	@SuppressWarnings("unchecked")
 	private <T> T getFirstValidOrderByType(Class<T> orderClass, String type) throws Exception {
-		return ((List<T>) Objects.requireNonNull(mvc.perform(get("/services"))
+		List<?> orders = (List<?>) Objects.requireNonNull(mvc.perform(get("/services"))
 				.andReturn()
 				.getModelAndView())
 			.getModel()
-			.get(type))
-			.getFirst();
+			.get(type);
+		if (!orders.isEmpty() && !orderClass.isInstance(orders.get(0))) {
+			throw new IllegalArgumentException("Invalid order type in response: expected "
+				+ orderClass.getName());
+		}
+		return (T) orders.getFirst();
 	}
 
 	private Order.OrderIdentifier getFirstValidContractId() throws Exception {
