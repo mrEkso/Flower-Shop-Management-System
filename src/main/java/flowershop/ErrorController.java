@@ -14,4 +14,9 @@ public class ErrorController {
 	public String notFound() {
 		return "404";
 	}
+
+	@GetMapping("400")
+	public String badRequest() {
+		return "400";
+	}
 }
