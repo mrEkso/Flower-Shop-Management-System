@@ -12,6 +12,7 @@ public class CustomErrorPagesConfig implements WebServerFactoryCustomizer<Config
 	@Override
 	public void customize(ConfigurableWebServerFactory factory) {
 		factory.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/404"),
-			new ErrorPage(HttpStatus.FORBIDDEN, "/403"));
+			new ErrorPage(HttpStatus.FORBIDDEN, "/403"),
+			new ErrorPage(HttpStatus.BAD_REQUEST, "/400"));
 	}
 }
