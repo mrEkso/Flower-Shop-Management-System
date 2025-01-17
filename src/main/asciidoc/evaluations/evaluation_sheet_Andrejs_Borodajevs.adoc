@@ -25,6 +25,8 @@ Salespoint war weder sehr groß noch klein, sodass es tatsächlich sogar schlech
 // Möglichst mit Beschreibung, warum die Umsetzung des von Ihnen angebrachten Vorschlages nötig ist.
 Die Tatsache, dass man nur statische Webseiten entwickeln darf, ist sehr frustrierend. Es ist doch nicht zeitgemäß, dass die Seite komplett ohne JS funktionieren soll. Warum nicht erlauben, dass es JS gibt, aber selbstverständlich ohne weiteren Frameworks bzw. Libraries wie React und Co.
 
+Ich würde empfehlen, dass es mehr Mittel und Zeit für Scrum-Entwicklung zur Verfügung gestellt wird. Es soll unbedingt einen normalen Backlog geben (GitHub Issues reichen nicht aus), der dann vom Scrum-Master + Tutor gepflegt wird, um eine Organisation des Entwicklungsprozesses abzubilden.  
+ 
 == Feedback für den Tutor
 // Fühlten Sie sich durch den vom Lehrstuhl bereitgestellten Tutor gut betreut? Was war positiv? Was war verbesserungswürdig?
 
