@@ -74,13 +74,7 @@ public class SalesService {
 			(p instanceof Flower? ((Flower)p).getPricing().getSellPrice().getNumber().doubleValue()
 				: ((Bouquet)p).getPrice().getNumber().doubleValue()));
 
-			simpleOrder.addOrderLine(productService.getAllProducts().stream()
-				.filter(f -> {
-						return f.getId().equals(product.getId());
-					}
-				)
-				.findFirst().get(), 
-			cartItem.getQuantity());
+			simpleOrder.addOrderLine(p, cartItem.getQuantity());
 		}
 		
 		System.out.println("---------------------");
