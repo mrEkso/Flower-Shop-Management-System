@@ -227,7 +227,7 @@ public class InventoryController {
 				model.addAttribute("selectedFlower", product);
 				model.addAttribute("showChooseModal", true);
 			} else {
-				model.addAttribute("error", "Selected product is not a flower.");
+				model.addAttribute("error", "Das ausgewählte Produkt ist keine Blume.");
 			}
 		});
 
@@ -263,14 +263,13 @@ public class InventoryController {
 					if (chooseQuantity > selectedFlower.getQuantity()) {
 						model.addAttribute("quantityProblemLabel2", true);
 						model.addAttribute("quantityProblemMessage",
-							"We don t have that quantity");
+							"Wir haben diese Menge nicht.");
 					}
 
 					if (chooseQuantity < selectedFlower.getQuantity()) {
 						model.addAttribute("quantityProblemLabel2", true);
 						model.addAttribute("quantityProblemMessage",
-							"You chose more quantity than the available stock. because " +
-								reservedQuantity + " are reserved");
+							"Sie haben mehr Menge gewählt als verfügbar ist, da " + reservedQuantity + " reserviert sind.");
 					}
 				} else if (chooseQuantity > 0) {
 					selectedFlower.setDeletedQuantity(chooseQuantity);
@@ -279,7 +278,7 @@ public class InventoryController {
 					} else {
 						model.addAttribute("quantityProblemLabel2", true);
 						model.addAttribute("quantityProblemMessage",
-							"You can t choose the same flower type more than once.");
+							"Sie können denselben Blumentyp nicht mehr als einmal auswählen.");
 					}
 				}
 			}
@@ -331,7 +330,7 @@ public class InventoryController {
 			} else {
 				model.addAttribute("quantityProblemLabel2", true);
 				model.addAttribute("quantityProblemMessage",
-					"You can t create a bouquet with only one flower");
+					"Sie können keinen Blumenstrauß mit nur einer Blume basteln");
 			}
 		}
 		selectedFlowersForBouquet.clear();
@@ -501,7 +500,7 @@ public class InventoryController {
 		Model model
 	) {
 		if (newSellPrice <= 0) {
-			model.addAttribute("error", "Price must be greater than zero.");
+			model.addAttribute("error", "Der Preis muss größer als Null sein.");
 			return "redirect:/inventory";
 		}
 
@@ -543,7 +542,7 @@ public class InventoryController {
 		for (ReservationOrder order : orders) {
 			for (OrderLine line : order.getOrderLines()) {
 				Product product = productCatalog.findById(line.getProductIdentifier())
-					.orElseThrow(() -> new IllegalArgumentException("Product not found: "
+					.orElseThrow(() -> new IllegalArgumentException("Produkt nicht gefunden: "
 						+ line.getProductIdentifier()));
 
 				int quantity = line.getQuantity().getAmount().intValue();
