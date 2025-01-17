@@ -41,9 +41,8 @@
                 th:placeholder="#{buy.search}"
                 th:value="${searchInput}"
               />
-              <!-- <div id="filter-div"> -->
               <select id="filter-dd" name="filterItem" th:value="${filterItem}">
-                <option value="">All</option>
+                <option value="" th:text="#{buy.filter.all}"></option>
                 <option
                   th:each="type : ${typeList}"
                   th:value="${type}"
@@ -51,7 +50,6 @@
                   th:selected="${type == filterItem}"
                 ></option>
               </select>
-              <!-- </div> -->
               <button type="submit">
                 <img th:src="@{/resources/img/filter.png}" />
               </button>
@@ -62,13 +60,13 @@
           ></div>
         </div>
         <div class="basket col-2 vh-100">
-          <h2 class="basket-head">Modify order</h2>
+          <h2 class="basket-head" th:text="#{basket.mod-order}"></h2>
           <div class="basket-head">
             <img
               class="basket-img"
               th:src="@{/resources/img/shopping-basket.png}"
             />
-            <b class="basket-header">Your basket</b>
+            <b class="basket-header" th:text="#{basket.your-basket}"></b>
           </div>
           <table class="basket-table">
             <tbody>
@@ -97,14 +95,11 @@
                     <div class="basket-card-body">
                       <div class="basket-card-inputs">
                         <form method="post" action="/update-buy-cart">
-                          <!-- Hidden field to identify the product -->
                           <input
                             type="hidden"
                             name="productId"
                             th:value="${selectedCart.product.id}"
                           />
-
-                          <!-- Input field for quantity -->
                           <label>
                             <input
                               class="basket-input-quantity"
@@ -115,8 +110,6 @@
                               value="1"
                             />
                           </label>
-
-                          <!-- Action buttons -->
                           <button
                             class="basket-minus-btn"
                             type="submit"
@@ -152,7 +145,7 @@
             </tbody>
           </table>
           <div class="basket-total-price" th:unless="${buyCart.isEmpty()}">
-            <b>Total:</b>
+            <b th:text="#{basket.label.total}"></b>
             <div th:text="${fullBuyPrice} + ' EUR'"></div>
           </div>
           <div class="basket-footer" th:unless="${buyCart.isEmpty()}">

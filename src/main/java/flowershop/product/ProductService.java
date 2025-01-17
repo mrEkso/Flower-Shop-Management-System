@@ -220,10 +220,9 @@ public class ProductService {
 	public void updateSellPrice(Product product, double newSellPrice) {
 		if (product instanceof Flower flower) {
 			flower.getPricing().setSellPrice(Money.of(newSellPrice, "EUR"));
-			flower.setPrice(flower.getPricing().getSellPrice());
+			flower.setPrice(Money.of(newSellPrice, "EUR"));	
 		} else if (product instanceof Bouquet bouquet) {
 			bouquet.setAdditionalPrice(Money.of(newSellPrice, "EUR"));
-			bouquet.setPrice(bouquet.getPricing().getSellPrice());
 		} else {
 			throw new IllegalStateException("Unsupported product type: " + product.getClass().getSimpleName());
 		}

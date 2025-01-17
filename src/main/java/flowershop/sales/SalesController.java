@@ -72,7 +72,8 @@ public class SalesController {
 	@PreAuthorize("hasRole('BOSS')")
 	public String sellCatalog(Model model,
 							  @RequestParam(required = false) String filterItem,
-							  @RequestParam(required = false) String searchInput) {
+							  @RequestParam(required = false) String searchInput,
+							  @ModelAttribute("sellCart") Cart sellCart) {
 
 		List<Flower> flowers = productService.findAllFlowers();
 		List<Bouquet> bouquets = productService.findAllBouquets();
@@ -113,6 +114,11 @@ public class SalesController {
 		products.addAll(bouquets);
 
 		Set<String> colors = productService.getAllFlowerColors();
+
+		if(!sellCart.isEmpty()){
+			double fp = salesService.calculateFullCartPrice(model, sellCart, true);
+			model.addAttribute("fullSellPrice", fp);
+		}
 
 		model.addAttribute("typeList", colors);
 		model.addAttribute("filterItem", filterItem);
