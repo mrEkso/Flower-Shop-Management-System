@@ -26,10 +26,25 @@ Summe der Arbeitsstunden pro Student:
 
 SUMME(SPALTE(DevX))
 
+[option="headers"]
+|===
+|Andrejs |Davyd |Vadym |Oleh |Bechir |Valeriia |Paul
+|…       |…     |153  |…    |…      |…        |…
+|===
+
+
 Arbeitsstunden pro Woche pro Student:
 
 SUMME(SPALTE(DevX)) / 12
 
+[option="headers"]
+|===
+|Andrejs |Davyd |Vadym |Oleh |Bechir |Valeriia |Paul
+|…       |…     |12.75  |…    |…      |…        |…
+|===
+
 Durchschnittliche Arbeitzeit aller Studenten pro Woche:
 
 (SUMME(SPALTE(Dev1)) + SUMME(SPALTE(Dev2)) + SUMME(SPALTE(Dev3)) + SUMME(SPALTE(Dev4)) + SUMME(SPALTE(Dev5)) +SUMME(SPALTE(Dev6))) / 6
+
+*Durchschnitt =*
