@@ -292,7 +292,7 @@ public class SalesController {
 		double fp = salesService.calculateFullCartPrice(model, buyCart, false);
 		model.addAttribute("fullBuyPrice", fp);
 
-		redirAttrs.addFlashAttribute("success", "Done");
+		redirAttrs.addFlashAttribute("success", "Your order has been successfully placed. It will arrive on the next working day.");
 		model.addAttribute("message", "Your order has been successfully placed.");
 		return "redirect:buy";
 	}
