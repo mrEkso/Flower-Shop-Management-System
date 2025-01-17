@@ -199,7 +199,7 @@ mostly _UI_ and/or _Communication_.
 === Package-Diagramm
 
 [[package_diagram]]
-image::./models/images/package_diagram_g.svg[package diagram, 100%, 100%, pdfwidth=100%, title= "Paketdiagramm in UML", align=center]
+image::./models/images/package_diagram_h.svg[package diagram, 100%, 100%, pdfwidth=100%, title= "Paketdiagramm in UML", align=center]
 
 
 * Entwurfsklassendiagramme der einzelnen Packages
@@ -222,7 +222,7 @@ image::./models/images/InventoryPackage.svg[class diagram, 100%, 100%, pdfwidth=
 
 === Finances
 [[class_diagram_finances]]
-image::./models/images/Finances_uml_b.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für finances package in UML", align=center]
+image::./models/images/Finances_uml_c.svg[class diagram, 100%, 100%, pdfwidth=100%, title= "Entwurfsklassendiagramm für finances package in UML", align=center]
 
 === Services
 [[class_diagram_services]]
