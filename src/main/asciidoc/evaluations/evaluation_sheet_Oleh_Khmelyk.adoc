@@ -1,0 +1,33 @@
+= Persönliches Feedback eines Teammitgliedes des Softwarepraktikums 2021/22
+// Auch wenn der Bogen nicht anonymisiert ist, dürfen Sie gern Ihre Meinung offen kundtun.
+// Sowohl positive als auch negative Anmerkungen werden gern gesehen und zur stetigen Verbesserung genutzt.
+// Versuchen Sie in dieser Auswertung also stets sowohl Positives wie auch Negatives zu erwähnen.
+
+**Von: Khmelyk Oleh**
+
+**Gruppe: 7**
+
+== Was habe ich gelernt / was habe ich nicht gelernt?
+// Ausführung der positiven und negativen Erfahrungen, die im Softwarepraktikum gesammelt wurden
+Ich habe gelernt, dass in Gruppenarbeit das größte Problem ist - Zeitmanagement, nicht Programmierung.
+Ich habe Geduld gelernt...
+
+
+== Welche Erfahrungen habe ich mit der Zusammenarbeit im Team gemacht?
+// Kurze Beschreibung der Zusammenarbeit im Team. Was lief gut? Was war verbesserungswürdig? Was würden Sie das nächste Mal anders machen?
+Die Teamarbeit war ok. Jede Gruppe hat ihre Packung gemacht, deswegen waren keine großen Probleme miteinander und in einer Gruppe von zwei Leuten auch war ok.
+
+== Welche Erfahrungen habe ich bei der Wiederverwendung von Bibliotheken/Frameworks (insbesondere SalesPoint) gemacht?
+// Einschätzung der Arbeit mit den bereitgestellten und zusätzlich genutzten Frameworks. Was War gut? Was war verbesserungswürdig?
+Meiner Meinung nach ist Salespoint unnötig zum SWP. Es wäre besser, wenn wir bei uns selbst das ganze Projekt machen würden. Unsere eigene DB, Klassen usw.
+
+== Welche Vorschläge zur weiteren Verbesserung des Softwarepraktikums gibt es?
+// Möglichst mit Beschreibung, warum die Umsetzung des von Ihnen angebrachten Vorschlages nötig ist.
+Web-developing nicht in JAVA machen! Js, Python, GO, usw. passt besser. Da man JAVA angewendet hat zum "Compile once, run everywhere"... Nicht in Browser, bitte.
+
+== Feedback für den Tutor
+// Fühlten Sie sich durch den vom Lehrstuhl bereitgestellten Tutor gut betreut? Was war positiv? Was war verbesserungswürdig?
+Alles war positiv. Unser Tutor hat alles, was wir bei ihr brauchen, gemacht, es liegt also keine Beschwerde gegen ihn vor.
+
+== Sonstiges und Anmerkungen
+// Welche Aspekte fanden in den oben genannten Punkten keine Erwähnung?
