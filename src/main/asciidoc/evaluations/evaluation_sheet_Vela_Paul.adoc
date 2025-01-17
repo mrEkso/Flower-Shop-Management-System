@@ -1,0 +1,26 @@
+= Persönliches Feedback eines Teammitgliedes des Softwarepraktikums 2024/25
+// Auch wenn der Bogen nicht anonymisiert ist, dürfen Sie gern Ihre Meinung offen kundtun.
+// Sowohl positive als auch negative Anmerkungen werden gern gesehen und zur stetigen Verbesserung genutzt.
+// Versuchen Sie in dieser Auswertung also stets sowohl Positives wie auch Negatives zu erwähnen.
+
+**Von:Vela Paul**
+
+**Gruppe:07**
+
+== Was habe ich gelernt / was habe ich nicht gelernt?
+ch hatte die Gelegenheit, meine Fähigkeiten in Java, Spring, CSS und Thymeleaf zu vertiefen. Besonders hilfreich war es, an realistischen Projekten zu arbeiten, die meine Programmierkenntnisse herausforderten.
+
+== Welche Erfahrungen habe ich mit der Zusammenarbeit im Team gemacht?
+Die Dynamik im Team war super – regelmäßige Meetings haben alles zusammengehalten.
+Für die Zukunft würde ich mir wünschen, dass Deadlines nicht erst am letzten Tag ernst genommen werden
+
+== Welche Erfahrungen habe ich bei der Wiederverwendung von Bibliotheken/Frameworks (insbesondere SalesPoint) gemacht?
+Salespoint war eine gute Wahl für unser Projekt. Es war einfach, sich in die Bibliothek einzuarbeiten und sie zu verwenden. Aber die Dokumentation war nicht immer hilfreich.
+== Welche Vorschläge zur weiteren Verbesserung des Softwarepraktikums gibt es?
+Ich würde mir wünschen, dass wir mehr über Scrum lernen könnten. Es wäre toll, wenn wir die Möglichkeit hätten, Scrum in einem realen Projekt anzuwenden.
+
+== Feedback für den Tutor
+Vincent war großartig! Seine Unterstützung und Motivation haben das Praktikum leichter gemacht.
+
+== Sonstiges und Anmerkungen
+Das Projekt hat zu viel Zeit in Anspruch genommen. Ich würde mir wünschen, dass wir mehr Zeit für die anderen Fächer hätten.
