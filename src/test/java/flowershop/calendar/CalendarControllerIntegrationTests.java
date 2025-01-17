@@ -1,5 +1,6 @@
 package flowershop.calendar;
 
+import flowershop.clock.ClockService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.ui.Model;
@@ -14,8 +15,9 @@ import static org.mockito.Mockito.*;
 
 public class CalendarControllerIntegrationTests {
 
+	private final ClockService clockService = Mockito.mock(ClockService.class);
 	private final CalendarService service = Mockito.mock(CalendarService.class);
-	private final CalendarController controller = new CalendarController(service);
+	private final CalendarController controller = new CalendarController(service, clockService);
 
 
 	@Test
@@ -83,7 +85,7 @@ public class CalendarControllerIntegrationTests {
 	@Test
 	public void testUpdateEvent() {
 		Event event = new Event(1L, "Updated Event", LocalDate.now().atStartOfDay(), "Updated Description");
-		String redirect = controller.updateEvent(event);
+		String redirect = controller.updateEvent(event, mock(RedirectAttributes.class));
 		assertEquals("redirect:/calendar", redirect);
 		verify(service).update(event);
 	}

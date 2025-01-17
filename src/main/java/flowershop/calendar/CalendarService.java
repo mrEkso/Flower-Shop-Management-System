@@ -20,14 +20,15 @@ public class CalendarService {
 	 * Set the desired dependencies
 	 * for {@link Event}
 	 */
+	@Autowired
 	private EventRepository eventRepository;
-
+	@Autowired
 	private ContractOrderService contractOrderService;
-
+	@Autowired
 	private ReservationOrderService reservationOrderService;
-
+	@Autowired
 	private EventOrderService eventOrderService;
-
+	@Autowired
 	private ClockService clockService;
 
 
@@ -84,7 +85,8 @@ public class CalendarService {
 	 * @param event The {@link Event} to be updated.
 	 */
 	public void update(Event event) {
-		eventRepository.save(event);
+
+		this.save(event);
 	}
 
 	/**
@@ -134,7 +136,7 @@ public class CalendarService {
 		while (!currentDay.isAfter(endOfGrid)) {
 			CalendarDay calendarDay = new CalendarDay(currentDay);
 			for (Event event : events) {
-				if (!event.getDate().toLocalDate().equals(currentDay)) {
+				if (! event.getDate().toLocalDate().equals(currentDay)) {
 					continue;
 				}
 

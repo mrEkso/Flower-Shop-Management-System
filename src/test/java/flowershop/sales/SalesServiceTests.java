@@ -29,7 +29,7 @@ class SalesServiceTests {
 	private SalesService salesService;
 	private GiftCardService giftCardService;
 	private BalanceService balanceService;
-
+	
 	@BeforeEach
 	void setUp() {
 		productService = mock(ProductService.class);
@@ -48,6 +48,8 @@ class SalesServiceTests {
 		Flower flower = new Flower("Rose", new Pricing(Money.of(20, "EUR"), Money.of(40, "EUR")), "Red", 10);
 
 		cart.addOrUpdateItem(flower, 5);
+		
+		productService.addFlower(flower);
 
 		SimpleOrder simpleOrder = mock(SimpleOrder.class);
 		when(orderFactory.createSimpleOrder()).thenReturn(simpleOrder);

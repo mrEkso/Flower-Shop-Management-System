@@ -21,6 +21,8 @@
 
         <form class="d-flex flex-column" action="/calendar/update" method="post">
             <input type="hidden" name="id" th:value="${event.getId()}">
+            <input type="hidden" name="type" th:value="${event.getType()}">
+            <input type="hidden" name="orderid" th:value="${event.getOrderId()}">
             <input type="text" name="name" class="form-control mb-2" th:value="${event.getName()}">
             <input type="datetime-local" name="date" class="form-control mb-2" th:value="${event.getDate()}">
             <input type="text" name="description" class="form-control mb-2" th:value="${event.getDescription()}">
@@ -30,6 +32,9 @@
         <form>
             <button type="button" class="btn btn-danger mt-2" onclick="window.location.href='/calendar'" th:text="#{calendar.cancel}"></button>
         </form>
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+            <span th:text="${error}"></span>
+        </div>
     </div>
 </div>
 

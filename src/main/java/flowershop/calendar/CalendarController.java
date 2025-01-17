@@ -1,5 +1,6 @@
 package flowershop.calendar;
 
+import flowershop.clock.ClockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,10 +22,13 @@ import java.util.List;
 public class CalendarController {
 	//Dependecies injection
 	@Autowired
-	private CalendarService service;
+	private final CalendarService service;
+	@Autowired
+	private final ClockService clockService;
 
-	public CalendarController(CalendarService service) {
+	public CalendarController(CalendarService service, ClockService clockService) {
 		this.service = service;
+		this.clockService = clockService;
 	}
 
 	/**
@@ -53,6 +57,8 @@ public class CalendarController {
 		LocalDateTime startOfMonth = firstDayOfMonth.atStartOfDay();
 		LocalDateTime endOfMonth = lastDayOfMonth.atTime(23, 59, 59);
 
+		LocalDate shopDay =  clockService.getCurrentDate();
+
 		List<Event> events = service.findAllByDateBetween(startOfMonth, endOfMonth);
 
 		List<CalendarDay> calendarDays = service.generateCalendarDays(firstDayOfMonth, events);
@@ -60,6 +66,7 @@ public class CalendarController {
 		model.addAttribute("calendarDays", calendarDays);
 		model.addAttribute("currentMonth", month);
 		model.addAttribute("currentYear", year);
+		model.addAttribute("shopDay", shopDay);
 
 		return "calendar/calendar";
 	}
@@ -161,9 +168,15 @@ public class CalendarController {
 
 	//Updates a given event on click
 	@PostMapping("/calendar/update")
-	public String updateEvent(@ModelAttribute Event event) {
-		service.update(event);
-		return "redirect:/calendar";
+	public String updateEvent(@ModelAttribute Event event, RedirectAttributes redirectAttribute) {
+		try {
+			service.update(event);
+			return "redirect:/calendar";
+
+		} catch (Exception e) {
+			redirectAttribute.addFlashAttribute("error", e.getMessage());
+			return "redirect:/calendar/edit?id=" + event.getId();
+		}
 	}
 
 }

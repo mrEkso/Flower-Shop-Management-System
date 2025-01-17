@@ -38,8 +38,11 @@
 
                 </div>
                 <div class="row calendar-grid p-2 m-2">
-                    <div th:each="day:${calendarDays}" class="day"
-                    th:classappend="${day.getState()} ? 'current-month' : 'other-month'">
+
+
+                        <div th:each="day : ${calendarDays}" class="day"
+                             th:classappend="${day.getDate() == shopDay ? ' highlight-day' : (day.getState() ? ' current-month' : ' other-month')}">
+
                         <div class="date" th:text="${day.getDate().dayOfMonth}"></div>
                         <div th:each="event : ${day.events}"  class="event">
 
