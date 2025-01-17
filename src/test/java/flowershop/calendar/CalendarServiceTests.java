@@ -84,7 +84,7 @@ class CalendarServiceTests {
 //	}
 	@Test
 	public void testUpdate() {
-		Event event = new Event(1L, "Event 1", LocalDateTime.now(), "Description 1");
+		Event event = new Event(1L, "Event 1", LocalDateTime.now().plusDays(1), "Description 1");
 		when(eventRepository.save(event)).thenReturn(event);
 		when(eventRepository.findAll()).thenReturn(List.of(event));
 
