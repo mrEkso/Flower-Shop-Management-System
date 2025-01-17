@@ -18,7 +18,7 @@ Die individuell erfasste Zeit beinhaltet auch das Lesen von Dokumentationen, Bes
 |9  |500   |1500    |1200    |1050    |500    |650   |480   |50
 |10  |720   |700    |1500    |850    |620    |900    |360    |60
 |11  |300   |400    |200    |250    |200    |350    |180   |25
-|12  |…   |…    |1500    |600    |450   |…    |1000    |35
+|12  |…   |1200    |1500    |600    |450   |…    |1000    |35
 |===
 
 Bitte tragen Sie am Ende des Praktikums noch folgende weitere Werte ein:
@@ -29,7 +29,7 @@ SUMME(SPALTE(DevX))
 [option="headers"]
 |===
 |Andrejs |Davyd |Vadym |Oleh |Bechir |Valeriia |Paul
-|…       |…     |153  |88.17    |85.33      |…        |79.83
+|…       |139.17     |153  |88.17    |85.33      |…        |79.83
 |===
 
 
@@ -40,7 +40,7 @@ SUMME(SPALTE(DevX)) / 12
 [option="headers"]
 |===
 |Andrejs |Davyd |Vadym |Oleh |Bechir |Valeriia |Paul
-|…       |…     |12.75  |7.35    |7.15      |…        |6.65
+|…       |11.6     |12.75  |7.35    |7.15      |…        |6.65
 |===
 
 Durchschnittliche Arbeitzeit aller Studenten pro Woche:
