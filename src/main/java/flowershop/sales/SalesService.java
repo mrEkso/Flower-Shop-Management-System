@@ -65,9 +65,25 @@ public class SalesService {
 			} else {
 				throw new IllegalArgumentException("Unsupported product type");
 			}
-			simpleOrder.addOrderLine(product, cartItem.getQuantity());
-		}
 
+			Product p = productService.getAllProducts().stream()
+				.filter(f -> f.getId().equals(product.getId()))
+				.findFirst().get();
+
+			System.out.println(p.getName() + "\t" + 
+			(p instanceof Flower? ((Flower)p).getPricing().getSellPrice().getNumber().doubleValue()
+				: ((Bouquet)p).getPrice().getNumber().doubleValue()));
+
+			simpleOrder.addOrderLine(productService.getAllProducts().stream()
+				.filter(f -> {
+						return f.getId().equals(product.getId());
+					}
+				)
+				.findFirst().get(), 
+			cartItem.getQuantity());
+		}
+		
+		System.out.println("---------------------");
 		simpleOrder.setPaymentMethod(paymentMethod);
 		simpleOrderService.create(simpleOrder);
 		cart.clear();
