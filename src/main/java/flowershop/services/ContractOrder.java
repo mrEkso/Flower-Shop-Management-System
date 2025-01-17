@@ -30,17 +30,20 @@ public class ContractOrder extends AbstractOrder {
 	private Client client;
 
 	/**
-	 * Constructs a `ContractOrder` with the specified user, contract type, start date, end date, address, client, and notes.
+	 * Constructs a `ContractOrder` with the specified user, contract type,
+	 * start date, end date, address, client, and notes.
 	 *
 	 * @param user         the user account associated with the order
 	 * @param contractType the type of contract (e.g., weekly, monthly)
-	 * @param startDate   the start date of the contract
+	 * @param startDate    the start date of the contract
 	 * @param endDate      the end date of the contract
 	 * @param address      the delivery address
 	 * @param client       the client associated with the order
 	 * @param notes        additional notes for the order
 	 */
-	public ContractOrder(UserAccount user, String contractType, String frequency, LocalDateTime startDate, LocalDateTime endDate, String address, Client client, String notes) {
+	public ContractOrder(UserAccount user, String contractType, String frequency,
+						 LocalDateTime startDate, LocalDateTime endDate, String address,
+						 Client client, String notes) {
 		super(user, notes);
 		this.client = client;
 		this.contractType = contractType;

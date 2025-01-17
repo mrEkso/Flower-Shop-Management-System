@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
 /**
  * Repository for storing {@link WholesalerOrder}s.
  */
-public interface WholesalerOrderRepository extends CrudRepository<WholesalerOrder, Order.OrderIdentifier>, PagingAndSortingRepository<WholesalerOrder, Order.OrderIdentifier> {
+public interface WholesalerOrderRepository extends CrudRepository<WholesalerOrder, Order.OrderIdentifier>,
+	PagingAndSortingRepository<WholesalerOrder, Order.OrderIdentifier> {
 	@NotNull
 	@Query("select o from #{#entityName} o")
 	Page<WholesalerOrder> findAll(@NotNull Pageable pageable);
@@ -27,5 +28,7 @@ public interface WholesalerOrderRepository extends CrudRepository<WholesalerOrde
 
 	Streamable<WholesalerOrder> findByUserAccountIdentifier(UserAccount.UserAccountIdentifier userAccountIdentifier);
 
-	Streamable<WholesalerOrder> findByUserAccountIdentifierAndDateCreatedBetween(UserAccount.UserAccountIdentifier userAccountIdentifier, LocalDateTime from, LocalDateTime to);
+	Streamable<WholesalerOrder> findByUserAccountIdentifierAndDateCreatedBetween(
+		UserAccount.UserAccountIdentifier userAccountIdentifier,
+		LocalDateTime from, LocalDateTime to);
 }

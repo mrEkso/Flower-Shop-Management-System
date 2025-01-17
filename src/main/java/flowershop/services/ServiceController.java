@@ -140,9 +140,9 @@ public class ServiceController {
 											   @RequestParam(value = "frequency", required = false)
 											   String frequency,
 											   @RequestParam(value = "customFrequency", required = false)
-												   Integer customFrequency,
+											   Integer customFrequency,
 											   @RequestParam(value = "customUnit", required = false)
-												   String customUnit
+											   String customUnit
 	) {
 		model.addAttribute("contractType", "Recurring");
 		model.addAttribute("frequency", frequency != null ? frequency : "");
@@ -173,11 +173,11 @@ public class ServiceController {
 	public String createContractOrder(@RequestParam("clientName") String clientName,
 									  @RequestParam("contractType") String contractType,
 									  @RequestParam(value = "frequency", required = false)
-										  String frequency,
+									  String frequency,
 									  @RequestParam(value = "customFrequency", required = false)
-										  Integer customFrequency,
+									  Integer customFrequency,
 									  @RequestParam(value = "customUnit", required = false)
-										  String customUnit,
+									  String customUnit,
 									  @RequestParam("startDate") LocalDateTime startDate,
 									  @RequestParam("endDate") LocalDateTime endDate,
 									  @RequestParam("address") String address,
@@ -185,7 +185,7 @@ public class ServiceController {
 									  @RequestParam Map<String, String> products,
 									  @RequestParam(value = "notes", required = false) String notes,
 									  @RequestParam(value = "servicePrice", defaultValue = "0")
-										  int servicePrice,
+									  int servicePrice,
 									  RedirectAttributes redirectAttribute) {
 		try {
 			if (!clockService.isOpen()) {
@@ -197,16 +197,23 @@ public class ServiceController {
 			if (startDate.isAfter(endDate)) {
 				throw new IllegalArgumentException("Start date cannot be later than end date");
 			}
+			if (startDate.isBefore(clockService.now())) {
+				throw new IllegalArgumentException("Event date and time cannot be in the past");
+			}
 			ContractOrder contractOrder = orderFactory.createContractOrder(contractType, frequency,
 				startDate, endDate, address, getOrCreateClient(clientName, phone), notes);
 			if ("Recurring".equals(contractType)) {
 				contractOrder.setFrequency(frequency);
-			} else if ("custom".equals(frequency)) {
-				contractOrder.setCustomFrequency(customFrequency);
-				contractOrder.setCustomUnit(customUnit);
 			} else {
 				contractOrder.setFrequency("One-Time");
+			}if ("custom".equals(frequency)) {
+				contractOrder.setCustomFrequency(customFrequency);
+				contractOrder.setCustomUnit(customUnit);
+				calendarService.removeReccuringEvent(UUID.fromString(contractOrder.getId().toString()));
+				calendarService.createReccuringEvent("Contract for " + clientName, startDate, endDate, notes,
+					customUnit, "contract", UUID.fromString(contractOrder.getId().toString()), customFrequency);
 			}
+
 			contractOrder.addChargeLine(Money.of(servicePrice, "EUR"), "Service Price");
 			contractOrderService.save(contractOrder, products);
 			return "redirect:/services";
@@ -236,7 +243,7 @@ public class ServiceController {
 								   @RequestParam Map<String, String> products,
 								   @RequestParam("notes") String notes,
 								   @RequestParam(value = "deliveryPrice", defaultValue = "0")
-									   int deliveryPrice,
+								   int deliveryPrice,
 								   RedirectAttributes redirectAttribute) {
 		try {
 			if (!clockService.isOpen()) {
@@ -245,7 +252,7 @@ public class ServiceController {
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$")) {
 				throw new IllegalArgumentException("Invalid phone number format");
 			}
-			if (eventDate.isBefore(LocalDateTime.now())) {
+			if (eventDate.isBefore(clockService.now())) {
 				throw new IllegalArgumentException("Event date and time cannot be in the past");
 			}
 			EventOrder eventOrder = orderFactory.createEventOrder(eventDate,
@@ -284,7 +291,7 @@ public class ServiceController {
 			if (!phone.matches("^(\\+\\d{1,3})?\\d{9,15}$")) {
 				throw new IllegalArgumentException("Invalid phone number format");
 			}
-			if (reservationDateTime.isBefore(LocalDateTime.now())) {
+			if (reservationDateTime.isBefore(clockService.now())) {
 				throw new IllegalArgumentException("Reservation date and time cannot be in the past");
 			}
 			ReservationOrder reservationOrder = orderFactory.createReservationOrder(reservationDateTime,
@@ -346,7 +353,7 @@ public class ServiceController {
 									@RequestParam("contractType") String contractType,
 									@RequestParam(value = "frequency", required = false) String frequency,
 									@RequestParam(value = "customFrequency", required = false)
-										Integer customFrequency,
+									Integer customFrequency,
 									@RequestParam(value = "customUnit", required = false) String customUnit,
 									@RequestParam("startDate") LocalDateTime startDate,
 									@RequestParam("endDate") LocalDateTime endDate,
@@ -382,32 +389,38 @@ public class ServiceController {
 			contractOrder.setPaymentMethod(paymentMethod);
 			if ("Recurring".equals(contractType)) {
 				contractOrder.setFrequency(frequency);
+			} else if ("custom".equals(frequency) && customFrequency != null && customUnit != null) {
+				contractOrder.setCustomFrequency(customFrequency);
+				contractOrder.setCustomUnit(customUnit);
 			} else {
 				contractOrder.setFrequency(null);
 				contractOrder.setCustomFrequency(null);
 				contractOrder.setCustomUnit(null);
 			}
-			if ("custom".equals(frequency) && customFrequency != null && customUnit != null) {
-				contractOrder.setCustomFrequency(customFrequency);
-				contractOrder.setCustomUnit(customUnit);
-			}
 			Event event = calendarService.findEventByUUID(id);
 			if (event != null) {
-				if (frequency != null && (frequency.equals("weekly") ||
-					frequency.equals("monthly") || frequency.equals("daily") ||
-					frequency.equals("custom"))) {
+				if (complicatedConditionCheck(frequency)) {
 					if (orderStatus.equals("CANCELED") || orderStatus.equals("COMPLETED")) {
 						calendarService.removeReccuringEvent(id);
 					} else {
 						calendarService.removeReccuringEvent(id);
-						calendarService.createReccuringEvent("Contract for " +
-							clientName, startDate, endDate, notes, frequency, "contract", id);
+						if(customFrequency == null) {
+							customFrequency = 1;
+						}
+						if(customUnit == null) {
+							calendarService.createReccuringEvent("Contract for " +
+								clientName, startDate, endDate, notes, frequency, "contract", id, customFrequency);
+						} else{
+							calendarService.createReccuringEvent("Contract for " +
+								clientName, startDate, endDate, notes, customUnit, "contract", id, customFrequency);
+						}
 					}
 				} else {
 					if (orderStatus.equals("CANCELED") || orderStatus.equals("COMPLETED")) {
 						calendarService.removeEvent(id);
 					} else {
 						event.setDate(startDate);
+						calendarService.save(event);
 					}
 				}
 			}
@@ -417,6 +430,21 @@ public class ServiceController {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/services/contracts/edit/" + id;
 		}
+	}
+
+	private boolean complicatedConditionCheck(String frequency) {
+		if (frequency == null) {
+			return false;
+		}
+		boolean out = false;
+		if ((frequency.equals("weekly") || frequency.equals("monthly"))) {
+			out = true;
+		} else if (frequency.equals("daily") || frequency.equals("custom")) {
+			out = true;
+		} else {
+			out = false;
+		}
+		return out;
 	}
 
 	/**
@@ -492,6 +520,7 @@ public class ServiceController {
 					calendarService.removeEvent(id);
 				} else {
 					event.setDate(eventDate);
+					calendarService.save(event);
 				}
 			}
 			return "redirect:/services";
@@ -547,7 +576,7 @@ public class ServiceController {
 									   @RequestParam("paymentMethod") String paymentMethod,
 									   @RequestParam("orderStatus") String orderStatus,
 									   @RequestParam(value = "cancelReason", required = false)
-										   String cancelReason,
+									   String cancelReason,
 									   @RequestParam("reservationStatus") String reservationStatus,
 									   @RequestParam("notes") String notes,
 									   RedirectAttributes redirectAttributes) {
@@ -566,6 +595,7 @@ public class ServiceController {
 			reservationOrder.setPaymentMethod(paymentMethod);
 			reservationOrderService.update(reservationOrder, products, orderStatus,
 				cancelReason, reservationStatus);
+
 			Event event = calendarService.findEventByUUID(id);
 			if (calendarService.findEventByUUID(id) != null) {
 				if (reservationOrder.getOrderStatus().name().equals("CANCELED") ||
@@ -573,6 +603,7 @@ public class ServiceController {
 					calendarService.removeEvent(id);
 				} else {
 					event.setDate(reservationDateTime);
+					calendarService.save(event);
 				}
 
 			}

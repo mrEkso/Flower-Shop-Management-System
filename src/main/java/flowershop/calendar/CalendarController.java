@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -72,7 +73,9 @@ public class CalendarController {
 	 * @return a redirect URL to the next month's view
 	 */
 	@GetMapping("/calendar/next")
-	public String nextMonth(Model model, @RequestParam(value = "month") int month, @RequestParam(value = "year") int year) {
+	public String nextMonth(Model model,
+							@RequestParam(value = "month") int month,
+							@RequestParam(value = "year") int year) {
 		month++;
 		if (month > 12) {
 			month = 1;
@@ -83,13 +86,16 @@ public class CalendarController {
 
 	/**
 	 * Redirects to the calendar view of the next month.
+	 *
 	 * @param model the Model object for adding attributes to the view
 	 * @param month the current month
-	 * @param year the current year
+	 * @param year  the current year
 	 * @return a redirect URL to the previous month's view
 	 */
 	@GetMapping("/calendar/previous")
-	public String previousMonth(Model model, @RequestParam(value = "month") int month, @RequestParam(value = "year") int year) {
+	public String previousMonth(Model model,
+								@RequestParam(value = "month") int month,
+								@RequestParam(value = "year") int year) {
 		month--;
 		if (month < 1) {
 			month = 12;
@@ -111,11 +117,18 @@ public class CalendarController {
 
 	//Sends the request to add a new Event
 	@PostMapping("/calendar/add")
-	public String addEvent(@ModelAttribute Event event) {
-		event.setType("regular");
-		service.save(event);
-		return "redirect:/calendar";
+	public String addEvent(@ModelAttribute Event event, RedirectAttributes redirectAttribute) {
+		try {
+			event.setType("regular");
+			service.save(event);
+			return "redirect:/calendar";
+		}
+		catch (Exception e) {
+		redirectAttribute.addFlashAttribute("error", e.getMessage());
+		return "redirect:/calendar/new";
 	}
+	}
+
 	//Deletes an existing event from mvc and service
 	@PostMapping("/calendar/delete")
 	public String deleteEvent(@RequestParam Long id) {
@@ -129,7 +142,7 @@ public class CalendarController {
 	 * for rendering the edit event page.
 	 *
 	 * @param model the model object used to pass attributes to the view
-	 * @param id the unique identifier of the event to be edited
+	 * @param id    the unique identifier of the event to be edited
 	 * @return the name of the view template to render the edit event page
 	 */
 	@GetMapping("/calendar/edit")

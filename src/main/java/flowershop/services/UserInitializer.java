@@ -41,13 +41,13 @@ public class UserInitializer implements DataInitializer {
 		if (userAccountManagement.findByUsername("boss").isPresent()) {
 			return;
 		}
-		
-		userAccountManagement.create("boss", 
-			UnencryptedPassword.of("123"), 
+
+		userAccountManagement.create("boss",
+			UnencryptedPassword.of("123"),
 			List.of(Role.of("BOSS"), Role.of("USER")));
 
 		// Creating Floris Nichte
-		userAccountManagement.create("shop_worker", 
-		UnencryptedPassword.of("123"), Role.of("USER"));
+		userAccountManagement.create("shop_worker",
+			UnencryptedPassword.of("123"), Role.of("USER"));
 	}
 }

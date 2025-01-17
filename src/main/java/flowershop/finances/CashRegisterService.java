@@ -18,11 +18,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.util.Streamable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.money.MonetaryAmount;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.temporal.TemporalAmount;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,14 +46,17 @@ public class CashRegisterService implements Accountancy {
 
 	@Autowired
 	public CashRegisterService(OrderManagement<AbstractOrder> orderManagement,
-							   CashRegisterRepository cashRegisterRepository, ClockService clockService, ProductService productService, SalesService salesService) {
+							   CashRegisterRepository cashRegisterRepository,
+							   ClockService clockService, ProductService productService,
+							   SalesService salesService) {
 		this.orderManagement = orderManagement;
 		this.cashRegisterRepository = cashRegisterRepository;
 		this.productService = productService;
 		Streamable<AbstractOrder> previousOrders = Optional.ofNullable(orderManagement.findBy(OrderStatus.PAID))
 			.orElse(Streamable.empty());
-		for (Order order : previousOrders) {
-			AccountancyEntry convertedOrder = new AccountancyEntryWrapper((AbstractOrder) order, clockService.now(), productService);
+		for (AbstractOrder order : previousOrders) {
+			AccountancyEntry convertedOrder = new AccountancyEntryWrapper(order, clockService.now(),
+				productService);
 			this.add(convertedOrder);
 		}
 		this.clockService = clockService;
@@ -104,6 +112,9 @@ public class CashRegisterService implements Accountancy {
 			Cart cart = new Cart();
 			for (Map.Entry<Product, Quantity> i : ((AccountancyEntryWrapper) entry).getFlowers().entrySet()) {
 				cart.addOrUpdateItem(i.getKey(), i.getValue());
+			}
+			if (cart.getPrice().add(getCashRegister().getBalance()).isNegative()) {
+				return null;
 			}
 			if (!cart.isEmpty()) {
 				salesService.buyProductsFromBasket(
@@ -324,15 +335,16 @@ public class CashRegisterService implements Accountancy {
 		if (allEntries.isEmpty() && getAllDeletedProducts().isEmpty()) {
 			return null;
 		}
+		DailyFinancialReport output;
 		if (allEntries.isEmpty()) {
-			return new DailyFinancialReport(
+			output = new DailyFinancialReport(
 				interval,
 				moneyThen,
 				this,
 				getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9, 0),
 				clockService);
 		} else if (getAllDeletedProducts().isEmpty()) {
-			return new DailyFinancialReport(
+			output =  new DailyFinancialReport(
 				interval,
 				moneyThen,
 				this,
@@ -342,13 +354,14 @@ public class CashRegisterService implements Accountancy {
 			LocalDateTime earlier = allEntries.getFirst().getTimestamp()
 				.isBefore(getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9, 0)) ?
 				allEntries.getFirst().getTimestamp() : getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9, 0);
-			return new DailyFinancialReport(
+			output = new DailyFinancialReport(
 				interval,
 				moneyThen,
 				this,
 				earlier,
 				clockService);
 		}
+		return output;
 	}
 
 	/**
@@ -377,15 +390,16 @@ public class CashRegisterService implements Accountancy {
 		if (allEntries.isEmpty() && getAllDeletedProducts().isEmpty()) {
 			return null;
 		}
+		MonthlyFinancialReport output;
 		if (allEntries.isEmpty()) {
-			return new MonthlyFinancialReport(
+			output = new MonthlyFinancialReport(
 				interval,
 				moneyThen,
 				this,
 				getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9, 0),
 				clockService);
 		} else if (getAllDeletedProducts().isEmpty()) {
-			return new MonthlyFinancialReport(
+			output = new MonthlyFinancialReport(
 				interval,
 				moneyThen,
 				this,
@@ -395,13 +409,14 @@ public class CashRegisterService implements Accountancy {
 			LocalDateTime earlier = allEntries.getFirst().getTimestamp()
 				.isBefore(getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9, 0)) ?
 				allEntries.getFirst().getTimestamp() : getAllDeletedProducts().getFirst().getDateWhenDeleted().atTime(9, 0);
-			return new MonthlyFinancialReport(
+			output = new MonthlyFinancialReport(
 				interval,
 				moneyThen,
 				this,
 				earlier,
 				clockService);
 		}
+		return output;
 	}
 
 	/**
@@ -476,12 +491,76 @@ public class CashRegisterService implements Accountancy {
 		return filteredEntries;
 	}
 
-	public AccountancyEntryWrapper getEntry(Long orderId, List<AccountancyEntryWrapper> filteredAndCutOrdersList) {
+	public AccountancyEntryWrapper getEntry(String orderId, List<AccountancyEntryWrapper> filteredAndCutOrdersList) {
 		for (AccountancyEntryWrapper entry : filteredAndCutOrdersList) {
-			if (entry.getId().equals(orderId)) {
+			if (entry.getId().equals(AccountancyEntry.AccountancyEntryIdentifier.of(orderId))) {
 				return entry;
 			}
 		}
 		return null;
+	}
+
+	protected ResponseEntity<byte[]> getDayReportOutput(LocalDate actualDate) {
+		if (actualDate.isAfter(clockService.getCurrentDate())) {
+			return ResponseEntity.badRequest()
+				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
+		}
+
+		DailyFinancialReport report = createFinancialReportDay(actualDate.atStartOfDay());
+		ResponseEntity<byte[]> badOutput = ResponseEntity.badRequest()
+			.body("No Transactions saved in the system.".getBytes(StandardCharsets.UTF_8));
+		boolean abort = false;
+		if (report == null) {
+			badOutput = ResponseEntity.badRequest()
+				.body("No Transactions saved in the system.".getBytes(StandardCharsets.UTF_8));
+			abort = true;
+
+		} else if (report.isBeforeBeginning()) {
+			badOutput = ResponseEntity.badRequest()
+				.body(("The given date is before the accounting process started. " +
+					"No Data.").getBytes(StandardCharsets.UTF_8));
+			abort = true;
+		}
+
+		if(abort) {
+			return badOutput;
+		}
+
+		byte[] docu = report.generatePDF();
+		return ResponseEntity.ok()
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report_day.pdf")
+			.contentType(MediaType.APPLICATION_PDF)
+			.body(docu);
+	}
+
+	protected ResponseEntity<byte[]> getMonthReportOutput(int month, int year) {
+		YearMonth monthParsed = YearMonth.of(year, month);
+		LocalDate firstOfMonth = monthParsed.atDay(1);
+		if (firstOfMonth.isAfter(clockService.getCurrentDate())) {
+			return ResponseEntity.badRequest()
+				.body("The given date cannot be in the future.".getBytes(StandardCharsets.UTF_8));
+		}
+
+		MonthlyFinancialReport report = createFinancialReportMonth(firstOfMonth.atStartOfDay());
+		ResponseEntity<byte[]> badOutput = ResponseEntity.badRequest()
+			.body("No Transactions saved in the system.".getBytes(StandardCharsets.UTF_8));
+		boolean abort = false;
+		if (report == null) {
+			badOutput = ResponseEntity.badRequest()
+				.body("No Transactions saved in the system.".getBytes(StandardCharsets.UTF_8));
+			abort = true;
+		} else if (report.isBeforeBeginning()) {
+			badOutput = ResponseEntity.badRequest()
+				.body("The given month is before the accounting process started. No Data.".getBytes(StandardCharsets.UTF_8));
+			abort = true;
+		}
+		if(abort) {
+			return badOutput;
+		}
+		byte[] docu = report.generatePDF();
+		return ResponseEntity.ok()
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report_month.pdf")
+			.contentType(MediaType.APPLICATION_PDF)
+			.body(docu);
 	}
 }

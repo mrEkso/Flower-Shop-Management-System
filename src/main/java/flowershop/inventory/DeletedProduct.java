@@ -10,13 +10,15 @@ public class DeletedProduct {
 	private MonetaryAmount totalLoss;
 	private LocalDate dateWhenDeleted;
 
-	public DeletedProduct(String name, MonetaryAmount pricePerUnit, int quantityDeleted, MonetaryAmount totalLoss, LocalDate dateWhenDeleted) {
+	public DeletedProduct(String name, MonetaryAmount pricePerUnit, int quantityDeleted,
+						  MonetaryAmount totalLoss, LocalDate dateWhenDeleted) {
 		this.name = name;
 		this.pricePerUnit = pricePerUnit;
 		this.quantityDeleted = quantityDeleted;
 		this.totalLoss = totalLoss;
 		this.dateWhenDeleted = dateWhenDeleted;
 	}
+
 	public String getName() {
 		return name;
 	}
@@ -37,5 +39,7 @@ public class DeletedProduct {
 		return quantityDeleted;
 	}
 
-	public LocalDate getDateWhenDeleted() { return dateWhenDeleted; }
+	public LocalDate getDateWhenDeleted() {
+		return dateWhenDeleted;
+	}
 }

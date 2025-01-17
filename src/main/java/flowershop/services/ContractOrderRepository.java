@@ -16,9 +16,11 @@ import java.util.List;
  * The `ContractOrderRepository` interface provides CRUD operations and pagination for `ContractOrder` entities.
  * It extends both `CrudRepository` and `PagingAndSortingRepository` interfaces provided by Spring Data.
  *
- * <p>This class serves as a replacement for orderManagement, as the logic currently faces a limitation of the built-in OrderManagement.
+ * <p>This class serves as a replacement for orderManagement, as the logic currently faces a limitation
+ * of the built-in OrderManagement.
  * Issue: All custom orders are saved without additional fields. They are converted to a generic Order class.
- * As a result, when retrieved from the database they are treated as regular Order objects from the Salespointframework and cannot be converted to subclasses of custom orders.</p>
+ * As a result, when retrieved from the database they are treated as regular Order objects from the Salespointframework
+ * and cannot be converted to subclasses of custom orders.</p>
  *
  * <p>Possible solution for future improvements:
  * <ul>
@@ -30,7 +32,8 @@ import java.util.List;
  *
  * <p>At this point, the priority is to make the current implementation work.</p>
  */
-public interface ContractOrderRepository extends CrudRepository<ContractOrder, Order.OrderIdentifier>, PagingAndSortingRepository<ContractOrder, Order.OrderIdentifier> {
+public interface ContractOrderRepository extends CrudRepository<ContractOrder, Order.OrderIdentifier>,
+	PagingAndSortingRepository<ContractOrder, Order.OrderIdentifier> {
 
 	/**
 	 * Retrieves all `ContractOrder` entities with pagination support.
@@ -50,5 +53,6 @@ public interface ContractOrderRepository extends CrudRepository<ContractOrder, O
 	 * @param orderStatus the status of the contract order
 	 * @return a list of `ContractOrder` entities that match the specified criteria
 	 */
-	List<ContractOrder> findAllByStartDateLessThanEqualAndEndDateGreaterThanEqualAndOrderStatus(LocalDateTime startDate, LocalDateTime endDate, OrderStatus orderStatus);
+	List<ContractOrder> findAllByStartDateLessThanEqualAndEndDateGreaterThanEqualAndOrderStatus(
+		LocalDateTime startDate, LocalDateTime endDate, OrderStatus orderStatus);
 }

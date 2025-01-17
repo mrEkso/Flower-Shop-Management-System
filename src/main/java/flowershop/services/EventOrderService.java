@@ -137,15 +137,16 @@ public class EventOrderService {
 			order.addChargeLine(Money.of(deliveryPrice, "EUR"), "Delivery Price");
 			Map<UUID, Integer> incoming = extractProducts(products);
 			order.getOrderLines().toList().forEach(line -> {
-				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))){
+				if (!incoming.containsKey(UUID.fromString(line.getProductIdentifier().toString()))) {
 					order.remove(line);
 				}
 			});
-			incoming.forEach((productId, quantity) -> productCatalog.findById(Product.ProductIdentifier.of(productId.toString())).ifPresent(product -> {
+			incoming.forEach((productId, quantity) -> productCatalog.findById(
+				Product.ProductIdentifier.of(productId.toString())).ifPresent(product -> {
 				order.getOrderLines(product).toList().forEach(order::remove);
 				order.addOrderLine(product, Quantity.of(quantity));
 			}));
-			if (OrderStatus.PAID.name().equals(orderStatus)){
+			if (OrderStatus.PAID.name().equals(orderStatus)) {
 				orderManagement.payOrder(order);
 			}
 		}
@@ -187,14 +188,5 @@ public class EventOrderService {
 			}
 		});
 		return productQuantities;
-	}
-
-	public void removeProductFromOrder(UUID orderId, UUID productId) {
-		EventOrder order = getById(orderId).orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderId));
-
-		// Remove the product
-		order.getOrderLines().stream().filter(line -> line.getProductIdentifier().equals(productId)).findFirst().ifPresent(order::remove);
-
-		save(order, new HashMap<>());
 	}
 }

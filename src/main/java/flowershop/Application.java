@@ -23,7 +23,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 /**
@@ -52,7 +51,7 @@ public class Application {
 				.headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-				.anyRequest().authenticated())
+					.anyRequest().authenticated())
 				.formLogin(login -> login.loginProcessingUrl("/login"))
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/"))
 				.build();

@@ -272,7 +272,7 @@ public class SalesControllerIntegrationTests extends AbstractIntegrationTests {
 	}
 
 	@Test
-	public void testBuyFromCart_EmptyCart() {
+	public void testBuyFromCart_EmptyCart() throws InsufficientFundsException {
 		Model model = new ExtendedModelMap();
 		Cart emptyCart = new Cart();  // Empty cart scenario
 		RedirectAttributes redirectAttributes = new RedirectAttributesModelMap();

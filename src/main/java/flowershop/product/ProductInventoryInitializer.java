@@ -9,7 +9,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import javax.money.MonetaryAmount;
 import java.util.HashMap;
 import java.util.Map;
 

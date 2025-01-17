@@ -25,7 +25,7 @@ public class Flower extends Product {
 	public Flower() {
 	}
 
-    public Pricing getPricing() {
+	public Pricing getPricing() {
 		return pricing;
 	}
 

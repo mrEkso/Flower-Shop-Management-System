@@ -1,5 +1,6 @@
 package flowershop.calendar;
 
+import flowershop.clock.ClockService;
 import flowershop.services.ContractOrderService;
 import flowershop.services.EventOrderService;
 import flowershop.services.ReservationOrderService;
@@ -19,17 +20,26 @@ public class CalendarService {
 	 * Set the desired dependencies
 	 * for {@link Event}
 	 */
-	@Autowired
 	private EventRepository eventRepository;
-	@Autowired
+
 	private ContractOrderService contractOrderService;
-	@Autowired
+
 	private ReservationOrderService reservationOrderService;
-	@Autowired
+
 	private EventOrderService eventOrderService;
 
-	public CalendarService(EventRepository eventRepository) {
+	private ClockService clockService;
+
+
+
+	public CalendarService(EventRepository eventRepository,
+						   EventOrderService eventOrderService, ContractOrderService contractOrderService,
+						   ReservationOrderService reservationOrderService, ClockService clockService) {
 		this.eventRepository = eventRepository;
+		this.eventOrderService = eventOrderService;
+		this.contractOrderService = contractOrderService;
+		this.reservationOrderService = reservationOrderService;
+		this.clockService = clockService;
 	}
 
 	/**
@@ -46,7 +56,11 @@ public class CalendarService {
 	 * @return The saved {@link Event}.
 	 */
 	public Event save(Event event) {
-		return eventRepository.save(event);
+
+		if(event.getDate().isAfter(LocalDateTime.now()))
+			return eventRepository.save(event);
+		throw new IllegalArgumentException("Event date is in the past");
+
 	}
 
 	/**
@@ -122,27 +136,32 @@ public class CalendarService {
 		while (!currentDay.isAfter(endOfGrid)) {
 			CalendarDay calendarDay = new CalendarDay(currentDay);
 			for (Event event : events) {
-				if (event.getDate().toLocalDate().equals(currentDay)) {
-
-					switch (event.getType()) {
-						case "event":
-							event.setName(eventOrderService.getById(event.getOrderId()).get().getClient().getName() + "'s Event");
-							calendarDay.addEvent(event);
-							break;
-						case "contract":
-							event.setName(contractOrderService.getById(event.getOrderId()).get().getClient().getName() + "'s Contract");
-							calendarDay.addEvent(event);
-							break;
-						case "reservation":
-							event.setName(reservationOrderService.getById(event.getOrderId()).get().getClient().getName() + "'s Reservation");
-							calendarDay.addEvent(event);
-							break;
-						default:
-							calendarDay.addEvent(event);
-							break;
-					}
-
+				if (!event.getDate().toLocalDate().equals(currentDay)) {
+					continue;
 				}
+
+				switch (event.getType()) {
+					case "event":
+						event.setName(eventOrderService.getById(event.getOrderId()).get()
+							.getClient().getName() + "'s Event");
+						calendarDay.addEvent(event);
+						break;
+					case "contract":
+						event.setName(contractOrderService.getById(event.getOrderId()).get()
+							.getClient().getName() + "'s Contract");
+						calendarDay.addEvent(event);
+						break;
+					case "reservation":
+						event.setName(reservationOrderService.getById(event.getOrderId()).get()
+							.getClient().getName() + "'s Reservation");
+						calendarDay.addEvent(event);
+						break;
+					default:
+						calendarDay.addEvent(event);
+						break;
+				}
+
+
 			}
 			calendarDay.setState(currentDay.getMonth() == firstDayOfMonth.getMonth());
 			calendarDays.add(calendarDay);
@@ -152,7 +171,14 @@ public class CalendarService {
 		return calendarDays;
 	}
 
-	public void createReccuringEvent(String name, LocalDateTime startDate, LocalDateTime endDate, String description, String frequency, String type, UUID orderId) {
+	public void createReccuringEvent(String name,
+									 LocalDateTime startDate,
+									 LocalDateTime endDate,
+									 String description,
+									 String frequency,
+									 String type,
+									 UUID orderId,
+									 Integer interval) {
 		LocalDateTime current = startDate;
 		if (frequency == null) {
 			Event event = new Event(name, startDate, description, type, orderId);
@@ -163,13 +189,16 @@ public class CalendarService {
 			Event event = new Event(name, current, description, type, orderId);
 			save(event);
 			current = switch (frequency) {
-				case "daily" -> current.plusDays(1);
-				case "weekly" -> current.plusWeeks(1);
-				case "monthly" -> current.plusMonths(1);
+				case "daily", "day" -> current.plusDays(interval);
+				case "weekly", "week" -> current.plusWeeks(interval);
+				case "monthly", "month" -> current.plusMonths(interval);
+				case "year" -> current.plusYears(interval);
 				default -> current.plusDays(1);
 			};
 		}
 	}
+
+
 
 	/**
 	 * Removes all {@link Event} instances with the specified UUID.
