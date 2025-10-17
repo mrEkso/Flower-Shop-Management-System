@@ -185,11 +185,8 @@ Apache License 2.0
 ## Academic Context
 
 Software Engineering Lab Project  
-TU Dresden - Group swt24w07  
 Winter Semester 2024
 
 ---
 
-**Maintainer:** mrEkso (Davyd Okaianchenko)  
-**Institution:** Technische Universität Dresden  
-**Framework:** [Salespoint](https://www.st.inf.tu-dresden.de/SalesPoint/)
+**Maintainer:** mrEkso (Davyd Okaianchenko)
